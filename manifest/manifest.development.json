@@ -1,0 +1,7 @@
+{
+  "name": "[DEV] POKT Wallet",
+  "description": "DEVELOPMENT VERSION.... DO NOT SUBMIT TO STORES",
+  "browser_action": {
+    "default_title": "[DEV] POKT Wallet"
+  }
+}

@@ -1,0 +1,344 @@
+@import url(./fonts.css);
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+html,
+body,
+#pokt-wallet-root {
+  background-color: var(--eerie-black-100);
+}
+
+html,
+body {
+  background-image: url(./images/tab-bg.png);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  position: relative;
+  background-color: var(--eerie-black-100);
+  min-height: 100vh;
+  min-width: 100vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.splash_screen {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  margin: auto;
+  right: 0;
+  left: 0;
+  opacity: 0;
+  animation-timing-function: ease-in-out;
+  animation-name: fadeIn;
+  animation-iteration-count: infinite;
+  animation-duration: 3s;
+}
+
+.one {
+  opacity: 1;
+  animation-name: unset;
+}
+
+.two {
+  animation-delay: 0.5s;
+}
+
+.three {
+  animation-delay: 1.5s;
+}
+
+.four {
+  animation-delay: 2.5s;
+}
+
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
+
+body {
+  margin: 0;
+  font-family: "Poppins", -apple-system, BlinkMacSystemFont, "Helvetica Neue",
+    sans-serif;
+  position: relative;
+  color: var(--text-body-color);
+}
+
+:root,
+html,
+body {
+  font-size: 16px;
+}
+
+p,
+pre {
+  font-size: 1rem;
+  line-height: 1.2;
+  margin: 0;
+}
+
+b {
+  font-weight: bold;
+}
+
+small {
+  font-size: 0.75rem;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--text-heading-color);
+  margin: 0;
+  font-weight: normal;
+  font-size: 1rem;
+  line-height: 2rem;
+}
+
+h1 {
+  font-weight: 500;
+  font-size: 1.5rem;
+}
+
+.base_texture {
+  background-color: var(--eerie-black-100);
+  background-image: url("./images/textures/base_texture@2x.png");
+  background-size: cover;
+  border-radius: 1rem;
+}
+
+.base_pokt_logo {
+  height: 0;
+  opacity: 0;
+  transition: opacity ease-in-out 0.4s, height ease-in-out 0.4s;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: auto;
+}
+
+.base_shadow {
+  display: none;
+}
+
+#pokt-wallet-root {
+  width: var(--popup-width);
+  height: var(--popup-height);
+  max-width: var(--popup-width);
+  max-height: var(--popup-height);
+  margin: auto;
+  scrollbar-width: none;
+  overflow: hidden;
+  background-color: var(--eerie-black-100);
+  transition: bottom ease-in-out 0.4s;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+@media screen and (max-width: 500px) {
+  .base_texture {
+    border-radius: 0;
+  }
+}
+
+@media screen and (min-height: 1100px) {
+  .base_pokt_logo {
+    opacity: 1;
+    height: 6rem;
+  }
+}
+
+@media screen and (min-height: 792px) and (min-width: 512px) {
+  :root {
+    --popup-width: 512px;
+    --popup-height: 792px;
+  }
+
+  :root,
+  html,
+  body {
+    font-size: 20px;
+  }
+
+  .base_shadow {
+    display: block;
+    background-image: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0) 0%,
+      var(--black) 100%
+    );
+    background-size: cover;
+    border: 1px solid var(--black);
+    filter: blur(94px);
+    width: calc(var(--popup-width) * 1.25);
+    height: calc(var(--popup-height) * 1.25);
+    position: absolute;
+    margin: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+  }
+}
+
+a {
+  all: unset;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+button {
+  all: unset;
+  cursor: pointer;
+  padding: 0;
+}
+
+input,
+textarea {
+  all: unset;
+  cursor: text;
+}
+
+ul,
+li {
+  all: unset;
+  list-style-type: none;
+}
+
+form {
+  all: inherit;
+  padding: 0;
+}
+
+img {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  user-drag: none;
+  -webkit-touch-callout: none;
+}
+
+* {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  -font-smoothing: antialiased;
+  box-sizing: border-box;
+  scrollbar-color: transparent transparent;
+  scrollbar-width: none;
+}
+
+.standard_width {
+  width: 352px;
+}
+
+.standard_width_padded {
+  width: 352px;
+  padding: 0px 8px;
+  box-sizing: border-box;
+}
+
+.full_width {
+  width: 100%;
+}
+
+.center_horizontal {
+  margin: 0 auto;
+}
+
+.center_text {
+  text-align: center;
+}
+
+.serif_header {
+  color: #fefefc;
+  font-family: "Quincy CF";
+  font-size: 38px;
+  font-weight: 400;
+  padding: unset;
+  margin: unset;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  line-height: 27px;
+  margin-top: -5.5px;
+}
+
+.label {
+  color: var(--spanish-gray);
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.42px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.hide {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.divider {
+  width: 80%;
+  height: 2px;
+  opacity: 60%;
+  background-color: var(--spanish-gray);
+}
+
+.text_success {
+  color: var(--success);
+}
+
+.text_attention {
+  color: var(--attention);
+}
+
+.text_error {
+  color: var(--error);
+}
+
+.page_content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.icon_new_tab {
+  mask-image: url("./images/new_tab@2x.png");
+  mask-size: cover;
+  width: 1rem;
+  height: 1rem;
+  background-color: var(--spanish-gray);
+  margin-left: 5px;
+}
+
+.new_tab_link:hover .icon_new_tab {
+  background-color: var(--aqua);
+}
