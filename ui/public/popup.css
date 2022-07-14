@@ -1,0 +1,5 @@
+html.popup,
+.popup body {
+  width: var(--popup-width);
+  height: var(--popup-height);
+}
