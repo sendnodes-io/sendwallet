@@ -1,0 +1,21 @@
+{
+  "name": "@sendnodes/provider-bridge-shared",
+  "version": "0.0.1",
+  "description": "POKTWallet: provider bridge to connect the in-page provider with the background script.",
+  "main": "index.ts",
+  "repository": "git@github.com:sendnodes/pokt-wallet.git",
+  "authors": [
+    "Dire <dire@sendnodes.io>",
+    "BigBoss <bigboss@sendnodes.io>"
+  ],
+  "license": "GPL-3.0",
+  "keywords": [
+    "ethereum",
+    "bitcoin",
+    "pokt",
+    "cryptocurrency",
+    "wallet",
+    "web3",
+    "dapp"
+  ]
+}
