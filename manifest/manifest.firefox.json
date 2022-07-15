@@ -1,0 +1,21 @@
+{
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "webextension@poktwallet.io",
+      "strict_min_version": "68.0"
+    }
+  },
+  "browser_action": {
+    "default_title": "POKT Wallet",
+    "default_popup": "popup.html"
+  },
+  "permissions": [
+    "https://*.pokt.network/*"
+  ],
+  "background": {
+    "persistent": true,
+    "scripts": [
+      "background.js"
+    ]
+  }
+}

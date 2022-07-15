@@ -1,0 +1,65 @@
+{
+  "name": "@sendnodes/pokt-wallet-ui",
+  "version": "0.0.1",
+  "description": "POKTWallet: UI package.",
+  "main": "index.ts",
+  "repository": "git@github.com:sendnodes/pokt-wallet.git",
+  "authors": [
+    "Dire <dire@sendnodes.io>",
+    "BigBoss <bigboss@sendnodes.io>"
+  ],
+  "license": "GPL-3.0",
+  "keywords": [
+    "ethereum",
+    "bitcoin",
+    "pokt",
+    "cryptocurrency",
+    "wallet",
+    "web3",
+    "dapp"
+  ],
+  "scripts": {
+    "build": "webpack --mode=production",
+    "lint": "run-p lint:*",
+    "lint-fix": "run-p 'lint:* -- --fix'",
+    "lint:js": "eslint .",
+    "test": "run-p lint:* build",
+    "watch": "webpack --mode=development --watch"
+  },
+  "dependencies": {
+    "@ethersproject/abstract-provider": "^5.5.1",
+    "@ethersproject/address": "^5.5.0",
+    "@ethersproject/hdnode": "^5.5.0",
+    "@ethersproject/units": "5.5.0",
+    "@ethersproject/web": "^5.5.1",
+    "@ledgerhq/devices": "^6.20.0",
+    "@pokt-network/pocket-js": "git+ssh://git@github.com:sendnodes-io/pocket-js.git#afa252f33a1ab5e93c54c1eb140f21bc8365671a",
+    "@reduxjs/toolkit": "^1.6.0",
+    "@sendnodes/pokt-wallet-background": "0.0.1",
+    "@sendnodes/provider-bridge-shared": "0.0.1",
+    "classnames": "^2.3.1",
+    "dayjs": "^1.10.6",
+    "ethers": "^5.5.1",
+    "history": "^4.9.0",
+    "lodash": "^4.17.21",
+    "prop-types": "^15.7.2",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-error-boundary": "^3.1.4",
+    "react-icons": "^4.3.1",
+    "react-qr-code": "^2.0.0",
+    "react-redux": "^7.2.4",
+    "react-router-dom": "^5.3.0",
+    "react-transition-group": "^4.4.2",
+    "redux": "^4.1.0",
+    "webextension-polyfill": "^0.8.0"
+  },
+  "devDependencies": {
+    "@iconify/react": "^3.2.2",
+    "@types/lodash": "^4.14.182",
+    "@types/react-dom": "^17.0.9",
+    "@types/react-transition-group": "^4.4.4",
+    "react-devtools": "^4.24.4",
+    "webext-redux": "git+ssh://git@github.com:0xBigBoss/webext-redux.git#9c9572832a6a8dacefff6128792da5d98833ec30"
+  }
+}
