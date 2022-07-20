@@ -5,7 +5,7 @@ import { Store } from "webext-redux"
 import Ledger from "./Ledger/Ledger"
 import TabNotFound from "./TabNotFound"
 import pageList from "../routes/routes"
-import CorePage from "../components/Core/CorePage"
+import CorePopupPage from "../components/Core/CorePopupPage"
 import ErrorFallback from "./ErrorFallback"
 import { ErrorBoundary } from "react-error-boundary"
 
@@ -19,29 +19,29 @@ export default function Tab({ store }: { store: Store }): ReactElement {
       <HashRouter>
         <Switch>
           <Route path={"/ledger"} exact>
-            <CorePage hasTopBar={false}>
+            <CorePopupPage hasTopBar={false}>
               <ErrorBoundary FallbackComponent={ErrorFallback}>
                 <Ledger />
               </ErrorBoundary>
-            </CorePage>
+            </CorePopupPage>
           </Route>
           {pageList.map(({ path, Component, hasTopBar }) => {
             return (
               <Route key={path} path={path} exact>
-                <CorePage hasTopBar={hasTopBar}>
+                <CorePopupPage hasTopBar={hasTopBar}>
                   <ErrorBoundary FallbackComponent={ErrorFallback}>
                     <Component />
                   </ErrorBoundary>
-                </CorePage>
+                </CorePopupPage>
               </Route>
             )
           })}
           <Route path="/*">
-            <CorePage hasTopBar={false}>
+            <CorePopupPage hasTopBar={false}>
               <ErrorBoundary FallbackComponent={ErrorFallback}>
                 <TabNotFound />
               </ErrorBoundary>
-            </CorePage>
+            </CorePopupPage>
           </Route>
         </Switch>
       </HashRouter>
