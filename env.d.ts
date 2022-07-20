@@ -5,7 +5,7 @@
 
 declare module "styled-jsx/style"
 interface Window {
-  poktWallet?: {
+  pocketNetwork?: {
     isPoktWallet: boolean
     on: (
       eventName: string | symbol,

@@ -40,9 +40,8 @@ const baseConfig: Configuration = {
     "tab-ui": "./src/tab-ui.ts",
     background: "./src/background.ts",
     "background-ui": "./src/background-ui.ts",
-    // TODO: wen dapps.....
-    // "window-provider": "./src/window-provider.ts",
-    // "provider-bridge": "./src/provider-bridge.ts",
+    "window-provider": "./src/window-provider.ts",
+    "provider-bridge": "./src/provider-bridge.ts",
   },
   module: {
     rules: [
