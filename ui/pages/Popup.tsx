@@ -8,7 +8,6 @@ import {
   Redirect,
 } from "react-router-dom"
 import { ErrorBoundary } from "react-error-boundary"
-import classNames from "classnames"
 import {
   setRouteHistoryEntries,
   Location,
@@ -37,7 +36,7 @@ import {
 
 import TabBar from "../components/TabBar/TabBar"
 import TopMenu from "../components/TopMenu/TopMenu"
-import CorePage from "../components/Core/CorePage"
+import CorePopupPage from "../components/Core/CorePopupPage"
 import ErrorFallback from "./ErrorFallback"
 
 import pageList from "../routes/routes"
@@ -269,7 +268,7 @@ export function Main(): ReactElement {
                                 ({ path, Component, hasTopBar }) => {
                                   return (
                                     <Route path={path} key={path}>
-                                      <CorePage hasTopBar={hasTopBar}>
+                                      <CorePopupPage hasTopBar={hasTopBar}>
                                         <ErrorBoundary
                                           FallbackComponent={ErrorFallback}
                                         >
@@ -277,7 +276,7 @@ export function Main(): ReactElement {
                                             location={transformedLocation}
                                           />
                                         </ErrorBoundary>
-                                      </CorePage>
+                                      </CorePopupPage>
                                     </Route>
                                   )
                                 }
