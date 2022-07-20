@@ -1,4 +1,4 @@
-import Dexie from "dexie"
+import Dexie, { IndexableTypeArrayReadonly } from "dexie"
 
 import { UNIXTime } from "../../types"
 import { AccountBalance, AddressOnNetwork } from "../../accounts"
@@ -31,6 +31,14 @@ type AccountAssetTransferLookup = {
   endBlock: bigint
 }
 
+export type TransactionRetrieval = {
+  network: EVMNetwork | POKTNetwork,
+  hash: string;
+  firstSeen: UNIXTime,
+  height?: bigint, 
+  txData?: AnyPOKTTransaction | AssetTransfer
+}
+
 interface Migration {
   id: number
   appliedAt: number
@@ -60,8 +68,8 @@ export class ChainDatabase extends Dexie {
     [number]
   >
 
-  private queuedTransactionToRetrieve!: Dexie.Table<
-    {network: EVMNetwork | POKTNetwork, hash: string; firstSeen: UNIXTime, txData?: POKTTransaction | AssetTransfer},
+  private queuedTransactionsToRetrieve!: Dexie.Table<
+    TransactionRetrieval,
     [number, string, string]
   >
 
@@ -119,8 +127,8 @@ export class ChainDatabase extends Dexie {
         "&[address+network.name+network.chainID],address,network.family,network.chainID,network.name",
       accountAssetTransferLookups:
         "++id,[addressNetwork.address+addressNetwork.network.name+addressNetwork.network.chainID],[addressNetwork.address+addressNetwork.network.name+addressNetwork.network.chainID+startBlock],[addressNetwork.address+addressNetwork.network.name+addressNetwork.network.chainID+endBlock],addressNetwork.address,addressNetwork.network.chainID,addressNetwork.network.name,startBlock,endBlock",
-      queuedTransactionToRetrieve:
-        "&[firstSeen+hash+network.name],hash,network.name,firstSeen,txData",
+      queuedTransactionsToRetrieve:
+        "&[firstSeen+hash+network.name],hash,network.name,firstSeen,txData,height",
       balances:
         "++id,address,assetAmount.amount,assetAmount.asset.symbol,network.name,blockHeight,retrievedAt",
       chainTransactions:
@@ -380,8 +388,8 @@ export class ChainDatabase extends Dexie {
       .toArray()
     return lookups.reduce(
       (newestBlock: bigint | null, lookup) =>
-        newestBlock === null || lookup.startBlock > newestBlock
-          ? lookup.startBlock
+        newestBlock === null || lookup.endBlock > newestBlock
+          ? lookup.endBlock
           : newestBlock,
       null
     )
@@ -426,31 +434,40 @@ export class ChainDatabase extends Dexie {
   }
 
   async queueTransactionRetrieval(
-    network: EVMNetwork | POKTNetwork,
-    hash: string,
-    firstSeen: UNIXTime,
-    txData?: POKTTransaction | AssetTransfer
-    ): Promise<void> {
-      const queued = await this.queuedTransactionToRetrieve.toArray()
-      const seen = new Set(queued.map(t => t.network.name+t.hash))
-      if (!seen.has(network.name+hash)) {
-        await this.queuedTransactionToRetrieve.add({
-          network,
-          hash,
-          firstSeen,
-          txData
-        })
-      }
+    tx: TransactionRetrieval
+  ): Promise<void> {
+    const {network, hash, firstSeen, txData} = tx
+    const queued = await this.queuedTransactionsToRetrieve.toArray()
+    const seen = new Set(queued.map(t => t.network.name+t.hash))
+    if (!seen.has(network.name+hash)) {
+      await this.queuedTransactionsToRetrieve.add({
+        network,
+        hash,
+        firstSeen,
+        txData
+      })
+    }
     return
   }
 
   async deQueueTransactionRetrieval(
     count = 5
-    ): Promise<{network: EVMNetwork | POKTNetwork, hash: string; firstSeen: UNIXTime, txData?: POKTTransaction | AssetTransfer}[]> {
-      const queued = await this.queuedTransactionToRetrieve.limit(count).sortBy("firstSeen")
-      
-      // TODO need to remove the result from the db
-      return queued
+  ): Promise<TransactionRetrieval[]> {
+    const all = (await this.queuedTransactionsToRetrieve.toArray()).sort((a,b) => {
+      if (a.height && b.height) {
+        if (a.height < b.height) return -1
+        return 1
+      }
+      return 0
+    }).sort((a,b) => {
+      if (a.firstSeen < b.firstSeen) return -1
+      if (a.firstSeen > b.firstSeen) return 1
+      return 0
+    })
+    const queued = all.slice(0, count)
+    const keys: any[] = queued.map(t => [t.firstSeen,t.hash,t.network.name])
+    await this.queuedTransactionsToRetrieve.bulkDelete(keys)
+    return queued
   }
 
   private async migrate() {
