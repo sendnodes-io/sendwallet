@@ -12,6 +12,9 @@ module.exports = {
       colors: {
         capri: "#33b8ff",
         aqua: "#33ffff",
+        "rich-black": "#040404",
+        "eerie-black": "#1e1e1e",
+        "spanish-gray": "#949494",
       },
     },
   },
