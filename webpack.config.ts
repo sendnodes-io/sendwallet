@@ -52,24 +52,35 @@ const baseConfig: Configuration = {
         ],
       },
       {
-        test: /\.css$/i,
+        test: /\.(tsx|ts|jsx)?$/,
+        include: path.resolve(__dirname, "ui"),
+        exclude: /node_modules(?!\/@sendnodes)|webpack/,
+
         use: [
-          MiniCssExtractPlugin.loader,
-          "css-loader",
+          {
+            loader: "babel-loader",
+            options: {
+              cacheDirectory: true,
+            },
+          },
+          "astroturf/loader",
+        ],
+      },
+
+      {
+        test: /\.css$/i,
+        exclude: /node_modules/,
+
+        use: [
+          "style-loader",
+          {
+            loader: "css-loader",
+            options: {
+              importLoaders: 1,
+            },
+          },
           {
             loader: "postcss-loader",
-            options: {
-              postcssOptions: {
-                plugins: [
-                  [
-                    "postcss-preset-env",
-                    {
-                      // Options
-                    },
-                  ],
-                ],
-              },
-            },
           },
         ],
       },
@@ -181,6 +192,16 @@ const baseConfig: Configuration = {
         ignoreCustomComments: [/<!-- inline_css_plugin -->/],
       },
       htmlCssClass: "tab",
+    }),
+    new HtmlWebpackPlugin({
+      template: "ui/pages/popup.html",
+      filename: "stake.html",
+      chunks: ["stake-ui"],
+      inject: "body",
+      minify: {
+        ignoreCustomComments: [/<!-- inline_css_plugin -->/],
+      },
+      htmlCssClass: "stake",
     }),
   ],
   optimization: {
