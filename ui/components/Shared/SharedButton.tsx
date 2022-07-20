@@ -33,6 +33,7 @@ interface Props {
   isLoading: boolean
   isFormSubmit: boolean
   title?: string
+  className?: string
 }
 
 export default function SharedButton(props: Props): ReactElement {
@@ -52,6 +53,7 @@ export default function SharedButton(props: Props): ReactElement {
     isLoading,
     isFormSubmit,
     title = "",
+    className,
   } = props
 
   const [navigateTo, setNavigateTo] =
@@ -101,7 +103,8 @@ export default function SharedButton(props: Props): ReactElement {
         { "tertiary gray": type === "tertiaryGray" },
         { deemphasized_white: type === "deemphasizedWhite" },
         { warning: type === "warning" },
-        { icon_button: icon }
+        { icon_button: icon },
+        className
       )}
       onClick={handleClick}
     >
@@ -131,6 +134,9 @@ export default function SharedButton(props: Props): ReactElement {
 
       <style jsx>
         {`
+          :global(:root) {
+            --icon-color: #ffffff;
+          }
           .button {
             height: 2.5rem;
             width: 100%;
@@ -162,10 +168,11 @@ export default function SharedButton(props: Props): ReactElement {
           .icon {
             mask-image: url("./images/${icon}@2x.png");
             mask-size: cover;
+            mask-repeat: no-repeat;
             width: 0.75rem;
             height: 0.75rem;
             margin-left: 0.5rem;
-            background-color: #ffffff;
+            background-color: var(--icon-color);
             display: inline-block;
             margin-top: -1px;
             transition: all 0.2s;
