@@ -164,7 +164,7 @@ const baseConfig: Configuration = {
       "process.env.VERSION": JSON.stringify(process.env.npm_package_version),
     }),
     new HtmlWebpackPlugin({
-      template: "ui/pages/popup.html",
+      template: "ui/pages/base.html",
       filename: "popup.html",
       chunks: ["ui"],
       inject: "body",
@@ -174,7 +174,7 @@ const baseConfig: Configuration = {
       htmlCssClass: "popup",
     }),
     new HtmlWebpackPlugin({
-      template: "ui/pages/popup.html",
+      template: "ui/pages/base.html",
       filename: "popout.html",
       chunks: ["ui"],
       inject: "body",
@@ -184,7 +184,7 @@ const baseConfig: Configuration = {
       htmlCssClass: "popup",
     }),
     new HtmlWebpackPlugin({
-      template: "ui/pages/popup.html",
+      template: "ui/pages/base.html",
       filename: "tab.html",
       chunks: ["tab-ui"],
       inject: "body",
@@ -192,16 +192,6 @@ const baseConfig: Configuration = {
         ignoreCustomComments: [/<!-- inline_css_plugin -->/],
       },
       htmlCssClass: "tab",
-    }),
-    new HtmlWebpackPlugin({
-      template: "ui/pages/popup.html",
-      filename: "stake.html",
-      chunks: ["stake-ui"],
-      inject: "body",
-      minify: {
-        ignoreCustomComments: [/<!-- inline_css_plugin -->/],
-      },
-      htmlCssClass: "stake",
     }),
   ],
   optimization: {
