@@ -1,4 +1,4 @@
-import Dexie, { IndexableTypeArrayReadonly } from "dexie"
+import Dexie from "dexie"
 
 import { UNIXTime } from "../../types"
 import { AccountBalance, AddressOnNetwork } from "../../accounts"

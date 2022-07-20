@@ -64,7 +64,6 @@ import { ETHEREUM, FORK, HOUR, POCKET } from "../../constants"
 import SerialFallbackProvider from "./serial-fallback-provider"
 import PocketProvider from "./pocket-provider"
 import AssetDataHelper from "./asset-data-helper"
-import chunk from "lodash/chunk"
 
 // We can't use destructuring because webpack has to replace all instances of
 // `process.env` variables in the bundled output
