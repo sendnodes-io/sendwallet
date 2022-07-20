@@ -76,8 +76,7 @@ body {
 
 body {
   margin: 0;
-  font-family: "Poppins", -apple-system, BlinkMacSystemFont, "Helvetica Neue",
-    sans-serif;
+  font-family: theme("fontFamily.sans");
   position: relative;
   color: var(--text-body-color);
 }
