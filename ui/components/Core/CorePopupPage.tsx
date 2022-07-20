@@ -1,8 +1,6 @@
 import React, { ReactElement } from "react"
 import Snackbar from "../Snackbar/Snackbar"
 
-import CoreStyles from "./CorePopupStyles"
-
 interface Props {
   children: React.ReactNode
   hasTopBar: boolean
@@ -17,9 +15,6 @@ export default function CorePopupPage(props: Props): ReactElement {
         {children}
         <Snackbar />
       </main>
-      <style jsx global>
-        {CoreStyles}
-      </style>
       <style jsx>
         {`
           main {

@@ -3,3 +3,60 @@ html.popup,
   width: var(--popup-width);
   height: var(--popup-height);
 }
+
+.base_texture {
+  background-color: var(--eerie-black-100);
+  background-image: url("./images/textures/base_texture@2x.png");
+  background-size: cover;
+  border-radius: 1rem;
+}
+
+#pokt-wallet-root {
+  width: var(--popup-width);
+  height: var(--popup-height);
+  max-width: var(--popup-width);
+  max-height: var(--popup-height);
+  margin: auto;
+  scrollbar-width: none;
+  overflow: hidden;
+  background-color: var(--eerie-black-100);
+  transition: bottom ease-in-out 0.4s;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+@media screen and (min-height: 792px) and (min-width: 512px) {
+  :root {
+    --popup-width: 512px;
+    --popup-height: 792px;
+  }
+
+  :root,
+  html,
+  body {
+    font-size: 20px;
+  }
+
+  .base_shadow {
+    display: block;
+    background-image: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0) 0%,
+      var(--black) 100%
+    );
+    background-size: cover;
+    border: 1px solid var(--black);
+    filter: blur(94px);
+    width: calc(var(--popup-width) * 1.25);
+    height: calc(var(--popup-height) * 1.25);
+    position: absolute;
+    margin: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+  }
+}
