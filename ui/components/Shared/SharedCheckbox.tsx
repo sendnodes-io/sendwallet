@@ -1,25 +1,27 @@
 import React, { ReactElement, ChangeEventHandler } from "react"
 
 interface Props {
+  id: string
   label: string
   onChange: ChangeEventHandler<HTMLInputElement>
   checked?: boolean
 }
 
 export default function SharedCheckbox(props: Props): ReactElement {
-  const { label, checked, onChange } = props
+  const { label, checked, onChange, id = "checkbox" } = props
 
   return (
     <div className="checkbox">
-      <input
-        id="checkbox"
-        defaultChecked={checked}
-        onChange={onChange}
-        type="checkbox"
-      />
-      <span className="checkmark" />
-      <label htmlFor="checkbox" className="label">
-        {label}
+      <label htmlFor={id} className="label flex flex-row">
+        <input
+          id={id}
+          defaultChecked={checked}
+          onChange={onChange}
+          type="checkbox"
+          className="inline-block"
+        />
+        <span className="checkmark " />
+        <span>{label}</span>
       </label>
       <style jsx>{`
         .checkbox {
@@ -27,8 +29,6 @@ export default function SharedCheckbox(props: Props): ReactElement {
           align-items: center;
           position: relative;
           cursor: pointer;
-          font-size: 14px;
-          color: var(--dim-gray);
           user-select: none;
         }
 
@@ -41,39 +41,38 @@ export default function SharedCheckbox(props: Props): ReactElement {
 
         .checkmark {
           position: relative;
-          height: 15px;
-          width: 15px;
-          border-radius: 3px;
+          height: 1.5rem;
+          width: 1.5rem;
+          border-radius: 0.25rem;
           background-color: var(--dim-gray);
-          margin-right: 5px;
+          margin-right: 0.25rem;
         }
         .checkbox:hover input ~ .checkmark {
-          background-color: var(--cod-gray-200);
-        }
-        .checkbox input:checked ~ .checkmark {
-          background-color: var(--aqua);
+          background-color: var(--dim-gray);
         }
         .checkmark:after {
-          content: "";
           position: absolute;
-          display: none;
         }
         .checkbox input:checked ~ .checkmark:after {
-          display: block;
+          content: "";
+        }
+        .checkbox input:checked ~ span {
+          color: var(--white);
         }
         .checkbox .checkmark:after {
-          left: 5px;
-          top: 2px;
-          width: 2px;
-          height: 7px;
-          border: solid white;
-          border-width: 0 3px 3px 0;
+          left: 0.49rem;
+          top: 0.15rem;
+          width: 0.6rem;
+          height: 1.2rem;
+          border: solid var(--white);
+          border-width: 0 0.3rem 0.3rem 0;
           transform: rotate(45deg);
         }
         .label {
           line-height: normal;
           margin-top: 0;
-          color: var(--dim-gray);
+          cursor: pointer;
+          font-size: 1rem;
         }
       `}</style>
     </div>

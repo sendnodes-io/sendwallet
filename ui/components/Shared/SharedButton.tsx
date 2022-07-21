@@ -126,7 +126,8 @@ export default function SharedButton(props: Props): ReactElement {
               { icon: true },
               { icon_large: iconSize === "large" },
               { icon_xlarge: iconSize === "xlarge" },
-              { icon_secondary_medium: iconSize === "secondaryMedium" }
+              { icon_secondary_medium: iconSize === "secondaryMedium" },
+              `${icon}_icon`
             )}
           />
         ) : null}
@@ -364,6 +365,11 @@ export default function SharedButton(props: Props): ReactElement {
           }
           .unstyled {
             unset: all;
+          }
+          button :global(.stake_icon) {
+            mask-size: contain;
+            mask-repeat: no-repeat;
+            mask-position: center;
           }
         `}
       </style>
