@@ -98,7 +98,6 @@ const HISTORIC_ASSET_TRANSFER_LOOKUPS_PER_ACCOUNT = 10
 // mempool) reasons.
 const TRANSACTION_CHECK_LIFETIME_MS = 10 * HOUR
 
-
 // The number of max historical transactions to load for Pocket network accounts
 const MAX_HISTORIC_ASSET_TRANSFERS_POCKET = 100
 
@@ -212,6 +211,7 @@ export default class ChainService extends BaseService<Events> {
         },
       },
       recentAssetTransferAlarm: {
+        runAtStart: true,
         schedule: {
           periodInMinutes: 5, // Pocket block times are 15min so no need for short period
         },
@@ -512,7 +512,8 @@ export default class ChainService extends BaseService<Events> {
       this.emitter.emit("newAccountToTrack", addressNetwork),
       this.getLatestBaseAccountBalance(addressNetwork),
       this.subscribeToAccountTransactions(addressNetwork),
-      this.loadRecentAssetTransfers(addressNetwork).then(() => this.handleQueuedTransactionAlarm()
+      this.loadRecentAssetTransfers(addressNetwork).then(() =>
+        this.handleQueuedTransactionAlarm()
       ),
     ])
   }
@@ -667,9 +668,10 @@ export default class ChainService extends BaseService<Events> {
         network,
         hash: txHash,
         firstSeen,
-        txData
+        txData,
       }
-      if (txData && 'height' in txData) txToRetrieve.height = BigInt(txData.height)
+      if (txData && "height" in txData)
+        txToRetrieve.height = BigInt(txData.height)
       await this.db.queueTransactionRetrieval(txToRetrieve)
     } catch (e) {
       throw new Error("Unable to fetch network family: " + network.family)
@@ -1056,17 +1058,16 @@ export default class ChainService extends BaseService<Events> {
   // }
 
   private async handleQueuedTransactionAlarm(): Promise<void> {
-    const txsToRetrieve = await this.db.deQueueTransactionRetrieval(MAX_CONCURRENT_TRANSACTION_REQUESTS)
+    const txsToRetrieve = await this.db.deQueueTransactionRetrieval(
+      MAX_CONCURRENT_TRANSACTION_REQUESTS
+    )
     for (const tx of txsToRetrieve) {
       const { network, hash, firstSeen, txData } = tx
       if (network.family === "EVM") {
         try {
           const result = await this.ethProvider.getTransaction(hash)
 
-          const transaction = transactionFromEthersTransaction(
-            result,
-            network
-          )
+          const transaction = transactionFromEthersTransaction(result, network)
 
           // TODO make this provider specific
           await this.saveTransaction(transaction, "alchemy")
@@ -1078,10 +1079,7 @@ export default class ChainService extends BaseService<Events> {
             )
           } else if (transaction.blockHash) {
             // Get relevant block data.
-            await this.getBlockData(
-              transaction.network,
-              transaction.blockHash
-            )
+            await this.getBlockData(transaction.network, transaction.blockHash)
             // Retrieve gas used, status, etc
             this.retrieveTransactionReceipt(transaction.network, transaction)
           }
