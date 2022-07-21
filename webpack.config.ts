@@ -264,10 +264,9 @@ const modeConfigs: {
           },
         }),
         new WebExtensionArchivePlugin({
-          filename: `POKTWallet-${browser}-${branch.replaceAll(
-            /[.\/]/gi,
-            "-"
-          )}-${date.toISOString().split("T")[0]}-${revision}`,
+          filename: `POKTWallet-${branch.replaceAll(/[.\/]/gi, "-")}-${
+            date.toISOString().split("T")[0]
+          }-${revision}-${browser}`,
         }),
       ],
       optimization: {
