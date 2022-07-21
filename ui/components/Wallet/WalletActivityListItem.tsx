@@ -99,10 +99,12 @@ export default function WalletActivityListItem(props: Props): ReactElement {
   let renderDetails: {
     iconClass: string | undefined
     label: string
-    recipient: {
-      address: HexString | undefined
-      name?: string | undefined
-    } | undefined
+    recipient:
+      | {
+          address: HexString | undefined
+          name?: string | undefined
+        }
+      | undefined
     assetLogoURL: string | undefined
     assetSymbol: string
     assetValue: string
