@@ -47,8 +47,6 @@ export default function Stake(): ReactElement {
     string | undefined
   >(undefined)
   const [amount, setAmount] = useState("")
-  const [memo, setMemo] = useState("Sent with POKTWallet.io")
-  const [memoError, setMemoError] = useState("")
   const [autoCompound, setAutoCompound] = useState(true)
   const [termsAccepted, setTermsAccepted] = useState(false)
   const [isSendingTransactionRequest, setIsSendingTransactionRequest] =
@@ -111,6 +109,9 @@ export default function Stake(): ReactElement {
     }
     try {
       setIsSendingTransactionRequest(true)
+
+      // memo spec is s:autoCompound=[true|false]
+      const memo = `s:${autoCompound}`
 
       dispatch(
         transferAsset({
@@ -214,7 +215,7 @@ export default function Stake(): ReactElement {
       <div className="section border-b-2 border-spanish-gray">
         <div className="form_input">
           <small>
-            By checking this box, you accept the{" "}
+            By checking this box, you agree the{" "}
             <a href="https://docs.sendnodes.io/terms/" className="underline">
               terms of service
             </a>
@@ -252,7 +253,6 @@ export default function Stake(): ReactElement {
               isSendingTransactionRequest ||
               Number(amount) === 0 ||
               destinationAddress === undefined ||
-              memoError !== "" ||
               !termsAccepted ||
               hasError
             }
