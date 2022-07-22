@@ -1,4 +1,3 @@
-
 import browser from "webextension-polyfill"
 
 import { Store as ProxyStore } from "webext-redux"
@@ -55,6 +54,5 @@ export async function startApi(): Promise<Main> {
   const mainService = await Main.create()
 
   mainService.startService()
-
   return mainService.started()
 }
