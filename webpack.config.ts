@@ -13,20 +13,14 @@ import LiveReloadPlugin from "webpack-livereload-plugin"
 import CopyPlugin, { ObjectPattern } from "copy-webpack-plugin"
 import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin"
 import WebExtensionArchivePlugin from "./build-utils/web-extension-archive-webpack-plugin"
-import HtmlWebpackPlugin from 'html-webpack-plugin'
-import WebExtension from 'webpack-target-webextension'
-const StatoscopeWebpackPlugin = require('@statoscope/webpack-plugin').default;
-import MiniCssExtractPlugin from "mini-css-extract-plugin";
-import { CleanWebpackPlugin } from 'clean-webpack-plugin';
-import HTMLInlineCSSWebpackPlugin from "html-inline-css-webpack-plugin";
+import HtmlWebpackPlugin from "html-webpack-plugin"
+import WebExtension from "webpack-target-webextension"
+const StatoscopeWebpackPlugin = require("@statoscope/webpack-plugin").default
+import MiniCssExtractPlugin from "mini-css-extract-plugin"
+import { CleanWebpackPlugin } from "clean-webpack-plugin"
+import HTMLInlineCSSWebpackPlugin from "html-inline-css-webpack-plugin"
 
-const supportedBrowsers = [
-  "brave",
-  "chrome",
-  "edge",
-  "firefox",
-  "opera"
-]
+const supportedBrowsers = ["brave", "chrome", "edge", "firefox", "opera"]
 
 // Replicated and adjusted for each target browser and the current build mode.
 const baseConfig: Configuration = {
@@ -34,7 +28,7 @@ const baseConfig: Configuration = {
   watchOptions: {
     ignored: "**/node_modules",
   },
-  stats: 'errors-only',
+  stats: "errors-only",
   entry: {
     ui: "./src/ui.ts",
     "tab-ui": "./src/tab-ui.ts",
@@ -76,8 +70,9 @@ const baseConfig: Configuration = {
                 ],
               },
             },
-          }],
-      }
+          },
+        ],
+      },
     ],
   },
   output: {
@@ -95,14 +90,14 @@ const baseConfig: Configuration = {
       crypto: require.resolve("crypto-browserify"),
       path: require.resolve("path-browserify"),
       https: require.resolve("https-browserify"),
-      http: require.resolve("stream-http")
+      http: require.resolve("stream-http"),
     },
   },
   plugins: [
     new CleanWebpackPlugin(),
     new MiniCssExtractPlugin({
       filename: "[name].css",
-      chunkFilename: "[id].css"
+      chunkFilename: "[id].css",
     }),
     new Dotenv({
       defaults: true,
@@ -111,9 +106,9 @@ const baseConfig: Configuration = {
     }) as unknown as WebpackPluginInstance,
     // background runs in a service worker and needs a global window object
     new webpack.BannerPlugin({
-      banner: 'window = self;',
-      test: 'background',
-      raw: true
+      banner: "window = self;",
+      test: "background",
+      raw: true,
     }),
     new ForkTsCheckerWebpackPlugin({
       typescript: {
@@ -127,7 +122,7 @@ const baseConfig: Configuration = {
     // polyfill the process and Buffer APIs
     new webpack.ProvidePlugin({
       Buffer: ["buffer", "Buffer"],
-      process: ["process"]
+      process: ["process"],
     }),
     new SizePlugin({}),
     new CopyPlugin({
@@ -137,7 +132,7 @@ const baseConfig: Configuration = {
           to: "_locales/",
           globOptions: {
             dot: true,
-            gitignore: true
+            gitignore: true,
           },
         },
         {
@@ -145,7 +140,7 @@ const baseConfig: Configuration = {
           force: true,
           globOptions: {
             dot: true,
-            gitignore: true
+            gitignore: true,
           },
         },
       ],
@@ -158,39 +153,39 @@ const baseConfig: Configuration = {
       "process.env.VERSION": JSON.stringify(process.env.npm_package_version),
     }),
     new HtmlWebpackPlugin({
-      template: 'ui/pages/popup.html',
-      filename: 'popup.html',
-      chunks: ['ui'],
-      inject: 'body',
+      template: "ui/pages/popup.html",
+      filename: "popup.html",
+      chunks: ["ui"],
+      inject: "body",
       minify: {
-        ignoreCustomComments: [/<!-- inline_css_plugin -->/]
+        ignoreCustomComments: [/<!-- inline_css_plugin -->/],
       },
-      htmlCssClass: 'popup'
+      htmlCssClass: "popup",
     }),
     new HtmlWebpackPlugin({
-      template: 'ui/pages/popup.html',
-      filename: 'popout.html',
-      chunks: ['ui'],
-      inject: 'body',
+      template: "ui/pages/popup.html",
+      filename: "popout.html",
+      chunks: ["ui"],
+      inject: "body",
       minify: {
-        ignoreCustomComments: [/<!-- inline_css_plugin -->/]
+        ignoreCustomComments: [/<!-- inline_css_plugin -->/],
       },
-      htmlCssClass: 'popup'
+      htmlCssClass: "popup",
     }),
     new HtmlWebpackPlugin({
-      template: 'ui/pages/popup.html',
-      filename: 'tab.html',
-      chunks: ['tab-ui'],
-      inject: 'body',
+      template: "ui/pages/popup.html",
+      filename: "tab.html",
+      chunks: ["tab-ui"],
+      inject: "body",
       minify: {
-        ignoreCustomComments: [/<!-- inline_css_plugin -->/]
+        ignoreCustomComments: [/<!-- inline_css_plugin -->/],
       },
-      htmlCssClass: 'tab',
+      htmlCssClass: "tab",
     }),
   ],
   optimization: {
     splitChunks: {
-      chunks: 'all',
+      chunks: "all",
       minSize: 1e4,
       enforceSizeThreshold: 2.5e5,
       maxSize: 5e5,
@@ -206,14 +201,14 @@ const modeConfigs: {
     entry:
       process.env.ENABLE_REACT_DEVTOOLS === "true"
         ? {
-          ui: ["react-devtools", "./src/ui.ts"],
-          "tab-ui": ["react-devtools", "./src/tab-ui.ts"],
-        }
+            ui: ["react-devtools", "./src/ui.ts"],
+            "tab-ui": ["react-devtools", "./src/tab-ui.ts"],
+          }
         : undefined,
     plugins: [
       new LiveReloadPlugin({
         useSourceHash: true,
-        delay: 400
+        delay: 400,
       }),
       new CopyPlugin({
         patterns: ["dev-utils/*.js"],
@@ -221,7 +216,7 @@ const modeConfigs: {
         // FIXME version refed in @types/copy-webpack-plugin and our local
         // FIXME webpack version.
       }) as unknown as WebpackPluginInstance,
-      new StatoscopeWebpackPlugin()
+      new StatoscopeWebpackPlugin(),
     ],
     optimization: {
       minimizer: [
@@ -239,24 +234,29 @@ const modeConfigs: {
     },
   }),
   production: (browser) => {
-    const revision = require('child_process')
-      .execSync('git rev-parse --short HEAD')
-      .toString().trim()
-    const branch = require('child_process')
-      .execSync('git rev-parse --abbrev-ref HEAD')
-      .toString().trim()
+    const revision = require("child_process")
+      .execSync("git rev-parse --short HEAD")
+      .toString()
+      .trim()
+    const branch = require("child_process")
+      .execSync("git rev-parse --abbrev-ref HEAD")
+      .toString()
+      .trim()
     const date = new Date()
-    return ({
+    return {
       devtool: false,
       plugins: [
         new HTMLInlineCSSWebpackPlugin({
           replace: {
             removeTarget: true,
-            target: '<!-- inline_css_plugin -->',
-          }
+            target: "<!-- inline_css_plugin -->",
+          },
         }),
         new WebExtensionArchivePlugin({
-          filename: `POKTWallet-${browser}-${branch.replaceAll(/[.\/]/gi, '-')}-${date.toISOString().split('T')[0]}-${revision}`,
+          filename: `POKTWallet-${browser}-${branch.replaceAll(
+            /[.\/]/gi,
+            "-"
+          )}-${date.toISOString().split("T")[0]}-${revision}`,
         }),
       ],
       optimization: {
@@ -269,7 +269,7 @@ const modeConfigs: {
           }),
         ],
       },
-    })
+    }
   },
 }
 
@@ -313,12 +313,16 @@ export default (
             {
               from: `manifest/manifest(|.${mode}|.${browser}|.${browser}.${mode}).json`,
               to: "manifest.json",
-              transformAll: (assets: { data: Buffer, sourceFilename: string }[]) => {
+              transformAll: (
+                assets: { data: Buffer; sourceFilename: string }[]
+              ) => {
                 const combinedManifest = webpackMerge(
                   {},
                   ...assets
                     .slice()
-                    .sort((a, b) => b.sourceFilename.localeCompare(a.sourceFilename))
+                    .sort((a, b) =>
+                      b.sourceFilename.localeCompare(a.sourceFilename)
+                    )
                     .map((asset) => asset.data.toString("utf8"))
                     // JSON.parse chokes on empty strings
                     .filter((assetData) => assetData.trim().length > 0)
@@ -334,13 +338,13 @@ export default (
         }) as unknown as WebpackPluginInstance,
         new WebExtension({
           background: {
-            entry: 'background',
+            entry: "background",
             // !! Add this to support manifest v3
-            manifest: browser == 'chrome' ? 3 : 2,
-            classicLoader: true
+            manifest: browser == "chrome" ? 3 : 2,
+            classicLoader: true,
           },
           weakRuntimeCheck: true,
-          hmrConfig: false
+          hmrConfig: false,
         }),
       ],
     })
