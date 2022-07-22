@@ -508,14 +508,13 @@ export default class ChainService extends BaseService<Events> {
 
   async addAccountToTrack(addressNetwork: AddressOnNetwork): Promise<void> {
     await this.db.addAccountToTrack(addressNetwork)
-    await Promise.all([
-      this.emitter.emit("newAccountToTrack", addressNetwork),
-      this.getLatestBaseAccountBalance(addressNetwork),
-      this.subscribeToAccountTransactions(addressNetwork),
-      this.loadRecentAssetTransfers(addressNetwork).then(() =>
-        this.handleQueuedTransactionAlarm()
-      ),
-    ])
+
+    this.emitter.emit("newAccountToTrack", addressNetwork)
+    this.getLatestBaseAccountBalance(addressNetwork)
+    this.subscribeToAccountTransactions(addressNetwork)
+    this.loadRecentAssetTransfers(addressNetwork).then(() =>
+      this.handleQueuedTransactionAlarm()
+    )
   }
 
   async removeAccountToTrack(address: HexString): Promise<void> {
@@ -1465,37 +1464,23 @@ export default class ChainService extends BaseService<Events> {
     }
 
     if (addressNetwork.network && addressNetwork.address) {
-      Promise.all(
-        (await this.getAccountsToTrack())
-          .flatMap((an) => [
-            // subscribe to all account transactions
-            this.subscribeToAccountTransactions(an),
-            // do a base-asset balance check for every account
-            this.getLatestBaseAccountBalance(an).then(() => {}),
-          ])
-          .concat(
-            // Schedule any stored unconfirmed transactions for
-            // retrieval---either to confirm they no longer exist, or to
-            // read/monitor their status.
-
-            this.db
-              .getNetworkPendingTransactions(addressNetwork.network)
-              .then((pendingTransactions) => {
-                pendingTransactions.forEach(({ hash, firstSeen }) => {
-                  logger.debug(
-                    `Queuing pending transaction ${hash} for status lookup.`
-                  )
-                  this.queueTransactionHashToRetrieve(
-                    addressNetwork.network,
-                    hash,
-                    firstSeen
-                  )
-                })
-              }),
-
-            this.getLatestBlockHeightPendingTransactions(addressNetwork)
-          )
-      )
+      this.subscribeToAccountTransactions(addressNetwork)
+      this.getLatestBaseAccountBalance(addressNetwork)
+      this.db
+        .getNetworkPendingTransactions(addressNetwork.network)
+        .then((pendingTransactions) => {
+          pendingTransactions.forEach(({ hash, firstSeen }) => {
+            logger.debug(
+              `Queuing pending transaction ${hash} for status lookup.`
+            )
+            this.queueTransactionHashToRetrieve(
+              addressNetwork.network,
+              hash,
+              firstSeen
+            )
+          })
+        }),
+        this.getLatestBlockHeightPendingTransactions(addressNetwork)
     }
   }
 

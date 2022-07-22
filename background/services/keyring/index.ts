@@ -581,7 +581,7 @@ export default class KeyringService extends BaseService<Events> {
     // )
 
     return [
-      poktKeyring.fingerprint, 
+      poktKeyring.fingerprint,
       // evmKeyring.fingerprint
     ]
   }
@@ -649,6 +649,10 @@ export default class KeyringService extends BaseService<Events> {
         (address: string) => this.#hiddenAccounts[address] === true
       ) ?? keyring.addAddressesSync(1)[0]
 
+    if (keyring.getAddressesSync().length > 10) {
+      throw new Error("Keyring has too many addresses")
+    }
+
     this.#hiddenAccounts[newAddress] = false
 
     await this.persistKeyrings()
@@ -704,7 +708,7 @@ export default class KeyringService extends BaseService<Events> {
     })
 
     // delete keyring metadata
-     delete this.#keyringMetadata[keyring.fingerprint]
+    delete this.#keyringMetadata[keyring.fingerprint]
 
     if (filteredKeyrings.length === this.#keyrings.length) {
       logger.warn(
