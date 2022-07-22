@@ -36,7 +36,12 @@ import {
   SignedEVMTransaction,
   SignedPOKTTransaction,
 } from "./networks"
-import { AccountBalance, AddressOnMaybeNetwork, AddressOnNetwork, NameOnNetwork } from "./accounts"
+import {
+  AccountBalance,
+  AddressOnMaybeNetwork,
+  AddressOnNetwork,
+  NameOnNetwork,
+} from "./accounts"
 
 import rootReducer from "./redux-slices"
 import {
@@ -240,7 +245,7 @@ const REDUX_MIGRATIONS: { [version: number]: Migration } = {
     newState.ledger.isArbitraryDataSigningEnabled = false
 
     return newState
-  }
+  },
 }
 
 // Migrate a previous version of the Redux state to that expected by the current
@@ -611,9 +616,10 @@ export default class Main extends BaseService<never> {
       const newAddressOnNetwork = {
         address: newAddress ?? "",
         // defaults to POCKET, but probably should be null
-        network: ((accountsData[newAddress ?? ""] as AccountData)?.network as
-          | POKTNetwork
-          | EVMNetwork) ?? POCKET,
+        network:
+          ((accountsData[newAddress ?? ""] as AccountData)?.network as
+            | POKTNetwork
+            | EVMNetwork) ?? POCKET,
       }
       await this.preferenceService.setSelectedAccount(newAddressOnNetwork)
       await this.store.dispatch(setNewSelectedAccount(newAddressOnNetwork))
@@ -686,7 +692,7 @@ export default class Main extends BaseService<never> {
       if ("txMsg" in txResponse) {
         const tx = txResponse as POKTTransaction
 
-        await trackEvent({
+        trackEvent({
           action: "transaction_send",
           label: "amount",
           value: tx.txMsg.value.amount.toString(),
@@ -694,7 +700,7 @@ export default class Main extends BaseService<never> {
       } else {
         const tx = txResponse as TransactionResponse
 
-        await trackEvent({
+        trackEvent({
           action: "transaction_send",
           label: "amount",
           value: tx.value.toString(),
@@ -711,7 +717,7 @@ export default class Main extends BaseService<never> {
       this.store.dispatch(
         setSnackbarMessage("Transaction failed to broadcast. " + error)
       )
-      await trackEvent({
+      trackEvent({
         action: "transaction_failed",
         label: "error",
         value: error ? (error as Error).toString() : "",
@@ -956,10 +962,7 @@ export default class Main extends BaseService<never> {
     this.keyringService.emitter.on(
       KeyringEvents.ADDRESS,
       ({ address, keyType }) => {
-        const network =
-          keyType === KeyType.SECP256K1
-            ? ETHEREUM
-            : POCKET
+        const network = keyType === KeyType.SECP256K1 ? ETHEREUM : POCKET
 
         // Mark as loading and wire things up.
         this.store.dispatch(loadAccount({ address, network }))
@@ -973,13 +976,13 @@ export default class Main extends BaseService<never> {
     this.keyringService.emitter.on(KeyringEvents.LOCKED, async (isLocked) => {
       if (isLocked) {
         this.store.dispatch(keyringLocked())
-        await trackEvent({
+        trackEvent({
           action: "keyring_lock",
           session_control: "end",
         })
       } else {
         this.store.dispatch(keyringUnlocked())
-        await trackEvent({
+        trackEvent({
           action: "keyring_unlock",
           session_control: "start",
         })
@@ -996,9 +999,14 @@ export default class Main extends BaseService<never> {
     keyringSliceEmitter.on(
       KeyringSliceEvents.UNLOCK_KEYRINGS,
       async (password) => {
-        if (!(await this.keyringService.unlock(password))) {
-          this.store.dispatch(keyringUnlockedFailed())
+        try {
+          if (await this.keyringService.unlock(password)) {
+            return
+          }
+        } catch (e) {
+          logger.error("error unlocking keyrings", e)
         }
+        this.store.dispatch(keyringUnlockedFailed())
       }
     )
 
@@ -1013,7 +1021,7 @@ export default class Main extends BaseService<never> {
           type: "keyring",
           accountID: keyringID,
         })
-        await trackEvent({
+        trackEvent({
           action: "derive_address",
         })
       }
@@ -1044,25 +1052,24 @@ export default class Main extends BaseService<never> {
         // use the UI currently selcted network
         this.keyringService.emitter
           .once(KeyringEvents.ADDRESS)
-          .then(async ({ address }) => {
-            
+          .then(({ address }) => {
             // so dumb but decide network by 0x
             const network = address.match(/^0x/) ? ETHEREUM : POCKET
 
             // FIXME: v0.2.0 once imported use the currect selected address and account instead of the first address emitted
-            await this.store.dispatch(
+            this.store.dispatch(
               setNewSelectedAccount({
                 address,
                 network,
               })
             )
 
-            await trackEvent({
+            trackEvent({
               action: "import_keyring",
             })
           })
 
-        await this.keyringService.importKeyring(mnemonic, source, path)
+        this.keyringService.importKeyring(mnemonic, source, path)
       }
     )
 
@@ -1073,23 +1080,23 @@ export default class Main extends BaseService<never> {
         // use the UI currently selcted network
         this.keyringService.emitter
           .once(KeyringEvents.ADDRESS)
-          .then(async ({ address }) => {
+          .then(({ address }) => {
             // so dumb but decide network by 0x
             const network = address.match(/^0x/) ? ETHEREUM : POCKET
 
-            await this.store.dispatch(
+            this.store.dispatch(
               setNewSelectedAccount({
                 address,
                 network,
               })
             )
 
-            await trackEvent({
+            trackEvent({
               action: "import_private_key",
             })
           })
 
-        await this.keyringService.importPrivateKey(privateKey, keyType)
+        this.keyringService.importPrivateKey(privateKey, keyType)
       }
     )
 
@@ -1213,7 +1220,10 @@ export default class Main extends BaseService<never> {
 
         this.signingService.emitter.on("signingDataResponse", handleAndClear)
 
-        signingSliceEmitter.on(TransactionConstructionEventNames.SIGNATURE_REJECTED, rejectAndClear)
+        signingSliceEmitter.on(
+          TransactionConstructionEventNames.SIGNATURE_REJECTED,
+          rejectAndClear
+        )
       }
     )
     this.internalEthereumProviderService.emitter.on(
@@ -1267,7 +1277,10 @@ export default class Main extends BaseService<never> {
           handleAndClear
         )
 
-        signingSliceEmitter.on(TransactionConstructionEventNames.SIGNATURE_REJECTED, rejectAndClear)
+        signingSliceEmitter.on(
+          TransactionConstructionEventNames.SIGNATURE_REJECTED,
+          rejectAndClear
+        )
       }
     )
   }

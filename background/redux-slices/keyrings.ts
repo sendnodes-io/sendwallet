@@ -2,7 +2,10 @@ import { createSlice } from "@reduxjs/toolkit"
 import Emittery from "emittery"
 
 import { createBackgroundAsyncThunk } from "./utils"
-import { ExtensionKeyring as Keyring, KeyringMetadata } from "../services/keyring/index"
+import {
+  ExtensionKeyring as Keyring,
+  KeyringMetadata,
+} from "../services/keyring/index"
 import { emitteryDebugLogger } from "../utils/emittery"
 import { KeyType } from "@sendnodes/hd-keyring"
 import logger from "../lib/logger"
@@ -42,16 +45,16 @@ export type Events = {
   [EventNames.LOCK_KEYRINGS]: never
   [EventNames.GENERATE_NEW_KEYRING]: never
   [EventNames.DERIVE_ADDRESS]: string
-  [EventNames.IMPORT_KEYRING]: ImportKeyring,
-  [EventNames.IMPORT_PRIVATE_KEY]: ImportPrivateKey,
-  [EventNames.EXPORT_PRIVATE_KEY]: ExportPrivateKey,
+  [EventNames.IMPORT_KEYRING]: ImportKeyring
+  [EventNames.IMPORT_PRIVATE_KEY]: ImportPrivateKey
+  [EventNames.EXPORT_PRIVATE_KEY]: ExportPrivateKey
 }
 
 export const emitter = new Emittery<Events>({
   debug: {
-    name: 'redux-slices/keyrings',
-    logger: emitteryDebugLogger()
-  }
+    name: "redux-slices/keyrings",
+    logger: emitteryDebugLogger(),
+  },
 })
 
 interface ImportKeyring {
@@ -81,7 +84,6 @@ export interface KeyringMnemonic {
   mnemonic: string[]
 }
 
-
 export type GenerateKeyringResponse = {
   [EventNames.GENERATE_NEW_KEYRING]: KeyringMnemonic
 }
@@ -98,15 +100,15 @@ export const importKeyring = createBackgroundAsyncThunk(
 export const importPrivateKey = createBackgroundAsyncThunk(
   "keyrings/importPrivateKey",
   async ({ privateKey, keyType }: ImportPrivateKey, { getState, dispatch }) => {
-     try {
-       await emitter.emit(EventNames.IMPORT_PRIVATE_KEY, {
-         privateKey,
-         keyType,
-       })
-     } catch (e) {
-       logger.error("Failed importing private key yup", e)
-       throw e
-     }
+    try {
+      await emitter.emit(EventNames.IMPORT_PRIVATE_KEY, {
+        privateKey,
+        keyType,
+      })
+    } catch (e) {
+      logger.error("Failed importing private key yup", e)
+      throw e
+    }
   }
 )
 
@@ -136,9 +138,17 @@ const keyringsSlice = createSlice({
   name: "keyrings",
   initialState,
   reducers: {
-    clearImporting: (state) => ({...state, importing: false }),
-    keyringLocked: (state) => ({ ...state, status: "locked", unlocking: false }),
-    keyringUnlocked: (state) => ({ ...state, status: "unlocked", unlocking: false }),
+    clearImporting: (state) => ({ ...state, importing: false }),
+    keyringLocked: (state) => ({
+      ...state,
+      status: "locked",
+      unlocking: false,
+    }),
+    keyringUnlocked: (state) => ({
+      ...state,
+      status: "unlocked",
+      unlocking: false,
+    }),
     keyringUnlockedFailed: (state) => ({ ...state, unlocking: "failed" }),
     updateKeyrings: (
       state,
@@ -168,6 +178,12 @@ const keyringsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(importKeyring.rejected, (state) => {
+        return {
+          ...state,
+          importing: "failed",
+        }
+      })
       .addCase(importKeyring.pending, (state) => {
         return {
           ...state,
@@ -220,6 +236,12 @@ const keyringsSlice = createSlice({
         return {
           ...state,
           deriving: "done",
+        }
+      })
+      .addCase(deriveAddress.rejected, (state) => {
+        return {
+          ...state,
+          deriving: false,
         }
       })
   },

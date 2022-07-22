@@ -41,7 +41,10 @@ export default class PreferenceService extends BaseService<Events> {
   protected async internalStartService(): Promise<void> {
     await super.internalStartService()
 
-    await this.emitter.emit(EventNames.INITIALIZE_DEFAULT_WALLET, await this.getDefaultWallet())
+    await this.emitter.emit(
+      EventNames.INITIALIZE_DEFAULT_WALLET,
+      await this.getDefaultWallet()
+    )
     await this.emitter.emit(
       EventNames.SELECTED_ACCOUNT_CHANGED,
       await this.getSelectedAccount()
@@ -76,8 +79,11 @@ export default class PreferenceService extends BaseService<Events> {
 
   async setSelectedAccount(addressNetwork: AddressOnNetwork): Promise<void> {
     await this.db.setSelectedAccount(addressNetwork)
-    await this.emitter.emit(EventNames.SELECTED_ACCOUNT_CHANGED, await this.getSelectedAccount())
-    return 
+    this.emitter.emit(
+      EventNames.SELECTED_ACCOUNT_CHANGED,
+      await this.getSelectedAccount()
+    )
+    return
   }
 
   async getDefaultCustomAssets(): Promise<FungibleAsset[]> {

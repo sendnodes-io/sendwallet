@@ -326,6 +326,7 @@ export default function SharedAssetInput<T extends AnyAsset>(
   } = props
 
   const [openAssetMenu, setOpenAssetMenu] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   const toggleIsAssetMenuOpen = useCallback(() => {
     if (!isAssetOptionsLocked) {
@@ -392,6 +393,15 @@ export default function SharedAssetInput<T extends AnyAsset>(
 
     onAmountChange?.(fixedPointString, getErrorMessage(fixedPointString))
   }
+
+  // auto focus input after some delay cuz browsers are slow
+  useEffect(() => {
+    let timeoutId = setTimeout(() => {
+      if (autoFocus && inputRef.current) inputRef.current.focus()
+    }, 200)
+
+    return () => clearTimeout(timeoutId)
+  }, [])
 
   return (
     <>
@@ -463,6 +473,7 @@ export default function SharedAssetInput<T extends AnyAsset>(
         </div>
 
         <input
+          ref={inputRef}
           id="asset_amount_input"
           className={classNames("input_amount", {
             blink: amount === "",
@@ -473,7 +484,6 @@ export default function SharedAssetInput<T extends AnyAsset>(
           disabled={isDisabled}
           value={amount}
           spellCheck={false}
-          // autoFocus={autoFocus}
           onChange={(event) =>
             onAmountChange?.(
               event.target.value,
