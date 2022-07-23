@@ -4,7 +4,7 @@ import React, {
   useCallback,
   useState,
 } from "react"
-import classNames from "classnames"
+import classNames from "clsx"
 import { useDispatch } from "react-redux"
 import { refreshBackgroundPage } from "@sendnodes/pokt-wallet-background/redux-slices/ui"
 import {
@@ -22,6 +22,7 @@ import { POKT } from "@sendnodes/pokt-wallet-background/constants"
 import formatTokenAmount from "../../utils/formatTokenAmount"
 import SharedLoadingSpinner from "../Shared/SharedLoadingSpinner"
 import SharedAssetIcon from "../Shared/SharedAssetIcon"
+import { browser } from "@sendnodes/pokt-wallet-background"
 
 function ReadOnlyNotice(): ReactElement {
   return (
@@ -208,7 +209,12 @@ export default function WalletAccountBalanceControl(
                 size="medium"
                 iconPosition="left"
                 type="primary"
-                linkTo="/stake"
+                onClick={() =>
+                  window.open(
+                    browser.runtime.getURL("stake.html"),
+                    "poktwallet_stake"
+                  )
+                }
                 title="Stake POKT"
                 className="stake_button"
               >

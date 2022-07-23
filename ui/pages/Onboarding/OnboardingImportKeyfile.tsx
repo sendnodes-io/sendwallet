@@ -26,7 +26,7 @@ import {
 } from "../../hooks"
 import { OnboardingImportRecoveryPhraseIcon } from "../../components/Onboarding/Icons"
 import SharedInput from "../../components/Shared/SharedInput"
-import classNames from "classnames"
+import classNames from "clsx"
 import { IoIosCheckmark } from "react-icons/io"
 import { KeyringTypes } from "../../../background/types"
 import { Buffer } from "buffer"
@@ -66,14 +66,14 @@ export default function OnboardingImportKeyfile() {
 
   // handle success state or failure after importing started
   useEffect(() => {
-    if (isImporting && keyringImport === "done"){
+    if (isImporting && keyringImport === "done") {
       // it worked
       dispatch(clearImporting()) //clean up
       history.push("/onboarding/account-created")
     }
 
     if (keyringImport === "failed") {
-      setErrorMessage('Something went wrong. Please try again.')
+      setErrorMessage("Something went wrong. Please try again.")
       setIsImporting(false)
     }
   }, [history, areKeyringsUnlocked, keyringImport, isImporting])

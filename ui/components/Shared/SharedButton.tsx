@@ -1,5 +1,5 @@
 import React, { ReactElement, useState, useEffect } from "react"
-import classNames from "classnames"
+import classNames from "clsx"
 import { Redirect } from "react-router-dom"
 import { History } from "history"
 import SharedLoadingSpinner from "./SharedLoadingSpinner"

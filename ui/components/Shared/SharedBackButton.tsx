@@ -1,6 +1,6 @@
 import React, { ReactElement, useState } from "react"
 import { useHistory, Redirect } from "react-router-dom"
-import classNames from "classnames"
+import classNames from "clsx"
 
 export default function SharedBackButton(): ReactElement {
   const historyPre: unknown = useHistory()
@@ -14,9 +14,10 @@ export default function SharedBackButton(): ReactElement {
       <Redirect
         push
         to={{
-          pathname: history.entries?.length > 0
-            ? history.entries[history.entries.length - 1]?.pathName ?? "/"
-            : "/",
+          pathname:
+            history.entries?.length > 0
+              ? history.entries[history.entries.length - 1]?.pathName ?? "/"
+              : "/",
           state: { isBack: true },
         }}
       />
