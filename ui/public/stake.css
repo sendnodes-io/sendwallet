@@ -1,0 +1,7 @@
+/** this is some css */
+body {
+  @apply justify-start;
+}
+.base_pokt_logo {
+  @apply hidden;
+}

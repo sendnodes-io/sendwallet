@@ -5,7 +5,7 @@ import {
   importLedgerAccounts,
   LedgerDeviceState,
 } from "@sendnodes/pokt-wallet-background/redux-slices/ledger"
-import classNames from "classnames"
+import classNames from "clsx"
 import React, { ReactElement, useEffect, useState } from "react"
 import { useBackgroundDispatch } from "../../hooks"
 import SharedButton from "../../components/Shared/SharedButton"

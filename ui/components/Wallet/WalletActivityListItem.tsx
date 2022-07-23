@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react"
-import classNames from "classnames"
+import classNames from "clsx"
 import { ActivityItem } from "@sendnodes/pokt-wallet-background/redux-slices/activities"
 import {
   isMaxUint256,

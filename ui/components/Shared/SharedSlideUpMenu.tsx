@@ -1,5 +1,5 @@
 import React, { ReactElement, CSSProperties, useRef } from "react"
-import classNames from "classnames"
+import classNames from "clsx"
 import { useDelayContentChange, useOnClickOutside } from "../../hooks"
 import { SharedIconButton } from "./SharedIcon"
 
@@ -46,7 +46,7 @@ export default function SharedSlideUpMenu(props: Props): ReactElement {
     customSize,
     alwaysRenderChildren,
     leftButton,
-    closeOnClickOutside = true
+    closeOnClickOutside = true,
   } = props
 
   const slideUpMenuRef = useRef(null)
@@ -64,7 +64,7 @@ export default function SharedSlideUpMenu(props: Props): ReactElement {
   )
 
   const menuHeight = menuHeights[size] ?? customSize ?? menuHeights.medium
-  
+
   return (
     <div className="slide_up_menu_wrap ">
       <div className={classNames("overlay", { closed: !isOpen })} />

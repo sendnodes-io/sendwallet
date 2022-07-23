@@ -1,5 +1,5 @@
 import React, { ChangeEvent, ReactElement, useEffect, useRef } from "react"
-import classNames from "classnames"
+import classNames from "clsx"
 import { useParsedValidation, useRunOnFirstRender } from "../../hooks"
 
 interface Props<T> {

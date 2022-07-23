@@ -32,6 +32,7 @@ const baseConfig: Configuration = {
   entry: {
     ui: "./src/ui.ts",
     "tab-ui": "./src/tab-ui.ts",
+    "stake-ui": "./src/stake-ui.ts",
     background: "./src/background.ts",
     "background-ui": "./src/background-ui.ts",
     "window-provider": "./src/window-provider.ts",
@@ -193,6 +194,16 @@ const baseConfig: Configuration = {
       },
       htmlCssClass: "tab",
     }),
+    new HtmlWebpackPlugin({
+      template: "ui/pages/base.html",
+      filename: "stake.html",
+      chunks: ["stake-ui"],
+      inject: "body",
+      minify: {
+        ignoreCustomComments: [/<!-- inline_css_plugin -->/],
+      },
+      htmlCssClass: "stake",
+    }),
   ],
   optimization: {
     splitChunks: {
@@ -214,6 +225,7 @@ const modeConfigs: {
         ? {
             ui: ["react-devtools", "./src/ui.ts"],
             "tab-ui": ["react-devtools", "./src/tab-ui.ts"],
+            "stake-ui": ["react-devtools", "./src/stake-ui.ts"],
           }
         : undefined,
     plugins: [

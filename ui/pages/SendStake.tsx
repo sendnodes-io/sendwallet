@@ -1,19 +1,19 @@
-import React, { ReactElement, useCallback, useState } from "react"
+import React, {
+  CSSProperties,
+  ReactElement,
+  useCallback,
+  useState,
+} from "react"
 import {
   selectCurrentAccount,
   selectCurrentAccountBalances,
   selectMainCurrencySymbol,
 } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
 import {
-  NetworkFeeSettings,
-  selectEstimatedFeesPerGas,
-  setFeeType,
-} from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction"
-import {
   FungibleAsset,
   isFungibleAssetAmount,
 } from "@sendnodes/pokt-wallet-background/assets"
-import { ETH, POKT } from "@sendnodes/pokt-wallet-background/constants"
+import { POKT } from "@sendnodes/pokt-wallet-background/constants"
 import {
   convertFixedPointNumber,
   parseToFixedPointNumber,
@@ -25,26 +25,19 @@ import {
 import { CompleteAssetAmount } from "@sendnodes/pokt-wallet-background/redux-slices/accounts"
 import { enrichAssetAmountWithMainCurrencyValues } from "@sendnodes/pokt-wallet-background/redux-slices/utils/asset-utils"
 import { useHistory, useLocation } from "react-router-dom"
-import classNames from "clsx"
-import NetworkSettingsChooser from "../NetworkFees/NetworkSettingsChooser"
-import SharedAssetInput from "../Shared/SharedAssetInput"
-import SharedBackButton from "../Shared/SharedBackButton"
-import SharedButton from "../Shared/SharedButton"
+import SharedAssetInput from "../components/Shared/SharedAssetInput"
+import SharedButton from "../components/Shared/SharedButton"
 import {
   useAddressOrNameValidation,
   useBackgroundDispatch,
   useBackgroundSelector,
   useAreKeyringsUnlocked,
-} from "../../hooks"
-import SharedSlideUpMenu from "../Shared/SharedSlideUpMenu"
-import FeeSettingsButton from "../NetworkFees/FeeSettingsButton"
-import SharedLoadingSpinner from "../Shared/SharedLoadingSpinner"
-import SharedInput from "../Shared/SharedInput"
-import SharedSplashScreen from "../Shared/SharedSplashScreen"
+} from "../hooks"
+import SharedInput from "../components/Shared/SharedInput"
+import SharedSplashScreen from "../components/Shared/SharedSplashScreen"
+import SharedCheckbox from "../components/Shared/SharedCheckbox"
 
-// TODO: v0.2.0 handle multiple assets
-export default function Send(): ReactElement {
-  const poktNetworkFeeDecimalAmount = 0.01
+export default function SendStake(): ReactElement {
   const maxMemoLength = 75
   const location = useLocation<FungibleAsset>()
   const [selectedAsset, setSelectedAsset] = useState<FungibleAsset>(
@@ -54,19 +47,15 @@ export default function Send(): ReactElement {
     string | undefined
   >(undefined)
   const [amount, setAmount] = useState("")
-  const [memo, setMemo] = useState("Sent with POKTWallet.io")
-  const [memoError, setMemoError] = useState("")
-  const [gasLimit, setGasLimit] = useState<bigint | undefined>(undefined)
+  const [autoCompound, setAutoCompound] = useState(true)
+  const [termsAccepted, setTermsAccepted] = useState(false)
   const [isSendingTransactionRequest, setIsSendingTransactionRequest] =
     useState(false)
   const [hasError, setHasError] = useState(false)
-  const [networkSettingsModalOpen, setNetworkSettingsModalOpen] =
-    useState(false)
 
   const history = useHistory()
 
   const dispatch = useBackgroundDispatch()
-  const estimatedFeesPerGas = useBackgroundSelector(selectEstimatedFeesPerGas)
   const currentAccount = useBackgroundSelector(selectCurrentAccount)
   const balanceData = useBackgroundSelector(selectCurrentAccountBalances)
   const mainCurrencySymbol = useBackgroundSelector(selectMainCurrencySymbol)
@@ -121,7 +110,10 @@ export default function Send(): ReactElement {
     try {
       setIsSendingTransactionRequest(true)
 
-      await dispatch(
+      // memo spec is s:autoCompound=[true|false]
+      const memo = `s:${autoCompound}`
+
+      dispatch(
         transferAsset({
           fromAddressNetwork: currentAccount,
           toAddressNetwork: {
@@ -129,8 +121,8 @@ export default function Send(): ReactElement {
             network: currentAccount.network,
           },
           assetAmount,
-          gasLimit,
           memo,
+          gasLimit: undefined,
         })
       )
     } finally {
@@ -143,22 +135,9 @@ export default function Send(): ReactElement {
     currentAccount,
     destinationAddress,
     dispatch,
-    gasLimit,
     history,
     areKeyringsUnlocked,
   ])
-
-  const networkSettingsSaved = (networkSetting: NetworkFeeSettings) => {
-    setGasLimit(networkSetting.gasLimit)
-    dispatch(setFeeType(networkSetting.feeType))
-    setNetworkSettingsModalOpen(false)
-  }
-
-  const {
-    errorMessage: addressErrorMessage,
-    isValidating: addressIsValidating,
-    handleInputChange: handleAddressChange,
-  } = useAddressOrNameValidation(setDestinationAddress)
 
   if (!areKeyringsUnlocked) {
     return <SharedSplashScreen />
@@ -170,12 +149,12 @@ export default function Send(): ReactElement {
         <div className="header ">
           <div className="row">
             <div className="start">
-              <div className="send_icon_wrap">
-                <div className="send_icon" />
+              <div className="stake_icon_wrap">
+                <div className="stake_icon" />
               </div>
             </div>
             <div className="center">
-              <h1>Send POKT</h1>
+              <h1>Stake</h1>
             </div>
             <div className="end">
               <button
@@ -215,38 +194,44 @@ export default function Send(): ReactElement {
           </div>
         </div>
       </div>
-      <div className="section">
-        <div className="form_input address_form_input">
-          <SharedInput
-            label="ENTER ADDRESS"
-            errorMessage={addressErrorMessage}
-            onChange={(val) => handleAddressChange(val)}
-          />
-        </div>
+
+      <div className="section border-b-2 border-spanish-gray">
         <div className="form_input">
-          <SharedInput
-            label="TX MEMO"
-            type="textarea"
-            maxLength={maxMemoLength}
-            errorMessage={memoError}
-            value={memo}
-            onChange={(val) => {
-              setMemoError("")
-              setMemo(val)
-              if (val.length > maxMemoLength) {
-                setMemoError(
-                  `Memo cannot be longer than ${maxMemoLength} characters`
-                )
-              }
+          <SharedCheckbox
+            id="autoCompound"
+            label="Auto Compound my rewards"
+            checked={autoCompound}
+            onChange={(e) => {
+              setAutoCompound(e.currentTarget.checked)
             }}
           />
-          <div className="memo_validation">
-            <small>
-              {memo.length} / {maxMemoLength}
-            </small>
-          </div>
+          <small>
+            Auto Compound automatically stakes your rewards instead of sending
+            it to your address. You can disable it at any time.
+          </small>
         </div>
       </div>
+
+      <div className="section border-b-2 border-spanish-gray">
+        <div className="form_input">
+          <small>
+            By checking this box, you agree the{" "}
+            <a href="https://docs.sendnodes.io/terms/" className="underline">
+              terms of service
+            </a>
+            . <br />
+          </small>
+          <SharedCheckbox
+            id="termsAccepted"
+            label="I Agree to the Terms of Service"
+            checked={termsAccepted}
+            onChange={(e) => {
+              setTermsAccepted(e.currentTarget.checked)
+            }}
+          />
+        </div>
+      </div>
+
       <div className="section">
         <div style={{ alignSelf: "flex-start", marginBottom: "1.5rem" }}>
           <p>
@@ -254,23 +239,30 @@ export default function Send(): ReactElement {
           </p>
         </div>
       </div>
-      <div className="section">
-        <SharedButton
-          type="primary"
-          size="large"
-          isDisabled={
-            isSendingTransactionRequest ||
-            Number(amount) === 0 ||
-            destinationAddress === undefined ||
-            memoError !== "" ||
-            hasError
-          }
-          onClick={sendTransactionRequest}
-          isFormSubmit
-          isLoading={isSendingTransactionRequest}
+      <div className="section stake_button_wrap">
+        <div
+          style={{ "--icon-color": "var(--eerie-black-100)" } as CSSProperties}
         >
-          Send
-        </SharedButton>
+          <SharedButton
+            type="primary"
+            size="large"
+            icon="stake"
+            iconPosition="left"
+            iconSize="large"
+            isDisabled={
+              isSendingTransactionRequest ||
+              Number(amount) === 0 ||
+              destinationAddress === undefined ||
+              !termsAccepted ||
+              hasError
+            }
+            onClick={sendTransactionRequest}
+            isFormSubmit
+            isLoading={isSendingTransactionRequest}
+          >
+            STAKE
+          </SharedButton>
+        </div>
       </div>
       <style jsx>
         {`
@@ -316,21 +308,23 @@ export default function Send(): ReactElement {
             color: var(--white);
           }
 
-          .send_icon_wrap {
+          .stake_icon_wrap {
             height: 2rem;
             width: 2rem;
-            border: 1px solid var(--pink-lavender);
+            border: 1px solid var(--aqua);
             border-radius: 1rem;
             display: flex;
             align-items: center;
             justify-content: center;
           }
-          .send_icon {
-            mask-image: url("./images/send@2x.png");
-            mask-size: cover;
-            width: 0.75rem;
-            height: 0.75rem;
-            background-color: var(--pink-lavender);
+          .stake_icon {
+            mask-image: url("./images/stake@2x.png");
+            mask-size: contain;
+            mask-repeat: no-repeat;
+            mask-position: center;
+            width: 1.25rem;
+            height: 1.25rem;
+            background-color: var(--aqua);
             display: inline-block;
           }
           .icon_close {
@@ -371,6 +365,16 @@ export default function Send(): ReactElement {
 
           :global(.page_content) {
             justify-content: space-evenly;
+          }
+
+          .stake_button_wrap :global(.icon) {
+            --icon-color: var(--eerie-black-100);
+            background-color: var(--eerie-black-100);
+          }
+
+          .stake_button_wrap:hover :global(.icon) {
+            --icon-color: var(--white);
+            background-color: var(--white);
           }
         `}
       </style>

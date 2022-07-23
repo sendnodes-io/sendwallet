@@ -55,10 +55,13 @@
     "webextension-polyfill": "^0.8.0"
   },
   "devDependencies": {
+    "@headlessui/react": "^1.6.6",
+    "@heroicons/react": "^1.0.6",
     "@iconify/react": "^3.2.2",
     "@types/lodash": "^4.14.182",
     "@types/react-dom": "^17.0.9",
     "@types/react-transition-group": "^4.4.4",
+    "clsx": "^1.2.1",
     "react-devtools": "^4.24.4",
     "webext-redux": "git+ssh://git@github.com:0xBigBoss/webext-redux.git#9c9572832a6a8dacefff6128792da5d98833ec30"
   }
