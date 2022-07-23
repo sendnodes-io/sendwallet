@@ -6,12 +6,13 @@ import ReactDOM from "react-dom"
 import { Store } from "webext-redux"
 import Popup from "./pages/Popup"
 import Tab from "./pages/Tab"
+import Stake from "./pages/Stake"
 
 import "./public/variables.css"
 import "./public/index.css"
 import logger from "@sendnodes/pokt-wallet-background/lib/logger"
 
-export { Popup, Tab }
+export { Popup, Tab, Stake }
 
 function invokeServiceWorkerUpdateFlow(
   registration: ServiceWorkerRegistration

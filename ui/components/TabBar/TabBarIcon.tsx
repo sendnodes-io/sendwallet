@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react"
-import classNames from "classnames"
+import classNames from "clsx"
 import { useHistory } from "react-router-dom"
 
 interface Props {

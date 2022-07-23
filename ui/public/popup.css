@@ -4,13 +4,6 @@ html.popup,
   height: var(--popup-height);
 }
 
-.base_texture {
-  background-color: var(--eerie-black-100);
-  background-image: url("./images/textures/base_texture@2x.png");
-  background-size: cover;
-  border-radius: 1rem;
-}
-
 #pokt-wallet-root {
   width: var(--popup-width);
   height: var(--popup-height);

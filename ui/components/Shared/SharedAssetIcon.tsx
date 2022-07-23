@@ -1,4 +1,4 @@
-import classNames from "classnames"
+import classNames from "clsx"
 import React, { CSSProperties, ReactElement } from "react"
 
 interface Props {
@@ -46,7 +46,7 @@ export default function SharedAssetIcon(props: Props): ReactElement {
           .medium .token_icon_fallback {
             margin-top: 1px;
           }
-          
+
           .small .token_icon {
             width: 0.8rem;
             height: 0.8rem;

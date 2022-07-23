@@ -1,6 +1,6 @@
 import React, { ReactElement, useCallback, useEffect, useRef } from "react"
 import { useDispatch } from "react-redux"
-import classNames from "classnames"
+import classNames from "clsx"
 import {
   selectSnackbarMessage,
   clearSnackbarMessage,

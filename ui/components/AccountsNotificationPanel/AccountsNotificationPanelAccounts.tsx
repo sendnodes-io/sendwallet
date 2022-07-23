@@ -25,7 +25,7 @@ import {
 import SharedAccountItemSummary from "../Shared/SharedAccountItemSummary"
 import AccountItemOptionsMenu from "../AccountItem/AccountItemOptionsMenu"
 import { Network } from "@sendnodes/pokt-wallet-background/networks"
-import classNames from "classnames"
+import classNames from "clsx"
 import { HiOutlinePlusSm } from "react-icons/hi"
 import { useRemoteConfig } from "../../hooks/remote-config-hooks"
 
@@ -156,9 +156,9 @@ export default function AccountsNotificationPanelAccounts({
 
   const [pendingSelectedAddress, setPendingSelectedAddress] = useState("")
 
-  const selectedAccount =
-    useBackgroundSelector(selectCurrentAccount)
-    const { address: selectedAccountAddress, network: selectedNetwork } = selectedAccount
+  const selectedAccount = useBackgroundSelector(selectCurrentAccount)
+  const { address: selectedAccountAddress, network: selectedNetwork } =
+    selectedAccount
 
   const updateCurrentAccount = (address: string) => {
     setPendingSelectedAddress(address)
@@ -296,9 +296,7 @@ export default function AccountsNotificationPanelAccounts({
                                     target.closest(".slide_up_menu")
                                   )
                                 )
-                                  updateCurrentAccount(
-                                    normalizedAddress
-                                  )
+                                  updateCurrentAccount(normalizedAddress)
                               }}
                             >
                               <SharedAccountItemSummary

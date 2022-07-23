@@ -17,7 +17,6 @@ import DAppPermissionRequest from "../pages/DAppConnectRequest"
 import KeyringUnlock from "../components/Keyring/KeyringUnlock"
 import KeyringSetPassword from "../components/Keyring/KeyringSetPassword"
 import OnboardingAccountCreated from "../pages/Onboarding/OnboardingAccountCreated"
-import Stake from "../pages/Stake"
 
 interface PageList {
   path: string
@@ -153,13 +152,6 @@ const pageList: PageList[] = [
   {
     path: "/onboarding/account-created",
     Component: OnboardingAccountCreated,
-    hasTabBar: false,
-    hasTopBar: false,
-    persistOnClose: false,
-  },
-  {
-    path: "/stake",
-    Component: Stake,
     hasTabBar: false,
     hasTopBar: false,
     persistOnClose: false,
