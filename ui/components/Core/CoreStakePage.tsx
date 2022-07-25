@@ -1,40 +1,96 @@
 /* This example requires Tailwind CSS v2.0+ */
 import React, { Fragment, ReactElement, useState } from "react"
 import { Dialog, Transition } from "@headlessui/react"
-import {
-  CalendarIcon,
-  ChartBarIcon,
-  FolderIcon,
-  HomeIcon,
-  InboxIcon,
-  MenuIcon,
-  UsersIcon,
-  XIcon,
-} from "@heroicons/react/outline"
-
-const navigation = [
-  { name: "Dashboad", href: "#", icon: HomeIcon, current: true },
-  { name: "Team", href: "#", icon: UsersIcon, current: false },
-  { name: "Projects", href: "#", icon: FolderIcon, current: false },
-  { name: "Calendar", href: "#", icon: CalendarIcon, current: false },
-  { name: "Documents", href: "#", icon: InboxIcon, current: false },
-  { name: "Reports", href: "#", icon: ChartBarIcon, current: false },
-]
-
-import classNames from "clsx"
+import classNames, { clsx } from "clsx"
 import { useBackgroundSelector } from "../../hooks"
-import { selectCurrentAccountTotal } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
+import {
+  AccountTotal,
+  selectCurrentAccountTotal,
+} from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
 import SharedLoadingSpinner from "../Shared/SharedLoadingSpinner"
 import SharedAccountItemSummary from "../Shared/SharedAccountItemSummary"
 import Snackbar from "../Snackbar/Snackbar"
+import { useHistory, Link } from "react-router-dom"
+import {
+  CollectionIcon,
+  ReceiptRefundIcon,
+  TrendingUpIcon,
+} from "@heroicons/react/solid"
+import { MenuIcon, XIcon } from "@heroicons/react/outline"
+
+const navigation = [
+  {
+    name: "Stake",
+    href: "/",
+    icon: ({ className }: { className: string }) => (
+      <div className={clsx(className, "stake_icon")} />
+    ),
+  },
+  { name: "Rewards", href: "/rewards", icon: TrendingUpIcon, disabled: true },
+  {
+    name: "Transactions",
+    href: "/transactions",
+    icon: CollectionIcon,
+    disabled: true,
+  },
+  {
+    name: "Unstake",
+    href: "/unstake",
+    icon: ReceiptRefundIcon,
+  },
+]
 
 interface SidebarProps {
   isOpen: boolean
   onClose: () => void
 }
 
+function SidebarAddress({
+  currentAccountTotal,
+}: {
+  currentAccountTotal?: AccountTotal
+}) {
+  return (
+    <div className="sidebar_address flex-shrink-0 flex bg-gray-700 p-4">
+      <div className="flex-shrink-0 w-full group block">
+        <div className="flex items-center relative">
+          {currentAccountTotal ? (
+            <SharedAccountItemSummary
+              accountTotal={currentAccountTotal}
+              isSelected={false}
+            />
+          ) : (
+            <SharedLoadingSpinner size="medium" />
+          )}
+        </div>
+      </div>
+      <style jsx>{`
+        .sidebar_address :global(.balance_status) {
+          display: none;
+        }
+
+        .sidebar_address :global(.address) {
+          color: var(--white);
+        }
+
+        .sidebar_address :global(.stake_icon) {
+          mask-image: url("./images/stake@2x.png");
+          mask-size: contain;
+          mask-repeat: no-repeat;
+          mask-position: center;
+          width: 1.25rem;
+          height: 1.25rem;
+          background-color: var(--white);
+          display: inline-block;
+        }
+      `}</style>
+    </div>
+  )
+}
+
 function Sidebar({ isOpen, onClose }: SidebarProps): ReactElement {
   const currentAccountTotal = useBackgroundSelector(selectCurrentAccountTotal)
+  const history = useHistory()
 
   return (
     <Fragment>
@@ -97,11 +153,11 @@ function Sidebar({ isOpen, onClose }: SidebarProps): ReactElement {
                   </div>
                   <nav className="mt-5 px-2 space-y-1">
                     {navigation.map((item) => (
-                      <a
+                      <Link
                         key={item.name}
-                        href={item.href}
+                        to={item.href}
                         className={classNames(
-                          item.current
+                          history.location.pathname === item.href
                             ? "bg-gray-900 text-white"
                             : "text-gray-300 hover:bg-gray-700 hover:text-white",
                           "group flex items-center px-2 py-2 text-base font-medium rounded-md"
@@ -109,7 +165,7 @@ function Sidebar({ isOpen, onClose }: SidebarProps): ReactElement {
                       >
                         <item.icon
                           className={classNames(
-                            item.current
+                            history.location.pathname === item.href
                               ? "text-gray-300"
                               : "text-gray-400 group-hover:text-gray-300",
                             "mr-4 flex-shrink-0 h-6 w-6"
@@ -117,31 +173,11 @@ function Sidebar({ isOpen, onClose }: SidebarProps): ReactElement {
                           aria-hidden="true"
                         />
                         {item.name}
-                      </a>
+                      </Link>
                     ))}
                   </nav>
                 </div>
-                <div className="flex-shrink-0 flex bg-eerie-black p-4">
-                  <a href="#" className="flex-shrink-0 group block">
-                    <div className="flex items-center">
-                      <div>
-                        <img
-                          className="inline-block h-10 w-10 rounded-full"
-                          src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                          alt=""
-                        />
-                      </div>
-                      <div className="ml-3">
-                        <p className="text-base font-medium text-white">
-                          Tom Cook yesyesyesy
-                        </p>
-                        <p className="text-sm font-medium text-gray-400 group-hover:text-gray-300">
-                          View profile
-                        </p>
-                      </div>
-                    </div>
-                  </a>
-                </div>
+                <SidebarAddress currentAccountTotal={currentAccountTotal} />
               </Dialog.Panel>
             </Transition.Child>
             <div className="flex-shrink-0 w-14">
@@ -166,11 +202,11 @@ function Sidebar({ isOpen, onClose }: SidebarProps): ReactElement {
             </div>
             <nav className="mt-5 flex-1 px-2 space-y-1">
               {navigation.map((item) => (
-                <a
+                <Link
                   key={item.name}
-                  href={item.href}
+                  to={item.href}
                   className={classNames(
-                    item.current
+                    history.location.pathname === item.href
                       ? "bg-gray-900 text-white"
                       : "text-gray-300 hover:bg-gray-700 hover:text-white",
                     "group flex items-center px-2 py-2 text-sm font-medium rounded-md"
@@ -178,7 +214,7 @@ function Sidebar({ isOpen, onClose }: SidebarProps): ReactElement {
                 >
                   <item.icon
                     className={classNames(
-                      item.current
+                      history.location.pathname === item.href
                         ? "text-gray-300"
                         : "text-gray-400 group-hover:text-gray-300",
                       "mr-3 flex-shrink-0 h-6 w-6"
@@ -186,35 +222,13 @@ function Sidebar({ isOpen, onClose }: SidebarProps): ReactElement {
                     aria-hidden="true"
                   />
                   {item.name}
-                </a>
+                </Link>
               ))}
             </nav>
           </div>
-          <div className="flex-shrink-0 flex bg-gray-700 p-4">
-            <a href="#" className="flex-shrink-0 w-full group block">
-              <div className="flex items-center relative">
-                {currentAccountTotal ? (
-                  <SharedAccountItemSummary
-                    accountTotal={currentAccountTotal}
-                    isSelected={false}
-                  />
-                ) : (
-                  <SharedLoadingSpinner size="medium" />
-                )}
-              </div>
-            </a>
-          </div>
+          <SidebarAddress currentAccountTotal={currentAccountTotal} />
         </div>
       </div>
-      <style jsx>{`
-        .sidebar :global(.balance_status) {
-          display: none;
-        }
-
-        .sidebar :global(.address) {
-          color: var(--white);
-        }
-      `}</style>
     </Fragment>
   )
 }
@@ -243,13 +257,8 @@ export default function CoreStakePage(props: Props): ReactElement {
           </button>
         </div>
         <main className="flex-1">
-          <div className="py-6">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <h1 className="text-2xl font-semibold text-gray-900">
-                Dashboard
-              </h1>
-            </div>
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+          <div className="py-16">
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 md:px-8">
               <div className="bg-eerie-black p-2 rounded-lg ">
                 <div className="dashed_border rounded-lg ">
                   <div className="p-4">{children}</div>
