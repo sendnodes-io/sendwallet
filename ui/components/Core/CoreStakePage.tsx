@@ -26,6 +26,7 @@ import { useBackgroundSelector } from "../../hooks"
 import { selectCurrentAccountTotal } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
 import SharedLoadingSpinner from "../Shared/SharedLoadingSpinner"
 import SharedAccountItemSummary from "../Shared/SharedAccountItemSummary"
+import Snackbar from "../Snackbar/Snackbar"
 
 interface SidebarProps {
   isOpen: boolean
@@ -151,7 +152,7 @@ function Sidebar({ isOpen, onClose }: SidebarProps): ReactElement {
       </Transition.Root>
 
       {/* Static sidebar for desktop */}
-      <div className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0">
+      <div className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 sidebar">
         {/* Sidebar component, swap this element with another sidebar if you like */}
         <div className="flex-1 flex flex-col min-h-0 bg-rich-black">
           <div className="flex-1 flex flex-col pb-4 overflow-y-auto">
@@ -191,7 +192,7 @@ function Sidebar({ isOpen, onClose }: SidebarProps): ReactElement {
           </div>
           <div className="flex-shrink-0 flex bg-gray-700 p-4">
             <a href="#" className="flex-shrink-0 w-full group block">
-              <div className="flex items-center">
+              <div className="flex items-center relative">
                 {currentAccountTotal ? (
                   <SharedAccountItemSummary
                     accountTotal={currentAccountTotal}
@@ -205,6 +206,15 @@ function Sidebar({ isOpen, onClose }: SidebarProps): ReactElement {
           </div>
         </div>
       </div>
+      <style jsx>{`
+        .sidebar :global(.balance_status) {
+          display: none;
+        }
+
+        .sidebar :global(.address) {
+          color: var(--white);
+        }
+      `}</style>
     </Fragment>
   )
 }
@@ -244,6 +254,9 @@ export default function CoreStakePage(props: Props): ReactElement {
                 <div className="dashed_border rounded-lg ">
                   <div className="p-4">{children}</div>
                 </div>
+              </div>
+              <div className="flex justify-center">
+                <Snackbar />
               </div>
             </div>
           </div>

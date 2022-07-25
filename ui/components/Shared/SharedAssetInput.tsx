@@ -367,7 +367,15 @@ export default function SharedAssetInput<T extends AnyAsset>(
       parsedGivenAmount,
       selectedAssetAndAmount.asset.decimals
     )
-    if (decimalMatched.amount > selectedAssetAndAmount.amount) {
+
+    let selectedAmount = selectedAssetAndAmount.amount
+
+    // FIXME: use the dynamic actual network fee
+    if (selectedAsset?.symbol === "POKT") {
+      selectedAmount -= BigInt(1e4)
+    }
+
+    if (decimalMatched.amount > selectedAmount) {
       return "Insufficient balance"
     }
 
@@ -382,8 +390,15 @@ export default function SharedAssetInput<T extends AnyAsset>(
       return
     }
 
+    let selectedAmount = selectedAssetAndAmount.amount
+
+    // FIXME: use the dynamic actual network fee
+    if (selectedAsset?.symbol === "POKT") {
+      selectedAmount -= BigInt(1e4)
+    }
+
     const fixedPointAmount = {
-      amount: selectedAssetAndAmount.amount,
+      amount: selectedAmount,
       decimals:
         "decimals" in selectedAssetAndAmount.asset
           ? selectedAssetAndAmount.asset.decimals
