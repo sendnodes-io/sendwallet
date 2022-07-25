@@ -72,17 +72,6 @@ function SidebarAddress({
         .sidebar_address :global(.address) {
           color: var(--white);
         }
-
-        .sidebar_address :global(.stake_icon) {
-          mask-image: url("./images/stake@2x.png");
-          mask-size: contain;
-          mask-repeat: no-repeat;
-          mask-position: center;
-          width: 1.25rem;
-          height: 1.25rem;
-          background-color: var(--white);
-          display: inline-block;
-        }
       `}</style>
     </div>
   )
@@ -108,7 +97,7 @@ function Sidebar({ isOpen, onClose }: SidebarProps): ReactElement {
             <div className="fixed inset-0 bg-eerie-black bg-opacity-75" />
           </Transition.Child>
 
-          <div className="fixed inset-0 flex z-40">
+          <div className="fixed inset-0 flex z-40 sidebar">
             <Transition.Child
               as={Fragment}
               enter="transition ease-in-out duration-300 transform"
@@ -229,6 +218,20 @@ function Sidebar({ isOpen, onClose }: SidebarProps): ReactElement {
           <SidebarAddress currentAccountTotal={currentAccountTotal} />
         </div>
       </div>
+      <style jsx>
+        {`
+          .sidebar :global(.stake_icon) {
+            mask-image: url("./images/stake@2x.png");
+            mask-size: contain;
+            mask-repeat: no-repeat;
+            mask-position: center;
+            width: 1.25rem;
+            height: 1.25rem;
+            background-color: var(--white);
+            display: inline-block;
+          }
+        `}
+      </style>
     </Fragment>
   )
 }
