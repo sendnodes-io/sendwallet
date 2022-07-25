@@ -161,25 +161,14 @@ export default function SendStake(): ReactElement {
       <div className="section">
         <div className="header ">
           <div className="row">
-            <div className="start">
-              <div className="stake_icon_wrap">
-                <div className="stake_icon" />
+            <div className="start"></div>
+            <div className="center">
+              <div className="flex gap-x-4 justify-center items-center">
+                <div className="stake_icon w-8 h-8" />
+                <h1>Stake</h1>
               </div>
             </div>
-            <div className="center">
-              <h1>Stake</h1>
-            </div>
-            <div className="end">
-              <a
-                href="https://docs.sendnodes.io/"
-                title="More information for staking with SendNodes"
-                className="block h-8 w-8 hover:text-white"
-                target="_blank"
-              >
-                <span className="sr-only">Information on Staking</span>
-                <InformationCircleIcon />
-              </a>
-            </div>
+            <div className="end"></div>
           </div>
         </div>
       </div>
@@ -229,6 +218,15 @@ export default function SendStake(): ReactElement {
             Auto Compound automatically stakes your rewards instead of sending
             it to your address. You can disable it at any time.
           </small>
+          <a
+            href="https://docs.sendnodes.io/"
+            title="More information on Auto Compound with SendNodes"
+            className="inline hover:text-white"
+            target="_blank"
+          >
+            <span className="sr-only">Information on Staking</span>
+            <InformationCircleIcon className="ml-1 h-4 w-4 inline" />
+          </a>
         </div>
       </div>
 
@@ -322,24 +320,14 @@ export default function SendStake(): ReactElement {
             justify-content: flex-end;
             gap: 0.75rem;
           }
-
-          .stake_icon_wrap {
-            height: 2rem;
-            width: 2rem;
-            border: 1px solid var(--aqua);
-            border-radius: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-          }
           .stake_icon {
             mask-image: url("./images/stake@2x.png");
             mask-size: contain;
             mask-repeat: no-repeat;
             mask-position: center;
-            width: 1.25rem;
-            height: 1.25rem;
-            background-color: var(--aqua);
+            width: 3rem;
+            height: 3rem;
+            background-color: var(--white);
             display: inline-block;
           }
           .icon_close {
