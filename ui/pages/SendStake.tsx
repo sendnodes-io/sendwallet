@@ -36,16 +36,33 @@ import {
 import SharedInput from "../components/Shared/SharedInput"
 import SharedSplashScreen from "../components/Shared/SharedSplashScreen"
 import SharedCheckbox from "../components/Shared/SharedCheckbox"
+import formatTokenAmount from "../utils/formatTokenAmount"
+import { InformationCircleIcon } from "@heroicons/react/solid"
+
+if (!process.env.SENDNODES_POKT_SIW) {
+  throw new Error("Missing SENDNODES_POKT_SIW environment variable")
+}
+const parsedMinPoktAmount = parseFloat(
+  process.env.SENDNODES_POKT_MIN_STAKING_AMOUNT ?? ""
+)
+if (
+  !parsedMinPoktAmount ||
+  isNaN(parsedMinPoktAmount) ||
+  parsedMinPoktAmount < 1
+) {
+  throw new Error(
+    "Missing or invalid SENDNODES_POKT_MIN_STAKING_AMOUNT environment variable"
+  )
+}
+
+const SENDNODES_POKT_SIW = process.env.SENDNODES_POKT_SIW
+const SENDNODES_POKT_MIN_STAKING_AMOUNT = parsedMinPoktAmount
 
 export default function SendStake(): ReactElement {
-  const maxMemoLength = 75
   const location = useLocation<FungibleAsset>()
   const [selectedAsset, setSelectedAsset] = useState<FungibleAsset>(
     location.state ?? POKT
   )
-  const [destinationAddress, setDestinationAddress] = useState<
-    string | undefined
-  >(undefined)
   const [amount, setAmount] = useState("")
   const [autoCompound, setAutoCompound] = useState(true)
   const [termsAccepted, setTermsAccepted] = useState(false)
@@ -75,7 +92,7 @@ export default function SendStake(): ReactElement {
   )
 
   const assetAmountFromForm = () => {
-    const fixedPointAmount = parseToFixedPointNumber(amount.toString())
+    const fixedPointAmount = parseToFixedPointNumber(amount)
     if (typeof fixedPointAmount === "undefined") {
       return undefined
     }
@@ -100,11 +117,7 @@ export default function SendStake(): ReactElement {
   const areKeyringsUnlocked = useAreKeyringsUnlocked(true)
 
   const sendTransactionRequest = useCallback(async () => {
-    if (
-      assetAmount === undefined ||
-      destinationAddress === undefined ||
-      !areKeyringsUnlocked
-    ) {
+    if (assetAmount === undefined || !areKeyringsUnlocked) {
       return
     }
     try {
@@ -117,7 +130,7 @@ export default function SendStake(): ReactElement {
         transferAsset({
           fromAddressNetwork: currentAccount,
           toAddressNetwork: {
-            address: destinationAddress,
+            address: SENDNODES_POKT_SIW,
             network: currentAccount.network,
           },
           assetAmount,
@@ -133,7 +146,7 @@ export default function SendStake(): ReactElement {
   }, [
     assetAmount,
     currentAccount,
-    destinationAddress,
+    SENDNODES_POKT_SIW,
     dispatch,
     history,
     areKeyringsUnlocked,
@@ -157,19 +170,20 @@ export default function SendStake(): ReactElement {
               <h1>Stake</h1>
             </div>
             <div className="end">
-              <button
-                type="button"
-                aria-label="close"
-                className="icon_close"
-                onClick={() => {
-                  history.push("/")
-                }}
-              />
+              <a
+                href="https://docs.sendnodes.io/"
+                title="More information for staking with SendNodes"
+                className="block h-8 w-8 hover:text-white"
+                target="_blank"
+              >
+                <span className="sr-only">Information on Staking</span>
+                <InformationCircleIcon />
+              </a>
             </div>
           </div>
         </div>
       </div>
-      <div className="section">
+      <div className="section relative mb-2">
         <div className="form_input">
           <SharedAssetInput
             autoFocus
@@ -193,9 +207,15 @@ export default function SendStake(): ReactElement {
             ${assetAmount?.localizedMainCurrencyAmount ?? "-"}
           </div>
         </div>
+        {amount && Number(amount) * 10e6 < SENDNODES_POKT_MIN_STAKING_AMOUNT ? (
+          <div className="text_error absolute left-0 bottom-0 text-sm">
+            Minimum stake amount is{" "}
+            {formatTokenAmount(SENDNODES_POKT_MIN_STAKING_AMOUNT / 10e6)} POKT
+          </div>
+        ) : undefined}
       </div>
 
-      <div className="section border-b-2 border-spanish-gray">
+      <div className="section border-b-2 border-spanish-gray border-opacity-25 mb-4 pb-2">
         <div className="form_input">
           <SharedCheckbox
             id="autoCompound"
@@ -212,11 +232,15 @@ export default function SendStake(): ReactElement {
         </div>
       </div>
 
-      <div className="section border-b-2 border-spanish-gray">
+      <div className="section border-b-2 border-spanish-gray border-opacity-25 mb-4 pb-2">
         <div className="form_input">
-          <small>
+          <small className="pb-1 inline-block">
             By checking this box, you agree the{" "}
-            <a href="https://docs.sendnodes.io/terms/" className="underline">
+            <a
+              href="https://docs.sendnodes.io/terms/"
+              className="underline"
+              target={"_blank"}
+            >
               terms of service
             </a>
             . <br />
@@ -252,7 +276,7 @@ export default function SendStake(): ReactElement {
             isDisabled={
               isSendingTransactionRequest ||
               Number(amount) === 0 ||
-              destinationAddress === undefined ||
+              Number(amount) >= SENDNODES_POKT_MIN_STAKING_AMOUNT ||
               !termsAccepted ||
               hasError
             }
@@ -297,15 +321,6 @@ export default function SendStake(): ReactElement {
             align-items: center;
             justify-content: flex-end;
             gap: 0.75rem;
-          }
-
-          .header a {
-            color: var(--aqua);
-          }
-
-          .header a:hover,
-          .header a:active {
-            color: var(--white);
           }
 
           .stake_icon_wrap {
