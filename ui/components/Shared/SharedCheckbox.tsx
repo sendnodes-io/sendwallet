@@ -45,7 +45,7 @@ export default function SharedCheckbox(props: Props): ReactElement {
           width: 1.5rem;
           border-radius: 0.25rem;
           background-color: var(--dim-gray);
-          margin-right: 0.25rem;
+          margin-right: 0.75rem;
         }
         .checkbox:hover input ~ .checkmark {
           background-color: var(--dim-gray);
