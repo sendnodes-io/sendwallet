@@ -6,7 +6,9 @@ import TabNotFound from "./TabNotFound"
 import pageList from "../routes/routes"
 import ErrorFallback from "./ErrorFallback"
 import { ErrorBoundary } from "react-error-boundary"
-import SendStake from "./SendStake"
+
+import SendStake from "../components/Stake/SendStake"
+import SendUnstake from "../components/Stake/SendUnstake"
 import CoreStakePage from "../components/Core/CoreStakePage"
 import KeyringUnlock from "../components/Keyring/KeyringUnlock"
 import CorePopupPage from "../components/Core/CorePopupPage"
@@ -56,6 +58,13 @@ export default function Stake({ store }: { store: Store }): ReactElement {
             <CoreStakePage>
               <ErrorBoundary FallbackComponent={ErrorFallback}>
                 <SignTransaction />
+              </ErrorBoundary>
+            </CoreStakePage>
+          </Route>
+          <Route path={"/unstake"} exact>
+            <CoreStakePage>
+              <ErrorBoundary FallbackComponent={ErrorFallback}>
+                <SendUnstake />
               </ErrorBoundary>
             </CoreStakePage>
           </Route>

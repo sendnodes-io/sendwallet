@@ -293,6 +293,8 @@ interface SharedAssetInputProps<AssetType extends AnyAsset> {
   isDisabled?: boolean
   onAssetSelect?: (asset: AssetType) => void
   onAmountChange?: (value: string, errorMessage: string | undefined) => void
+  /** Include a network fee in the max balance set*/
+  networkFee?: string
 }
 
 function isSameAsset(asset1: Asset, asset2: Asset) {
@@ -323,6 +325,7 @@ export default function SharedAssetInput<T extends AnyAsset>(
     onAssetSelect,
     onAmountChange,
     autoFocus = false,
+    networkFee,
   } = props
 
   const [openAssetMenu, setOpenAssetMenu] = useState(false)
@@ -370,9 +373,8 @@ export default function SharedAssetInput<T extends AnyAsset>(
 
     let selectedAmount = selectedAssetAndAmount.amount
 
-    // FIXME: use the dynamic actual network fee
-    if (selectedAsset?.symbol === "POKT") {
-      selectedAmount -= BigInt(1e4)
+    if (networkFee) {
+      selectedAmount -= BigInt(networkFee)
     }
 
     if (decimalMatched.amount > selectedAmount) {
@@ -392,9 +394,8 @@ export default function SharedAssetInput<T extends AnyAsset>(
 
     let selectedAmount = selectedAssetAndAmount.amount
 
-    // FIXME: use the dynamic actual network fee
-    if (selectedAsset?.symbol === "POKT") {
-      selectedAmount -= BigInt(1e4)
+    if (networkFee) {
+      selectedAmount -= BigInt(networkFee)
     }
 
     const fixedPointAmount = {

@@ -1,6 +1,5 @@
-/** this is some css */
 body {
-  @apply justify-start;
+  @apply justify-start min-h-screen;
 }
 .base_pokt_logo {
   @apply hidden;
