@@ -25,38 +25,23 @@ import {
 import { CompleteAssetAmount } from "@sendnodes/pokt-wallet-background/redux-slices/accounts"
 import { enrichAssetAmountWithMainCurrencyValues } from "@sendnodes/pokt-wallet-background/redux-slices/utils/asset-utils"
 import { useHistory, useLocation } from "react-router-dom"
-import SharedAssetInput from "../components/Shared/SharedAssetInput"
-import SharedButton from "../components/Shared/SharedButton"
+import SharedAssetInput from "../Shared/SharedAssetInput"
+import SharedButton from "../Shared/SharedButton"
 import {
   useAddressOrNameValidation,
   useBackgroundDispatch,
   useBackgroundSelector,
   useAreKeyringsUnlocked,
-} from "../hooks"
-import SharedInput from "../components/Shared/SharedInput"
-import SharedSplashScreen from "../components/Shared/SharedSplashScreen"
-import SharedCheckbox from "../components/Shared/SharedCheckbox"
-import formatTokenAmount from "../utils/formatTokenAmount"
+} from "../../hooks"
+import SharedInput from "../Shared/SharedInput"
+import SharedSplashScreen from "../Shared/SharedSplashScreen"
+import SharedCheckbox from "../Shared/SharedCheckbox"
+import formatTokenAmount from "../../utils/formatTokenAmount"
 import { InformationCircleIcon } from "@heroicons/react/solid"
-
-if (!process.env.SENDNODES_POKT_SIW) {
-  throw new Error("Missing SENDNODES_POKT_SIW environment variable")
-}
-const parsedMinPoktAmount = parseFloat(
-  process.env.SENDNODES_POKT_MIN_STAKING_AMOUNT ?? ""
-)
-if (
-  !parsedMinPoktAmount ||
-  isNaN(parsedMinPoktAmount) ||
-  parsedMinPoktAmount < 1
-) {
-  throw new Error(
-    "Missing or invalid SENDNODES_POKT_MIN_STAKING_AMOUNT environment variable"
-  )
-}
-
-const SENDNODES_POKT_SIW = process.env.SENDNODES_POKT_SIW
-const SENDNODES_POKT_MIN_STAKING_AMOUNT = parsedMinPoktAmount
+import {
+  SENDNODES_POKT_MIN_STAKING_AMOUNT,
+  SENDNODES_POKT_SIW,
+} from "../../hooks/staking-hooks"
 
 export default function SendStake(): ReactElement {
   const location = useLocation<FungibleAsset>()
@@ -191,15 +176,20 @@ export default function SendStake(): ReactElement {
             }}
             selectedAsset={selectedAsset}
             amount={amount}
+            networkFee={
+              selectedAsset.symbol === "POKT"
+                ? BigInt(1e4).toString()
+                : undefined
+            }
           />
           <div className="value">
             ${assetAmount?.localizedMainCurrencyAmount ?? "-"}
           </div>
         </div>
-        {amount && Number(amount) * 10e6 < SENDNODES_POKT_MIN_STAKING_AMOUNT ? (
+        {amount && Number(amount) * 1e6 < SENDNODES_POKT_MIN_STAKING_AMOUNT ? (
           <div className="text_error absolute left-0 bottom-0 text-sm">
             Minimum stake amount is{" "}
-            {formatTokenAmount(SENDNODES_POKT_MIN_STAKING_AMOUNT / 10e6)} POKT
+            {formatTokenAmount(SENDNODES_POKT_MIN_STAKING_AMOUNT / 1e6)} POKT
           </div>
         ) : undefined}
       </div>
