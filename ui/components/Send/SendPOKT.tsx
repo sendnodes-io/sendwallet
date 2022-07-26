@@ -209,6 +209,7 @@ export default function Send(): ReactElement {
             }}
             selectedAsset={selectedAsset}
             amount={amount}
+            networkFee={BigInt(1e4).toString()}
           />
           <div className="value">
             ${assetAmount?.localizedMainCurrencyAmount ?? "-"}
