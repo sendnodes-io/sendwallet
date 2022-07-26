@@ -37,11 +37,22 @@ import SharedInput from "../Shared/SharedInput"
 import SharedSplashScreen from "../Shared/SharedSplashScreen"
 import SharedCheckbox from "../Shared/SharedCheckbox"
 import formatTokenAmount from "../../utils/formatTokenAmount"
-import { InformationCircleIcon } from "@heroicons/react/solid"
+import {
+  InformationCircleIcon,
+  ArrowSmDownIcon,
+  ArrowSmUpIcon,
+  CursorClickIcon,
+  MailOpenIcon,
+  UsersIcon,
+} from "@heroicons/react/solid"
+
 import {
   SENDNODES_POKT_MIN_STAKING_AMOUNT,
   SENDNODES_POKT_SIW,
+  useStakingUserData,
 } from "../../hooks/staking-hooks"
+import clsx from "clsx"
+import SharedLoadingSpinner from "../Shared/SharedLoadingSpinner"
 
 export default function SendStake(): ReactElement {
   const location = useLocation<FungibleAsset>()
@@ -75,6 +86,12 @@ export default function SendStake(): ReactElement {
       mainCurrencySymbol
     )
   )
+
+  const {
+    data: stakingData,
+    isLoading,
+    isError,
+  } = useStakingUserData(currentAccount)
 
   const assetAmountFromForm = () => {
     const fixedPointAmount = parseToFixedPointNumber(amount)
@@ -137,19 +154,46 @@ export default function SendStake(): ReactElement {
     areKeyringsUnlocked,
   ])
 
+  // const stats = [
+  //   {
+  //     id: 1,
+  //     name: "Total Subscribers",
+  //     stat: "71,897",
+  //     icon: UsersIcon,
+  //     change: "122",
+  //     changeType: "increase",
+  //   },
+  //   {
+  //     id: 2,
+  //     name: "Avg. Open Rate",
+  //     stat: "58.16%",
+  //     icon: MailOpenIcon,
+  //     change: "5.4%",
+  //     changeType: "increase",
+  //   },
+  //   {
+  //     id: 3,
+  //     name: "Avg. Click Rate",
+  //     stat: "24.57%",
+  //     icon: CursorClickIcon,
+  //     change: "3.2%",
+  //     changeType: "decrease",
+  //   },
+  // ]
+
   if (!areKeyringsUnlocked) {
     return <SharedSplashScreen />
   }
 
   return (
-    <div className="page_content">
+    <div className="">
       <div className="section">
         <div className="header ">
           <div className="row">
             <div className="start"></div>
             <div className="center">
               <div className="flex gap-x-4 justify-center items-center">
-                <div className="stake_icon w-8 h-8" />
+                <div className="stake_icon w-12 h-12" />
                 <h1>Stake</h1>
               </div>
             </div>
@@ -157,8 +201,76 @@ export default function SendStake(): ReactElement {
           </div>
         </div>
       </div>
+      <div>
+        <dl className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="relative pt-5 px-4 pb-6 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden">
+            <dt>
+              <div className="absolute bg-capri rounded-md p-3">
+                <div className="stake_icon w-8 h-8 inline-block" />
+              </div>
+              <p className="ml-16 text-sm font-medium text-spanish-gray truncate">
+                Total Staked
+              </p>
+            </dt>
+            {isLoading ? (
+              <SharedLoadingSpinner />
+            ) : (
+              <dd className="ml-16 flex items-baseline">
+                <p className="text-2xl font-semibold text-white">
+                  {stakingData?.staked}
+                </p>
+
+                {/* <div className="absolute bottom-0 inset-x-0 bg-gray-50 px-4 py-4 sm:px-6">
+                  <div className="text-sm">
+                    <a
+                      href="#"
+                      className="font-medium text-indigo-600 hover:text-indigo-500"
+                    >
+                      {" "}
+                      View all
+                      <span className="sr-only"> {item.name} stats</span>
+                    </a>
+                  </div>
+                </div> */}
+              </dd>
+            )}
+          </div>
+          <div className="relative pt-5 px-4 pb-12 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden">
+            <dt>
+              <div className="absolute bg-spanish-gray rounded-md p-3">
+                <div className="stake_icon w-8 h-8 inline-block" />
+              </div>
+              <p className="ml-16 text-sm font-medium text-spanish-gray truncate">
+                Pending Staked
+              </p>
+            </dt>
+            {isLoading ? (
+              <SharedLoadingSpinner />
+            ) : (
+              <dd className="ml-16 flex items-baseline">
+                <p className="text-2xl font-semibold text-white">
+                  {stakingData?.pendingStaked}
+                </p>
+
+                {/* <div className="absolute bottom-0 inset-x-0 bg-gray-50 px-4 py-4 sm:px-6">
+                  <div className="text-sm">
+                    <a
+                      href="#"
+                      className="font-medium text-indigo-600 hover:text-indigo-500"
+                    >
+                      {" "}
+                      View all
+                      <span className="sr-only"> {item.name} stats</span>
+                    </a>
+                  </div>
+                </div> */}
+              </dd>
+            )}
+          </div>
+        </dl>
+      </div>
       <div className="section relative mb-2">
-        <div className="form_input">
+        <div className="mb-4">
           <SharedAssetInput
             autoFocus
             label="ENTER AMOUNT"
@@ -187,7 +299,7 @@ export default function SendStake(): ReactElement {
           </div>
         </div>
         {amount && Number(amount) * 1e6 < SENDNODES_POKT_MIN_STAKING_AMOUNT ? (
-          <div className="text_error absolute left-0 bottom-0 text-sm">
+          <div className="text_error absolute left-0 -bottom-2 text-sm">
             Minimum stake amount is{" "}
             {formatTokenAmount(SENDNODES_POKT_MIN_STAKING_AMOUNT / 1e6)} POKT
           </div>
@@ -310,16 +422,6 @@ export default function SendStake(): ReactElement {
             justify-content: flex-end;
             gap: 0.75rem;
           }
-          .stake_icon {
-            mask-image: url("./images/stake@2x.png");
-            mask-size: contain;
-            mask-repeat: no-repeat;
-            mask-position: center;
-            width: 3rem;
-            height: 3rem;
-            background-color: var(--white);
-            display: inline-block;
-          }
           .icon_close {
             width: 1rem;
             height: 1rem;
@@ -354,10 +456,6 @@ export default function SendStake(): ReactElement {
             position: absolute;
             right: 0;
             bottom: -1.5rem;
-          }
-
-          :global(.page_content) {
-            justify-content: space-evenly;
           }
 
           .stake_button_wrap :global(.icon) {
