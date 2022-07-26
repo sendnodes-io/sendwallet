@@ -96,7 +96,9 @@ export default class InternalPoktProviderService extends BaseService<Events> {
             const txHash = await this.chainService.broadcastSignedTransaction(
               signed
             )
-            return txHash
+            if (!txHash) return undefined
+            const tx = await this.chainService.getTransaction(POCKET, txHash)
+            return tx
           }
         )
       case "pokt_tx":
