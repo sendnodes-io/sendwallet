@@ -49,6 +49,7 @@ import { AnyAssetWithOptionalAmount } from "../Shared/SharedAssetItem"
 import { isEqual } from "lodash"
 import { ReceiptRefundIcon } from "@heroicons/react/outline"
 import { truncateAddress } from "@sendnodes/pokt-wallet-background/lib/utils"
+import SharedLoadingSpinner from "../Shared/SharedLoadingSpinner"
 
 export default function SendUnstake(): ReactElement {
   const history = useHistory()
@@ -63,7 +64,11 @@ export default function SendUnstake(): ReactElement {
     selectMainCurrencySymbol,
     isEqual
   )
-  const { data, isLoading, isError } = useStakingUserData(currentAccount)
+  const {
+    data: stakingData,
+    isLoading,
+    isError,
+  } = useStakingUserData(currentAccount)
   const [selectedAsset, setSelectedAsset] = useState<FungibleAsset>(
     currentAccount.network.baseAsset
   )
@@ -73,16 +78,9 @@ export default function SendUnstake(): ReactElement {
   const [hasError, setHasError] = useState(false)
 
   const totalStakedBalance =
-    BigInt(data?.pendingStaked ?? 0) * BigInt(1e6) +
-    BigInt(data?.staked ?? 0) * BigInt(1e6) -
-    BigInt(data?.unstaked ?? 0) * BigInt(1e6) -
-    BigInt(data?.pendingUnstaked ?? 0) * BigInt(1e6)
-  const totalStakedBalanceDecimals = BigNumber.from(
-    BigInt(data?.pendingStaked ?? 0) * BigInt(1e6) +
-      BigInt(data?.staked ?? 0) * BigInt(1e6) -
-      BigInt(data?.unstaked ?? 0) * BigInt(1e6) -
-      BigInt(data?.pendingUnstaked ?? 0) * BigInt(1e6)
-  )
+    BigInt(stakingData?.staked ?? 0) * BigInt(1e6) -
+    BigInt(stakingData?.pendingUnstaked ?? 0) * BigInt(1e6)
+  const totalStakedBalanceDecimals = BigNumber.from(totalStakedBalance)
     .div(Math.pow(10, currentAccount.network.baseAsset.decimals))
     .toNumber()
 
@@ -173,15 +171,115 @@ export default function SendUnstake(): ReactElement {
   }
 
   return (
-    <div className="page_content pb-4">
+    <div className=" pb-4">
       <div className="flex gap-x-4 justify-center items-center pt-4 pb-8">
         <ReceiptRefundIcon className="w-8 h-8 text-white" />
         <h1>Unstake</h1>
       </div>
+      <div>
+        <dl className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="relative pt-5 px-4 pb-6 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden">
+            <dt>
+              <div className="absolute bg-eerie-black rounded-md p-3">
+                <div className="stake_icon w-8 h-8 inline-block" />
+              </div>
+              <p className="ml-16 text-sm font-medium text-spanish-gray truncate">
+                Total Unstaked
+              </p>
+            </dt>
+            {isLoading ? (
+              <SharedLoadingSpinner />
+            ) : (
+              <dd className="ml-16 pb-6 flex items-baseline sm:pb-7">
+                <p className="text-2xl font-semibold text-white">
+                  {stakingData?.unstaked}
+                </p>
+
+                {/* <div className="absolute bottom-0 inset-x-0 bg-gray-50 px-4 py-4 sm:px-6">
+                  <div className="text-sm">
+                    <a
+                      href="#"
+                      className="font-medium text-indigo-600 hover:text-indigo-500"
+                    >
+                      {" "}
+                      View all
+                      <span className="sr-only"> {item.name} stats</span>
+                    </a>
+                  </div>
+                </div> */}
+              </dd>
+            )}
+          </div>
+          <div className="relative pt-5 px-4 pb-6 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden">
+            <dt>
+              <div className="absolute bg-spanish-gray rounded-md p-3">
+                <div className="stake_icon w-8 h-8 inline-block" />
+              </div>
+              <p className="ml-16 text-sm font-medium text-spanish-gray truncate">
+                Pending Unstaked
+              </p>
+            </dt>
+            {isLoading ? (
+              <SharedLoadingSpinner />
+            ) : (
+              <dd className="ml-16 pb-6 flex items-baseline sm:pb-7">
+                <p className="text-2xl font-semibold text-white">
+                  {stakingData?.pendingUnstaked}
+                </p>
+
+                {/* <div className="absolute bottom-0 inset-x-0 bg-gray-50 px-4 py-4 sm:px-6">
+                  <div className="text-sm">
+                    <a
+                      href="#"
+                      className="font-medium text-indigo-600 hover:text-indigo-500"
+                    >
+                      {" "}
+                      View all
+                      <span className="sr-only"> {item.name} stats</span>
+                    </a>
+                  </div>
+                </div> */}
+              </dd>
+            )}
+          </div>
+          <div className="relative pt-5 px-4 pb-6 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden">
+            <dt>
+              <div className="absolute bg-capri rounded-md p-3">
+                <div className="stake_icon w-8 h-8 inline-block" />
+              </div>
+              <p className="ml-16 text-sm font-medium text-spanish-gray truncate">
+                Total Staked
+              </p>
+            </dt>
+            {isLoading ? (
+              <SharedLoadingSpinner />
+            ) : (
+              <dd className="ml-16 pb-6 flex items-baseline sm:pb-7">
+                <p className="text-2xl font-semibold text-white">
+                  {stakingData?.staked}
+                </p>
+
+                {/* <div className="absolute bottom-0 inset-x-0 bg-gray-50 px-4 py-4 sm:px-6">
+                  <div className="text-sm">
+                    <a
+                      href="#"
+                      className="font-medium text-indigo-600 hover:text-indigo-500"
+                    >
+                      {" "}
+                      View all
+                      <span className="sr-only"> {item.name} stats</span>
+                    </a>
+                  </div>
+                </div> */}
+              </dd>
+            )}
+          </div>
+        </dl>
+      </div>
       <div className="flex pt-4 pb-8">
         <p className="text-lg">
           We're sad to see you go! To unstake, please enter an amount below (up
-          to your staked amount). The amount will be sent back to the addres{" "}
+          to your staked amount). The amount will be sent back to the address{" "}
           <span title={currentAccount.address}>
             {truncateAddress(currentAccount.address)}
           </span>{" "}
@@ -284,16 +382,6 @@ export default function SendUnstake(): ReactElement {
             align-items: center;
             justify-content: flex-end;
             gap: 0.75rem;
-          }
-          .stake_icon {
-            mask-image: url("./images/stake@2x.png");
-            mask-size: contain;
-            mask-repeat: no-repeat;
-            mask-position: center;
-            width: 3rem;
-            height: 3rem;
-            background-color: var(--white);
-            display: inline-block;
           }
           .icon_close {
             width: 1rem;

@@ -88,7 +88,7 @@ export function useStakingUserData(addressOnNetwork: AddressOnNetwork) {
     redirect: "follow",
   }
 
-  const { data, error } = useSWR(
+  const { data, error } = useSWR<IUserStakingDataFormatted[], unknown>(
     // TODO: support more than one network name
     [
       `${SENDNODES_ONCHAIN_API_URL}pocket.${addressOnNetwork.network.chainID}`,
