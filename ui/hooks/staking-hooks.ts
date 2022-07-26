@@ -51,14 +51,19 @@ export function useStakingTransactions(address: string) {
 
   const requestOptions = {
     method: "POST",
-    headers: myHeaders,
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: raw,
     redirect: "follow",
   } as RequestInit
 
   const { data, error } = useSWR(
     [`${SENDNODES_ONCHAIN_API_URL}pocket.mainnet`, requestOptions],
-    fetcher
+    fetcher,
+    {
+      refreshInterval: 30 * 1000,
+    }
   )
 
   return {
@@ -94,7 +99,10 @@ export function useStakingUserData(addressOnNetwork: AddressOnNetwork) {
       `${SENDNODES_ONCHAIN_API_URL}pocket.${addressOnNetwork.network.chainID}`,
       request,
     ],
-    fetcher
+    fetcher,
+    {
+      refreshInterval: 30 * 1000,
+    }
   )
 
   return {

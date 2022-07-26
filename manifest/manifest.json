@@ -1,6 +1,6 @@
 {
   "name": "POKT Wallet",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Secure your POKT with a modern and simple crypto wallet. It's your POKT, store it safely.",
   "homepage_url": "https://poktwallet.io",
   "author": "https://poktwallet.io",
@@ -9,8 +9,14 @@
   "content_security_policy": "object-src 'self'; script-src 'self';",
   "content_scripts": [
     {
-      "matches": ["file://*/*", "http://localhost/*", "https://*/*"],
-      "js": ["provider-bridge.js"],
+      "matches": [
+        "file://*/*",
+        "http://localhost/*",
+        "https://*/*"
+      ],
+      "js": [
+        "provider-bridge.js"
+      ],
       "run_at": "document_start",
       "all_frames": true
     }
