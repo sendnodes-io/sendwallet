@@ -34,12 +34,11 @@ import {
   POKTSkinnyBlock,
 } from "../../networks"
 import { AssetTransfer } from "../../assets"
-import { ETH, POKT } from "../../constants/currencies"
 import PreferenceService, {
   EventNames as PreferencesEventNames,
 } from "../preferences"
 import { ServiceCreatorFunction, ServiceLifecycleEvents } from "../types"
-import { getOrCreateDB, ChainDatabase } from "./db"
+import { getOrCreateDB, ChainDatabase, TransactionRetrieval } from "./db"
 import BaseService from "../base"
 import {
   blockFromEthersBlock,
@@ -65,7 +64,6 @@ import { ETHEREUM, FORK, HOUR, POCKET } from "../../constants"
 import SerialFallbackProvider from "./serial-fallback-provider"
 import PocketProvider from "./pocket-provider"
 import AssetDataHelper from "./asset-data-helper"
-import chunk from "lodash/chunk"
 
 // We can't use destructuring because webpack has to replace all instances of
 // `process.env` variables in the bundled output
@@ -88,7 +86,7 @@ const BLOCKS_FOR_EVM_TRANSACTION_HISTORY = 128000
 // The number of blocks before the current block height to start looking for
 // asset transfers. This is important to allow nodes like Erigon and
 // OpenEthereum with tracing to catch up to where we are.
-const BLOCKS_TO_SKIP_FOR_TRANSACTION_HISTORY = 20
+const BLOCKS_TO_SKIP_FOR_EVM_TRANSACTION_HISTORY = 20
 
 // The number of asset transfer lookups that will be done per account to rebuild
 // historic activity.
@@ -99,6 +97,9 @@ const HISTORIC_ASSET_TRANSFER_LOOKUPS_PER_ACCOUNT = 10
 // for either internal (request failure) or external (transaction dropped from
 // mempool) reasons.
 const TRANSACTION_CHECK_LIFETIME_MS = 10 * HOUR
+
+// The number of max historical transactions to load for Pocket network accounts
+const MAX_HISTORIC_ASSET_TRANSFERS_POCKET = 100
 
 export enum ChainEventNames {
   BLOCK_PRICES = "blockPrices",
@@ -210,8 +211,9 @@ export default class ChainService extends BaseService<Events> {
         },
       },
       recentAssetTransferAlarm: {
+        runAtStart: true,
         schedule: {
-          periodInMinutes: 1,
+          periodInMinutes: 5, // Pocket block times are 15min so no need for short period
         },
         handler: () => {
           this.handleRecentAssetTransferAlarm()
@@ -659,22 +661,18 @@ export default class ChainService extends BaseService<Events> {
     network: EVMNetwork | POKTNetwork,
     txHash: HexString,
     firstSeen: UNIXTime,
-    txData?: POKTTransaction
+    txData?: POKTTransaction | AssetTransfer
   ): Promise<void> {
     try {
-      const seen = new Set(
-        this.transactionsToRetrieve
-          .filter((x) => x.network.family === network.family)
-          .map(({ hash }) => hash)
-      )
-      if (!seen.has(txHash)) {
-        this.transactionsToRetrieve.push({
-          network,
-          hash: txHash,
-          firstSeen,
-          txData,
-        })
+      const txToRetrieve: TransactionRetrieval = {
+        network,
+        hash: txHash,
+        firstSeen,
+        txData,
       }
+      if (txData && "height" in txData)
+        txToRetrieve.height = BigInt(txData.height)
+      await this.db.queueTransactionRetrieval(txToRetrieve)
     } catch (e) {
       throw new Error("Unable to fetch network family: " + network.family)
     }
@@ -816,7 +814,7 @@ export default class ChainService extends BaseService<Events> {
     if (addressNetwork.network.family === "EVM") {
       const blockHeight =
         (await this.getBlockHeight(addressNetwork.network)) -
-        BLOCKS_TO_SKIP_FOR_TRANSACTION_HISTORY
+        BLOCKS_TO_SKIP_FOR_EVM_TRANSACTION_HISTORY
       let fromBlock = blockHeight - BLOCKS_FOR_EVM_TRANSACTION_HISTORY
       try {
         return await this.loadAssetTransfers(
@@ -876,7 +874,7 @@ export default class ChainService extends BaseService<Events> {
           addressNetwork
         )
 
-        // new account, load 100 historical asset transfers
+        // load 100 historical asset transfers
         if (oldest === null && newest === null)
           return await this.loadAssetTransfers(addressNetwork)
 
@@ -998,7 +996,7 @@ export default class ChainService extends BaseService<Events> {
 
       const txsToRecord: PoktJSTransaction[] = []
       for (let tx of allTxs) {
-        if (txsToRecord.length >= 100) break
+        if (txsToRecord.length >= MAX_HISTORIC_ASSET_TRANSFERS_POCKET) break
         if (startBlock && tx.height <= startBlock) break
         if (tx.txResult.messageType !== "send") continue
         txsToRecord.push(tx)
@@ -1007,7 +1005,7 @@ export default class ChainService extends BaseService<Events> {
       if (!txsToRecord.length) {
         await this.db.recordAccountAssetTransferLookup(
           addressOnNetwork,
-          BigInt(0),
+          BigInt(1),
           BigInt(height)
         )
         return
@@ -1019,7 +1017,7 @@ export default class ChainService extends BaseService<Events> {
           pocketTx,
           addressOnNetwork.network
         )
-        this.queueTransactionHashToRetrieve(
+        await this.queueTransactionHashToRetrieve(
           addressOnNetwork.network,
           tx.hash,
           firstSeen,
@@ -1029,11 +1027,12 @@ export default class ChainService extends BaseService<Events> {
 
       const startHeight =
         startBlock ?? txsToRecord[txsToRecord.length - 1].height.valueOf()
+      const endHeight = endBlock ?? txsToRecord[0].height.valueOf()
 
       await this.db.recordAccountAssetTransferLookup(
         addressOnNetwork,
         startHeight,
-        BigInt(height)
+        endHeight
       )
     }
   }
@@ -1059,72 +1058,64 @@ export default class ChainService extends BaseService<Events> {
   // }
 
   private async handleQueuedTransactionAlarm(): Promise<void> {
-    console.log("handle queued transaction alarm", this.transactionsToRetrieve)
-
-    for (const txsChunk of chunk(
-      this.transactionsToRetrieve,
+    const txsToRetrieve = await this.db.deQueueTransactionRetrieval(
       MAX_CONCURRENT_TRANSACTION_REQUESTS
-    )) {
-      for (const tx of txsChunk) {
-        const { network, hash, firstSeen, txData } = tx
-        if (network.family === "EVM") {
-          try {
-            const result = await this.ethProvider.getTransaction(hash)
+    )
+    for (const tx of txsToRetrieve) {
+      const { network, hash, firstSeen, txData } = tx
+      if (network.family === "EVM") {
+        try {
+          const result = await this.ethProvider.getTransaction(hash)
 
-            const transaction = transactionFromEthersTransaction(
-              result,
-              network
+          const transaction = transactionFromEthersTransaction(result, network)
+
+          // TODO make this provider specific
+          await this.saveTransaction(transaction, "alchemy")
+
+          if (!transaction.blockHash && !transaction.blockHeight) {
+            this.subscribeToTransactionConfirmation(
+              transaction.network,
+              transaction
+            )
+          } else if (transaction.blockHash) {
+            // Get relevant block data.
+            await this.getBlockData(transaction.network, transaction.blockHash)
+            // Retrieve gas used, status, etc
+            this.retrieveTransactionReceipt(transaction.network, transaction)
+          }
+        } catch (error) {
+          logger.error(`Error retrieving transaction ${hash}`, error)
+          if (Date.now() <= firstSeen + TRANSACTION_CHECK_LIFETIME_MS) {
+            this.queueTransactionHashToRetrieve(network, hash, firstSeen)
+          } else {
+            logger.warn(
+              `Transaction ${hash} is too old to keep looking for it; treating ` +
+                "it as expired."
             )
 
-            // TODO make this provider specific
-            await this.saveTransaction(transaction, "alchemy")
-
-            if (!transaction.blockHash && !transaction.blockHeight) {
-              this.subscribeToTransactionConfirmation(
-                transaction.network,
-                transaction
-              )
-            } else if (transaction.blockHash) {
-              // Get relevant block data.
-              await this.getBlockData(
-                transaction.network,
-                transaction.blockHash
-              )
-              // Retrieve gas used, status, etc
-              this.retrieveTransactionReceipt(transaction.network, transaction)
-            }
-          } catch (error) {
-            logger.error(`Error retrieving transaction ${hash}`, error)
-            if (Date.now() <= firstSeen + TRANSACTION_CHECK_LIFETIME_MS) {
-              this.queueTransactionHashToRetrieve(network, hash, firstSeen)
-            } else {
-              logger.warn(
-                `Transaction ${hash} is too old to keep looking for it; treating ` +
-                  "it as expired."
-              )
-
-              this.db
-                .getTransaction(network, hash)
-                .then((existingTransaction) => {
-                  if (existingTransaction !== null) {
-                    logger.debug(
-                      "Found existing transaction for expired lookup; marking as " +
-                        "failed if no other status exists."
-                    )
-                    this.saveTransaction(
-                      // Don't override an already-persisted successful status with
-                      // an expiration-based failed status, but do set status to
-                      // failure if no transaction was seen.
-                      { status: 0, ...existingTransaction },
-                      "local"
-                    )
-                  }
-                })
-            }
+            this.db
+              .getTransaction(network, hash)
+              .then((existingTransaction) => {
+                if (existingTransaction !== null) {
+                  logger.debug(
+                    "Found existing transaction for expired lookup; marking as " +
+                      "failed if no other status exists."
+                  )
+                  this.saveTransaction(
+                    // Don't override an already-persisted successful status with
+                    // an expiration-based failed status, but do set status to
+                    // failure if no transaction was seen.
+                    { status: 0, ...existingTransaction },
+                    "local"
+                  )
+                }
+              })
           }
         }
+      }
 
-        if (network.family === "POKT" && txData) {
+      if (network.family === "POKT" && txData) {
+        try {
           const tx = txData as POKTTransaction
           const existingBlock = await this.db.getBlock(network, tx.height)
           // important to save the block before the tx so the block timestamp is readily available
@@ -1133,6 +1124,8 @@ export default class ChainService extends BaseService<Events> {
             await this.getBlockData(network, tx.height.toString())
           }
           await this.saveTransaction(tx, "local")
+        } catch (error) {
+          logger.error(`Error retrieving transaction ${hash}`, error)
         }
       }
     }
