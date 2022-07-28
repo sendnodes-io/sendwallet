@@ -739,33 +739,31 @@ export default class ChainService extends BaseService<Events> {
 
       const tx = transaction as SignedPOKTTransaction
 
-      await Promise.all([
-        this.poktProvider
-          .sendTransaction(tx)
-          .then(async (transactionResponse) => {
-            this.emitter.emit("transactionSend", transactionResponse)
-            this.saveTransaction({ ...tx, ...transactionResponse }, "local")
-            // TODO subscribe to pokt tx confirmation
-            await this.subscribeToTransactionConfirmation(
-              tx.network,
-              transactionResponse
-            )
-            return Promise.resolve(transactionResponse.hash)
-          })
-          .catch((error) => {
-            logger.debug(
-              "Broadcast error caught, saving failed status and releasing nonce...",
-              transaction,
-              error
-            )
-            // Failure to broadcast needs to be registered.
-            // this.saveTransaction(
-            //   { ...transaction, status: 0, error: error.toString() },
-            //   "alchemy"
-            // )
-            return Promise.reject(error)
-          }),
-      ])
+      return await this.poktProvider
+        .sendTransaction(tx)
+        .then(async (transactionResponse) => {
+          this.emitter.emit("transactionSend", transactionResponse)
+          await this.saveTransaction({ ...tx, ...transactionResponse }, "local")
+          // TODO subscribe to pokt tx confirmation
+          await this.subscribeToTransactionConfirmation(
+            tx.network,
+            transactionResponse
+          )
+          return transactionResponse.hash
+        })
+        .catch((error) => {
+          logger.debug(
+            "Broadcast error caught, saving failed status...",
+            transaction,
+            error
+          )
+          // Failure to broadcast needs to be registered.
+          // this.saveTransaction(
+          //   { ...transaction, status: 0, error: error.toString() },
+          //   "alchemy"
+          // )
+          return Promise.reject(error)
+        })
     } catch (error) {
       this.emitter.emit("transactionSendFailure", error)
       logger.error("Error broadcasting transaction", transaction, error)
