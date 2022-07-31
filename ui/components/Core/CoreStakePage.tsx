@@ -17,6 +17,7 @@ import {
   TrendingUpIcon,
 } from "@heroicons/react/solid"
 import { MenuIcon, XIcon } from "@heroicons/react/outline"
+import { stylesheet } from "astroturf"
 
 const navigation = [
   {
@@ -84,7 +85,7 @@ function Sidebar({ isOpen, onClose }: SidebarProps): ReactElement {
   return (
     <Fragment>
       <Transition.Root show={isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-40 md:hidden" onClose={onClose}>
+        <Dialog as="div" className="relative z-40 lg:hidden" onClose={onClose}>
           <Transition.Child
             as={Fragment}
             enter="transition-opacity ease-linear duration-300"
@@ -177,7 +178,7 @@ function Sidebar({ isOpen, onClose }: SidebarProps): ReactElement {
       </Transition.Root>
 
       {/* Static sidebar for desktop */}
-      <div className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 sidebar">
+      <div className="hidden lg:flex lg:w-56 lg:flex-col lg:absolute lg:inset-y-0 sidebar">
         {/* Sidebar component, swap this element with another sidebar if you like */}
         <div className="flex-1 flex flex-col min-h-0 bg-rich-black">
           <div className="flex-1 flex flex-col pb-4 overflow-y-auto">
@@ -240,39 +241,42 @@ interface Props {
   children: React.ReactNode
 }
 
+const styles = stylesheet`
+  .mainPanel {
+    @apply max-w-5xl mx-auto relative rounded-3xl bg-eerie-black;
+    background: radial-gradient(98.15% 107.73% at 15.3% 0%, rgba(255, 255, 255, 0.12) 0%, rgba(0, 0, 0, 0) 100%) /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */, #151515;
+  }
+`
+
 export default function CoreStakePage(props: Props): ReactElement {
   const { children } = props
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   return (
-    <div className="">
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+    <div className="md:py-12 xl:py-24">
+      <div className={styles.mainPanel}>
+        <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-      <div className="md:pl-64 flex flex-col flex-1">
-        <div className="sticky top-0 z-10 md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3 bg-eerie-black">
-          <button
-            type="button"
-            className="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-white hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-aqua"
-            onClick={() => setSidebarOpen(true)}
-          >
-            <span className="sr-only">Open sidebar</span>
-            <MenuIcon className="h-6 w-6" aria-hidden="true" />
-          </button>
-        </div>
-        <main className="flex-1">
-          <div className="py-16">
-            <div className="max-w-5xl mx-auto px-4 sm:px-6 md:px-8">
-              <div className="bg-eerie-black p-2 rounded-lg ">
-                <div className="dashed_border rounded-lg ">
-                  <div className="p-4">{children}</div>
-                </div>
-              </div>
+        <div className="lg:pl-56 flex flex-col flex-1">
+          <div className="sticky top-0 z-10 lg:hidden pl-1 pt-1 sm:pl-3 sm:pt-3 bg-eerie-black">
+            <button
+              type="button"
+              className="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-white hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-aqua"
+              onClick={() => setSidebarOpen(true)}
+            >
+              <span className="sr-only">Open sidebar</span>
+              <MenuIcon className="h-6 w-6" aria-hidden="true" />
+            </button>
+          </div>
+          <main className="flex-1">
+            <div className="min-h-[36rem] flex p-4">
+              {children}
               <div className="flex justify-center">
                 <Snackbar />
               </div>
             </div>
-          </div>
-        </main>
+          </main>
+        </div>
       </div>
     </div>
   )
