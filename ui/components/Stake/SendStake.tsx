@@ -182,6 +182,15 @@ export default function SendStake(): ReactElement {
     )
   }
 
+  // throw to error fallback page
+  if (isStakingPoktParamsError) {
+    throw isStakingPoktParamsError
+  }
+
+  if (isUserStakingDataError) {
+    throw isUserStakingDataError
+  }
+
   // validatation variables
   const isAmountLessThanStakeMin =
     !amount ||
