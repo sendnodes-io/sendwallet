@@ -15,6 +15,7 @@ module.exports = {
         "rich-black": "#040404",
         "eerie-black": "#1e1e1e",
         "spanish-gray": "#949494",
+        "neon-green": "#5cff33",
       },
     },
   },

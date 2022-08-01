@@ -3,27 +3,38 @@ import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts"
 import { lowerCase } from "lodash"
 import { fetcher, SENDNODES_ONCHAIN_API_URL } from "./constants"
 
-export interface IUserStakingDataFormatted {
-  staked: string
-  unstaked: string
-  pendingStaked: string
-  pendingUnstaked: string
-  compound: boolean
-  userWalletAddress: string
-  transactions: string
+export enum SnAction {
+  STAKE = "STAKE",
+  UNSTAKE = "UNSTAKE",
+  COMPOUND = "COMPOUND",
+  REWARD = "REWARD",
 }
 
-export function useStakingUserData(addressOnNetwork: AddressOnNetwork) {
+export interface ISnTransactionFormatted {
+  height: string
+  index: string
+  signer: string
+  userWalletAddress: string
+  hash: string
+  memo: string
+  amount: string | null
+  action: SnAction
+  compound: boolean
+  reward: boolean
+  timestamp: string
+}
+
+export function useStakingRequestsTransactions(
+  addressOnNetwork: AddressOnNetwork
+) {
   var raw = JSON.stringify({
-    method: "pokt_getStakingUserData",
+    method: "pokt_getStakingRequestsTransactions",
     id: 1,
     jsonrpc: "2.0",
     params: {
-      // TODO: implement cutoff height, but what does it do?
       userWalletAddress: addressOnNetwork.address,
     },
   })
-
   var request = {
     method: "POST",
     headers: {
@@ -33,7 +44,7 @@ export function useStakingUserData(addressOnNetwork: AddressOnNetwork) {
     redirect: "follow",
   }
 
-  const { data, error } = useSWR<IUserStakingDataFormatted[], unknown>(
+  const { data, error } = useSWR<ISnTransactionFormatted[], unknown>(
     // TODO: support more than one network name
     [
       `${SENDNODES_ONCHAIN_API_URL}pocket.${addressOnNetwork.network.chainID}`,
@@ -46,7 +57,7 @@ export function useStakingUserData(addressOnNetwork: AddressOnNetwork) {
   )
 
   return {
-    data: data?.find(
+    data: data?.filter(
       (user: any) =>
         lowerCase(user.userWalletAddress) ===
         lowerCase(addressOnNetwork.address)

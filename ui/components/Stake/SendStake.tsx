@@ -198,7 +198,7 @@ export default function SendStake(): ReactElement {
             <div className="start"></div>
             <div className="center">
               <div className="flex gap-x-4 justify-center items-center">
-                <div className="stake_icon w-12 h-12" />
+                <div className="stake_icon bg-white w-12 h-12" />
                 <h1>Stake</h1>
               </div>
             </div>
@@ -212,7 +212,7 @@ export default function SendStake(): ReactElement {
           <div className="relative pt-5 px-4 pb-12 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden">
             <dt>
               <div className="absolute bg-spanish-gray rounded-md p-3">
-                <div className="stake_icon w-8 h-8 inline-block" />
+                <div className="stake_icon bg-white w-8 h-8 inline-block" />
               </div>
               <p className="ml-16 text-sm font-medium text-spanish-gray truncate">
                 Pending Staked

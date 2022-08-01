@@ -13,6 +13,7 @@ import CoreStakePage from "../components/Core/CoreStakePage"
 import KeyringUnlock from "../components/Keyring/KeyringUnlock"
 import CorePopupPage from "../components/Core/CorePopupPage"
 import SignTransaction from "./SignTransaction"
+import StakeRequestsTransactions from "../components/Stake/StakeRequestsTransactions"
 
 /**
  * Entry point for Stake UI
@@ -58,6 +59,13 @@ export default function Stake({ store }: { store: Store }): ReactElement {
             <CoreStakePage>
               <ErrorBoundary FallbackComponent={ErrorFallback}>
                 <SignTransaction />
+              </ErrorBoundary>
+            </CoreStakePage>
+          </Route>
+          <Route path={"/transactions"} exact>
+            <CoreStakePage>
+              <ErrorBoundary FallbackComponent={ErrorFallback}>
+                <StakeRequestsTransactions />
               </ErrorBoundary>
             </CoreStakePage>
           </Route>

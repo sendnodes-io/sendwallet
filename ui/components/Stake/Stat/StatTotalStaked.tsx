@@ -19,7 +19,7 @@ export default function StatTotalStaked({
     <div className="relative pt-5 px-4 pb-6 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden">
       <dt>
         <div className="absolute bg-capri rounded-md p-3">
-          <div className="stake_icon w-8 h-8 inline-block" />
+          <div className="stake_icon bg-white w-8 h-8 inline-block" />
         </div>
         <p className="ml-16 text-sm font-medium text-spanish-gray truncate">
           Total Staked

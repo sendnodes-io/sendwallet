@@ -32,7 +32,6 @@ const navigation = [
     name: "Transactions",
     href: "/transactions",
     icon: CollectionIcon,
-    disabled: true,
   },
   {
     name: "Unstake",
@@ -269,7 +268,7 @@ export default function CoreStakePage(props: Props): ReactElement {
             </button>
           </div>
           <main className="flex-1">
-            <div className="min-h-[36rem] flex p-4">
+            <div className="min-h-[36rem] flex px-4 py-8">
               {children}
               <div className="flex justify-center">
                 <Snackbar />
