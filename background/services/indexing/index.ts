@@ -115,7 +115,11 @@ export default class IndexingService extends BaseService<Events> {
     // on launch, push any assets we have cached
     this.emitter.emit(
       "assets",
-      await this.getCachedAssets((await this.preferenceService.getSelectedAccount())?.network)
+      await this.getCachedAssets(
+        (
+          await this.preferenceService.getSelectedAccount()
+        )?.network
+      )
     )
 
     // ... and kick off token list fetching
@@ -219,9 +223,9 @@ export default class IndexingService extends BaseService<Events> {
       addressOnNetwork: AddressOnNetwork
     }[]
   } = {
-      timeout: undefined,
-      assetLookups: [],
-    }
+    timeout: undefined,
+    assetLookups: [],
+  }
 
   async notifyEnrichedTransaction(
     enrichedEVMTransaction: EnrichedEVMTransaction
@@ -230,9 +234,9 @@ export default class IndexingService extends BaseService<Events> {
       typeof enrichedEVMTransaction.annotation === "undefined"
         ? []
         : [
-          enrichedEVMTransaction.annotation,
-          ...(enrichedEVMTransaction.annotation.subannotations ?? []),
-        ]
+            enrichedEVMTransaction.annotation,
+            ...(enrichedEVMTransaction.annotation.subannotations ?? []),
+          ]
 
     jointAnnotations.forEach(async (annotation) => {
       // Note asset transfers of smart contract assets to or from an
@@ -367,8 +371,8 @@ export default class IndexingService extends BaseService<Events> {
           "status" in transaction &&
           transaction.status === 1 &&
           transaction.blockHeight >
-          (await this.chainService.getBlockHeight(transaction.network)) -
-          FAST_TOKEN_REFRESH_BLOCK_RANGE
+            (await this.chainService.getBlockHeight(transaction.network)) -
+              FAST_TOKEN_REFRESH_BLOCK_RANGE
         ) {
           this.scheduledTokenRefresh = true
         }
@@ -565,9 +569,8 @@ export default class IndexingService extends BaseService<Events> {
     const activeAssetsToTrack = assetsToTrack.filter(
       async (asset) =>
         asset.symbol ===
-        (
-          await this.preferenceService.getSelectedAccount()
-        ).network.baseAsset.symbol
+        (await this.preferenceService.getSelectedAccount()).network.baseAsset
+          .symbol
     )
 
     try {
@@ -647,7 +650,8 @@ export default class IndexingService extends BaseService<Events> {
             await this.db.saveTokenList(url, newListRef.tokenList)
           } catch (err) {
             logger.warn(
-              `Error fetching, validating, and saving token list ${url}`, err
+              `Error fetching, validating, and saving token list ${url}`,
+              err
             )
           }
         }
@@ -671,12 +675,11 @@ export default class IndexingService extends BaseService<Events> {
   }
 
   private async handleTokenAlarm(): Promise<void> {
-
     if (!this.chainService.ethereumNetwork) {
       logger.warn("No network selected, skipping token refresh")
       return
     }
-    
+
     // no need to block here, as the first fetch blocks the entire service init
     this.fetchAndCacheTokenLists()
 

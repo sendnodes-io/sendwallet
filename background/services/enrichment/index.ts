@@ -9,6 +9,7 @@ import {
   EIP1559TransactionRequest,
   EVMNetwork,
   POKTNetwork,
+  sameNetwork,
 } from "../../networks"
 import { enrichAssetAmountWithDecimalValues } from "../../redux-slices/utils/asset-utils"
 
@@ -94,16 +95,27 @@ export default class EnrichmentService extends BaseService<Events> {
       async ({ transaction, forAccounts }) => {
         if (transaction.network.family === "EVM") {
           this.emitter.emit("enrichedEVMTransaction", {
-            transaction: await this.enrichTransaction(
+            transaction: (await this.enrichTransaction(
               transaction,
               2 /* TODO desiredDecimals should be configurable */
-            ) as EnrichedEVMTransaction,
+            )) as EnrichedEVMTransaction,
             forAccounts,
           })
         }
-
       }
     )
+
+    this.chainService.emitter.on("block", async (block) => {
+      // update all balances of base account on new blocks
+      // TODO: refetch all token balances
+      this.chainService.getAccountsToTrack().then(async (accounts) => {
+        for (const account of accounts.filter((a) =>
+          sameNetwork(a.network, block.network)
+        )) {
+          await this.chainService.getLatestBaseAccountBalance(account)
+        }
+      })
+    })
   }
 
   async resolveTransactionAnnotation(
@@ -118,7 +130,9 @@ export default class EnrichmentService extends BaseService<Events> {
 
     const resolvedTime = Date.now()
     if (network.family === "EVM") {
-      const tx = transaction as AnyEVMTransaction | (Partial<EIP1559TransactionRequest> & { from: string })
+      const tx = transaction as
+        | AnyEVMTransaction
+        | (Partial<EIP1559TransactionRequest> & { from: string })
       if (typeof tx.to === "undefined") {
         // A missing recipient means a contract deployment.
         txAnnotation = {
@@ -243,7 +257,6 @@ export default class EnrichmentService extends BaseService<Events> {
         }
       }
 
-
       // Look up logs and resolve subannotations, if available.
       if ("logs" in tx && typeof tx.logs !== "undefined") {
         const assets = await this.indexingService.getCachedAssets(network)
@@ -292,21 +305,21 @@ export default class EnrichmentService extends BaseService<Events> {
 
             return typeof matchingFungibleAsset !== "undefined"
               ? [
-                {
-                  type: "asset-transfer",
-                  assetAmount: enrichAssetAmountWithDecimalValues(
-                    {
-                      asset: matchingFungibleAsset,
-                      amount,
-                    },
-                    desiredDecimals
-                  ),
-                  senderAddress,
-                  recipientAddress,
-                  recipientName,
-                  timestamp: resolvedTime,
-                },
-              ]
+                  {
+                    type: "asset-transfer",
+                    assetAmount: enrichAssetAmountWithDecimalValues(
+                      {
+                        asset: matchingFungibleAsset,
+                        amount,
+                      },
+                      desiredDecimals
+                    ),
+                    senderAddress,
+                    recipientAddress,
+                    recipientName,
+                    timestamp: resolvedTime,
+                  },
+                ]
               : []
           }
         )
