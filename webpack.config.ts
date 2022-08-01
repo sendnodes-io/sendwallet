@@ -18,7 +18,6 @@ import WebExtension from "webpack-target-webextension"
 const StatoscopeWebpackPlugin = require("@statoscope/webpack-plugin").default
 import MiniCssExtractPlugin from "mini-css-extract-plugin"
 import { CleanWebpackPlugin } from "clean-webpack-plugin"
-import HTMLInlineCSSWebpackPlugin from "html-inline-css-webpack-plugin"
 
 const supportedBrowsers = ["brave", "chrome", "edge", "firefox", "opera"]
 
@@ -64,7 +63,10 @@ const baseConfig: Configuration = {
               cacheDirectory: true,
             },
           },
-          "astroturf/loader",
+          {
+            loader: "astroturf/loader",
+            options: { extension: ".module.css" },
+          },
         ],
       },
 
@@ -269,12 +271,6 @@ const modeConfigs: {
     return {
       devtool: false,
       plugins: [
-        new HTMLInlineCSSWebpackPlugin({
-          replace: {
-            removeTarget: true,
-            target: "<!-- inline_css_plugin -->",
-          },
-        }),
         new WebExtensionArchivePlugin({
           filename: `POKTWallet-${branch.replaceAll(/[.\/]/gi, "-")}-${
             date.toISOString().split("T")[0]
