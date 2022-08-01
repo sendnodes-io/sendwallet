@@ -9,10 +9,7 @@ import {
   selectCurrentAccountBalances,
   selectMainCurrencySymbol,
 } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
-import {
-  FungibleAsset,
-  isFungibleAssetAmount,
-} from "@sendnodes/pokt-wallet-background/assets"
+import { FungibleAsset } from "@sendnodes/pokt-wallet-background/assets"
 import { POKT } from "@sendnodes/pokt-wallet-background/constants"
 import {
   convertFixedPointNumber,
@@ -22,12 +19,11 @@ import {
   selectAssetPricePoint,
   transferAsset,
 } from "@sendnodes/pokt-wallet-background/redux-slices/assets"
-import { CompleteAssetAmount } from "@sendnodes/pokt-wallet-background/redux-slices/accounts"
 import {
   enrichAssetAmountWithDecimalValues,
   enrichAssetAmountWithMainCurrencyValues,
 } from "@sendnodes/pokt-wallet-background/redux-slices/utils/asset-utils"
-import { useHistory, useLocation } from "react-router-dom"
+import { useHistory } from "react-router-dom"
 import SharedAssetInput from "../Shared/SharedAssetInput"
 import SharedButton from "../Shared/SharedButton"
 import {
@@ -40,16 +36,17 @@ import SharedCheckbox from "../Shared/SharedCheckbox"
 import formatTokenAmount from "../../utils/formatTokenAmount"
 import { InformationCircleIcon } from "@heroicons/react/solid"
 import {
-  SENDNODES_POKT_SIW,
+  useStakingPoktParams,
   useStakingUserData,
 } from "../../hooks/staking-hooks"
-import { current } from "@reduxjs/toolkit"
 import { BigNumber } from "ethers"
 import { AnyAssetWithOptionalAmount } from "../Shared/SharedAssetItem"
 import { isEqual } from "lodash"
 import { ReceiptRefundIcon } from "@heroicons/react/outline"
 import { truncateAddress } from "@sendnodes/pokt-wallet-background/lib/utils"
 import SharedLoadingSpinner from "../Shared/SharedLoadingSpinner"
+import StatTotalStaked from "./Stat/StatTotalStaked"
+import { formatFixed, parseFixed } from "@ethersproject/bignumber"
 
 export default function SendUnstake(): ReactElement {
   const history = useHistory()
@@ -64,11 +61,22 @@ export default function SendUnstake(): ReactElement {
     selectMainCurrencySymbol,
     isEqual
   )
+
   const {
-    data: stakingData,
-    isLoading,
-    isError,
+    data: stakingPoktParamsData,
+    isLoading: isStakingPoktParamsLoading,
+    isError: isStakingPoktParamsError,
+  } = useStakingPoktParams(currentAccount)
+
+  const {
+    data: userStakingData,
+    isLoading: isUserStakingDataLoading,
+    isError: isUserStakingDataError,
   } = useStakingUserData(currentAccount)
+
+  // TODO: write a network data hook
+  const networkFee = 1e4
+
   const [selectedAsset, setSelectedAsset] = useState<FungibleAsset>(
     currentAccount.network.baseAsset
   )
@@ -77,12 +85,13 @@ export default function SendUnstake(): ReactElement {
     useState(false)
   const [hasError, setHasError] = useState(false)
 
-  const totalStakedBalance =
-    BigInt(stakingData?.staked ?? 0) * BigInt(1e6) -
-    BigInt(stakingData?.pendingUnstaked ?? 0) * BigInt(1e6)
-  const totalStakedBalanceDecimals = BigNumber.from(totalStakedBalance)
-    .div(Math.pow(10, currentAccount.network.baseAsset.decimals))
-    .toNumber()
+  const totalStakedBalance = BigNumber.from(userStakingData?.staked ?? 0).sub(
+    BigNumber.from(userStakingData?.pendingUnstaked ?? 0)
+  )
+
+  const totalStakedBalanceDecimals = Number(
+    formatFixed(totalStakedBalance, selectedAsset.decimals)
+  )
 
   const assetPricePoint = useBackgroundSelector((state) =>
     selectAssetPricePoint(
@@ -96,7 +105,7 @@ export default function SendUnstake(): ReactElement {
     enrichAssetAmountWithMainCurrencyValues(
       enrichAssetAmountWithDecimalValues(
         {
-          amount: totalStakedBalance,
+          amount: totalStakedBalance.toBigInt(),
           asset: currentAccount.network.baseAsset,
         },
         2
@@ -131,20 +140,29 @@ export default function SendUnstake(): ReactElement {
   const areKeyringsUnlocked = useAreKeyringsUnlocked(true)
 
   const sendTransactionRequest = useCallback(async () => {
-    if (assetAmount === undefined || !areKeyringsUnlocked) {
+    if (
+      assetAmount === undefined ||
+      !areKeyringsUnlocked ||
+      !stakingPoktParamsData?.wallets?.siw
+    ) {
+      console.warn("Somethings not right", {
+        assetAmount,
+        areKeyringsUnlocked,
+        stakingPoktParamsData,
+      })
       return
     }
     try {
       setIsSendingTransactionRequest(true)
 
       // memo spec is u:amount=[amount in uPOKT]
-      const memo = `u:${amount}`
+      const memo = `u:${parseFixed(amount, selectedAsset.decimals)}`
 
       dispatch(
         transferAsset({
           fromAddressNetwork: currentAccount,
           toAddressNetwork: {
-            address: SENDNODES_POKT_SIW,
+            address: stakingPoktParamsData.wallets.siw,
             network: currentAccount.network,
           },
           assetAmount: { amount: 1n, asset: selectedAsset },
@@ -160,14 +178,18 @@ export default function SendUnstake(): ReactElement {
   }, [
     assetAmount,
     currentAccount,
-    SENDNODES_POKT_SIW,
+    stakingPoktParamsData,
     dispatch,
     history,
     areKeyringsUnlocked,
   ])
 
-  if (!areKeyringsUnlocked || isLoading) {
-    return <SharedSplashScreen />
+  if (!areKeyringsUnlocked) {
+    return (
+      <div className="flex-1 w-full relative flex justify-center items-center">
+        <SharedSplashScreen />
+      </div>
+    )
   }
 
   return (
@@ -180,36 +202,35 @@ export default function SendUnstake(): ReactElement {
         <dl className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           <div className="relative pt-5 px-4 pb-6 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden">
             <dt>
-              <div className="absolute bg-eerie-black rounded-md p-3">
+              <div className="absolute bg-spanish-gray rounded-md p-3">
                 <div className="stake_icon w-8 h-8 inline-block" />
               </div>
               <p className="ml-16 text-sm font-medium text-spanish-gray truncate">
                 Total Unstaked
               </p>
             </dt>
-            {isLoading ? (
+            {isUserStakingDataLoading ? (
               <SharedLoadingSpinner />
             ) : (
               <dd className="ml-16 pb-6 flex items-baseline sm:pb-7">
-                <p className="text-2xl font-semibold text-white">
-                  {stakingData?.unstaked}
-                </p>
-
-                {/* <div className="absolute bottom-0 inset-x-0 bg-gray-50 px-4 py-4 sm:px-6">
-                  <div className="text-sm">
-                    <a
-                      href="#"
-                      className="font-medium text-indigo-600 hover:text-indigo-500"
-                    >
-                      {" "}
-                      View all
-                      <span className="sr-only"> {item.name} stats</span>
-                    </a>
-                  </div>
-                </div> */}
+                {isUserStakingDataError ? (
+                  (isUserStakingDataError as any).toString()
+                ) : isUserStakingDataLoading ? (
+                  <SharedLoadingSpinner />
+                ) : (
+                  <p className="text-2xl font-semibold text-white">
+                    {formatTokenAmount(
+                      formatFixed(
+                        userStakingData?.unstaked ?? 0,
+                        selectedAsset.decimals
+                      )
+                    )}
+                  </p>
+                )}
               </dd>
             )}
           </div>
+
           <div className="relative pt-5 px-4 pb-6 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden">
             <dt>
               <div className="absolute bg-spanish-gray rounded-md p-3">
@@ -219,61 +240,29 @@ export default function SendUnstake(): ReactElement {
                 Pending Unstaked
               </p>
             </dt>
-            {isLoading ? (
+            {isUserStakingDataLoading ? (
               <SharedLoadingSpinner />
             ) : (
               <dd className="ml-16 pb-6 flex items-baseline sm:pb-7">
-                <p className="text-2xl font-semibold text-white">
-                  {stakingData?.pendingUnstaked}
-                </p>
-
-                {/* <div className="absolute bottom-0 inset-x-0 bg-gray-50 px-4 py-4 sm:px-6">
-                  <div className="text-sm">
-                    <a
-                      href="#"
-                      className="font-medium text-indigo-600 hover:text-indigo-500"
-                    >
-                      {" "}
-                      View all
-                      <span className="sr-only"> {item.name} stats</span>
-                    </a>
-                  </div>
-                </div> */}
+                {isUserStakingDataError ? (
+                  (isUserStakingDataError as any).toString()
+                ) : isUserStakingDataLoading ? (
+                  <SharedLoadingSpinner />
+                ) : (
+                  <p className="text-2xl font-semibold text-white">
+                    {formatTokenAmount(
+                      formatFixed(
+                        userStakingData?.pendingUnstaked ?? 0,
+                        selectedAsset.decimals
+                      )
+                    )}
+                  </p>
+                )}
               </dd>
             )}
           </div>
-          <div className="relative pt-5 px-4 pb-6 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden">
-            <dt>
-              <div className="absolute bg-capri rounded-md p-3">
-                <div className="stake_icon w-8 h-8 inline-block" />
-              </div>
-              <p className="ml-16 text-sm font-medium text-spanish-gray truncate">
-                Total Staked
-              </p>
-            </dt>
-            {isLoading ? (
-              <SharedLoadingSpinner />
-            ) : (
-              <dd className="ml-16 pb-6 flex items-baseline sm:pb-7">
-                <p className="text-2xl font-semibold text-white">
-                  {stakingData?.staked}
-                </p>
 
-                {/* <div className="absolute bottom-0 inset-x-0 bg-gray-50 px-4 py-4 sm:px-6">
-                  <div className="text-sm">
-                    <a
-                      href="#"
-                      className="font-medium text-indigo-600 hover:text-indigo-500"
-                    >
-                      {" "}
-                      View all
-                      <span className="sr-only"> {item.name} stats</span>
-                    </a>
-                  </div>
-                </div> */}
-              </dd>
-            )}
-          </div>
+          <StatTotalStaked aon={currentAccount} asset={selectedAsset} />
         </dl>
       </div>
       <div className="flex pt-4 pb-8">
@@ -304,7 +293,20 @@ export default function SendUnstake(): ReactElement {
             assetsAndAmounts={[fungibleAssetAmount]}
             disableDropdown={true}
             onAmountChange={(value, errorMessage) => {
+              // truncate to selected asset decimals
+              try {
+                parseFixed(value, selectedAsset.decimals)
+              } catch (e) {
+                if (
+                  (e as Error)
+                    .toString()
+                    .includes("fractional component exceeds decimals")
+                ) {
+                  value = value.substring(0, value.length - 1)
+                }
+              }
               setAmount(value)
+
               if (errorMessage) {
                 setHasError(true)
                 return
@@ -324,10 +326,17 @@ export default function SendUnstake(): ReactElement {
       <div className="section">
         <div style={{ alignSelf: "flex-start", marginBottom: "1.5rem" }}>
           <p>
-            <small>TX Fees - 0.01 POKT</small>
+            <small>
+              TX Fees -{" "}
+              {formatTokenAmount(
+                formatFixed(networkFee, selectedAsset.decimals)
+              )}{" "}
+              POKT
+            </small>
           </p>
         </div>
       </div>
+
       <div className="section py-4">
         <div
           style={{ "--icon-color": "var(--eerie-black-100)" } as CSSProperties}
@@ -337,6 +346,8 @@ export default function SendUnstake(): ReactElement {
             size="large"
             isDisabled={
               isSendingTransactionRequest ||
+              isStakingPoktParamsLoading ||
+              !!isStakingPoktParamsError ||
               Number(amount) === 0 ||
               Number(amount) > totalStakedBalanceDecimals ||
               hasError

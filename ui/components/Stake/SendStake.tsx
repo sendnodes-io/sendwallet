@@ -54,6 +54,7 @@ import clsx from "clsx"
 import SharedLoadingSpinner from "../Shared/SharedLoadingSpinner"
 import { BigNumber } from "ethers"
 import { formatFixed, parseFixed } from "@ethersproject/bignumber"
+import StatTotalStaked from "./Stat/StatTotalStaked"
 
 export default function SendStake(): ReactElement {
   const location = useLocation<FungibleAsset>()
@@ -207,31 +208,7 @@ export default function SendStake(): ReactElement {
       </div>
       <div>
         <dl className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          <div className="relative pt-5 px-4 pb-6 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden">
-            <dt>
-              <div className="absolute bg-capri rounded-md p-3">
-                <div className="stake_icon w-8 h-8 inline-block" />
-              </div>
-              <p className="ml-16 text-sm font-medium text-spanish-gray truncate">
-                Total Staked
-              </p>
-            </dt>
-
-            <dd className="ml-16 flex items-baseline">
-              {isUserStakingDataLoading ? (
-                <SharedLoadingSpinner />
-              ) : (
-                <p className="text-2xl font-semibold text-white">
-                  {formatTokenAmount(
-                    formatFixed(
-                      userStakingData?.staked ?? 0,
-                      selectedAsset.decimals
-                    )
-                  )}
-                </p>
-              )}
-            </dd>
-          </div>
+          <StatTotalStaked aon={currentAccount} asset={selectedAsset} />
           <div className="relative pt-5 px-4 pb-12 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden">
             <dt>
               <div className="absolute bg-spanish-gray rounded-md p-3">
@@ -255,19 +232,6 @@ export default function SendStake(): ReactElement {
                   )}
                 </p>
               )}
-
-              {/* <div className="absolute bottom-0 inset-x-0 bg-gray-50 px-4 py-4 sm:px-6">
-                  <div className="text-sm">
-                    <a
-                      href="#"
-                      className="font-medium text-indigo-600 hover:text-indigo-500"
-                    >
-                      {" "}
-                      View all
-                      <span className="sr-only"> {item.name} stats</span>
-                    </a>
-                  </div>
-                </div> */}
             </dd>
           </div>
         </dl>

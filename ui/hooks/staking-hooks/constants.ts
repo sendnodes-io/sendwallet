@@ -1,4 +1,3 @@
-export const SENDNODES_POKT_SIW = process.env.SENDNODES_POKT_SIW!
 export const SENDNODES_ONCHAIN_API_URL =
   process.env.SENDNODES_ONCHAIN_API_URL ?? "http://onchainapi.sendnodes.io/"
 
