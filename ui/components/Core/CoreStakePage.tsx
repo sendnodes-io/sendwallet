@@ -23,8 +23,8 @@ import { useStakingPoktParams } from "../../hooks/staking-hooks"
 import SharedSplashScreen from "../Shared/SharedSplashScreen"
 import { isEqual } from "lodash"
 import SharedAddress from "../Shared/SharedAddress"
-import SharedSlideUpMenu from "../Shared/SharedSlideUpMenu"
 import AccountsNotificationPanel from "../AccountsNotificationPanel/AccountsNotificationPanel"
+import SharedModal from "../Shared/SharedModal"
 
 /* FIXME: REMOVE NOT NEEDED FOR GO LIVE */
 function ProdWarningBanner() {
@@ -242,6 +242,12 @@ const styles = stylesheet`
     @apply max-w-5xl mx-auto relative rounded-3xl bg-eerie-black;
     background: radial-gradient(98.15% 107.73% at 15.3% 0%, rgba(255, 255, 255, 0.12) 0%, rgba(0, 0, 0, 0) 100%) /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */, #151515;
   }
+  .accountsModal :global(.switcher_wrap) {
+    @apply rounded-none -mx-4 sm:-mx-6 !important;
+  }
+  .accountsModalScrollbar :global(.switcher_wrap:-webkit-scrollbar-track) {
+    @apply bg-eerie-black;
+  }
 `
 
 export default function CoreStakePage(props: Props): ReactElement {
@@ -332,14 +338,33 @@ export default function CoreStakePage(props: Props): ReactElement {
         </div>
       </div>
 
-      <SharedSlideUpMenu
+      <SharedModal
         isOpen={isAccountsPanelOpen}
-        close={() => setIsAccountsPanelOpen(false)}
+        onClose={() => setIsAccountsPanelOpen(false)}
+        className={styles.accountsModal}
       >
-        <AccountsNotificationPanel
-          onCurrentAddressChange={() => setIsAccountsPanelOpen(false)}
-        />
-      </SharedSlideUpMenu>
+        <>
+          <div className="absolute top-0 right-0 pt-5 pr-5 z-10">
+            <button
+              type="button"
+              className="rounded-md text-spanish-gray hover:text-white  "
+              onClick={() => setIsAccountsPanelOpen(false)}
+            >
+              <span className="sr-only">Close</span>
+              <XIcon className="h-6 w-6" aria-hidden="true" />
+            </button>
+          </div>
+          <div className="z-0">
+            <div className="text-center relative py-4 mb-2">
+              <h3 className="text-2xl">My Wallets</h3>
+            </div>
+            <AccountsNotificationPanel
+              showEasterEgg={false}
+              onCurrentAddressChange={() => setIsAccountsPanelOpen(false)}
+            />
+          </div>
+        </>
+      </SharedModal>
     </>
   )
 }
