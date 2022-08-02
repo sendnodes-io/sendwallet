@@ -14,7 +14,7 @@ interface SharedModalProps {
 
 const modalElement = document.getElementById("pokt-wallet-root") as HTMLElement
 
-export default function SharedModal({
+export default function SharedModalPopup({
   children,
   header,
   onClose,
