@@ -4,12 +4,10 @@ import { Dialog, Transition } from "@headlessui/react"
 import classNames, { clsx } from "clsx"
 import { useBackgroundSelector } from "../../hooks"
 import {
-  AccountTotal,
+  getCurrentAccountState,
   selectCurrentAccount,
-  selectCurrentAccountTotal,
 } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
-import SharedLoadingSpinner from "../Shared/SharedLoadingSpinner"
-import SharedAccountItemSummary from "../Shared/SharedAccountItemSummary"
+import { SharedIcon } from "../Shared/SharedIcon"
 import Snackbar from "../Snackbar/Snackbar"
 import { useHistory, Link } from "react-router-dom"
 import {
@@ -19,6 +17,39 @@ import {
 } from "@heroicons/react/solid"
 import { MenuIcon, XIcon } from "@heroicons/react/outline"
 import { stylesheet } from "astroturf"
+
+import { SpeakerphoneIcon } from "@heroicons/react/outline"
+import { useStakingPoktParams } from "../../hooks/staking-hooks"
+import SharedSplashScreen from "../Shared/SharedSplashScreen"
+import { isEqual } from "lodash"
+import SharedAddress from "../Shared/SharedAddress"
+import SharedSlideUpMenu from "../Shared/SharedSlideUpMenu"
+import AccountsNotificationPanel from "../AccountsNotificationPanel/AccountsNotificationPanel"
+
+/* FIXME: REMOVE NOT NEEDED FOR GO LIVE */
+function ProdWarningBanner() {
+  return (
+    <div className="relative bg-gradient-to-r from-capri to-aqua ">
+      <div className="max-w-7xl mx-auto py-3 px-3 sm:px-6 lg:px-8">
+        <div className="pr-16 sm:text-center sm:px-16">
+          <div className="flex-1 flex items-center">
+            <span className="flex p-2 rounded-lg bg-pink-500">
+              <SpeakerphoneIcon
+                className="h-6 w-6 text-white"
+                aria-hidden="true"
+              />
+            </span>
+            <p className="ml-3 font-medium text-eerie-black truncate">
+              <span className="">
+                This is not a drill... You are staking with SendNodes.
+              </span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
 
 const navigation = [
   {
@@ -46,40 +77,7 @@ interface SidebarProps {
   onClose: () => void
 }
 
-function SidebarAddress({
-  currentAccountTotal,
-}: {
-  currentAccountTotal?: AccountTotal
-}) {
-  return (
-    <div className="sidebar_address flex-shrink-0 flex bg-gray-700 p-4">
-      <div className="flex-shrink-0 w-full group block">
-        <div className="flex items-center relative">
-          {currentAccountTotal ? (
-            <SharedAccountItemSummary
-              accountTotal={currentAccountTotal}
-              isSelected={false}
-            />
-          ) : (
-            <SharedLoadingSpinner size="medium" />
-          )}
-        </div>
-      </div>
-      <style jsx>{`
-        .sidebar_address :global(.balance_status) {
-          display: none;
-        }
-
-        .sidebar_address :global(.address) {
-          color: var(--white);
-        }
-      `}</style>
-    </div>
-  )
-}
-
 function Sidebar({ isOpen, onClose }: SidebarProps): ReactElement {
-  const currentAccountTotal = useBackgroundSelector(selectCurrentAccountTotal)
   const history = useHistory()
 
   return (
@@ -167,7 +165,6 @@ function Sidebar({ isOpen, onClose }: SidebarProps): ReactElement {
                     ))}
                   </nav>
                 </div>
-                <SidebarAddress currentAccountTotal={currentAccountTotal} />
               </Dialog.Panel>
             </Transition.Child>
             <div className="flex-shrink-0 w-14">
@@ -216,7 +213,6 @@ function Sidebar({ isOpen, onClose }: SidebarProps): ReactElement {
               ))}
             </nav>
           </div>
-          <SidebarAddress currentAccountTotal={currentAccountTotal} />
         </div>
       </div>
       <style jsx>
@@ -250,11 +246,16 @@ const styles = stylesheet`
 
 export default function CoreStakePage(props: Props): ReactElement {
   const { children } = props
+  const [isAccountsPanelOpen, setIsAccountsPanelOpen] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const currentAccount = useBackgroundSelector(selectCurrentAccount, isEqual)
+  const currentAccountData = useBackgroundSelector(
+    getCurrentAccountState,
+    isEqual
+  )
   const { data, isLoading, isError } = useStakingPoktParams(currentAccount)
 
-  if (isLoading) {
+  if (isLoading || currentAccountData === "loading") {
     return (
       <div className="md:py-12 xl:py-24 min-h-screen flex flex-col justify-center items-center flex-1">
         <SharedSplashScreen />
@@ -273,7 +274,38 @@ export default function CoreStakePage(props: Props): ReactElement {
         <ProdWarningBanner />
       ) : null}
 
-      <div className="md:py-12 xl:py-24">
+      <div className="w-full grid grid-cols-3 max-w-5xl mx-auto py-8">
+        <div className="col-span-1"></div>
+        <div className="col-span-1 flex justify-center items-center">
+          <img src="images/pokt-wallet-logo@2x.png" width="227" height="48" />
+        </div>
+        <div className="col-span-1 flex justify-end items-center">
+          <div className="ml-auto flex-shrink-0">
+            <SharedAddress
+              className="border border-solid border-spanish-gray group"
+              address={currentAccountData!.address}
+              showAvatar
+              onClick={() => setIsAccountsPanelOpen(true)}
+              title={`Current Account: ${
+                currentAccountData?.name
+                  ? currentAccountData?.name
+                  : currentAccountData!.address
+              }`.trim()}
+              icon={
+                <SharedIcon
+                  icon="accounts@2x.png"
+                  width="0.65rem"
+                  height="0.65rem"
+                  className="ml-2 group-hover:bg-white"
+                  color="var(--aqua)"
+                />
+              }
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="">
         <div className={styles.mainPanel}>
           <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
@@ -299,36 +331,15 @@ export default function CoreStakePage(props: Props): ReactElement {
           </div>
         </div>
       </div>
+
+      <SharedSlideUpMenu
+        isOpen={isAccountsPanelOpen}
+        close={() => setIsAccountsPanelOpen(false)}
+      >
+        <AccountsNotificationPanel
+          onCurrentAddressChange={() => setIsAccountsPanelOpen(false)}
+        />
+      </SharedSlideUpMenu>
     </>
-  )
-}
-
-import { SpeakerphoneIcon } from "@heroicons/react/outline"
-import { useStakingPoktParams } from "../../hooks/staking-hooks"
-import SharedSplashScreen from "../Shared/SharedSplashScreen"
-import { isEqual } from "lodash"
-
-/* FIXME: REMOVE NOT NEEDED FOR GO LIVE */
-function ProdWarningBanner() {
-  return (
-    <div className="relative bg-gradient-to-r from-capri to-aqua ">
-      <div className="max-w-7xl mx-auto py-3 px-3 sm:px-6 lg:px-8">
-        <div className="pr-16 sm:text-center sm:px-16">
-          <div className="flex-1 flex items-center">
-            <span className="flex p-2 rounded-lg bg-pink-500">
-              <SpeakerphoneIcon
-                className="h-6 w-6 text-white"
-                aria-hidden="true"
-              />
-            </span>
-            <p className="ml-3 font-medium text-eerie-black truncate">
-              <span className="">
-                This is not a drill... You are staking with SendNodes.
-              </span>
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
   )
 }

@@ -28,6 +28,7 @@ import {
 } from "./keyringsSelectors"
 import { KeyringType } from "@sendnodes/hd-keyring"
 import { BASE_ASSETS_BY_SYMBOL } from "../../constants"
+import { AddressOnMaybeNetwork } from "../../accounts"
 
 // TODO What actual precision do we want here? Probably more than 2
 // TODO decimals? Maybe it's configurable?
@@ -80,7 +81,8 @@ const computeCombinedAssetAmountsData = (
           ? true
           : assetAmount.mainCurrencyAmount > userValueDustThreshold
       const isPresent =
-        assetAmount.decimalAmount > 0 || BASE_ASSETS_BY_SYMBOL[assetAmount.asset.symbol]
+        assetAmount.decimalAmount > 0 ||
+        BASE_ASSETS_BY_SYMBOL[assetAmount.asset.symbol]
       // Hide dust and missing amounts.
       return hideDust ? isNotDust && isPresent : isPresent
     })
@@ -90,7 +92,9 @@ const computeCombinedAssetAmountsData = (
 
 export const getAccountState = (state: RootState) => state.account
 
-export const getCurrentAccountState = (state: RootState): AccountData | "loading" | undefined => {
+export const getCurrentAccountState = (
+  state: RootState
+): AccountData | "loading" | undefined => {
   return state.account.accountsData[state.ui.selectedAccount.address]
 }
 export const getAssetsState = (state: RootState): AssetsState => state.assets
@@ -112,13 +116,14 @@ export const selectAccountAndTimestampedActivities = createSelector(
     return {
       combinedData: {
         assets: combinedAssetAmounts,
-        totalMainCurrencyValue: totalMainCurrencyAmount !== undefined
-          ? formatCurrencyAmount(
-            mainCurrencySymbol,
-            totalMainCurrencyAmount,
-            desiredDecimals
-          )
-          : undefined,
+        totalMainCurrencyValue:
+          totalMainCurrencyAmount !== undefined
+            ? formatCurrencyAmount(
+                mainCurrencySymbol,
+                totalMainCurrencyAmount,
+                desiredDecimals
+              )
+            : undefined,
       },
       accountData: account.accountsData,
     }
@@ -128,7 +133,8 @@ export const selectAccountAndTimestampedActivities = createSelector(
 export const getAccountData = createSelector(
   getAccountState,
   (_: RootState, address: string) => address,
-  (accountState, address): AccountData | "loading" | undefined => accountState.accountsData[address]
+  (accountState, address): AccountData | "loading" | undefined =>
+    accountState.accountsData[address]
 )
 
 export const selectMainCurrencyPricePoint = createSelector(
@@ -143,7 +149,11 @@ export const selectMainCurrencyPricePoint = createSelector(
       return undefined
     }
     // TODO: v0.2.0 Support multi-network base assets.
-    return selectAssetPricePoint(assets, currentAccount?.network.baseAsset.symbol, mainCurrencySymbol)
+    return selectAssetPricePoint(
+      assets,
+      currentAccount?.network.baseAsset.symbol,
+      mainCurrencySymbol
+    )
   }
 )
 
@@ -170,27 +180,26 @@ export const selectCurrentAccountBalances = createSelector(
 
     return {
       assetAmounts: combinedAssetAmounts,
-      totalMainCurrencyValue: totalMainCurrencyAmount !== undefined
-        ? formatCurrencyAmount(
-          mainCurrencySymbol,
-          totalMainCurrencyAmount,
-          desiredDecimals
-        )
-        : undefined,
+      totalMainCurrencyValue:
+        totalMainCurrencyAmount !== undefined
+          ? formatCurrencyAmount(
+              mainCurrencySymbol,
+              totalMainCurrencyAmount,
+              desiredDecimals
+            )
+          : undefined,
     }
   }
 )
 
-export type AccountTotal = {
-  address: string
+export type AccountTotal = AddressOnMaybeNetwork & {
   shortenedAddress: string
   accountType: AccountType
   keyringId: string | null
   keyringType: KeyringType
-  network: Network | null
   signingMethod: SigningMethod | null
-  defaultName?: string
   name?: string
+  defaultName?: string
   avatarURL?: string
   localizedTotalMainCurrencyAmount?: string
   networkTokenAmount?: AssetDecimalAmount
@@ -266,7 +275,7 @@ export const selectAccountTotalsByCategory = createSelector(
             accountType,
             keyringId,
             signingMethod,
-            network: null,
+            network: undefined,
             keyringType,
           }
         }

@@ -1,3 +1,4 @@
+import clsx from "clsx"
 import React, { ReactElement } from "react"
 
 type Props = {
@@ -9,6 +10,7 @@ type Props = {
   customStyles?: string
   ariaLabel?: string
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
+  className?: string
 }
 
 export function SharedIconButton(props: Props): ReactElement {
@@ -52,10 +54,11 @@ export function SharedIcon(props: Props): ReactElement {
     hoverColor = color,
     customStyles = "",
     ariaLabel,
+    className = "",
   } = props
 
   return (
-    <div className="icon" aria-label={ariaLabel}>
+    <div className={clsx("icon", className)} aria-label={ariaLabel}>
       <style jsx>{`
         .icon {
           mask-image: url("./images/${icon}");

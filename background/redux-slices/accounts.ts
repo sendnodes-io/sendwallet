@@ -1,8 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit"
 import { createBackgroundAsyncThunk } from "./utils"
-import { AccountBalance, AddressOnMaybeNetwork, AddressOnNetwork, NameOnNetwork } from "../accounts"
-import { Network } from "../networks"
-import { POCKET } from "../constants"
+import {
+  AccountBalance,
+  AddressOnMaybeNetwork,
+  AddressOnNetwork,
+  NameOnNetwork,
+} from "../accounts"
+import { AnyNetwork, Network } from "../networks"
 import { AnyAsset, AnyAssetAmount, SmartContractFungibleAsset } from "../assets"
 import {
   AssetMainCurrencyAmount,
@@ -10,31 +14,33 @@ import {
 } from "./utils/asset-utils"
 import { DomainName, HexString, URI } from "../types"
 import { normalizeEVMAddress, normalizeAddress } from "../lib/utils"
-import { selectKeyringForAddress, selectKeyringMetadataForAddress, selectSiblingKeyrings } from "./selectors"
+import {
+  selectKeyringForAddress,
+  selectKeyringMetadataForAddress,
+  selectSiblingKeyrings,
+} from "./selectors"
 import { RootState } from "."
 
 const availableDefaultAvatars = [
-  'invisiblefriends/65.png',
-  'invisiblefriends/290.png',
-  'invisiblefriends/1198.png',
-  'invisiblefriends/1822.png',
-  'invisiblefriends/1870.png',
-  'invisiblefriends/2041.png',
-  'invisiblefriends/2619.png',
-  'invisiblefriends/3291.png',
-  'invisiblefriends/4478.png',
-  'invisiblefriends/1228.png',
-  'invisiblefriends/1913.png',
-  'invisiblefriends/2510.png',
-  'invisiblefriends/2655.png',
-  'invisiblefriends/3260.png',
-  'invisiblefriends/4256.png',
-  'invisiblefriends/4617.png',
+  "invisiblefriends/65.png",
+  "invisiblefriends/290.png",
+  "invisiblefriends/1198.png",
+  "invisiblefriends/1822.png",
+  "invisiblefriends/1870.png",
+  "invisiblefriends/2041.png",
+  "invisiblefriends/2619.png",
+  "invisiblefriends/3291.png",
+  "invisiblefriends/4478.png",
+  "invisiblefriends/1228.png",
+  "invisiblefriends/1913.png",
+  "invisiblefriends/2510.png",
+  "invisiblefriends/2655.png",
+  "invisiblefriends/3260.png",
+  "invisiblefriends/4256.png",
+  "invisiblefriends/4617.png",
 ]
 
-export type AccountData = {
-  address: HexString
-  network: Network
+export type AccountData = AddressOnNetwork & {
   balances: {
     [assetSymbol: string]: AccountBalance
   }
@@ -67,7 +73,7 @@ export type CombinedAccountData = {
 type InternalCompleteAssetAmount<
   E extends AnyAsset = AnyAsset,
   T extends AnyAssetAmount<E> = AnyAssetAmount<E>
-  > = T & AssetMainCurrencyAmount & AssetDecimalAmount
+> = T & AssetMainCurrencyAmount & AssetDecimalAmount
 
 /**
  * An asset amount including localized and numeric main currency and decimal
@@ -90,7 +96,7 @@ export const initialState = {
 
 function newAccountData(
   address: HexString,
-  network: Network,
+  network: AnyNetwork,
   existingAccountsCount: number
 ): AccountData {
   const addressNum =
@@ -103,10 +109,10 @@ function newAccountData(
       // Treat the address as a number and mod it to get an index into
       // default Avatars.
       addressNum %
-      BigInt(
-        availableDefaultAvatars.length -
-        (existingAccountsCount % availableDefaultAvatars.length)
-      )
+        BigInt(
+          availableDefaultAvatars.length -
+            (existingAccountsCount % availableDefaultAvatars.length)
+        )
     )
   const defaultAccountAvatar = availableDefaultAvatars[defaultAvatarIndex]
 
@@ -116,8 +122,8 @@ function newAccountData(
 
   // use IF token ID as the default name
   const defaultName = defaultAccountAvatar
-    .replace('invisiblefriends/', '')
-    .replace('.png', '')
+    .replace("invisiblefriends/", "")
+    .replace(".png", "")
 
   return {
     address,
@@ -125,16 +131,16 @@ function newAccountData(
     balances: {},
     ens: {},
     defaultName: `Wallet ${defaultName}`,
-    name: '',
+    name: "",
     defaultAvatar: `./images/avatars/${defaultAccountAvatar}`,
-    avatar: ''
+    avatar: "",
   }
 }
 
 function getOrCreateAccountData(
   data: AccountData | "loading",
   account: HexString,
-  network: Network,
+  network: AnyNetwork,
   existingAccountsCount: number
 ): AccountData {
   if (data === "loading" || !data) {
@@ -142,7 +148,6 @@ function getOrCreateAccountData(
   }
   return data
 }
-
 
 /**
  * Async thunk whose dispatch promise will return a resolved name or undefined
@@ -183,21 +188,31 @@ export const addAddressNetwork = createBackgroundAsyncThunk(
 
 export const removeAccount = createBackgroundAsyncThunk(
   "account/removeAccount",
-  async (addressOnNetwork: AddressOnNetwork, { getState, dispatch, extra: { main } }) => {
+  async (
+    addressOnNetwork: AddressOnNetwork,
+    { getState, dispatch, extra: { main } }
+  ) => {
     const state = getState() as RootState
     const keyring = selectKeyringForAddress(state, addressOnNetwork.address)
 
     // last address, remove sibling keyrings
     if (keyring?.addresses?.length === 1) {
-      const keyringMetadata = selectKeyringMetadataForAddress(state, addressOnNetwork.address)
+      const keyringMetadata = selectKeyringMetadataForAddress(
+        state,
+        addressOnNetwork.address
+      )
       const siblingKeyrings = selectSiblingKeyrings(
         state,
         keyringMetadata.seedId
       )
-      await Promise.all(siblingKeyrings.flatMap((kr) => kr.addresses).map(async (address) => {
-        await dispatch(accountSlice.actions.deleteAccount({ address }))
-        await main.removeAccount({ address }, { type: "keyring" })
-      }))
+      await Promise.all(
+        siblingKeyrings
+          .flatMap((kr) => kr.addresses)
+          .map(async (address) => {
+            await dispatch(accountSlice.actions.deleteAccount({ address }))
+            await main.removeAccount({ address }, { type: "keyring" })
+          })
+      )
     } else {
       // still other addresses left, just remove this one
       await dispatch(accountSlice.actions.deleteAccount(addressOnNetwork))
@@ -205,7 +220,6 @@ export const removeAccount = createBackgroundAsyncThunk(
     }
   }
 )
-
 
 // TODO Much of the combinedData bits should probably be done in a Reselect
 // TODO selector.
@@ -216,7 +230,7 @@ const accountSlice = createSlice({
     clearRemovingAccount: (state) => {
       return {
         ...state,
-        removingAccount: false
+        removingAccount: false,
       }
     },
     loadAccount: (

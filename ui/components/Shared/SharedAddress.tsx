@@ -13,6 +13,10 @@ type SharedAddressProps = {
   nameResolverSystem?: NameResolverSystem
   alwaysShowAddress: boolean
   showAvatar?: boolean
+  className?: string
+  onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
+  title?: string
+  icon?: JSX.Element
 }
 
 /**
@@ -36,6 +40,10 @@ export default function SharedAddress({
   nameResolverSystem,
   alwaysShowAddress,
   showAvatar = false,
+  className = "",
+  onClick = undefined,
+  title = undefined,
+  icon = undefined,
 }: SharedAddressProps): ReactElement {
   const dispatch = useBackgroundDispatch()
   const currentAccountTotal = showAvatar
@@ -43,7 +51,7 @@ export default function SharedAddress({
     : null
 
   const primaryText = name ? name : truncateAddress(address, 5, -3)
-
+  const isDefaultCopy = onClick === undefined
   const copyAddress = useCallback(
     (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
       e.stopPropagation()
@@ -56,8 +64,9 @@ export default function SharedAddress({
   return (
     <button
       type="button"
-      onClick={copyAddress}
-      title={`Copy to clipboard:\n${address}`}
+      className={className}
+      onClick={isDefaultCopy ? copyAddress : onClick}
+      title={isDefaultCopy ? `Copy to clipboard:\n${address}` : title}
     >
       {showAvatar && (
         <div className="avatar">
@@ -86,7 +95,7 @@ export default function SharedAddress({
       ) : (
         <></>
       )}
-      <div className="copy_icon" />
+      {isDefaultCopy ? <div className="copy_icon" /> : icon}
       <style jsx>{`
         button {
           transition: 300ms color;
@@ -96,6 +105,7 @@ export default function SharedAddress({
           width: 100%;
           background-color: var(--eerie-black-100);
           border-radius: 3rem;
+          padding-right: 0.25rem;
         }
 
         .name_source_tooltip {
@@ -104,16 +114,16 @@ export default function SharedAddress({
         }
 
         p.detail {
-          font-size: 14px;
-          line-height: 16px;
+          font-size: 1rem;
+          line-height: 1rem;
         }
         .copy_icon {
           mask-image: url("./images/copy@2x.png");
           mask-size: cover;
           mask-repeat: no-repeat;
-          width: 12px;
-          height: 12px;
-          margin-left: 9px;
+          width: 0.75rem;
+          height: 0.75rem;
+          margin-left: 0.5rem;
           background-color: var(--aqua);
           display: inline-block;
           margin-top: -1px;
