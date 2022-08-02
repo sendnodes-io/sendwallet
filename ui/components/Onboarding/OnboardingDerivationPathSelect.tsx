@@ -7,7 +7,7 @@ import React, {
 } from "react"
 import SharedButton from "../Shared/SharedButton"
 import SharedInput from "../Shared/SharedInput"
-import SharedModal from "../Shared/SharedModal"
+import SharedModalPopup from "../Shared/SharedModalPopup"
 import SharedSelect, { Option } from "../Shared/SharedSelect"
 
 // TODO make this network specific
@@ -109,7 +109,7 @@ export default function OnboardingDerivationPathSelect({
 
   return (
     <>
-      <SharedModal
+      <SharedModalPopup
         header="Add derivation path"
         isOpen={modalStep > 0}
         onClose={() => setModalStep((prev) => prev - 1)}
@@ -174,7 +174,7 @@ export default function OnboardingDerivationPathSelect({
             />
           </div>
         )}
-      </SharedModal>
+      </SharedModalPopup>
       <SharedSelect
         label="Derivation path"
         options={derivationPaths}
