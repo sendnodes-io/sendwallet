@@ -46,6 +46,7 @@ import { ReceiptRefundIcon } from "@heroicons/react/outline"
 import { truncateAddress } from "@sendnodes/pokt-wallet-background/lib/utils"
 import SharedLoadingSpinner from "../Shared/SharedLoadingSpinner"
 import StatTotalStaked from "./Stat/StatTotalStaked"
+import StatTotalPendingStaked from "./Stat/StatTotalPendingStaked"
 import { formatFixed, parseFixed } from "@ethersproject/bignumber"
 
 export default function SendUnstake(): ReactElement {
@@ -85,9 +86,9 @@ export default function SendUnstake(): ReactElement {
     useState(false)
   const [hasError, setHasError] = useState(false)
 
-  const totalStakedBalance = BigNumber.from(userStakingData?.staked ?? 0).sub(
-    BigNumber.from(userStakingData?.pendingUnstaked ?? 0)
-  )
+  const totalStakedBalance = BigNumber.from(userStakingData?.staked ?? 0)
+    .add(userStakingData?.pendingStaked ?? 0)
+    .sub(BigNumber.from(userStakingData?.pendingUnstaked ?? 0))
 
   const totalStakedBalanceDecimals = Number(
     formatFixed(totalStakedBalance, selectedAsset.decimals)
@@ -263,6 +264,7 @@ export default function SendUnstake(): ReactElement {
           </div>
 
           <StatTotalStaked aon={currentAccount} asset={selectedAsset} />
+          <StatTotalPendingStaked aon={currentAccount} asset={selectedAsset} />
         </dl>
       </div>
       <div className="flex pt-4 pb-8">
