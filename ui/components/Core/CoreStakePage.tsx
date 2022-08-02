@@ -5,6 +5,7 @@ import classNames, { clsx } from "clsx"
 import { useBackgroundSelector } from "../../hooks"
 import {
   AccountTotal,
+  selectCurrentAccount,
   selectCurrentAccountTotal,
 } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
 import SharedLoadingSpinner from "../Shared/SharedLoadingSpinner"
@@ -250,31 +251,82 @@ const styles = stylesheet`
 export default function CoreStakePage(props: Props): ReactElement {
   const { children } = props
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const currentAccount = useBackgroundSelector(selectCurrentAccount, isEqual)
+  const { data, isLoading, isError } = useStakingPoktParams(currentAccount)
+
+  if (isLoading) {
+    return (
+      <div className="md:py-12 xl:py-24 min-h-screen flex flex-col justify-center items-center flex-1">
+        <SharedSplashScreen />
+      </div>
+    )
+  }
+
+  // bubble up to error fallback
+  if (isError) {
+    throw isError
+  }
 
   return (
-    <div className="md:py-12 xl:py-24">
-      <div className={styles.mainPanel}>
-        <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+    <>
+      {data?.wallets.siw === "cb6ff4204f8a93e89759c22a9e0f8896f8561379" ? (
+        <ProdWarningBanner />
+      ) : null}
 
-        <div className="lg:pl-56 flex flex-col flex-1">
-          <div className="sticky top-0 z-10 lg:hidden pl-1 pt-1 sm:pl-3 sm:pt-3 bg-eerie-black">
-            <button
-              type="button"
-              className="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-white hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-aqua"
-              onClick={() => setSidebarOpen(true)}
-            >
-              <span className="sr-only">Open sidebar</span>
-              <MenuIcon className="h-6 w-6" aria-hidden="true" />
-            </button>
-          </div>
-          <main className="flex-1">
-            <div className="min-h-[36rem] flex px-4 py-8">
-              {children}
-              <div className="flex justify-center">
-                <Snackbar />
-              </div>
+      <div className="md:py-12 xl:py-24">
+        <div className={styles.mainPanel}>
+          <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+
+          <div className="lg:pl-56 flex flex-col flex-1">
+            <div className="sticky top-0 z-10 lg:hidden pl-1 pt-1 sm:pl-3 sm:pt-3 bg-eerie-black">
+              <button
+                type="button"
+                className="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-white hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-aqua"
+                onClick={() => setSidebarOpen(true)}
+              >
+                <span className="sr-only">Open sidebar</span>
+                <MenuIcon className="h-6 w-6" aria-hidden="true" />
+              </button>
             </div>
-          </main>
+            <main className="flex-1">
+              <div className="min-h-[36rem] flex px-4 py-8">
+                {children}
+                <div className="flex justify-center">
+                  <Snackbar />
+                </div>
+              </div>
+            </main>
+          </div>
+        </div>
+      </div>
+    </>
+  )
+}
+
+import { SpeakerphoneIcon } from "@heroicons/react/outline"
+import { useStakingPoktParams } from "../../hooks/staking-hooks"
+import SharedSplashScreen from "../Shared/SharedSplashScreen"
+import { isEqual } from "lodash"
+
+/* FIXME: REMOVE NOT NEEDED FOR GO LIVE */
+function ProdWarningBanner() {
+  return (
+    <div className="relative bg-gradient-to-r from-capri to-aqua ">
+      <div className="max-w-7xl mx-auto py-3 px-3 sm:px-6 lg:px-8">
+        <div className="pr-16 sm:text-center sm:px-16">
+          <div className="flex-1 flex items-center">
+            <span className="flex p-2 rounded-lg bg-pink-500">
+              <SpeakerphoneIcon
+                className="h-6 w-6 text-white"
+                aria-hidden="true"
+              />
+            </span>
+            <p className="ml-3 font-medium text-eerie-black truncate">
+              <span className="">
+                This is not a drill... You are staking with SendNodes.
+              </span>
+            </p>
+          </div>
         </div>
       </div>
     </div>
