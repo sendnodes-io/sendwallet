@@ -28,33 +28,23 @@ import { useHistory, useLocation } from "react-router-dom"
 import SharedAssetInput from "../Shared/SharedAssetInput"
 import SharedButton from "../Shared/SharedButton"
 import {
-  useAddressOrNameValidation,
   useBackgroundDispatch,
   useBackgroundSelector,
   useAreKeyringsUnlocked,
 } from "../../hooks"
-import SharedInput from "../Shared/SharedInput"
 import SharedSplashScreen from "../Shared/SharedSplashScreen"
 import SharedCheckbox from "../Shared/SharedCheckbox"
 import formatTokenAmount from "../../utils/formatTokenAmount"
-import {
-  InformationCircleIcon,
-  ArrowSmDownIcon,
-  ArrowSmUpIcon,
-  CursorClickIcon,
-  MailOpenIcon,
-  UsersIcon,
-} from "@heroicons/react/solid"
+import { InformationCircleIcon } from "@heroicons/react/solid"
 
 import {
   useStakingUserData,
   useStakingPoktParams,
 } from "../../hooks/staking-hooks"
-import clsx from "clsx"
-import SharedLoadingSpinner from "../Shared/SharedLoadingSpinner"
 import { BigNumber } from "ethers"
 import { formatFixed, parseFixed } from "@ethersproject/bignumber"
 import StatTotalStaked from "./Stat/StatTotalStaked"
+import StatTotalPendingStaked from "./Stat/StatTotalPendingStaked"
 
 export default function SendStake(): ReactElement {
   const location = useLocation<FungibleAsset>()
@@ -218,31 +208,7 @@ export default function SendStake(): ReactElement {
       <div>
         <dl className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           <StatTotalStaked aon={currentAccount} asset={selectedAsset} />
-          <div className="relative pt-5 px-4 pb-12 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden">
-            <dt>
-              <div className="absolute bg-spanish-gray rounded-md p-3">
-                <div className="stake_icon bg-white w-8 h-8 inline-block" />
-              </div>
-              <p className="ml-16 text-sm font-medium text-spanish-gray truncate">
-                Pending Staked
-              </p>
-            </dt>
-
-            <dd className="ml-16 flex items-baseline">
-              {isUserStakingDataLoading ? (
-                <SharedLoadingSpinner />
-              ) : (
-                <p className="text-2xl font-semibold text-white">
-                  {formatTokenAmount(
-                    formatFixed(
-                      userStakingData?.pendingStaked ?? 0,
-                      selectedAsset.decimals
-                    )
-                  )}
-                </p>
-              )}
-            </dd>
-          </div>
+          <StatTotalPendingStaked aon={currentAccount} asset={selectedAsset} />
         </dl>
       </div>
       <div className="section relative mb-2">
