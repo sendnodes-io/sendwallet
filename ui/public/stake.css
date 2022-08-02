@@ -4,3 +4,27 @@ body {
 .base_pokt_logo {
   @apply hidden;
 }
+
+* {
+  scrollbar-color: aqua green;
+  scrollbar-width: 0.5rem;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 0.5rem;
+  scrollbar-gutter: stable both-edges;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 1px var(--eerie-black);
+  border-radius: 10px;
+  @apply cursor-pointer;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  @apply bg-gradient-to-b from-capri to-aqua hover:from-aqua hover:to-aqua;
+  border-radius: 0.667rem;
+}
