@@ -10,13 +10,7 @@ import {
 import { SharedIcon } from "../Shared/SharedIcon"
 import Snackbar from "../Snackbar/Snackbar"
 import { useHistory, Link } from "react-router-dom"
-import {
-  CollectionIcon,
-  ReceiptRefundIcon,
-  TrendingUpIcon,
-} from "@heroicons/react/solid"
 import { MenuIcon, XIcon } from "@heroicons/react/outline"
-import { stylesheet } from "astroturf"
 
 import { SpeakerphoneIcon } from "@heroicons/react/outline"
 import { useStakingPoktParams } from "../../hooks/staking-hooks"
@@ -25,6 +19,7 @@ import { isEqual } from "lodash"
 import SharedAddress from "../Shared/SharedAddress"
 import AccountsNotificationPanel from "../AccountsNotificationPanel/AccountsNotificationPanel"
 import SharedModal from "../Shared/SharedModal"
+import { css, stylesheet } from "astroturf"
 
 /* FIXME: REMOVE NOT NEEDED FOR GO LIVE */
 function ProdWarningBanner() {
@@ -51,24 +46,62 @@ function ProdWarningBanner() {
   )
 }
 
+const sidebarIconCss = css`
+  mask-size: cover;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  display: inline-block;
+`
+
 const navigation = [
   {
     name: "Stake",
     href: "/",
     icon: ({ className }: { className: string }) => (
-      <div className={clsx(className, "stake_icon")} />
+      <div
+        className={clsx(className, sidebarIconCss, "stake-icon")}
+        css={`
+          mask-image: url("../../public/images/stake@2x.png");
+        `}
+      />
     ),
   },
-  { name: "Rewards", href: "/rewards", icon: TrendingUpIcon, disabled: true },
+  {
+    name: "Rewards",
+    href: "/rewards",
+    icon: ({ className }: { className: string }) => (
+      <div
+        className={clsx(className, sidebarIconCss, "rewards-icon")}
+        css={`
+          mask-image: url("../../public/images/rewards@2x.png");
+        `}
+      />
+    ),
+    disabled: true,
+  },
   {
     name: "Transactions",
     href: "/transactions",
-    icon: CollectionIcon,
+    icon: ({ className }: { className: string }) => (
+      <div
+        className={clsx(className, sidebarIconCss, "transactions-icon")}
+        css={`
+          mask-image: url("../../public/images/transactions@2x.png");
+        `}
+      />
+    ),
   },
   {
     name: "Unstake",
     href: "/unstake",
-    icon: ReceiptRefundIcon,
+    icon: ({ className }: { className: string }) => (
+      <div
+        className={clsx(className, sidebarIconCss, "unstake-icon")}
+        css={`
+          mask-image: url("../../public/images/unstake@2x.png");
+        `}
+      />
+    ),
   },
 ]
 
@@ -77,6 +110,11 @@ interface SidebarProps {
   onClose: () => void
 }
 
+const revealSidebarHover = stylesheet`
+  .sidebar:hover .linkText {
+    @apply opacity-100 relative delay-100;
+  }
+`
 function Sidebar({ isOpen, onClose }: SidebarProps): ReactElement {
   const history = useHistory()
 
@@ -96,7 +134,7 @@ function Sidebar({ isOpen, onClose }: SidebarProps): ReactElement {
             <div className="fixed inset-0 bg-eerie-black bg-opacity-75" />
           </Transition.Child>
 
-          <div className="fixed inset-0 flex z-40 sidebar">
+          <div className="fixed inset-0 flex z-40 ">
             <Transition.Child
               as={Fragment}
               enter="transition ease-in-out duration-300 transform"
@@ -163,6 +201,36 @@ function Sidebar({ isOpen, onClose }: SidebarProps): ReactElement {
                         {item.name}
                       </Link>
                     ))}
+                    {navigation.map((item) => (
+                      <Link
+                        key={`${item.name}-dup`}
+                        to={item.href}
+                        className={classNames(
+                          history.location.pathname === item.href
+                            ? "text-aqua"
+                            : "text-white hover:text-aqua",
+                          "group flex flex-col justify-center items-center px-2 py-2 text-sm xl:text-lg font-light rounded-md"
+                        )}
+                      >
+                        <item.icon
+                          className={classNames(
+                            history.location.pathname === item.href
+                              ? "bg-aqua"
+                              : "bg-white group-hover:bg-aqua",
+                            "flex-shrink-0 lg:h-8 lg:w-8 xl:h-12 xl:w-12"
+                          )}
+                          aria-hidden="true"
+                        />
+                        <span
+                          className={clsx(
+                            "opacity-0 transition-opacity duration-300",
+                            revealSidebarHover.linkText
+                          )}
+                        >
+                          {item.name}
+                        </span>
+                      </Link>
+                    ))}
                   </nav>
                 </div>
               </Dialog.Panel>
@@ -175,60 +243,50 @@ function Sidebar({ isOpen, onClose }: SidebarProps): ReactElement {
       </Transition.Root>
 
       {/* Static sidebar for desktop */}
-      <div className="hidden lg:flex lg:w-56 lg:flex-col lg:absolute lg:inset-y-0 sidebar">
+      <div
+        className={clsx(
+          "hidden lg:flex lg:w-20 lg:hover:w-32 xl:w-20 xl:hover:w-36 transition-width duration-300 lg:flex-col lg:absolute lg:inset-y-0 bg-gradient-to-b from-eerie-black to-rich-black md:rounded-tl-3xl md:rounded-bl-3xl",
+          revealSidebarHover.sidebar
+        )}
+      >
         {/* Sidebar component, swap this element with another sidebar if you like */}
-        <div className="flex-1 flex flex-col min-h-0 bg-rich-black">
+        <div className="flex-1 flex flex-col min-h-0">
           <div className="flex-1 flex flex-col pb-4 overflow-y-auto">
-            <div className="flex items-center flex-shrink-0 px-4">
-              <img
-                width="380"
-                height="137"
-                draggable="false"
-                src="./images/pokt_wallet_logo@2x.png"
-              />
-            </div>
-            <nav className="mt-5 flex-1 px-2 space-y-1">
+            <nav className="mt-5 flex-1 px-2 space-y-1 flex flex-col justify-between overflow-x-hidden">
               {navigation.map((item) => (
                 <Link
                   key={item.name}
                   to={item.href}
                   className={classNames(
                     history.location.pathname === item.href
-                      ? "bg-gray-900 text-white"
-                      : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                    "group flex items-center px-2 py-2 text-sm font-medium rounded-md"
+                      ? "text-aqua"
+                      : "text-white hover:text-aqua",
+                    "group flex flex-col justify-center items-center px-2 py-2 text-sm xl:text-lg font-light rounded-md"
                   )}
                 >
                   <item.icon
                     className={classNames(
                       history.location.pathname === item.href
-                        ? "text-gray-300"
-                        : "text-gray-400 group-hover:text-gray-300",
-                      "mr-3 flex-shrink-0 h-6 w-6"
+                        ? "bg-aqua"
+                        : "bg-white group-hover:bg-aqua",
+                      "flex-shrink-0 lg:h-8 lg:w-8 xl:h-12 xl:w-12"
                     )}
                     aria-hidden="true"
                   />
-                  {item.name}
+                  <span
+                    className={clsx(
+                      "opacity-0 transition-opacity duration-300",
+                      revealSidebarHover.linkText
+                    )}
+                  >
+                    {item.name}
+                  </span>
                 </Link>
               ))}
             </nav>
           </div>
         </div>
       </div>
-      <style jsx>
-        {`
-          .sidebar :global(.stake_icon) {
-            mask-image: url("./images/stake@2x.png");
-            mask-size: contain;
-            mask-repeat: no-repeat;
-            mask-position: center;
-            width: 1.25rem;
-            height: 1.25rem;
-            background-color: var(--white);
-            display: inline-block;
-          }
-        `}
-      </style>
     </Fragment>
   )
 }
@@ -239,7 +297,6 @@ interface Props {
 
 const styles = stylesheet`
   .mainPanel {
-    @apply max-w-5xl mx-auto relative rounded-3xl bg-eerie-black;
     background: radial-gradient(98.15% 107.73% at 15.3% 0%, rgba(255, 255, 255, 0.12) 0%, rgba(0, 0, 0, 0) 100%) /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */, #151515;
   }
   .accountsModal :global(.switcher_wrap) {
@@ -280,7 +337,7 @@ export default function CoreStakePage(props: Props): ReactElement {
         <ProdWarningBanner />
       ) : null}
 
-      <div className="w-full grid grid-cols-3 max-w-5xl mx-auto py-8">
+      <div className="w-full grid grid-cols-3 xl:max-w-7xl mx-auto py-8 md:px-8 px-4">
         <div className="col-span-1"></div>
         <div className="col-span-1 flex justify-center items-center">
           <img src="images/pokt-wallet-logo@2x.png" width="227" height="48" />
@@ -311,12 +368,17 @@ export default function CoreStakePage(props: Props): ReactElement {
         </div>
       </div>
 
-      <div className="">
-        <div className={styles.mainPanel}>
+      <div className="px-4 md:px-8 xl:px-24 lg:px-8">
+        <div
+          className={clsx(
+            "xl:max-w-7xl mx-auto relative rounded-lg lg:rounded-3xl bg-eerie-black",
+            styles.mainPanel
+          )}
+        >
           <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-          <div className="lg:pl-56 flex flex-col flex-1">
-            <div className="sticky top-0 z-10 lg:hidden pl-1 pt-1 sm:pl-3 sm:pt-3 bg-eerie-black">
+          <div className="xl:px-36 xl:-mr-20 lg:px-24 lg:-mr-24 mr-0 flex flex-col flex-1">
+            <div className="z-10 lg:hidden pl-1 pt-1 sm:pl-3 sm:pt-3 bg-eerie-black rounded-tl-lg rounded-tr-lg">
               <button
                 type="button"
                 className="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-white hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-aqua"
@@ -327,16 +389,15 @@ export default function CoreStakePage(props: Props): ReactElement {
               </button>
             </div>
             <main className="flex-1">
-              <div className="min-h-[36rem] flex px-4 py-8">
-                {children}
-                <div className="flex justify-center">
-                  <Snackbar />
-                </div>
+              <div className="min-h-[36rem] flex flex-col px-4 py-8 justify-center">
+                <div>{children}</div>
               </div>
             </main>
           </div>
         </div>
       </div>
+
+      <Snackbar />
 
       <SharedModal
         isOpen={isAccountsPanelOpen}
