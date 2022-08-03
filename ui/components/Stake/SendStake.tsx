@@ -191,7 +191,7 @@ export default function SendStake(): ReactElement {
 
   return (
     <div className="">
-      <div className="section">
+      <div className="">
         <div className="header ">
           <div className="row">
             <div className="start"></div>
@@ -211,7 +211,7 @@ export default function SendStake(): ReactElement {
           <StatTotalPendingStaked aon={currentAccount} asset={selectedAsset} />
         </dl>
       </div>
-      <div className="section relative mb-2">
+      <div className=" relative mb-2">
         <div className="mb-4">
           <SharedAssetInput
             autoFocus
@@ -269,7 +269,7 @@ export default function SendStake(): ReactElement {
         ) : undefined}
       </div>
 
-      <div className="section border-b-2 border-spanish-gray border-opacity-25 mb-4 pb-2">
+      <div className=" border-b-2 border-spanish-gray border-opacity-25 mb-4 pb-2">
         <div className="form_input">
           <SharedCheckbox
             id="autoCompound"
@@ -295,7 +295,7 @@ export default function SendStake(): ReactElement {
         </div>
       </div>
 
-      <div className="section border-b-2 border-spanish-gray border-opacity-25 mb-4 pb-2">
+      <div className=" border-b-2 border-spanish-gray border-opacity-25 mb-4 pb-2">
         <div className="form_input">
           <small className="pb-1 inline-block">
             By checking this box, you agree the{" "}
@@ -319,7 +319,7 @@ export default function SendStake(): ReactElement {
         </div>
       </div>
 
-      <div className="section">
+      <div className="">
         <div style={{ alignSelf: "flex-start", marginBottom: "1.5rem" }}>
           <p>
             <small>
@@ -332,7 +332,7 @@ export default function SendStake(): ReactElement {
           </p>
         </div>
       </div>
-      <div className="section stake_button_wrap">
+      <div className=" stake_button_wrap">
         <div
           style={{ "--icon-color": "var(--eerie-black-100)" } as CSSProperties}
         >
@@ -361,10 +361,6 @@ export default function SendStake(): ReactElement {
       </div>
       <style jsx>
         {`
-          .section {
-            width: calc(100% - 1rem);
-          }
-
           .header {
             width: 100%;
             margin-bottom: 1rem;
