@@ -3,11 +3,23 @@ import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts"
 import { fetcher, SENDNODES_ONCHAIN_API_URL } from "./constants"
 
 export interface IStakingPoktParams {
+  /** Can we stake at all? */
+  stakingEnabled: boolean
   /** BigNumber representing the minimum stake amount in uPOKT */
-  minStakingAmount: string
+  stakingMinAmount: string
+  /** BigNumber representing the minimum number of blocks before a staking request TX is considered for rewards */
+  stakingMinAge: string
+  /** BigNumber representing the minimum stake amount in uPOKT */
+  lastRewardHeight: string
+  /** BigNumber representing the current height of the POKT network*/
+  currentHeight: string
+  /** BigNumber representing the amount of uPOKT left on a staked POKT node*/
+  nodeRewardsReserveAmount: string
   wallets: {
     /** POKT Address to send stake amounts to */
     siw: string
+    /** POKT Address to rewards are sent to*/
+    riw: string
   }
 }
 

@@ -181,29 +181,23 @@ export default function SendStake(): ReactElement {
     throw isUserStakingDataError
   }
 
+  if (!stakingPoktParamsData!.stakingMinAmount) {
+    throw new Error("stakingMinAmount is not defined")
+  }
+
   // validatation variables
   const isAmountLessThanStakeMin =
     !amount ||
     isNaN(Number(amount)) ||
     parseFixed(amount, selectedAsset.decimals).lt(
-      BigNumber.from(stakingPoktParamsData!.minStakingAmount)
+      BigNumber.from(stakingPoktParamsData!.stakingMinAmount)
     )
 
   return (
     <div className="">
-      <div className="">
-        <div className="header ">
-          <div className="row">
-            <div className="start"></div>
-            <div className="center">
-              <div className="flex gap-x-4 justify-center items-center">
-                <div className="stake_icon bg-white w-12 h-12" />
-                <h1>Stake</h1>
-              </div>
-            </div>
-            <div className="end"></div>
-          </div>
-        </div>
+      <div className="flex gap-x-4 justify-center items-center">
+        <div className="stake_icon bg-white w-12 h-12" />
+        <h1>Stake</h1>
       </div>
       <div>
         <dl className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -258,7 +252,7 @@ export default function SendStake(): ReactElement {
             Minimum stake amount is{" "}
             {formatTokenAmount(
               formatFixed(
-                stakingPoktParamsData!.minStakingAmount,
+                stakingPoktParamsData!.stakingMinAmount,
                 selectedAsset.decimals
               ),
               undefined,
@@ -361,48 +355,10 @@ export default function SendStake(): ReactElement {
       </div>
       <style jsx>
         {`
-          .header {
-            width: 100%;
-            margin-bottom: 1rem;
-          }
-
-          .row {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            padding: 1rem 0;
-          }
-          .header .row {
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-          }
-
-          .row .center {
-            text-align: center;
-            width: 14.375rem;
-          }
-
-          .row .end {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: flex-end;
-            gap: 0.75rem;
-          }
-          .icon_close {
-            width: 1rem;
-            height: 1rem;
-            position: unset;
-          }
-
           .form_input {
             width: 100%;
             margin-bottom: 0.5rem;
             position: relative;
-          }
-
-          .address_form_input {
-            font-size: 0.8rem;
           }
 
           .value {
@@ -414,15 +370,6 @@ export default function SendStake(): ReactElement {
             color: var(--spanish-gray);
             font-size: 0.75rem;
             line-height: 1rem;
-          }
-
-          .form_input :global(textarea) {
-            height: 7.5rem;
-          }
-          .memo_validation {
-            position: absolute;
-            right: 0;
-            bottom: -1.5rem;
           }
 
           .stake_button_wrap :global(.icon) {
