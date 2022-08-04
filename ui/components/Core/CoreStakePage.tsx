@@ -245,7 +245,7 @@ function Sidebar({ isOpen, onClose }: SidebarProps): ReactElement {
       {/* Static sidebar for desktop */}
       <div
         className={clsx(
-          "hidden lg:flex lg:w-20 lg:hover:w-32 xl:w-20 xl:hover:w-36 transition-width duration-300 lg:flex-col lg:absolute lg:inset-y-0 bg-gradient-to-b from-eerie-black to-rich-black md:rounded-tl-3xl md:rounded-bl-3xl",
+          "hidden lg:flex lg:w-20 lg:hover:w-32 xl:w-20 xl:hover:w-36 transition-width duration-300 lg:flex-col lg:absolute lg:inset-y-0 bg-gradient-to-b from-eerie-black to-rich-black md:rounded-tl-3xl md:rounded-bl-3xl border-l-2 border-aqua",
           revealSidebarHover.sidebar
         )}
       >
