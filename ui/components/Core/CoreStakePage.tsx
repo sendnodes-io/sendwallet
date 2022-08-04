@@ -22,6 +22,8 @@ import SharedModal from "../Shared/SharedModal"
 import { css, stylesheet } from "astroturf"
 import { selectTransactionData } from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction"
 import SignStakeTransaction from "../Stake/SignStakeTransaction"
+import SignTransaction from "../../pages/SignTransaction"
+import SignTransactionContainer from "../SignTransaction/SignTransactionContainer"
 
 /* FIXME: REMOVE NOT NEEDED FOR GO LIVE */
 function ProdWarningBanner() {
@@ -440,7 +442,7 @@ export default function CoreStakePage(props: Props): ReactElement {
         className={styles.accountsModal}
       >
         <div className="z-0">
-          <SignStakeTransaction />
+          <SignTransaction />
         </div>
       </SharedModal>
     </>
