@@ -10,13 +10,11 @@ export default function ErrorFallback({
   const history = useHistory()
   return (
     <>
-      <div className="w-full absolute z-0">
-        <div className="absolute left-0 inset-y-0">
-          <Icon
-            icon="fa6-solid:person-falling-burst"
-            className="opacity-25 h-56 w-56"
-          />
-        </div>
+      <div className="static md:absolute md:top-1/2  md:-translate-y-1/2">
+        <Icon
+          icon="fa6-solid:person-falling-burst"
+          className="opacity-25 z-0  h-56 w-56"
+        />
       </div>
       <div className="wrap z-10">
         <h1>Unexpected Error</h1>
