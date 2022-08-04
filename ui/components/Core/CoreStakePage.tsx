@@ -337,8 +337,8 @@ export default function CoreStakePage(props: Props): ReactElement {
         <ProdWarningBanner />
       ) : null}
 
-      <div className="w-full grid grid-cols-3 xl:max-w-7xl mx-auto py-8 md:px-8 px-4">
-        <div className="col-span-1"></div>
+      <div className="w-full grid grid-cols-2 md:grid-cols-3 xl:max-w-7xl lg:max-w-4xl mx-auto  py-8 md:px-8 px-4">
+        <div className="hidden md:block col-span-1"></div>
         <div className="col-span-1 flex justify-center items-center">
           <img src="images/pokt-wallet-logo@2x.png" width="227" height="48" />
         </div>
@@ -371,13 +371,13 @@ export default function CoreStakePage(props: Props): ReactElement {
       <div className="px-4 md:px-8 xl:px-24 lg:px-8">
         <div
           className={clsx(
-            "xl:max-w-7xl mx-auto relative rounded-lg lg:rounded-3xl bg-eerie-black",
+            "xl:max-w-7xl lg:max-w-4xl mx-auto relative rounded-lg lg:rounded-3xl bg-eerie-black",
             styles.mainPanel
           )}
         >
           <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-          <div className="xl:px-36 xl:-mr-20 lg:px-24 lg:-mr-24 mr-0 flex flex-col flex-1">
+          <div className="xl:px-32  lg:px-24 lg:ml-16  flex flex-col flex-1">
             <div className="z-10 lg:hidden pl-1 pt-1 sm:pl-3 sm:pt-3 bg-eerie-black rounded-tl-lg rounded-tr-lg">
               <button
                 type="button"
@@ -389,7 +389,7 @@ export default function CoreStakePage(props: Props): ReactElement {
               </button>
             </div>
             <main className="flex-1">
-              <div className="min-h-[36rem] flex flex-col px-4 py-8 justify-center">
+              <div className="flex flex-col px-4 sm:px-8 lg:px-0 py-12 lg:py-16 ">
                 <div>{children}</div>
               </div>
             </main>
