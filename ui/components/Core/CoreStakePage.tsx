@@ -389,7 +389,7 @@ export default function CoreStakePage(props: Props): ReactElement {
               </button>
             </div>
             <main className="flex-1">
-              <div className="flex flex-col px-4 sm:px-8 lg:px-0 py-12 lg:py-16 ">
+              <div className="flex flex-col px-4 sm:px-8 lg:px-0 py-12 lg:py-16 min-h-[36rem] justify-center">
                 <div>{children}</div>
               </div>
             </main>
