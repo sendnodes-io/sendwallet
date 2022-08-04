@@ -153,8 +153,6 @@ export default function SendStake(): ReactElement {
     } finally {
       setIsSendingTransactionRequest(false)
     }
-
-    history.push("/sign-transaction")
   }, [
     assetAmount,
     currentAccount,

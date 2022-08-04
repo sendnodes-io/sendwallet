@@ -13,22 +13,26 @@ import {
   useBackgroundDispatch,
   useBackgroundSelector,
   useIsSigningMethodLocked,
-} from "../hooks"
-import SignTransactionContainer from "../components/SignTransaction/SignTransactionContainer"
-import SignTransactionInfoProvider from "../components/SignTransaction/SignTransactionInfoProvider"
-import SignTransactionPanelSwitcher from "../components/SignTransaction/SignTransactionPanelSwitcher"
+} from "../../hooks"
+import SignTransactionContainer from "../SignTransaction/SignTransactionContainer"
+import SignTransactionInfoProvider from "../SignTransaction/SignTransactionInfoProvider"
+import SignTransactionPanelSwitcher from "../SignTransaction/SignTransactionPanelSwitcher"
 import { SigningMethod } from "@sendnodes/pokt-wallet-background/utils/signing"
 import { POKTTransactionRequest } from "@sendnodes/pokt-wallet-background/networks"
-import SharedSplashScreen from "../components/Shared/SharedSplashScreen"
+import SharedSplashScreen from "../Shared/SharedSplashScreen"
 import { Redirect, useHistory } from "react-router-dom"
+import { isEqual } from "lodash"
 
-export default function SignTransaction(): ReactElement {
-  const history = useHistory()
+export default function SignStakeTransaction(): ReactElement {
   const dispatch = useBackgroundDispatch()
-  const transactionDetails = useBackgroundSelector(selectTransactionData)
+  const transactionDetails = useBackgroundSelector(
+    selectTransactionData,
+    isEqual
+  )
 
   const isTransactionDataReady = useBackgroundSelector(
-    selectIsTransactionLoaded
+    selectIsTransactionLoaded,
+    isEqual
   )
 
   const signerAccountTotal = useBackgroundSelector((state) => {
@@ -36,7 +40,7 @@ export default function SignTransaction(): ReactElement {
       return getAccountTotal(state, transactionDetails.from)
     }
     return undefined
-  })
+  }, isEqual)
 
   const [isTransactionSigning, setIsTransactionSigning] = useState(false)
 
@@ -46,7 +50,6 @@ export default function SignTransaction(): ReactElement {
 
   const handleReject = async () => {
     dispatch(rejectTransactionSignature())
-    history.push("/")
   }
   const handleConfirm = async () => {
     if (
@@ -61,10 +64,6 @@ export default function SignTransaction(): ReactElement {
         })
       )
       setIsTransactionSigning(true)
-
-      if (signingMethod.type === "keyring") {
-        history.push("/")
-      }
     }
   }
 
