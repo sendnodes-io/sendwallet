@@ -20,6 +20,8 @@ import SharedAddress from "../Shared/SharedAddress"
 import AccountsNotificationPanel from "../AccountsNotificationPanel/AccountsNotificationPanel"
 import SharedModal from "../Shared/SharedModal"
 import { css, stylesheet } from "astroturf"
+import { selectTransactionData } from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction"
+import SignStakeTransaction from "../Stake/SignStakeTransaction"
 
 /* FIXME: REMOVE NOT NEEDED FOR GO LIVE */
 function ProdWarningBanner() {
@@ -311,6 +313,10 @@ export default function CoreStakePage(props: Props): ReactElement {
   const { children } = props
   const [isAccountsPanelOpen, setIsAccountsPanelOpen] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const transactionDetails = useBackgroundSelector(
+    selectTransactionData,
+    isEqual
+  )
   const currentAccount = useBackgroundSelector(selectCurrentAccount, isEqual)
   const currentAccountData = useBackgroundSelector(
     getCurrentAccountState,
@@ -425,6 +431,17 @@ export default function CoreStakePage(props: Props): ReactElement {
             />
           </div>
         </>
+      </SharedModal>
+      <SharedModal
+        isOpen={!!transactionDetails}
+        onClose={() => {
+          /**ignored */
+        }}
+        className={styles.accountsModal}
+      >
+        <div className="z-0">
+          <SignStakeTransaction />
+        </div>
       </SharedModal>
     </>
   )

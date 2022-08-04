@@ -1,7 +1,7 @@
 import { unitPricePointForPricePoint } from "@sendnodes/pokt-wallet-background/assets"
 import { USD } from "@sendnodes/pokt-wallet-background/constants"
 import { selectAssetPricePoint } from "@sendnodes/pokt-wallet-background/redux-slices/assets"
-import { selectCurrentAddressNetwork } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
+import { selectCurrentAccount } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
 import {
   enrichAssetAmountWithDecimalValues,
   enrichAssetAmountWithMainCurrencyValues,
@@ -17,20 +17,32 @@ import SignTransactionBaseInfoProvider, {
 } from "./SignTransactionBaseInfoProvider"
 import TransactionSendDetail from "../TransactionDetail/TransactionSendDetail"
 import { ActivityItem } from "@sendnodes/pokt-wallet-background/redux-slices/activities"
+import { isEqual, startsWith } from "lodash"
+import { useStakingPoktParams } from "../../hooks/staking-hooks"
 
 export default function SignTransactionSignInfoProvider({
   transactionDetails,
   annotation,
   inner,
 }: SignTransactionInfoProviderProps): ReactElement {
-  const { address, network } = useBackgroundSelector(
-    selectCurrentAddressNetwork
+  const currentAccount = useBackgroundSelector(selectCurrentAccount, isEqual)
+  const { network } = currentAccount
+  const baseAssetPricePoint = useBackgroundSelector(
+    (state) =>
+      selectAssetPricePoint(state.assets, network.baseAsset.symbol, USD.symbol),
+    isEqual
   )
-  const baseAssetPricePoint = useBackgroundSelector((state) =>
-    selectAssetPricePoint(state.assets, network.baseAsset.symbol, USD.symbol)
-  )
+
+  const { data: stakingPoktData, isError } =
+    useStakingPoktParams(currentAccount)
+
+  if (isError) {
+    console.error("Error fetching staking params", isError)
+  }
+
   let amount: bigint = BigInt(0)
   let to: string | undefined
+  let memo: string | undefined
   if ("value" in transactionDetails) {
     amount = transactionDetails.value
   }
@@ -38,7 +50,13 @@ export default function SignTransactionSignInfoProvider({
     amount = BigInt(transactionDetails.txMsg.value.amount)
     to = transactionDetails.txMsg.value.toAddress
   }
-  if ("to" in transactionDetails) to = transactionDetails.to
+  if ("to" in transactionDetails) {
+    to = transactionDetails.to
+  }
+  if ("memo" in transactionDetails) {
+    memo = transactionDetails.memo
+  }
+
   const transactionAssetAmount = enrichAssetAmountWithDecimalValues(
     {
       asset: network.baseAsset,
@@ -63,12 +81,32 @@ export default function SignTransactionSignInfoProvider({
     baseAssetPricePoint,
     decimalPlaces
   )
-  /**
-   * TODO: v0.2.0 Handle different kinds of transactions and assets
-   */
+
+  let title = "Sign Transaction"
+  let confirmButtonLabel = "SIGN"
+  let rejectButtonLabel = "REJECT"
+
+  if (to && to === stakingPoktData?.wallets?.siw) {
+    if (startsWith(memo, "s")) {
+      title = "Stake"
+    }
+    if (startsWith(memo, "u")) {
+      title = "Unstake"
+    }
+    if (memo === "c:true") {
+      title = "Compounding On"
+    }
+    if (memo === "c:false") {
+      title = "Compounding Off"
+    }
+
+    confirmButtonLabel = title.toUpperCase()
+    rejectButtonLabel = "CANCEL"
+  }
+
   return (
     <SignTransactionBaseInfoProvider
-      title="Sign Transaction"
+      title={title}
       infoBlock={
         <TransactionSendDetail
           transaction={transactionDetails as unknown as ActivityItem}
@@ -76,7 +114,7 @@ export default function SignTransactionSignInfoProvider({
       }
       textualInfoBlock={
         <TransactionDetailContainer>
-          <TransactionDetailItem name="Type" value="SIGN" />
+          <TransactionDetailItem name="Type" value={confirmButtonLabel} />
           <TransactionDetailItem name="Spend amount" value={tokenValue} />
           <TransactionDetailItem
             name="To:"
@@ -84,7 +122,8 @@ export default function SignTransactionSignInfoProvider({
           />
         </TransactionDetailContainer>
       }
-      confirmButtonLabel="SIGN"
+      rejectButtonLabel={rejectButtonLabel}
+      confirmButtonLabel={confirmButtonLabel}
       inner={inner}
     />
   )

@@ -12,10 +12,14 @@ import { normalizeEVMAddress, normalizeAddress } from "../lib/utils"
 import { createBackgroundAsyncThunk } from "./utils"
 import { isNetworkBaseAsset } from "./utils/asset-utils"
 import { getProvider, internalPocketProvider } from "./utils/contract-utils"
-import { sameNetwork, POKTTransactionRequest, POKTMsgSend, POKTMsgType } from "../networks"
+import {
+  sameNetwork,
+  POKTTransactionRequest,
+  POKTMsgSend,
+  POKTMsgType,
+} from "../networks"
 import { ERC20_INTERFACE } from "../lib/erc20"
 import logger from "../lib/logger"
-import { POCKET } from "../constants"
 import { BASE_POKT_FEE } from "../constants/network-fees"
 
 type SingleAssetState = AnyAsset & {
@@ -109,7 +113,7 @@ const assetsSlice = createSlice({
                 "contractAddress" in a &&
                 a.homeNetwork.name === asset.homeNetwork.name &&
                 normalizeEVMAddress(a.contractAddress) ===
-                normalizeEVMAddress(asset.contractAddress)) ||
+                  normalizeEVMAddress(asset.contractAddress)) ||
               asset.name === a.name
           )
           // if there aren't duplicates, add the asset
@@ -180,12 +184,12 @@ export const transferAsset = createBackgroundAsyncThunk(
     toAddressNetwork: { address: toAddress, network: toNetwork },
     assetAmount,
     gasLimit,
-    memo
+    memo,
   }: {
     fromAddressNetwork: AddressOnNetwork
     toAddressNetwork: AddressOnNetwork
     assetAmount: AnyAssetAmount
-    gasLimit: bigint | undefined,
+    gasLimit: bigint | undefined
     memo?: string
   }) => {
     if (!sameNetwork(fromNetwork, toNetwork)) {
@@ -198,7 +202,7 @@ export const transferAsset = createBackgroundAsyncThunk(
       if (isNetworkBaseAsset(assetAmount.asset, fromNetwork)) {
         logger.debug(
           `Sending ${assetAmount.amount} ${assetAmount.asset.symbol} from ` +
-          `${fromAddress} to ${toAddress} as a base asset transfer.`
+            `${fromAddress} to ${toAddress} as a base asset transfer.`
         )
         await signer.sendTransaction({
           from: fromAddress,
@@ -209,7 +213,7 @@ export const transferAsset = createBackgroundAsyncThunk(
       } else if (isSmartContractFungibleAsset(assetAmount.asset)) {
         logger.debug(
           `Sending ${assetAmount.amount} ${assetAmount.asset.symbol} from ` +
-          `${fromAddress} to ${toAddress} as an ERC20 transfer.`
+            `${fromAddress} to ${toAddress} as an ERC20 transfer.`
         )
         const token = new ethers.Contract(
           assetAmount.asset.contractAddress,
@@ -256,7 +260,6 @@ export const transferAsset = createBackgroundAsyncThunk(
         provider.send("pokt_sendTransaction", [txRequest])
       }
     }
-
   }
 )
 
