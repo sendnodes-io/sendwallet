@@ -1,5 +1,5 @@
 /* This example requires Tailwind CSS v2.0+ */
-import React, { Fragment, ReactElement, useState } from "react"
+import React, { Fragment, ReactElement, useEffect, useState } from "react"
 import { Dialog, Transition } from "@headlessui/react"
 import classNames, { clsx } from "clsx"
 import { useBackgroundSelector } from "../../hooks"
@@ -9,7 +9,7 @@ import {
 } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
 import { SharedIcon } from "../Shared/SharedIcon"
 import Snackbar from "../Snackbar/Snackbar"
-import { useHistory, Link } from "react-router-dom"
+import { useHistory, Link, useLocation } from "react-router-dom"
 import { MenuIcon, XIcon } from "@heroicons/react/outline"
 
 import { SpeakerphoneIcon } from "@heroicons/react/outline"
@@ -117,6 +117,13 @@ const revealSidebarHover = stylesheet`
 `
 function Sidebar({ isOpen, onClose }: SidebarProps): ReactElement {
   const history = useHistory()
+  const location = useLocation()
+
+  useEffect(() => {
+    if (isOpen) {
+      onClose()
+    }
+  }, [location])
 
   return (
     <Fragment>
