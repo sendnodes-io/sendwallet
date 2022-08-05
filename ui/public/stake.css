@@ -4,7 +4,7 @@
 }
 
 body {
-  @apply justify-start min-h-screen;
+  @apply justify-start min-h-screen w-full;
 }
 .base_pokt_logo {
   @apply hidden;
@@ -36,4 +36,9 @@ body {
 
 .snackbar_wrap {
   @apply left-0 right-0 text-xl mx-auto font-semibold py-5 border border-eerie-black bg-spanish-gray text-white !important;
+}
+
+/* TODO: figure out how to make this not overflow the containers */
+.slide_up_menu_wrap {
+  @apply hidden;
 }

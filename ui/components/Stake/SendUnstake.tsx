@@ -353,7 +353,7 @@ export default function SendUnstake(): ReactElement {
         </div>
       </div>
 
-      <div className="section py-4">
+      <div className="section py-4 max-w-xs mx-auto">
         <div
           style={{ "--icon-color": "var(--eerie-black-100)" } as CSSProperties}
         >
