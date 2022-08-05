@@ -344,10 +344,10 @@ export default function CoreStakePage(props: Props): ReactElement {
         </div>
       </div>
 
-      <div className="px-4 md:px-8 xl:px-24 lg:px-8 w-full ">
+      <div className="px-4 md:px-8 xl:px-24 lg:px-8 w-full flex flex-col justify-center items-center">
         <div
           className={clsx(
-            "xl:max-w-7xl lg:max-w-4xl mx-auto relative rounded-lg lg:rounded-3xl bg-eerie-black w-full ",
+            "xl:max-w-7xl lg:max-w-4xl mx-auto relative rounded-lg lg:rounded-3xl bg-eerie-black w-full  min-h-[36rem]",
             styles.mainPanel
           )}
         >
@@ -365,7 +365,7 @@ export default function CoreStakePage(props: Props): ReactElement {
               </button>
             </div>
             <main className="flex-1 w-full ">
-              <div className="flex flex-col px-4 sm:px-8 lg:px-0 py-12 lg:py-16 justify-center w-full ">
+              <div className="flex flex-col px-4 sm:px-8 lg:px-0 py-12 lg:py-16 justify-center w-full">
                 {children}
               </div>
             </main>

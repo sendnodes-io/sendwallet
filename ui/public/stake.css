@@ -6,8 +6,13 @@
 body {
   @apply justify-start min-h-screen w-full;
 }
+
 .base_pokt_logo {
   @apply hidden;
+}
+
+#pokt-wallet-root {
+  @apply h-full flex-1;
 }
 
 * {
@@ -19,6 +24,11 @@ body {
 ::-webkit-scrollbar {
   width: 0.5rem;
   scrollbar-gutter: stable both-edges;
+}
+
+body::-webkit-scrollbar {
+  width: 0;
+  scrollbar-width: 0;
 }
 
 /* Track */
