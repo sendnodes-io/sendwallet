@@ -157,6 +157,10 @@ function StakeTransactionItem({ color, Icon, tx }: StakeTransactionItemProps) {
 
   const timestamp = dayjs.utc(tx.timestamp)
   const relativeTimestamp = timestamp.fromNow()
+
+  // TODO: add est. rewards start
+  // TODO: add est. unstake time
+
   return (
     <li key={tx.hash} className="list-item hover:bg-gray-700 rounded-sm">
       <a
