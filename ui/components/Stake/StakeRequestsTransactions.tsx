@@ -6,7 +6,13 @@ import {
 
 import { useBackgroundSelector, useAreKeyringsUnlocked } from "../../hooks"
 import SharedSplashScreen from "../Shared/SharedSplashScreen"
-import { CollectionIcon } from "@heroicons/react/outline"
+import {
+  CalendarIcon,
+  CollectionIcon,
+  InformationCircleIcon,
+  LocationMarkerIcon,
+  UsersIcon,
+} from "@heroicons/react/outline"
 
 import { capitalize, isEqual } from "lodash"
 import {
@@ -32,24 +38,6 @@ dayjs.extend(updateLocale.default)
 dayjs.extend(relativeTime.default)
 dayjs.extend(utc.default)
 
-dayjs.updateLocale("en", {
-  relativeTime: {
-    future: "in %s",
-    past: "%s",
-    s: "a few sec",
-    m: "a min",
-    mm: "%d min",
-    h: "an hr",
-    hh: "%d hrs",
-    d: "a day",
-    dd: "%d days",
-    M: "a mon",
-    MM: "%d mons",
-    y: "a yr",
-    yy: "%d yrs",
-  },
-})
-
 const snActionBg = {
   [SnAction.COMPOUND]: "bg-indigo",
   [SnAction.STAKE]: "bg-capri",
@@ -59,7 +47,9 @@ const snActionBg = {
 
 const snActionIcon: Record<SnAction, (props: any) => JSX.Element> = {
   [SnAction.COMPOUND]: CheckIcon,
-  [SnAction.STAKE]: () => <div className="stake_icon h-5 w-5 bg-white"></div>,
+  [SnAction.STAKE]: ({ className }: { className: string }) => (
+    <div className={clsx("stake_icon bg-white", className)}></div>
+  ),
   [SnAction.UNSTAKE]: ReceiptRefundIcon,
   [SnAction.REWARD]: TrendingUpIcon,
 }
@@ -88,7 +78,16 @@ export default function StakeRequestsTransactions(): ReactElement {
               Staking Transactions
             </h1>
             <p className="mt-2 text-sm text-spanish-gray">
-              A list of all staking transactions recorded on the POKT Network.
+              A list of all staking transactions for{" "}
+              <a
+                href="https://docs.sendnodes.io/"
+                target={"_blank"}
+                className="hover:text-white"
+              >
+                POKT Onchain Pool Staking (POPS){" "}
+                <InformationCircleIcon className="inline h-4 w-4" />
+              </a>{" "}
+              recorded on the POKT Network.
             </p>
           </div>
           <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
@@ -108,20 +107,17 @@ export default function StakeRequestsTransactions(): ReactElement {
         <div className="mt-8 flex flex-col">
           <div className="-my-2 -mx-4 sm:-mx-6 lg:-mx-8">
             <div className="inline-block min-w-full py-2 align-middle">
-              <div className="shadow-sm ring-1 ring-black ring-opacity-5">
-                <div className="flow-root max-h-[24rem] overflow-y-scroll">
-                  <ul role="list" className="-mb-8 ">
-                    {data?.map((tx, txIdx) => (
-                      <StakeTransactionItem
-                        key={tx.hash}
-                        tx={tx}
-                        isLast={txIdx !== data.length - 1}
-                        bgColor={snActionBg[tx.action]}
-                        Icon={snActionIcon[tx.action]}
-                      />
-                    ))}
-                  </ul>
-                </div>
+              <div className="max-h-[80vh] overflow-y-scroll">
+                <ul role="list" className="divide-y divide-spanish-gray">
+                  {data?.map((tx, txIdx) => (
+                    <StakeTransactionItem
+                      key={tx.hash}
+                      tx={tx}
+                      color={snActionBg[tx.action]}
+                      Icon={snActionIcon[tx.action]}
+                    />
+                  ))}
+                </ul>
               </div>
             </div>
           </div>
@@ -132,18 +128,12 @@ export default function StakeRequestsTransactions(): ReactElement {
 }
 
 type StakeTransactionItemProps = {
-  bgColor: string
+  color: string
   Icon: (props: any) => JSX.Element
-  isLast: boolean
   tx: ISnTransactionFormatted
 }
 
-function StakeTransactionItem({
-  bgColor,
-  Icon,
-  isLast,
-  tx,
-}: StakeTransactionItemProps) {
+function StakeTransactionItem({ color, Icon, tx }: StakeTransactionItemProps) {
   const currentAccount = useBackgroundSelector(selectCurrentAccount, isEqual)
   const blockExplorerUrl = useBackgroundSelector(
     (_) =>
@@ -157,50 +147,76 @@ function StakeTransactionItem({
   const timestamp = dayjs.utc(tx.timestamp)
   const relativeTimestamp = timestamp.fromNow()
   return (
-    <li key={tx.hash}>
-      <div className="relative pb-8">
-        {isLast ? (
-          <span
-            className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-spanish-gray"
-            aria-hidden="true"
-          />
-        ) : null}
-        <div className="relative flex space-x-3">
-          <div>
-            <span
+    <li key={tx.hash} className="list-item hover:bg-eerie-black">
+      <a
+        href={blockExplorerUrl}
+        target="_poktwatch"
+        className="font-medium text-white"
+      >
+        <div className="px-4 py-4 sm:px-6 flex">
+          <div className="flex items-center flex-shrink-0">
+            <div
               className={clsx(
-                bgColor,
-                "h-8 w-8 rounded-full flex items-center justify-center"
+                color,
+                "h-16 w-16 rounded-full flex items-center justify-center"
               )}
             >
-              <Icon className="h-5 w-5 text-white" aria-hidden="true" />
-            </span>
+              <Icon className="h-10 w-10 text-white" aria-hidden="true" />
+            </div>
           </div>
-          <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
-            <div>
-              <p className="text-sm">
-                <a
-                  href={blockExplorerUrl}
-                  target="_poktwatch"
-                  className="font-medium text-white"
+          <div className="flex-1 ml-4 sm:ml-6">
+            <div className="flex items-center justify-between">
+              <p className="text-sm sm:text-lg font-medium text-white truncate">
+                {capitalize(tx.action)}
+              </p>
+              <div className="ml-2 flex-shrink-0 flex">
+                <p
+                  className={clsx(
+                    "px-2 inline-flex items-center gap-2 text-sm sm:text-lg leading-5 font-semibold rounded-full"
+                  )}
                 >
-                  {capitalize(tx.action)}{" "}
+                  <div className="inline">
+                    <img
+                      src="/images/pokt_icon@2x.svg"
+                      className="h-5 w-5"
+                      alt="POKT"
+                    />
+                  </div>
                   {formatFixed(
                     BigNumber.from(tx.amount),
                     currentAccount.network.baseAsset.decimals
-                  )}{" "}
-                  POKT
-                </a>
-              </p>
+                  )}
+                </p>
+              </div>
             </div>
-            <div className="text-right text-sm whitespace-nowrap text-gray-500">
-              <time dateTime={timestamp.format("YYYY-MM-DD HH:mm:ss [UTC]")}>
-                {relativeTimestamp}
-              </time>
+            <div className="mt-2 sm:flex sm:justify-between">
+              <div className="sm:flex">
+                <p className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0 ">
+                  <LocationMarkerIcon
+                    className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
+                    aria-hidden="true"
+                  />
+                  position.location
+                </p>
+              </div>
+              <div className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
+                <CalendarIcon
+                  className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
+                  aria-hidden="true"
+                />
+                <p>
+                  Closing on{" "}
+                  <time
+                    dateTime={timestamp.format("YYYY-MM-DD HH:mm:ss [UTC]")}
+                  >
+                    {relativeTimestamp}
+                  </time>
+                </p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </a>
     </li>
   )
 }
