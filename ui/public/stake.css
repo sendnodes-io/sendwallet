@@ -33,3 +33,7 @@ body {
   @apply bg-gradient-to-b from-capri to-aqua hover:from-aqua hover:to-aqua;
   border-radius: 0.667rem;
 }
+
+.snackbar_wrap {
+  @apply left-0 right-0 text-xl mx-auto font-semibold py-5 border border-eerie-black bg-spanish-gray text-white !important;
+}

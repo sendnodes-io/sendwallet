@@ -20,10 +20,6 @@ import SharedAddress from "../Shared/SharedAddress"
 import AccountsNotificationPanel from "../AccountsNotificationPanel/AccountsNotificationPanel"
 import SharedModal from "../Shared/SharedModal"
 import { css, stylesheet } from "astroturf"
-import { selectTransactionData } from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction"
-import SignStakeTransaction from "../Stake/SignStakeTransaction"
-import SignTransaction from "../../pages/SignTransaction"
-import SignTransactionContainer from "../SignTransaction/SignTransactionContainer"
 
 /* FIXME: REMOVE NOT NEEDED FOR GO LIVE */
 function ProdWarningBanner() {
@@ -303,28 +299,23 @@ const styles = stylesheet`
   .mainPanel {
     background: radial-gradient(98.15% 107.73% at 15.3% 0%, rgba(255, 255, 255, 0.12) 0%, rgba(0, 0, 0, 0) 100%) /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */, #151515;
   }
-  .accountsModal :global(.switcher_wrap) {
-    @apply rounded-none -mx-4 sm:-mx-6 !important;
-  }
-  .accountsModalScrollbar :global(.switcher_wrap:-webkit-scrollbar-track) {
-    @apply bg-eerie-black;
-  }
 `
 
 export default function CoreStakePage(props: Props): ReactElement {
   const { children } = props
   const [isAccountsPanelOpen, setIsAccountsPanelOpen] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const transactionDetails = useBackgroundSelector(
-    selectTransactionData,
-    isEqual
-  )
+
   const currentAccount = useBackgroundSelector(selectCurrentAccount, isEqual)
   const currentAccountData = useBackgroundSelector(
     getCurrentAccountState,
     isEqual
   )
-  const { data, isLoading, isError } = useStakingPoktParams(currentAccount)
+  const {
+    data: stakingPoktParams,
+    isLoading,
+    isError,
+  } = useStakingPoktParams(currentAccount)
 
   if (isLoading || currentAccountData === "loading") {
     return (
@@ -334,14 +325,14 @@ export default function CoreStakePage(props: Props): ReactElement {
     )
   }
 
-  // bubble up to error fallback
   if (isError) {
-    throw isError
+    console.warn("failed to pull staking pokt params", isError)
   }
 
   return (
     <>
-      {data?.wallets.siw === "cb6ff4204f8a93e89759c22a9e0f8896f8561379" ? (
+      {stakingPoktParams?.wallets.siw ===
+      "cb6ff4204f8a93e89759c22a9e0f8896f8561379" ? (
         <ProdWarningBanner />
       ) : null}
 
@@ -403,9 +394,11 @@ export default function CoreStakePage(props: Props): ReactElement {
             </main>
           </div>
         </div>
-      </div>
 
-      <Snackbar />
+        <div className="relative">
+          <Snackbar />
+        </div>
+      </div>
 
       <SharedModal
         isOpen={isAccountsPanelOpen}
@@ -433,17 +426,6 @@ export default function CoreStakePage(props: Props): ReactElement {
             />
           </div>
         </>
-      </SharedModal>
-      <SharedModal
-        isOpen={!!transactionDetails}
-        onClose={() => {
-          /**ignored */
-        }}
-        className={styles.accountsModal}
-      >
-        <div className="z-0">
-          <SignTransaction />
-        </div>
       </SharedModal>
     </>
   )

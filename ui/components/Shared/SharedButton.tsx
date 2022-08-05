@@ -370,6 +370,8 @@ export default function SharedButton(props: Props): ReactElement {
             mask-size: contain;
             mask-repeat: no-repeat;
             mask-position: center;
+            width: 1.2rem;
+            height: 1.2rem;
           }
         `}
       </style>

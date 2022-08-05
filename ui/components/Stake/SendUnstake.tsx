@@ -48,6 +48,19 @@ import SharedLoadingSpinner from "../Shared/SharedLoadingSpinner"
 import StatTotalStaked from "./Stat/StatTotalStaked"
 import StatTotalPendingStaked from "./Stat/StatTotalPendingStaked"
 import { formatFixed, parseFixed } from "@ethersproject/bignumber"
+import SharedModal from "../Shared/SharedModal"
+import { selectTransactionData } from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction"
+import { stylesheet } from "astroturf"
+import SignTransaction from "../../pages/SignTransaction"
+
+const styles = stylesheet`
+  .accountsModal :global(.switcher_wrap) {
+    @apply rounded-none -mx-4 sm:-mx-6 !important;
+  }
+  .accountsModalScrollbar :global(.switcher_wrap:-webkit-scrollbar-track) {
+    @apply bg-eerie-black;
+  }
+`
 
 export default function SendUnstake(): ReactElement {
   const history = useHistory()
@@ -62,7 +75,10 @@ export default function SendUnstake(): ReactElement {
     selectMainCurrencySymbol,
     isEqual
   )
-
+  const transactionDetails = useBackgroundSelector(
+    selectTransactionData,
+    isEqual
+  )
   const {
     data: stakingPoktParamsData,
     isLoading: isStakingPoktParamsLoading,
@@ -174,8 +190,6 @@ export default function SendUnstake(): ReactElement {
     } finally {
       setIsSendingTransactionRequest(false)
     }
-
-    history.push("/sign-transaction")
   }, [
     assetAmount,
     currentAccount,
@@ -362,54 +376,26 @@ export default function SendUnstake(): ReactElement {
           </SharedButton>
         </div>
       </div>
+      <SharedModal
+        isOpen={
+          !!transactionDetails &&
+          stakingPoktParamsData?.wallets?.siw === transactionDetails?.to
+        }
+        onClose={() => {
+          /**ignored */
+        }}
+        className={styles.accountsModal}
+      >
+        <div className="z-0">
+          <SignTransaction />
+        </div>
+      </SharedModal>
       <style jsx>
         {`
-          .section {
-            width: calc(100% - 1rem);
-          }
-
-          .header {
-            width: 100%;
-            margin-bottom: 1rem;
-          }
-
-          .row {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            padding: 1rem 0;
-          }
-          .header .row {
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-          }
-
-          .row .center {
-            text-align: center;
-            width: 14.375rem;
-          }
-
-          .row .end {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: flex-end;
-            gap: 0.75rem;
-          }
-          .icon_close {
-            width: 1rem;
-            height: 1rem;
-            position: unset;
-          }
-
           .form_input {
             width: 100%;
             margin-bottom: 0.5rem;
             position: relative;
-          }
-
-          .address_form_input {
-            font-size: 0.8rem;
           }
 
           .value {
@@ -426,14 +412,9 @@ export default function SendUnstake(): ReactElement {
           .form_input :global(textarea) {
             height: 7.5rem;
           }
-          .memo_validation {
-            position: absolute;
-            right: 0;
-            bottom: -1.5rem;
-          }
 
-          :global(.page_content) {
-            justify-content: space-evenly;
+          .form_input :global(.slide_up_menu_wrap) {
+            display: none;
           }
         `}
       </style>
