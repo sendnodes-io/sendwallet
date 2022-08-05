@@ -341,11 +341,7 @@ export default function WalletAccountBalanceControl(
 
           .wallet_control :global(.stake_button) {
             letter-spacing: -0.025em;
-          }
-          .wallet_control :global(.stake_button .icon) {
-            width: 1.33rem;
-            height: 0.667rem;
-            mask-size: contain;
+            font-weight: 600;
           }
 
           .wallet_control :global(.stake_button.icon_button .icon_left .icon) {

@@ -1,16 +1,35 @@
 import useSWR from "swr"
 import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts"
 import { lowerCase } from "lodash"
-import { fetcher, SENDNODES_ONCHAIN_API_URL } from "./constants"
+import { SENDNODES_ONCHAIN_API_URL } from "./constants"
+
+export interface IRewardsData {
+  startHeight: string
+  endHeight: string
+  apy: number
+  apyNoCompounding: number
+  netRewardsPerNodePerDay: string
+  netRewardsPerPoktStakedPerDay: string
+  netRewardsUsersTotal: string
+  avgPoktPricePerUSD: string
+}
 
 export interface IUserStakingDataFormatted {
   staked: string
   unstaked: string
   pendingStaked: string
   pendingUnstaked: string
+  rewards: string
+  pendingRewards: string
+  rewardsAPY: string
   compound: boolean
+  stakedWeight: string
   userWalletAddress: string
-  transactions: string
+}
+
+export interface IGetStakingUserData {
+  rewardsData: IRewardsData
+  userStakingData: IUserStakingDataFormatted[]
 }
 
 export function useStakingUserData(addressOnNetwork: AddressOnNetwork) {
@@ -19,7 +38,6 @@ export function useStakingUserData(addressOnNetwork: AddressOnNetwork) {
     id: 1,
     jsonrpc: "2.0",
     params: {
-      // TODO: implement cutoff height, but what does it do?
       userWalletAddress: addressOnNetwork.address,
     },
   })
@@ -33,21 +51,34 @@ export function useStakingUserData(addressOnNetwork: AddressOnNetwork) {
     redirect: "follow",
   }
 
-  const { data, error } = useSWR<IUserStakingDataFormatted[], unknown>(
+  const { data, error } = useSWR<IGetStakingUserData, unknown>(
     // TODO: support more than one network name
     [
       `${SENDNODES_ONCHAIN_API_URL}pocket.${addressOnNetwork.network.chainID}`,
       request,
     ],
-    fetcher,
+    async (url: string, request: RequestInit) => {
+      const response = await window.fetch(url, {
+        headers: { "Content-Type": "application/json" },
+        ...request,
+      })
+
+      if (!response.ok) {
+        throw new Error(
+          "Failed to fetch user staking data: " + response.statusText
+        )
+      } else {
+        return response.json()
+      }
+    },
     {
       refreshInterval: 30 * 1000,
     }
   )
 
   return {
-    data: data?.find(
-      (user: any) =>
+    data: data?.userStakingData?.find(
+      (user: IUserStakingDataFormatted) =>
         lowerCase(user.userWalletAddress) ===
         lowerCase(addressOnNetwork.address)
     ),

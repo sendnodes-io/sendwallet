@@ -45,6 +45,20 @@ import { BigNumber } from "ethers"
 import { formatFixed, parseFixed } from "@ethersproject/bignumber"
 import StatTotalStaked from "./Stat/StatTotalStaked"
 import StatTotalPendingStaked from "./Stat/StatTotalPendingStaked"
+import SharedModal from "../Shared/SharedModal"
+import { selectTransactionData } from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction"
+import { isEqual } from "lodash"
+import { stylesheet } from "astroturf"
+import SignTransaction from "../../pages/SignTransaction"
+
+const styles = stylesheet`
+  .accountsModal :global(.switcher_wrap) {
+    @apply rounded-none -mx-4 sm:-mx-6 !important;
+  }
+  .accountsModalScrollbar :global(.switcher_wrap:-webkit-scrollbar-track) {
+    @apply bg-eerie-black;
+  }
+`
 
 export default function SendStake(): ReactElement {
   const location = useLocation<FungibleAsset>()
@@ -64,7 +78,10 @@ export default function SendStake(): ReactElement {
   const currentAccount = useBackgroundSelector(selectCurrentAccount)
   const balanceData = useBackgroundSelector(selectCurrentAccountBalances)
   const mainCurrencySymbol = useBackgroundSelector(selectMainCurrencySymbol)
-
+  const transactionDetails = useBackgroundSelector(
+    selectTransactionData,
+    isEqual
+  )
   const {
     data: stakingPoktParamsData,
     isLoading: isStakingPoktParamsLoading,
@@ -351,6 +368,20 @@ export default function SendStake(): ReactElement {
           </SharedButton>
         </div>
       </div>
+      <SharedModal
+        isOpen={
+          !!transactionDetails &&
+          stakingPoktParamsData?.wallets?.siw === transactionDetails?.to
+        }
+        onClose={() => {
+          /**ignored */
+        }}
+        className={styles.accountsModal}
+      >
+        <div className="z-0">
+          <SignTransaction />
+        </div>
+      </SharedModal>
       <style jsx>
         {`
           .form_input {

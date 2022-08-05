@@ -1,6 +1,6 @@
 import useSWR from "swr"
 import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts"
-import { fetcher, SENDNODES_ONCHAIN_API_URL } from "./constants"
+import { SENDNODES_ONCHAIN_API_URL } from "./constants"
 
 export interface IStakingPoktParams {
   /** Can we stake at all? */
@@ -46,7 +46,20 @@ export function useStakingPoktParams(addressOnNetwork: AddressOnNetwork) {
       `${SENDNODES_ONCHAIN_API_URL}pocket.${addressOnNetwork.network.chainID}`,
       request,
     ],
-    fetcher,
+    async (url: string, request: RequestInit) => {
+      const response = await window.fetch(url, {
+        headers: { "Content-Type": "application/json" },
+        ...request,
+      })
+
+      if (!response.ok) {
+        throw new Error(
+          "Failed to fetch staking params data: " + response.statusText
+        )
+      } else {
+        return response.json()
+      }
+    },
     {
       refreshInterval: 30 * 1000,
     }
