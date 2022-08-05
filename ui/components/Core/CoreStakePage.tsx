@@ -199,43 +199,13 @@ function Sidebar({ isOpen, onClose }: SidebarProps): ReactElement {
                         <item.icon
                           className={classNames(
                             history.location.pathname === item.href
-                              ? "text-gray-300"
-                              : "text-gray-400 group-hover:text-gray-300",
+                              ? "bg-aqua"
+                              : "bg-white group-hover:bg-aqua",
                             "mr-4 flex-shrink-0 h-6 w-6"
                           )}
                           aria-hidden="true"
                         />
                         {item.name}
-                      </Link>
-                    ))}
-                    {navigation.map((item) => (
-                      <Link
-                        key={`${item.name}-dup`}
-                        to={item.href}
-                        className={classNames(
-                          history.location.pathname === item.href
-                            ? "text-aqua"
-                            : "text-white hover:text-aqua",
-                          "group flex flex-col justify-center items-center px-2 py-2 text-sm xl:text-lg font-light rounded-md"
-                        )}
-                      >
-                        <item.icon
-                          className={classNames(
-                            history.location.pathname === item.href
-                              ? "bg-aqua"
-                              : "bg-white group-hover:bg-aqua",
-                            "flex-shrink-0 lg:h-8 lg:w-8 xl:h-12 xl:w-12"
-                          )}
-                          aria-hidden="true"
-                        />
-                        <span
-                          className={clsx(
-                            "opacity-0 transition-opacity duration-300",
-                            revealSidebarHover.linkText
-                          )}
-                        >
-                          {item.name}
-                        </span>
                       </Link>
                     ))}
                   </nav>
