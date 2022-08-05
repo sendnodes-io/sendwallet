@@ -22,11 +22,7 @@ import {
 } from "../../hooks/staking-hooks/use-staking-requests-transactions"
 import clsx from "clsx"
 import { Link } from "react-router-dom"
-import {
-  CheckIcon,
-  ReceiptRefundIcon,
-  TrendingUpIcon,
-} from "@heroicons/react/solid"
+import { CheckIcon, TrendingUpIcon } from "@heroicons/react/solid"
 import { BigNumber, formatFixed } from "@ethersproject/bignumber"
 
 import dayjs from "dayjs"
@@ -40,17 +36,24 @@ dayjs.extend(utc.default)
 
 const snActionBg = {
   [SnAction.COMPOUND]: "bg-indigo",
-  [SnAction.STAKE]: "bg-capri",
-  [SnAction.UNSTAKE]: "bg-spanish-gray",
+  [SnAction.STAKE]: "bg-aqua",
+  [SnAction.UNSTAKE]: "bg-white bg-opacity-75",
   [SnAction.REWARD]: "bg-emerald",
 }
 
 const snActionIcon: Record<SnAction, (props: any) => JSX.Element> = {
   [SnAction.COMPOUND]: CheckIcon,
   [SnAction.STAKE]: ({ className }: { className: string }) => (
-    <div className={clsx("stake_icon bg-white", className)}></div>
+    <div className={clsx("stake_icon", className)}></div>
   ),
-  [SnAction.UNSTAKE]: ReceiptRefundIcon,
+  [SnAction.UNSTAKE]: ({ className }: { className: string }) => (
+    <div
+      className={clsx(className, "icon-mask")}
+      css={`
+        mask-image: url("../../public/images/unstake@2x.png");
+      `}
+    />
+  ),
   [SnAction.REWARD]: TrendingUpIcon,
 }
 
@@ -74,20 +77,28 @@ export default function StakeRequestsTransactions(): ReactElement {
         <div className="sm:flex sm:items-center">
           <div className="sm:flex-auto">
             <h1 className="text-xl font-semibold">
-              <CollectionIcon className="w-6 h-6 inline mr-2" />
+              <div
+                className={clsx(
+                  "icon-mask h-10 w-10 bg-white inline-block align-middle"
+                )}
+                css={`
+                  mask-image: url("../../public/images/transactions@2x.png");
+                `}
+              />
               Staking Transactions
             </h1>
             <p className="mt-2 text-sm text-spanish-gray">
-              A list of all staking transactions for{" "}
+              A list of all staking transactions recorded on the POKT Network
+              for{" "}
               <a
                 href="https://docs.sendnodes.io/"
                 target={"_blank"}
                 className="hover:text-white"
               >
-                POKT Onchain Pool Staking (POPS){" "}
+                POKT Onchain Pool Staking (<b className="text-white">POPS</b>){" "}
                 <InformationCircleIcon className="inline h-4 w-4" />
               </a>{" "}
-              recorded on the POKT Network.
+              by SendNodes.
             </p>
           </div>
           <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
@@ -107,7 +118,7 @@ export default function StakeRequestsTransactions(): ReactElement {
         <div className="mt-8 flex flex-col">
           <div className="-my-2 -mx-4 sm:-mx-6 lg:-mx-8">
             <div className="inline-block min-w-full py-2 align-middle">
-              <div className="max-h-[80vh] overflow-y-scroll">
+              <div className="max-h-[80vh] overflow-y-scroll rounded-md">
                 <ul role="list" className="divide-y divide-spanish-gray">
                   {data?.map((tx, txIdx) => (
                     <StakeTransactionItem
@@ -147,7 +158,7 @@ function StakeTransactionItem({ color, Icon, tx }: StakeTransactionItemProps) {
   const timestamp = dayjs.utc(tx.timestamp)
   const relativeTimestamp = timestamp.fromNow()
   return (
-    <li key={tx.hash} className="list-item hover:bg-eerie-black">
+    <li key={tx.hash} className="list-item hover:bg-gray-700 rounded-sm">
       <a
         href={blockExplorerUrl}
         target="_poktwatch"
@@ -157,11 +168,10 @@ function StakeTransactionItem({ color, Icon, tx }: StakeTransactionItemProps) {
           <div className="flex items-center flex-shrink-0">
             <div
               className={clsx(
-                color,
                 "h-16 w-16 rounded-full flex items-center justify-center"
               )}
             >
-              <Icon className="h-10 w-10 text-white" aria-hidden="true" />
+              <Icon className={clsx("h-10 w-10", color)} aria-hidden="true" />
             </div>
           </div>
           <div className="flex-1 ml-4 sm:ml-6">
@@ -170,7 +180,7 @@ function StakeTransactionItem({ color, Icon, tx }: StakeTransactionItemProps) {
                 {capitalize(tx.action)}
               </p>
               <div className="ml-2 flex-shrink-0 flex">
-                <p
+                <div
                   className={clsx(
                     "px-2 inline-flex items-center gap-2 text-sm sm:text-lg leading-5 font-semibold rounded-full"
                   )}
@@ -186,28 +196,30 @@ function StakeTransactionItem({ color, Icon, tx }: StakeTransactionItemProps) {
                     BigNumber.from(tx.amount),
                     currentAccount.network.baseAsset.decimals
                   )}
-                </p>
+                </div>
               </div>
             </div>
             <div className="mt-2 sm:flex sm:justify-between">
               <div className="sm:flex">
-                <p className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0 ">
-                  <LocationMarkerIcon
-                    className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
-                    aria-hidden="true"
+                <div className="mt-2 flex items-center text-sm text-spanish-gray hover:text-white sm:mt-0 ">
+                  <img
+                    src="/images/pokt-watch.png"
+                    className="h-4 w-4 mr-2"
+                    width={"158"}
+                    height={"158"}
+                    alt="POKTWatch.io"
                   />
-                  position.location
-                </p>
+                  <span title={tx.hash}>
+                    {tx.hash.substring(0, 5)}...
+                    {tx.hash.substring(tx.hash.length - 4, tx.hash.length)}
+                  </span>
+                </div>
               </div>
-              <div className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
-                <CalendarIcon
-                  className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
-                  aria-hidden="true"
-                />
+              <div className="mt-2 flex items-center text-sm text-spanish-gray sm:mt-0">
                 <p>
-                  Closing on{" "}
                   <time
                     dateTime={timestamp.format("YYYY-MM-DD HH:mm:ss [UTC]")}
+                    title={timestamp.format("YYYY-MM-DD HH:mm:ss [UTC]")}
                   >
                     {relativeTimestamp}
                   </time>

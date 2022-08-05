@@ -364,3 +364,9 @@ label {
   mask-position: center;
   display: block;
 }
+
+.icon-mask {
+  mask-size: cover;
+  mask-repeat: no-repeat;
+  mask-position: center;
+}
