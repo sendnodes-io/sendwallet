@@ -309,7 +309,7 @@ export default function SendStake(): ReactElement {
           <small className="pb-1 inline-block">
             By checking this box, you agree the{" "}
             <a
-              href="https://docs.sendnodes.io/terms/"
+              href="https://docs.sendnodes.io/legal/terms-of-service"
               className="underline"
               target={"_blank"}
             >

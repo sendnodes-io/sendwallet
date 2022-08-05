@@ -290,12 +290,12 @@ export default function SendUnstake(): ReactElement {
           </span>{" "}
           within 21-24 days.{" "}
           <a
-            href="https://docs.sendnodes.io/"
-            title="More information on Auto Compound with SendNodes"
+            href="https://docs.sendnodes.io/start-here/frequently-asked-questions#how-do-i-unstake"
+            title="More information on unstaking with SendNodes"
             className="inline hover:text-white"
             target="_blank"
           >
-            <span className="sr-only">Information on Staking</span>
+            <span className="sr-only">Information on Unstaking</span>
             <InformationCircleIcon className="ml-1 h-4 w-4 inline" />
           </a>
         </p>
