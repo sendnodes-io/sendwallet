@@ -341,7 +341,7 @@ export default function SendStake(): ReactElement {
           </p>
         </div>
       </div>
-      <div className=" stake_button_wrap">
+      <div className=" stake_button_wrap max-w-xs mx-auto">
         <div
           style={{ "--icon-color": "var(--eerie-black-100)" } as CSSProperties}
         >

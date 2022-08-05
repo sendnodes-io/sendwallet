@@ -307,7 +307,7 @@ export default function CoreStakePage(props: Props): ReactElement {
   }
 
   return (
-    <>
+    <div className="w-full ">
       {stakingPoktParams?.wallets.siw ===
       "cb6ff4204f8a93e89759c22a9e0f8896f8561379" ? (
         <ProdWarningBanner />
@@ -344,16 +344,16 @@ export default function CoreStakePage(props: Props): ReactElement {
         </div>
       </div>
 
-      <div className="px-4 md:px-8 xl:px-24 lg:px-8">
+      <div className="px-4 md:px-8 xl:px-24 lg:px-8 w-full ">
         <div
           className={clsx(
-            "xl:max-w-7xl lg:max-w-4xl mx-auto relative rounded-lg lg:rounded-3xl bg-eerie-black",
+            "xl:max-w-7xl lg:max-w-4xl mx-auto relative rounded-lg lg:rounded-3xl bg-eerie-black w-full ",
             styles.mainPanel
           )}
         >
           <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-          <div className="xl:px-32  lg:px-24 lg:ml-16  flex flex-col flex-1">
+          <div className="xl:px-32  lg:px-24 lg:ml-16  flex flex-col flex-1 w-full ">
             <div className="z-10 lg:hidden pl-1 pt-1 sm:pl-3 sm:pt-3 bg-eerie-black rounded-tl-lg rounded-tr-lg">
               <button
                 type="button"
@@ -364,9 +364,9 @@ export default function CoreStakePage(props: Props): ReactElement {
                 <MenuIcon className="h-6 w-6" aria-hidden="true" />
               </button>
             </div>
-            <main className="flex-1">
-              <div className="flex flex-col px-4 sm:px-8 lg:px-0 py-12 lg:py-16 min-h-[36rem] justify-center">
-                <div>{children}</div>
+            <main className="flex-1 w-full ">
+              <div className="flex flex-col px-4 sm:px-8 lg:px-0 py-12 lg:py-16 justify-center w-full ">
+                {children}
               </div>
             </main>
           </div>
@@ -404,6 +404,6 @@ export default function CoreStakePage(props: Props): ReactElement {
           </div>
         </>
       </SharedModal>
-    </>
+    </div>
   )
 }

@@ -214,7 +214,7 @@ function StakeTransactionItem({ color, Icon, tx }: StakeTransactionItemProps) {
                     alt="POKTWatch.io"
                   />
                   <span title={tx.hash}>
-                    {tx.hash.substring(0, 5)}...
+                    {tx.hash.substring(0, 4)}...
                     {tx.hash.substring(tx.hash.length - 4, tx.hash.length)}
                   </span>
                 </div>
