@@ -491,9 +491,9 @@ export default function SharedAssetInput<T extends AnyAsset>(
         <input
           ref={inputRef}
           id="asset_amount_input"
-          className={classNames("input_amount", {
-            blink: amount === "",
-          })}
+          className={classNames(
+            "input_amount focus:outline outline-1 outline-white px-1 rounded-sm"
+          )}
           type="number"
           step="any"
           min="0"
@@ -566,20 +566,6 @@ export default function SharedAssetInput<T extends AnyAsset>(
             text-align: left;
             width: 100%;
             caret-color: var(--aqua);
-          }
-          .blink {
-            caret-color: transparent;
-            border-left: 0.15em solid var(--aqua);
-            animation: blink-caret 0.8s step-end infinite;
-          }
-          @keyframes blink-caret {
-            from,
-            to {
-              border-color: transparent;
-            }
-            50% {
-              border-color: var(--aqua);
-            }
           }
           input::-webkit-outer-spin-button,
           input::-webkit-inner-spin-button {

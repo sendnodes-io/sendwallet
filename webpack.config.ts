@@ -17,6 +17,7 @@ import HtmlWebpackPlugin from "html-webpack-plugin"
 import WebExtension from "webpack-target-webextension"
 const StatoscopeWebpackPlugin = require("@statoscope/webpack-plugin").default
 import MiniCssExtractPlugin from "mini-css-extract-plugin"
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin")
 import { CleanWebpackPlugin } from "clean-webpack-plugin"
 
 const supportedBrowsers = ["brave", "chrome", "edge", "firefox", "opera"]
@@ -255,6 +256,7 @@ const modeConfigs: {
             },
           },
         }),
+        new CssMinimizerPlugin(),
       ],
     },
   }),
