@@ -269,7 +269,9 @@ function StakeTransactionItem({ color, Icon, tx }: StakeTransactionItemProps) {
                     />
                   </div>
                   {formatFixed(
-                    BigNumber.from(tx.amount),
+                    BigNumber.from(
+                      isPending && isUnstake ? tx.memo.split(":")[1] : tx.amount
+                    ),
                     currentAccount.network.baseAsset.decimals
                   )}
                 </div>
