@@ -49,7 +49,7 @@ import SharedModal from "../Shared/SharedModal"
 import { selectTransactionData } from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction"
 import { isEqual } from "lodash"
 import { stylesheet } from "astroturf"
-import SignTransaction from "../../pages/SignTransaction"
+import SignStakeTransaction from "./SignStakeTransaction"
 
 const styles = stylesheet`
   .accountsModal :global(.switcher_wrap) {
@@ -75,9 +75,15 @@ export default function SendStake(): ReactElement {
   const history = useHistory()
 
   const dispatch = useBackgroundDispatch()
-  const currentAccount = useBackgroundSelector(selectCurrentAccount)
-  const balanceData = useBackgroundSelector(selectCurrentAccountBalances)
-  const mainCurrencySymbol = useBackgroundSelector(selectMainCurrencySymbol)
+  const currentAccount = useBackgroundSelector(selectCurrentAccount, isEqual)
+  const balanceData = useBackgroundSelector(
+    selectCurrentAccountBalances,
+    isEqual
+  )
+  const mainCurrencySymbol = useBackgroundSelector(
+    selectMainCurrencySymbol,
+    isEqual
+  )
   const transactionDetails = useBackgroundSelector(
     selectTransactionData,
     isEqual
@@ -181,7 +187,7 @@ export default function SendStake(): ReactElement {
 
   if (!areKeyringsUnlocked || isStakingPoktParamsLoading) {
     return (
-      <div className="flex-1 w-full relative flex justify-center items-center">
+      <div className="grow w-full relative flex flex-col justify-center items-center">
         <SharedSplashScreen />
       </div>
     )
@@ -379,7 +385,7 @@ export default function SendStake(): ReactElement {
         className={styles.accountsModal}
       >
         <div className="z-0">
-          <SignTransaction />
+          <SignStakeTransaction />
         </div>
       </SharedModal>
       <style jsx>

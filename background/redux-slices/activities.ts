@@ -1,9 +1,19 @@
 import { createEntityAdapter, createSlice, EntityState } from "@reduxjs/toolkit"
-import { keysMap, keysMapPokt, adaptForUI, ActivityItem, POKTActivityItem, EVMActivityItem } from "./utils/activity-utils"
+import {
+  keysMap,
+  keysMapPokt,
+  adaptForUI,
+  ActivityItem,
+  POKTActivityItem,
+  EVMActivityItem,
+} from "./utils/activity-utils"
 import { truncateAddress } from "../lib/utils"
 
 import { assetAmountToDesiredDecimals } from "../assets"
-import { EnrichedEVMTransaction, EnrichedPOKTTransaction } from "../services/enrichment"
+import {
+  EnrichedEVMTransaction,
+  EnrichedPOKTTransaction,
+} from "../services/enrichment"
 
 export { ActivityItem, POKTActivityItem, EVMActivityItem }
 
@@ -22,7 +32,10 @@ const activitiesAdapter = createEntityAdapter<ActivityItem>({
       // Sort by nonce if a block height is missing or equal between two
       // transactions, as long as the two activities are on the same network;
       // otherwise, sort as before.
-      return (b as EnrichedEVMTransaction).nonce - (a as EnrichedEVMTransaction).nonce
+      return (
+        (b as EnrichedEVMTransaction).nonce -
+        (a as EnrichedEVMTransaction).nonce
+      )
     }
     // null means pending or dropped, these are always sorted above everything
     // if networks don't match.
@@ -113,7 +126,7 @@ const activitiesSlice = createSlice({
             }),
             fromTruncated: truncateAddress(tx.from),
             toTruncated: truncateAddress(tx.to ?? ""),
-            blockHeight: tx.height || tx.targetHeight
+            blockHeight: tx.height || tx.targetHeight,
           }
           if (typeof immerState[address] === "undefined") {
             immerState[address] = activitiesAdapter.setOne(
@@ -125,7 +138,6 @@ const activitiesSlice = createSlice({
           }
         })
       }
-
     },
   },
 })
