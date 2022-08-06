@@ -10,22 +10,12 @@ import { HexString } from "@sendnodes/pokt-wallet-background/types"
 import { getRecipient } from "@sendnodes/pokt-wallet-background/redux-slices/utils/activity-utils"
 import SharedAssetIcon from "../Shared/SharedAssetIcon"
 import formatTokenAmount from "../../utils/formatTokenAmount"
+import getTransactionResult from "../../helpers/get-transaction-result"
 
 interface Props {
   onClick: () => void
   activity: ActivityItem
   asAccount: string
-}
-
-enum TransactionStatus {
-  Failed = "failed",
-  Success = "success",
-  Pending = "pending",
-}
-
-interface TransactionResult {
-  status: TransactionStatus
-  description?: string
 }
 
 function isReceiveActivity(activity: ActivityItem, account: string): boolean {
@@ -39,51 +29,6 @@ function isSendActivity(activity: ActivityItem, account: string): boolean {
   return activity.annotation?.type === "asset-transfer"
     ? sameEVMAddress(activity.annotation?.senderAddress, account)
     : true
-}
-
-function getTransactionResult(activity: ActivityItem): TransactionResult {
-  if (activity.network.family === "EVM") {
-    if ("status" in activity && activity.blockHash !== null) {
-      if (activity.status === 0) {
-        return {
-          status: TransactionStatus.Failed,
-          description: "Dropped",
-        }
-      }
-    }
-    if (
-      !("status" in activity) &&
-      "blockHash" in activity &&
-      activity.blockHash === null
-    ) {
-      return {
-        status: TransactionStatus.Pending,
-      }
-    }
-  }
-
-  if (activity.network.family === "POKT") {
-    if ("height" in activity) {
-      if (
-        "txResult" in activity &&
-        activity.txResult &&
-        activity.txResult.code === 10
-      ) {
-        return {
-          status: TransactionStatus.Failed,
-        }
-      }
-      if (activity.height === 0) {
-        return {
-          status: TransactionStatus.Pending,
-        }
-      }
-    }
-  }
-
-  return {
-    status: TransactionStatus.Success,
-  }
 }
 
 export default function WalletActivityListItem(props: Props): ReactElement {

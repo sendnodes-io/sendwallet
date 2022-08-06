@@ -307,12 +307,7 @@ export default function CoreStakePage(props: Props): ReactElement {
   }
 
   return (
-    <div className="w-full ">
-      {stakingPoktParams?.wallets.siw ===
-      "cb6ff4204f8a93e89759c22a9e0f8896f8561379" ? (
-        <ProdWarningBanner />
-      ) : null}
-
+    <div className="w-full h-screen max-h-[70rem] flex flex-col items-center ">
       <div className="w-full grid grid-cols-2 md:grid-cols-3 xl:max-w-7xl lg:max-w-4xl mx-auto  py-8 md:px-8 px-4">
         <div className="hidden md:block col-span-1"></div>
         <div className="col-span-1 flex justify-center items-center">
@@ -344,16 +339,16 @@ export default function CoreStakePage(props: Props): ReactElement {
         </div>
       </div>
 
-      <div className="px-4 md:px-8 xl:px-24 lg:px-8 w-full flex flex-col justify-center items-center">
+      <div className="px-4 md:px-8 xl:px-24 lg:px-8 py-4 md:py-8 w-full flex flex-col justify-center items-center flex-1">
         <div
           className={clsx(
-            "xl:max-w-7xl lg:max-w-4xl mx-auto relative rounded-lg lg:rounded-3xl bg-eerie-black w-full  min-h-[36rem]",
+            "xl:max-w-7xl lg:max-w-4xl mx-auto relative rounded-lg lg:rounded-3xl bg-eerie-black w-full h-full  min-h-[36rem]",
             styles.mainPanel
           )}
         >
           <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-          <div className="xl:px-32  lg:px-24 lg:ml-16  flex flex-col flex-1 w-full ">
+          <div className="xl:px-32  lg:px-24 lg:ml-16 flex flex-col grow w-full ">
             <div className="z-10 lg:hidden pl-1 pt-1 sm:pl-3 sm:pt-3 bg-eerie-black rounded-tl-lg rounded-tr-lg">
               <button
                 type="button"
@@ -364,17 +359,15 @@ export default function CoreStakePage(props: Props): ReactElement {
                 <MenuIcon className="h-6 w-6" aria-hidden="true" />
               </button>
             </div>
-            <main className="flex-1 w-full ">
-              <div className="flex flex-col px-4 sm:px-8 lg:px-0 py-12 lg:py-16 justify-center w-full">
+            <main className="flex flex-col flex-1 w-full min-h-[40rem] grow">
+              <div className="flex flex-col grow px-4 sm:px-8 lg:px-0 py-12 lg:py-16 justify-center w-full h-full">
                 {children}
               </div>
             </main>
           </div>
         </div>
 
-        <div className="relative">
-          <Snackbar />
-        </div>
+        <Snackbar />
       </div>
 
       <SharedModal

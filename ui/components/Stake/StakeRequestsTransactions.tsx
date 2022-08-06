@@ -2,17 +2,12 @@ import React, { ReactElement } from "react"
 import {
   selectBlockExplorerForTxHash,
   selectCurrentAccount,
+  selectCurrentAccountActivitiesWithTimestamps,
 } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
 
 import { useBackgroundSelector, useAreKeyringsUnlocked } from "../../hooks"
 import SharedSplashScreen from "../Shared/SharedSplashScreen"
-import {
-  CalendarIcon,
-  CollectionIcon,
-  InformationCircleIcon,
-  LocationMarkerIcon,
-  UsersIcon,
-} from "@heroicons/react/outline"
+import { InformationCircleIcon } from "@heroicons/react/outline"
 
 import { capitalize, isEqual } from "lodash"
 import {
@@ -28,9 +23,16 @@ import { BigNumber, formatFixed } from "@ethersproject/bignumber"
 import dayjs from "dayjs"
 import * as relativeTime from "dayjs/plugin/relativeTime"
 import * as updateLocale from "dayjs/plugin/updateLocale"
+import * as localizedFormat from "dayjs/plugin/localizedFormat"
 import * as utc from "dayjs/plugin/utc"
+import { useStakingPoktParams } from "../../hooks/staking-hooks"
+import getTransactionResult from "../../helpers/get-transaction-result"
+import getSnActionFromMemo from "../../helpers/get-sn-action-from-memo"
+import { POKTActivityItem } from "@sendnodes/pokt-wallet-background/redux-slices/activities"
+import { usePoktWatchLatestBlock } from "../../hooks/pokt-watch/use-latest-block"
 
 dayjs.extend(updateLocale.default)
+dayjs.extend(localizedFormat.default)
 dayjs.extend(relativeTime.default)
 dayjs.extend(utc.default)
 
@@ -60,16 +62,60 @@ const snActionIcon: Record<SnAction, (props: any) => JSX.Element> = {
 export default function StakeRequestsTransactions(): ReactElement {
   const areKeyringsUnlocked = useAreKeyringsUnlocked(true)
   const currentAccount = useBackgroundSelector(selectCurrentAccount, isEqual)
-  const { data, isLoading, isError } =
-    useStakingRequestsTransactions(currentAccount)
+  const {
+    data: stakingPoktParams,
+    isLoading: isStakingParamsLoading,
+    isError: isStakingParamsError,
+  } = useStakingPoktParams(currentAccount)
+  const {
+    data: stakingTransactions,
+    isLoading,
+    isError,
+  } = useStakingRequestsTransactions(currentAccount)
+
+  const pendingTransactions = useBackgroundSelector(
+    selectCurrentAccountActivitiesWithTimestamps,
+    isEqual
+  )
+    .filter(
+      (activity) =>
+        getTransactionResult(activity).status === "pending" &&
+        activity.to === stakingPoktParams?.wallets.siw
+    )
+    .map((activity) => {
+      activity = activity as POKTActivityItem
+      const action = getSnActionFromMemo(activity.memo)
+      if (action === null) {
+        return null
+      }
+      return {
+        height: activity.blockHeight?.toString(),
+        signer: activity.from,
+        userWalletAddress: activity.from,
+        hash: activity.hash,
+        memo: activity.memo,
+        amount: activity.txMsg.value.amount,
+        action,
+        index: "-1",
+        compound: action === SnAction.COMPOUND,
+        reward: action === SnAction.REWARD,
+        timestamp: activity.unixTimestamp,
+      } as ISnTransactionFormatted
+    })
+    .filter((activity) => activity !== null) as ISnTransactionFormatted[]
 
   if (!areKeyringsUnlocked || isLoading) {
     return (
-      <div className="flex-1 w-full relative flex justify-center items-center">
+      <div className="grow w-full relative flex flex-col justify-center items-center">
         <SharedSplashScreen />
       </div>
     )
   }
+
+  const allTransactions = [
+    ...pendingTransactions,
+    ...(stakingTransactions ?? []),
+  ]
 
   return (
     <div className="w-full">
@@ -118,17 +164,28 @@ export default function StakeRequestsTransactions(): ReactElement {
         <div className="mt-8 flex flex-col">
           <div className="-my-2 -mx-4 sm:-mx-6 lg:-mx-8">
             <div className="inline-block min-w-full py-2 align-middle">
-              <div className="max-h-[80vh] overflow-y-scroll rounded-md">
-                <ul role="list" className="divide-y divide-spanish-gray">
-                  {data?.map((tx, txIdx) => (
-                    <StakeTransactionItem
-                      key={tx.hash}
-                      tx={tx}
-                      color={snActionBg[tx.action]}
-                      Icon={snActionIcon[tx.action]}
-                    />
-                  ))}
-                </ul>
+              <div className="flex sm:h-80 md:h-96 xl:h-[32rem] overflow-y-scroll rounded-sm">
+                {allTransactions.length === 0 ? (
+                  <div className="relative flex items-center justify-center flex-1 h-full w-full border-2 border-gray-300 border-dashed p-12 text-center hover:border-gray-400">
+                    <span className="mt-2 block text-sm font-medium text-spanish-gray">
+                      No staking transactions found for this account
+                    </span>
+                  </div>
+                ) : (
+                  <ul
+                    role="list"
+                    className="divide-y divide-spanish-gray w-full h-full flex-1"
+                  >
+                    {allTransactions.map((tx, txIdx) => (
+                      <StakeTransactionItem
+                        key={tx.hash}
+                        tx={tx}
+                        color={snActionBg[tx.action]}
+                        Icon={snActionIcon[tx.action]}
+                      />
+                    ))}
+                  </ul>
+                )}
               </div>
             </div>
           </div>
@@ -145,6 +202,7 @@ type StakeTransactionItemProps = {
 }
 
 function StakeTransactionItem({ color, Icon, tx }: StakeTransactionItemProps) {
+  const { latestBlock: poktWatchLatestBlock } = usePoktWatchLatestBlock()
   const currentAccount = useBackgroundSelector(selectCurrentAccount, isEqual)
   const blockExplorerUrl = useBackgroundSelector(
     (_) =>
@@ -155,11 +213,20 @@ function StakeTransactionItem({ color, Icon, tx }: StakeTransactionItemProps) {
     isEqual
   )
 
-  const timestamp = dayjs.utc(tx.timestamp)
-  const relativeTimestamp = timestamp.fromNow()
+  const isPending = !tx.timestamp
+  let timestamp = !isPending
+    ? dayjs.utc(tx.timestamp)
+    : // the next block is committed 30 minutes after the start of the previous one
+      dayjs.utc(poktWatchLatestBlock?.timestamp).add(30, "minute")
+  const rewardTimestamp = timestamp.clone().add(24, "hour")
+  const earningRewards = dayjs.utc().isAfter(rewardTimestamp)
+  const isStake = tx.action === SnAction.STAKE
+  const isUnstake = tx.action === SnAction.UNSTAKE
 
-  // TODO: add est. rewards start
-  // TODO: add est. unstake time
+  if (!isPending && isStake) {
+    timestamp = rewardTimestamp
+  }
+  const relativeTimestamp = timestamp.fromNow()
 
   return (
     <li key={tx.hash} className="list-item hover:bg-gray-700 rounded-sm">
@@ -175,7 +242,12 @@ function StakeTransactionItem({ color, Icon, tx }: StakeTransactionItemProps) {
                 "h-16 w-16 rounded-full flex items-center justify-center"
               )}
             >
-              <Icon className={clsx("h-10 w-10", color)} aria-hidden="true" />
+              <Icon
+                className={clsx("h-10 w-10", color, {
+                  "bg-orange-500": !tx.timestamp,
+                })}
+                aria-hidden="true"
+              />
             </div>
           </div>
           <div className="flex-1 ml-4 sm:ml-6">
@@ -221,6 +293,13 @@ function StakeTransactionItem({ color, Icon, tx }: StakeTransactionItemProps) {
               </div>
               <div className="mt-2 flex items-center text-sm text-spanish-gray sm:mt-0">
                 <p>
+                  {isPending && "awaiting confirmation "}
+                  {!isPending &&
+                    isStake &&
+                    (earningRewards
+                      ? "earning rewards since "
+                      : "rewards estimated start ")}
+                  {!isPending && isUnstake && "unstaked since "}
                   <time
                     dateTime={timestamp.format("YYYY-MM-DD HH:mm:ss [UTC]")}
                     title={timestamp.format("YYYY-MM-DD HH:mm:ss [UTC]")}
