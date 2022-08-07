@@ -5,7 +5,7 @@ import { useBackgroundSelector, useAreKeyringsUnlocked } from "../../hooks"
 import SharedSplashScreen from "../Shared/SharedSplashScreen"
 import { InformationCircleIcon } from "@heroicons/react/outline"
 
-import { groupBy, isEqual, last, reduce } from "lodash"
+import { groupBy, isEqual, last, reduce, uniqBy } from "lodash"
 import {
   SnAction,
   useStakingRequestsTransactions,
@@ -103,13 +103,16 @@ export default function StakeRewards(): ReactElement {
     )
   }
 
-  const allTransactions = [
-    ...[...(stakingTransactions ?? []), ...(rewardsTransactions ?? [])].sort(
-      (a, b) => {
-        return dayjs.utc(a.timestamp).unix() - dayjs.utc(b.timestamp).unix()
-      }
-    ),
-  ]
+  const allTransactions = uniqBy(
+    [
+      ...[...(stakingTransactions ?? []), ...(rewardsTransactions ?? [])].sort(
+        (a, b) => {
+          return dayjs.utc(a.timestamp).unix() - dayjs.utc(b.timestamp).unix()
+        }
+      ),
+    ],
+    (tx) => tx.hash
+  )
 
   const txsByDate = groupBy(allTransactions, (transaction) => {
     return dayjs.utc(transaction.timestamp).format("YYYY-MM-DD")
