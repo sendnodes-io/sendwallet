@@ -1,4 +1,4 @@
-import { SnAction } from "../hooks/staking-hooks/use-staking-requests-transactions"
+import { SnAction } from "../hooks/staking-hooks"
 
 const MEMO_TO_SNACTION: Record<string, SnAction> = {
   c: SnAction.COMPOUND,

@@ -10,14 +10,14 @@ import SharedSplashScreen from "../Shared/SharedSplashScreen"
 import { InformationCircleIcon } from "@heroicons/react/outline"
 
 import { capitalize, isEqual, uniqBy } from "lodash"
-import {
-  ISnTransactionFormatted,
-  SnAction,
-  useStakingRequestsTransactions,
-} from "../../hooks/staking-hooks/use-staking-requests-transactions"
+import { useStakingRequestsTransactions } from "../../hooks/staking-hooks/use-staking-requests-transactions"
 import clsx from "clsx"
 import { Link } from "react-router-dom"
-import { CheckIcon, TrendingUpIcon } from "@heroicons/react/solid"
+import {
+  DownloadIcon,
+  TrendingUpIcon,
+  UploadIcon,
+} from "@heroicons/react/solid"
 import { BigNumber, formatFixed } from "@ethersproject/bignumber"
 
 import dayjs from "dayjs"
@@ -25,7 +25,11 @@ import * as relativeTime from "dayjs/plugin/relativeTime"
 import * as updateLocale from "dayjs/plugin/updateLocale"
 import * as localizedFormat from "dayjs/plugin/localizedFormat"
 import * as utc from "dayjs/plugin/utc"
-import { useStakingPoktParams } from "../../hooks/staking-hooks"
+import {
+  ISnTransactionFormatted,
+  SnAction,
+  useStakingPoktParams,
+} from "../../hooks/staking-hooks"
 import getTransactionResult from "../../helpers/get-transaction-result"
 import getSnActionFromMemo from "../../helpers/get-sn-action-from-memo"
 import { POKTActivityItem } from "@sendnodes/pokt-wallet-background/redux-slices/activities"
@@ -38,14 +42,20 @@ dayjs.extend(relativeTime.default)
 dayjs.extend(utc.default)
 
 const snActionBg = {
-  [SnAction.COMPOUND]: "bg-indigo",
+  [SnAction.COMPOUND]: "bg-transparent ",
   [SnAction.STAKE]: "bg-aqua",
   [SnAction.UNSTAKE]: "bg-white bg-opacity-75",
   [SnAction.REWARD]: "bg-emerald",
 }
 
 const snActionIcon: Record<SnAction, (props: any) => JSX.Element> = {
-  [SnAction.COMPOUND]: CheckIcon,
+  [SnAction.COMPOUND]: ({ className }: { className: string }) => {
+    return className.includes("uncompound") ? (
+      <UploadIcon className={className} />
+    ) : (
+      <DownloadIcon className={className} />
+    )
+  },
   [SnAction.STAKE]: ({ className }: { className: string }) => (
     <div className={clsx("stake_icon", className)}></div>
   ),
@@ -242,7 +252,10 @@ function StakeTransactionItem({ color, Icon, tx }: StakeTransactionItemProps) {
       dayjs.utc(poktWatchLatestBlock?.timestamp).add(30, "minute")
   const rewardTimestamp = timestamp.clone().add(24, "hour")
   const earningRewards = dayjs.utc().isAfter(rewardTimestamp)
-  const isCompounds = tx.action === SnAction.COMPOUND
+  const isCompound =
+    tx.action === SnAction.COMPOUND && tx.memo?.split(":")[1] === "true"
+  const isUncompound =
+    tx.action === SnAction.COMPOUND && tx.memo?.split(":")[1] === "false"
   const isRewards = tx.action === SnAction.REWARD
   const isStake = tx.action === SnAction.STAKE
   const isUnstake = tx.action === SnAction.UNSTAKE
@@ -254,11 +267,7 @@ function StakeTransactionItem({ color, Icon, tx }: StakeTransactionItemProps) {
 
   return (
     <li key={tx.hash} className="list-item hover:bg-gray-700 rounded-sm">
-      <a
-        href={blockExplorerUrl}
-        target="_poktwatch"
-        className="font-medium text-white"
-      >
+      <a href={blockExplorerUrl} target="_poktwatch" className="text-white">
         <div className="px-4 py-4 sm:px-6 flex">
           <div className="flex items-center flex-shrink-0">
             <div
@@ -268,7 +277,8 @@ function StakeTransactionItem({ color, Icon, tx }: StakeTransactionItemProps) {
             >
               <Icon
                 className={clsx("h-10 w-10", color, {
-                  "bg-orange-500": !tx.timestamp,
+                  "bg-orange-500 text-orange-500": !tx.timestamp,
+                  uncompound: isUncompound,
                 })}
                 aria-hidden="true"
               />
@@ -277,28 +287,34 @@ function StakeTransactionItem({ color, Icon, tx }: StakeTransactionItemProps) {
           <div className="flex-1 ml-4 sm:ml-6">
             <div className="flex items-center justify-between">
               <p className="text-sm sm:text-lg font-medium text-white truncate">
-                {capitalize(tx.action)}
+                {!(isUncompound || isCompound) && capitalize(tx.action)}
+                {isCompound && "Enable Autocompound "}
+                {isUncompound && `Disable Autocompound`}
               </p>
               <div className="ml-2 flex-shrink-0 flex">
-                <div
-                  className={clsx(
-                    "px-2 inline-flex items-center gap-2 text-sm sm:text-lg leading-5 font-semibold rounded-full"
-                  )}
-                >
-                  <div className="inline">
-                    <img
-                      src="/images/pokt_icon@2x.svg"
-                      className="h-5 w-5"
-                      alt="POKT"
-                    />
+                {!(isUncompound || isCompound) && (
+                  <div
+                    className={clsx(
+                      "px-2 inline-flex items-center gap-2 text-sm sm:text-lg leading-5 font-semibold rounded-full"
+                    )}
+                  >
+                    <div className="inline">
+                      <img
+                        src="/images/pokt_icon@2x.svg"
+                        className="h-5 w-5"
+                        alt="POKT"
+                      />
+                    </div>
+                    {formatFixed(
+                      BigNumber.from(
+                        isPending && isUnstake
+                          ? tx.memo.split(":")[1]
+                          : tx.amount
+                      ),
+                      currentAccount.network.baseAsset.decimals
+                    )}
                   </div>
-                  {formatFixed(
-                    BigNumber.from(
-                      isPending && isUnstake ? tx.memo.split(":")[1] : tx.amount
-                    ),
-                    currentAccount.network.baseAsset.decimals
-                  )}
-                </div>
+                )}
               </div>
             </div>
             <div className="mt-2 sm:flex sm:justify-between">
@@ -309,7 +325,7 @@ function StakeTransactionItem({ color, Icon, tx }: StakeTransactionItemProps) {
                     className="h-4 w-4 mr-2"
                     width={"158"}
                     height={"158"}
-                    alt="POKTWatch.io"
+                    alt="https://pokt.watch/"
                   />
                   <span title={tx.hash}>
                     {tx.hash.substring(0, 4)}...

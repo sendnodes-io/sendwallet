@@ -1,28 +1,7 @@
 import useSWR from "swr"
 import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts"
+import { ISnTransactionFormatted, SENDNODES_ONCHAIN_API_URL } from "./constants"
 import { lowerCase } from "lodash"
-import { SENDNODES_ONCHAIN_API_URL } from "./constants"
-
-export enum SnAction {
-  STAKE = "STAKE",
-  UNSTAKE = "UNSTAKE",
-  COMPOUND = "COMPOUND",
-  REWARD = "REWARD",
-}
-
-export interface ISnTransactionFormatted {
-  height: string
-  index: string
-  signer: string
-  userWalletAddress: string
-  hash: string
-  memo: string
-  amount: string | null
-  action: SnAction
-  compound: boolean
-  reward: boolean
-  timestamp: string
-}
 
 export function useStakingRewardsTransactions(
   addressOnNetwork: AddressOnNetwork
