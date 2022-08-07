@@ -376,20 +376,6 @@ export default function SendUnstake(): ReactElement {
           </SharedButton>
         </div>
       </div>
-      <SharedModal
-        isOpen={
-          !!transactionDetails &&
-          stakingPoktParamsData?.wallets?.siw === transactionDetails?.to
-        }
-        onClose={() => {
-          /**ignored */
-        }}
-        className={styles.accountsModal}
-      >
-        <div className="z-0">
-          <SignTransaction />
-        </div>
-      </SharedModal>
       <style jsx>
         {`
           .form_input {

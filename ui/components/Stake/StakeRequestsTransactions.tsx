@@ -102,7 +102,8 @@ export default function StakeRequestsTransactions(): ReactElement {
         timestamp: activity.unixTimestamp,
       } as ISnTransactionFormatted
     })
-    .filter((activity) => activity !== null) as ISnTransactionFormatted[]
+    .filter((activity) => activity !== null)
+    .reverse() as ISnTransactionFormatted[]
 
   if (!areKeyringsUnlocked || isLoading) {
     return (

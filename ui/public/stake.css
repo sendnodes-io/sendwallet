@@ -45,7 +45,7 @@ body::-webkit-scrollbar {
 }
 
 .snackbar_wrap {
-  @apply left-0 right-0 text-base mx-auto font-semibold py-5 border border-eerie-black bg-spanish-gray text-white w-80 !important;
+  @apply left-0 right-0 text-base mx-auto font-semibold py-5 border border-eerie-black bg-spanish-gray text-white w-80 sm:w-96 !important;
 }
 
 /* TODO: figure out how to make this not overflow the containers */

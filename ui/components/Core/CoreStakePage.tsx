@@ -13,38 +13,16 @@ import { useHistory, Link, useLocation } from "react-router-dom"
 import { MenuIcon, XIcon } from "@heroicons/react/outline"
 
 import { SpeakerphoneIcon } from "@heroicons/react/outline"
-import { useStakingPoktParams } from "../../hooks/staking-hooks"
 import SharedSplashScreen from "../Shared/SharedSplashScreen"
 import { isEqual } from "lodash"
 import SharedAddress from "../Shared/SharedAddress"
 import AccountsNotificationPanel from "../AccountsNotificationPanel/AccountsNotificationPanel"
 import SharedModal from "../Shared/SharedModal"
 import { css, stylesheet } from "astroturf"
+import SignStakeTransaction from "../Stake/SignStakeTransaction"
+import { selectTransactionData } from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction"
 
-/* FIXME: REMOVE NOT NEEDED FOR GO LIVE */
-function ProdWarningBanner() {
-  return (
-    <div className="relative bg-gradient-to-r from-capri to-aqua ">
-      <div className="max-w-7xl mx-auto py-3 px-3 sm:px-6 lg:px-8">
-        <div className="pr-16 sm:text-center sm:px-16">
-          <div className="flex-1 flex items-center">
-            <span className="flex p-2 rounded-lg bg-pink-500">
-              <SpeakerphoneIcon
-                className="h-6 w-6 text-white"
-                aria-hidden="true"
-              />
-            </span>
-            <p className="ml-3 font-medium text-eerie-black truncate">
-              <span className="">
-                This is not a drill... You are staking with SendNodes.
-              </span>
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
+import { useStakingPoktParams } from "../../hooks/staking-hooks"
 
 const sidebarIconCss = css`
   mask-size: cover;
@@ -273,6 +251,12 @@ interface Props {
 }
 
 const styles = stylesheet`
+ .accountsModal :global(.switcher_wrap) {
+    @apply rounded-none -mx-4 sm:-mx-6 !important;
+  }
+  .accountsModalScrollbar :global(.switcher_wrap:-webkit-scrollbar-track) {
+    @apply bg-eerie-black;
+  }
   .mainPanel {
     background: radial-gradient(98.15% 107.73% at 15.3% 0%, rgba(255, 255, 255, 0.12) 0%, rgba(0, 0, 0, 0) 100%) /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */, #151515;
   }
@@ -284,6 +268,11 @@ export default function CoreStakePage(props: Props): ReactElement {
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   const currentAccount = useBackgroundSelector(selectCurrentAccount, isEqual)
+
+  const transactionDetails = useBackgroundSelector(
+    selectTransactionData,
+    isEqual
+  )
   const currentAccountData = useBackgroundSelector(
     getCurrentAccountState,
     isEqual
@@ -396,6 +385,21 @@ export default function CoreStakePage(props: Props): ReactElement {
             />
           </div>
         </>
+      </SharedModal>
+
+      <SharedModal
+        isOpen={
+          !!transactionDetails &&
+          stakingPoktParams?.wallets?.siw === transactionDetails?.to
+        }
+        onClose={() => {
+          /**ignored */
+        }}
+        className={styles.accountsModal}
+      >
+        <div className="z-0">
+          <SignStakeTransaction />
+        </div>
       </SharedModal>
     </div>
   )
