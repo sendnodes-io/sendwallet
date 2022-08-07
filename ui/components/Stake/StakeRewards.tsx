@@ -6,10 +6,7 @@ import SharedSplashScreen from "../Shared/SharedSplashScreen"
 import { InformationCircleIcon } from "@heroicons/react/outline"
 
 import { groupBy, isEqual, last, reduce, uniqBy } from "lodash"
-import {
-  SnAction,
-  useStakingRequestsTransactions,
-} from "../../hooks/staking-hooks/use-staking-requests-transactions"
+import { useStakingRequestsTransactions } from "../../hooks/staking-hooks/use-staking-requests-transactions"
 import clsx from "clsx"
 import { Link } from "react-router-dom"
 
@@ -22,6 +19,7 @@ import * as localizedFormat from "dayjs/plugin/localizedFormat"
 import * as utc from "dayjs/plugin/utc"
 import * as isSameOrBefore from "dayjs/plugin/isSameOrBefore"
 import {
+  SnAction,
   useStakingPoktParams,
   useStakingUserData,
 } from "../../hooks/staking-hooks"
