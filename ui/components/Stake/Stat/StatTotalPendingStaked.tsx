@@ -34,7 +34,10 @@ export default function StatTotalStaked({
         ) : (
           <p className="text-2xl font-semibold text-white">
             {formatTokenAmount(
-              formatFixed(data?.pendingStaked ?? 0, asset.decimals)
+              formatFixed(
+                data?.userStakingData[0]?.pendingStaked ?? 0,
+                asset.decimals
+              )
             )}
           </p>
         )}

@@ -9,7 +9,7 @@ import { useBackgroundSelector, useAreKeyringsUnlocked } from "../../hooks"
 import SharedSplashScreen from "../Shared/SharedSplashScreen"
 import { InformationCircleIcon } from "@heroicons/react/outline"
 
-import { capitalize, isEqual } from "lodash"
+import { capitalize, isEqual, uniqBy } from "lodash"
 import {
   ISnTransactionFormatted,
   SnAction,
@@ -30,6 +30,7 @@ import getTransactionResult from "../../helpers/get-transaction-result"
 import getSnActionFromMemo from "../../helpers/get-sn-action-from-memo"
 import { POKTActivityItem } from "@sendnodes/pokt-wallet-background/redux-slices/activities"
 import { usePoktWatchLatestBlock } from "../../hooks/pokt-watch/use-latest-block"
+import { useStakingRewardsTransactions } from "../../hooks/staking-hooks/use-staking-rewards-transactions"
 
 dayjs.extend(updateLocale.default)
 dayjs.extend(localizedFormat.default)
@@ -69,10 +70,14 @@ export default function StakeRequestsTransactions(): ReactElement {
   } = useStakingPoktParams(currentAccount)
   const {
     data: stakingTransactions,
-    isLoading,
-    isError,
+    isLoading: isStakingTransactionsLoading,
+    isError: isStakingTransactionsError,
   } = useStakingRequestsTransactions(currentAccount)
-
+  const {
+    data: rewardsTransactions,
+    isLoading: isRewardsTransactionsLoading,
+    isError: isRewardsTransactionsError,
+  } = useStakingRewardsTransactions(currentAccount)
   const pendingTransactions = useBackgroundSelector(
     selectCurrentAccountActivitiesWithTimestamps,
     isEqual
@@ -105,7 +110,16 @@ export default function StakeRequestsTransactions(): ReactElement {
     .filter((activity) => activity !== null)
     .reverse() as ISnTransactionFormatted[]
 
-  if (!areKeyringsUnlocked || isLoading) {
+  if (isStakingParamsError) throw isStakingParamsError
+  if (isRewardsTransactionsError) throw isRewardsTransactionsError
+  if (isStakingTransactionsError) throw isStakingTransactionsError
+
+  if (
+    !areKeyringsUnlocked ||
+    isStakingParamsLoading ||
+    isStakingTransactionsLoading ||
+    isRewardsTransactionsLoading
+  ) {
     return (
       <div className="grow w-full relative flex flex-col justify-center items-center">
         <SharedSplashScreen />
@@ -113,10 +127,17 @@ export default function StakeRequestsTransactions(): ReactElement {
     )
   }
 
-  const allTransactions = [
-    ...pendingTransactions,
-    ...(stakingTransactions ?? []),
-  ]
+  const allTransactions = uniqBy(
+    [
+      ...pendingTransactions,
+      ...[...(stakingTransactions ?? []), ...(rewardsTransactions ?? [])].sort(
+        (a, b) => {
+          return dayjs.utc(b.timestamp).unix() - dayjs.utc(a.timestamp).unix()
+        }
+      ),
+    ],
+    (tx) => tx.hash
+  )
 
   return (
     <div className="w-full">
@@ -165,7 +186,7 @@ export default function StakeRequestsTransactions(): ReactElement {
         <div className="mt-8 flex flex-col">
           <div className="-my-2 -mx-4 sm:-mx-6 lg:-mx-8">
             <div className="inline-block min-w-full py-2 align-middle">
-              <div className="flex sm:h-80 md:h-96 xl:h-[32rem] overflow-y-scroll rounded-sm">
+              <div className="flex max-h-[60vh] h-full overflow-y-scroll rounded-sm">
                 {allTransactions.length === 0 ? (
                   <div className="relative flex items-center justify-center flex-1 h-full w-full border-2 border-gray-300 border-dashed p-12 text-center hover:border-gray-400">
                     <span className="mt-2 block text-sm font-medium text-spanish-gray">
@@ -221,6 +242,8 @@ function StakeTransactionItem({ color, Icon, tx }: StakeTransactionItemProps) {
       dayjs.utc(poktWatchLatestBlock?.timestamp).add(30, "minute")
   const rewardTimestamp = timestamp.clone().add(24, "hour")
   const earningRewards = dayjs.utc().isAfter(rewardTimestamp)
+  const isCompounds = tx.action === SnAction.COMPOUND
+  const isRewards = tx.action === SnAction.REWARD
   const isStake = tx.action === SnAction.STAKE
   const isUnstake = tx.action === SnAction.UNSTAKE
 
@@ -279,7 +302,7 @@ function StakeTransactionItem({ color, Icon, tx }: StakeTransactionItemProps) {
               </div>
             </div>
             <div className="mt-2 sm:flex sm:justify-between">
-              <div className="sm:flex">
+              <div className="sm:flex gap-4">
                 <div className="mt-2 flex items-center text-sm text-spanish-gray hover:text-white sm:mt-0 ">
                   <img
                     src="/images/pokt-watch.png"
@@ -293,22 +316,46 @@ function StakeTransactionItem({ color, Icon, tx }: StakeTransactionItemProps) {
                     {tx.hash.substring(tx.hash.length - 4, tx.hash.length)}
                   </span>
                 </div>
+                {isStake && tx.reward && (
+                  <div className="mt-2 flex items-center text-sm text-spanish-gray sm:mt-0 ">
+                    <div
+                      className={clsx(
+                        "icon-mask",
+                        "h-4 w-4 inline bg-white mr-2"
+                      )}
+                      css={`
+                        mask-image: url("../../public/images/rewards@2x.png");
+                      `}
+                    />
+                    <span>Autocompounded</span>
+                  </div>
+                )}
               </div>
               <div className="mt-2 flex items-center text-sm text-spanish-gray sm:mt-0">
-                <p>
-                  {isPending && "awaiting confirmation "}
-                  {!isPending &&
-                    isStake &&
-                    (earningRewards
-                      ? "earning rewards since "
-                      : "rewards estimated start ")}
-                  {!isPending && isUnstake && "unstaked since "}
-                  <time
-                    dateTime={timestamp.format("YYYY-MM-DD HH:mm:ss [UTC]")}
-                    title={timestamp.format("YYYY-MM-DD HH:mm:ss [UTC]")}
-                  >
-                    {relativeTimestamp}
-                  </time>
+                <p className="group">
+                  <span className="inline group-hover:hidden">
+                    {isPending && "awaiting confirmation "}
+                    {!isPending &&
+                      isStake &&
+                      (earningRewards
+                        ? "earning rewards since "
+                        : "rewards start (estimated) ")}
+                    {!isPending && isUnstake && "unstaked since "}
+                    <time
+                      dateTime={timestamp.format("YYYY-MM-DD HH:mm:ss [UTC]")}
+                      title={timestamp.format("YYYY-MM-DD HH:mm:ss [UTC]")}
+                    >
+                      {relativeTimestamp}
+                    </time>
+                  </span>
+                  <span className="hidden group-hover:inline">
+                    <time
+                      dateTime={timestamp.format("YYYY-MM-DD HH:mm:ss [UTC]")}
+                      title={timestamp.format("YYYY-MM-DD HH:mm:ss [UTC]")}
+                    >
+                      {timestamp.format("YYYY-MM-DD HH:mm:ss [UTC]")}
+                    </time>
+                  </span>
                 </p>
               </div>
             </div>
