@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react"
+import React, { ReactElement, useState } from "react"
 import { selectCurrentAccount } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
 
 import { useBackgroundSelector, useAreKeyringsUnlocked } from "../../hooks"
@@ -42,6 +42,7 @@ import {
   ChartOptions,
 } from "chart.js"
 import { Line } from "react-chartjs-2"
+import StakeToggleAutocompounding from "./StakeToggleAutocompounding"
 
 ChartJS.register(
   CategoryScale,
@@ -60,6 +61,8 @@ dayjs.extend(utc.default)
 dayjs.extend(isSameOrBefore.default)
 
 export default function StakeRewards(): ReactElement {
+  const [showAutocompoundingModal, setShowAutocompoundingModal] =
+    useState(false)
   const areKeyringsUnlocked = useAreKeyringsUnlocked(true)
   const currentAccount = useBackgroundSelector(selectCurrentAccount, isEqual)
   const {
@@ -252,17 +255,7 @@ export default function StakeRewards(): ReactElement {
             </p>
           </div>
           <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
-            {/* <Link
-              to="/"
-              className="relative inline-flex items-center justify-center px-4 py-1 overflow-hidden font-medium text-eerie-black rounded-lg shadow-2xl group"
-            >
-              <span className="absolute top-0 left-0 w-40 h-40 -mt-10 -ml-3 transition-all duration-700 bg-capri rounded-full blur-md ease"></span>
-              <span className="absolute inset-0 w-full h-full transition duration-700 group-hover:rotate-180 ease">
-                <span className="absolute bottom-0 left-0 w-24 h-24 -ml-10 bg-aqua rounded-full blur-md"></span>
-                <span className="absolute bottom-0 right-0 w-24 h-24 -mr-10 bg-capri rounded-full blur-md"></span>
-              </span>
-              <span className="relative ">Stake</span>
-            </Link> */}
+            <StakeToggleAutocompounding />
           </div>
         </div>
         <div className="mt-16 flex flex-col">
