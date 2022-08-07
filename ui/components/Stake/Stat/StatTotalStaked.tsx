@@ -33,7 +33,9 @@ export default function StatTotalStaked({
           <SharedLoadingSpinner />
         ) : (
           <p className="text-2xl font-semibold text-white">
-            {formatTokenAmount(formatFixed(data?.staked ?? 0, asset.decimals))}
+            {formatTokenAmount(
+              formatFixed(data?.userStakingData[0]?.staked ?? 0, asset.decimals)
+            )}
           </p>
         )}
       </dd>

@@ -102,9 +102,13 @@ export default function SendUnstake(): ReactElement {
     useState(false)
   const [hasError, setHasError] = useState(false)
 
-  const totalStakedBalance = BigNumber.from(userStakingData?.staked ?? 0)
-    .add(userStakingData?.pendingStaked ?? 0)
-    .sub(BigNumber.from(userStakingData?.pendingUnstaked ?? 0))
+  const totalStakedBalance = BigNumber.from(
+    userStakingData?.userStakingData[0]?.staked ?? 0
+  )
+    .add(userStakingData?.userStakingData[0]?.pendingStaked ?? 0)
+    .sub(
+      BigNumber.from(userStakingData?.userStakingData[0]?.pendingUnstaked ?? 0)
+    )
 
   const totalStakedBalanceDecimals = Number(
     formatFixed(totalStakedBalance, selectedAsset.decimals)
@@ -236,7 +240,7 @@ export default function SendUnstake(): ReactElement {
                   <p className="text-2xl font-semibold text-white">
                     {formatTokenAmount(
                       formatFixed(
-                        userStakingData?.unstaked ?? 0,
+                        userStakingData?.userStakingData[0]?.unstaked ?? 0,
                         selectedAsset.decimals
                       )
                     )}
@@ -267,7 +271,8 @@ export default function SendUnstake(): ReactElement {
                   <p className="text-2xl font-semibold text-white">
                     {formatTokenAmount(
                       formatFixed(
-                        userStakingData?.pendingUnstaked ?? 0,
+                        userStakingData?.userStakingData[0]?.pendingUnstaked ??
+                          0,
                         selectedAsset.decimals
                       )
                     )}

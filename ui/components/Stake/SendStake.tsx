@@ -271,15 +271,15 @@ export default function SendStake(): ReactElement {
         <div className="form_input">
           <SharedCheckbox
             id="autoCompound"
-            label="Auto Compound my rewards"
+            label="Autocompound my rewards"
             checked={autoCompound}
             onChange={(e) => {
               setAutoCompound(e.currentTarget.checked)
             }}
           />
           <small>
-            Auto Compound automatically stakes your rewards instead of sending
-            it to your address. You can disable it at any time.
+            Autocompound automatically stakes your rewards instead of sending it
+            to your address. You can disable it at any time.
           </small>
           <a
             href="https://docs.sendnodes.io/"
