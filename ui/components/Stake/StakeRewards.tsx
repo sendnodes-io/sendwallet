@@ -249,7 +249,7 @@ export default function StakeRewards(): ReactElement {
             </p>
           </div>
           <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
-            <Link
+            {/* <Link
               to="/"
               className="relative inline-flex items-center justify-center px-4 py-1 overflow-hidden font-medium text-eerie-black rounded-lg shadow-2xl group"
             >
@@ -259,10 +259,10 @@ export default function StakeRewards(): ReactElement {
                 <span className="absolute bottom-0 right-0 w-24 h-24 -mr-10 bg-capri rounded-full blur-md"></span>
               </span>
               <span className="relative ">Stake</span>
-            </Link>
+            </Link> */}
           </div>
         </div>
-        <div className="mt-8 flex flex-col">
+        <div className="mt-16 flex flex-col">
           <div className="grid md:grid-cols-8 gap-4 gap-y-12 lg:gap-8">
             <div className="relative border border-spanish-gray h-32 rounded-md md:col-span-4">
               <div className="absolute flex items-center justify-center -top-6 left-0 right-0 text-white">
