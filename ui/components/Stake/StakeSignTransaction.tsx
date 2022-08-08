@@ -47,7 +47,7 @@ import getSnActionFromMemo from "../../helpers/get-sn-action-from-memo"
 import { usePoktWatchLatestBlock } from "../../hooks/pokt-watch/use-latest-block"
 import usePocketNetworkFee from "../../hooks/pocket-network/use-network-fee"
 
-export default function SignStakeTransaction(): ReactElement {
+export default function StakeSignTransaction(): ReactElement {
   const history = useHistory()
   const dispatch = useBackgroundDispatch()
   const { latestBlock } = usePoktWatchLatestBlock()

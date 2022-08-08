@@ -19,7 +19,7 @@ import SharedAddress from "../Shared/SharedAddress"
 import AccountsNotificationPanel from "../AccountsNotificationPanel/AccountsNotificationPanel"
 import SharedModal from "../Shared/SharedModal"
 import { css, stylesheet } from "astroturf"
-import SignStakeTransaction from "../Stake/SignStakeTransaction"
+import StakeSignTransaction from "../Stake/StakeSignTransaction"
 import { selectTransactionData } from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction"
 
 import { useStakingPoktParams } from "../../hooks/staking-hooks"
@@ -398,7 +398,7 @@ export default function CoreStakePage(props: Props): ReactElement {
         className={styles.accountsModal}
       >
         <div className="z-0">
-          <SignStakeTransaction />
+          <StakeSignTransaction />
         </div>
       </SharedModal>
     </div>
