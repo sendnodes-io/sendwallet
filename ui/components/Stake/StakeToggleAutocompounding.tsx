@@ -89,7 +89,11 @@ export default function StakeToggleAutocompounding() {
   }
 
   const sendTransactionRequest = useCallback(async () => {
-    if (!areKeyringsUnlocked || !stakingPoktParamsData!.wallets!.siw) {
+    if (
+      !areKeyringsUnlocked ||
+      !stakingPoktParamsData?.wallets?.siw ||
+      !userStakingData
+    ) {
       console.warn("Somethings not right", {
         areKeyringsUnlocked,
         stakingPoktParamsData,
@@ -100,13 +104,13 @@ export default function StakeToggleAutocompounding() {
       setIsSendingTransactionRequest(true)
 
       // memo spec is c:compound=[true|false]
-      const memo = `c:${!userStakingData!.userStakingData[0]!.compound}`
+      const memo = `c:${!userStakingData?.userStakingData[0]?.compound}`
 
       dispatch(
         transferAsset({
           fromAddressNetwork: currentAccount,
           toAddressNetwork: {
-            address: stakingPoktParamsData!.wallets.siw,
+            address: stakingPoktParamsData?.wallets.siw,
             network: currentAccount.network,
           },
           assetAmount: {
@@ -135,7 +139,7 @@ export default function StakeToggleAutocompounding() {
     <Switch.Group
       as={"div"}
       title={
-        userStakingData!.userStakingData[0]!.compound
+        userStakingData?.userStakingData[0]?.compound
           ? "Click to disable autocompounding"
           : "Click to enable autocompounding"
       }
@@ -145,12 +149,12 @@ export default function StakeToggleAutocompounding() {
           <Switch.Label>Autocompounding</Switch.Label>
         </span>
         <Switch
-          checked={userStakingData!.userStakingData[0]!.compound}
+          checked={!!userStakingData?.userStakingData[0]?.compound}
           disabled={isDisabled}
           onChange={sendTransactionRequest}
           className={clsx(
             isDisabled ? "cursor-not-allowed" : "cursor-pointer",
-            userStakingData!.userStakingData[0]!.compound
+            userStakingData?.userStakingData[0]?.compound
               ? "bg-capri"
               : "bg-gray-200",
             "relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none outline-transparent focus:ring-2 focus:ring-offset-2 focus:ring-aqua"
@@ -159,7 +163,7 @@ export default function StakeToggleAutocompounding() {
           <span className="sr-only">Use setting</span>
           <span
             className={clsx(
-              userStakingData!.userStakingData[0]!.compound
+              userStakingData?.userStakingData[0]?.compound
                 ? "translate-x-5"
                 : "translate-x-0",
               "pointer-events-none relative inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200"
@@ -167,7 +171,7 @@ export default function StakeToggleAutocompounding() {
           >
             <span
               className={clsx(
-                userStakingData!.userStakingData[0]!.compound
+                userStakingData?.userStakingData[0]?.compound
                   ? "opacity-0 ease-out duration-100"
                   : "opacity-100 ease-in duration-200",
                 "absolute inset-0 h-full w-full flex items-center justify-center transition-opacity"
@@ -190,7 +194,7 @@ export default function StakeToggleAutocompounding() {
             </span>
             <span
               className={clsx(
-                userStakingData!.userStakingData[0]!.compound
+                userStakingData?.userStakingData[0]?.compound
                   ? "opacity-100 ease-in duration-200"
                   : "opacity-0 ease-out duration-100",
                 "absolute inset-0 h-full w-full flex items-center justify-center transition-opacity"
