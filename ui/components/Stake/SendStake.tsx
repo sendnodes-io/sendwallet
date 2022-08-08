@@ -44,7 +44,6 @@ import {
 import { BigNumber } from "ethers"
 import { formatFixed, parseFixed } from "@ethersproject/bignumber"
 import StatTotalStaked from "./Stat/StatTotalStaked"
-import StatTotalPendingStaked from "./Stat/StatTotalPendingStaked"
 import { isEqual } from "lodash"
 import usePocketNetworkFee from "../../hooks/pocket-network/use-network-fee"
 import StakePausedModal from "./StakePausedModal"
@@ -292,8 +291,8 @@ export default function SendStake(): ReactElement {
             Auto Compound automatically stakes your rewards. This feature can be
             disabled at anytime.{" "}
             <a
-              href="https://docs.sendnodes.io/"
-              title="More information on Auto Compound with SendNodes"
+              href="https://sendnodes.gitbook.io/sendnodes/start-here/frequently-asked-questions#how-do-i-get-my-rewards"
+              title="How do I get my rewards?"
               className="inline text-aqua hover:text-white"
               target="_blank"
             >
