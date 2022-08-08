@@ -14,13 +14,15 @@ export default function StatTotalUnstaked({
   asset: FungibleAsset
 }) {
   const { data, isLoading, isError } = useStakingUserData(aon)
-
+  const amount = formatFixed(
+    BigNumber.from(data?.userStakingData[0]?.unstaked ?? 0).add(
+      data?.userStakingData[0]?.pendingUnstaked ?? 0
+    ),
+    asset.decimals
+  )
   return (
     <div
-      title={formatFixed(
-        data?.userStakingData[0]?.unstaked ?? 0,
-        asset.decimals
-      )}
+      title={amount}
       className="relative border border-spanish-gray h-32 rounded-md md:col-span-2"
     >
       <div className="absolute flex items-center justify-center -top-6 left-0 right-0 text-white">
@@ -35,16 +37,7 @@ export default function StatTotalUnstaked({
               ) : isLoading ? (
                 <SharedLoadingSpinner />
               ) : (
-                formatTokenAmount(
-                  formatFixed(
-                    BigNumber.from(data?.userStakingData[0]?.unstaked ?? 0).add(
-                      data?.userStakingData[0]?.pendingUnstaked ?? 0
-                    ),
-                    asset.decimals
-                  ),
-                  4,
-                  0
-                )
+                formatTokenAmount(amount, 4, 0)
               )}
             </div>
           </div>
