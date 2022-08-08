@@ -23,6 +23,7 @@ import StakeSignTransaction from "../Stake/StakeSignTransaction"
 import { selectTransactionData } from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction"
 
 import { useStakingPoktParams } from "../../hooks/staking-hooks"
+import Footer from "../Stake/Footer"
 
 const sidebarIconCss = css`
   mask-size: cover;
@@ -296,7 +297,7 @@ export default function CoreStakePage(props: Props): ReactElement {
   }
 
   return (
-    <div className="w-full h-screen max-h-[70rem] flex flex-col items-center ">
+    <div className="w-full h-screen flex flex-col items-center ">
       <div className="w-full grid grid-cols-2 md:grid-cols-3 xl:max-w-7xl lg:max-w-4xl mx-auto  py-8 md:px-8 px-4">
         <div className="hidden md:block col-span-1"></div>
         <div className="col-span-1 flex justify-center items-center">
@@ -401,6 +402,8 @@ export default function CoreStakePage(props: Props): ReactElement {
           <StakeSignTransaction />
         </div>
       </SharedModal>
+
+      <Footer />
     </div>
   )
 }

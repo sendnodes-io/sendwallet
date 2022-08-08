@@ -382,6 +382,7 @@ export default function SendStake(): ReactElement {
           )}
         </div>
       </div>
+
       <StakePausedModal
         open={isStakePausedModalOpen}
         setOpen={setIsStakePausedModalOpen}
