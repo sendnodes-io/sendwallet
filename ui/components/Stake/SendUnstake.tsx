@@ -40,14 +40,9 @@ import {
 import { BigNumber } from "ethers"
 import { AnyAssetWithOptionalAmount } from "../Shared/SharedAssetItem"
 import { isEqual } from "lodash"
-import { ReceiptRefundIcon } from "@heroicons/react/outline"
 import { truncateAddress } from "@sendnodes/pokt-wallet-background/lib/utils"
-import SharedLoadingSpinner from "../Shared/SharedLoadingSpinner"
 import StatTotalStaked from "./Stat/StatTotalStaked"
-import StatTotalPendingStaked from "./Stat/StatTotalPendingStaked"
 import { formatFixed, parseFixed } from "@ethersproject/bignumber"
-import { selectTransactionData } from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction"
-import { stylesheet } from "astroturf"
 import usePocketNetworkFee from "../../hooks/pocket-network/use-network-fee"
 import StatAPY from "./Stat/StatAPY"
 import StatTotalUnstaked from "./Stat/StatTotalUnstaked"
@@ -193,7 +188,7 @@ export default function SendUnstake(): ReactElement {
     <div className=" pb-4">
       <div className="flex gap-x-4 justify-center items-center pt-4 pb-8">
         <div
-          className={"w-8 h-8 bg-white"}
+          className={"icon-mask w-12 h-12 bg-white"}
           css={`
             mask-image: url("../../public/images/unstake@2x.png");
           `}
@@ -207,7 +202,7 @@ export default function SendUnstake(): ReactElement {
           <StatAPY aon={currentAccount} asset={selectedAsset} />
         </div>
       </div>
-      <div className="flex pt-4 pb-8">
+      <div className="mt-8 flex pb-8">
         <p className="text-lg">
           We're sad to see you go! To unstake, please enter an amount below (up
           to your staked amount). The amount will be sent back to the address{" "}
@@ -218,11 +213,11 @@ export default function SendUnstake(): ReactElement {
           <a
             href="https://docs.sendnodes.io/start-here/frequently-asked-questions#how-do-i-unstake"
             title="More information on unstaking with SendNodes"
-            className="inline hover:text-white"
+            className="inline text-aqua hover:text-white"
             target="_blank"
           >
-            <span className="sr-only">Information on Unstaking</span>
-            <InformationCircleIcon className="ml-1 h-4 w-4 inline" />
+            Read more<span className="sr-only">Information on Unstaking</span>
+            <InformationCircleIcon className="ml-1 h-4 w-4 inline-block" />
           </a>
         </p>
       </div>
