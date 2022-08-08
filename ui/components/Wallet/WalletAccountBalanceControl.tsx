@@ -131,9 +131,11 @@ export default function WalletAccountBalanceControl(
   const selectedAccount = useBackgroundSelector(selectCurrentAccount)
   const { address: selectedAccountAddress, network } = selectedAccount
   const { assets, balance, initializationLoadingTimeExpired } = props
-  const assetAmount = assets.find(a => a.asset.symbol === network.baseAsset.symbol)
+  const assetAmount = assets.find(
+    (a) => a.asset.symbol === network.baseAsset.symbol
+  )
 
-  const shouldIndicateLoading =  typeof balance === "undefined"
+  const shouldIndicateLoading = typeof balance === "undefined"
 
   const copyBalance = (bal: string | undefined) => () => {
     navigator.clipboard.writeText(bal ?? "")
@@ -143,8 +145,21 @@ export default function WalletAccountBalanceControl(
   return (
     <>
       <div className="wallet_summary">
-        <div style={{position: 'absolute', padding: '0.25rem', margin: 'auto'}}>{network.name}</div>
-        
+        {
+          // TODO: v0.2.1 re-enable network selector
+          process.env.NODE_ENV === "development" ? (
+            <div
+              style={{
+                position: "absolute",
+                padding: "0.25rem",
+                margin: "auto",
+              }}
+            >
+              {network.name}
+            </div>
+          ) : undefined
+        }
+
         <div className="balance_summary">
           {shouldIndicateLoading || assetAmount === undefined ? (
             <>

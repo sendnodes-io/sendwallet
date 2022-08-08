@@ -138,26 +138,19 @@ export default function WalletHeader() {
           ) : null}
         </div>
         <div className="center">
-          {
-            // TODO: v0.2.1 re-enable provider bridge
-            process.env.NODE_ENV == "development" ? (
-              <DappConnectivityButton
-                title={
-                  currentAccount !== "loading" &&
-                  currentAccount &&
-                  currentAccount.name
-                    ? currentAccount.name
-                    : "Your Wallet"
-                }
-                onClick={() => {
-                  setIsActiveDAppConnectionInfoOpen(
-                    !isActiveDAppConnectionInfoOpen
-                  )
-                }}
-                connected={isConnectedToDApp}
-              />
-            ) : undefined
-          }
+          <DappConnectivityButton
+            title={
+              currentAccount !== "loading" &&
+              currentAccount &&
+              currentAccount.name
+                ? currentAccount.name
+                : "Your Wallet"
+            }
+            onClick={() => {
+              setIsActiveDAppConnectionInfoOpen(!isActiveDAppConnectionInfoOpen)
+            }}
+            connected={isConnectedToDApp}
+          />
         </div>
         <div className="end">
           {
@@ -192,31 +185,26 @@ export default function WalletHeader() {
             <span className="icon settings_button"> </span>
           </a>
         </div>
-        {
-          // TODO: v0.2.1 re-enable provider bridge
-          process.env.NODE_ENV == "development" ? (
-            <SharedSlideUpMenu
-              title={
-                <DappConnectivityButton
-                  title="Connected dApps"
-                  onClick={() => {}}
-                  connected={isConnectedToDApp}
-                />
-              }
-              size="full"
-              isOpen={isActiveDAppConnectionInfoOpen}
-              close={() => {
-                setIsActiveDAppConnectionInfoOpen(false)
-              }}
-            >
-              <WalletConnectedDAppInfo
-                currentPermission={currentPermission}
-                permissions={allowedPages}
-                close={() => {}}
-              />
-            </SharedSlideUpMenu>
-          ) : null
-        }
+        <SharedSlideUpMenu
+          title={
+            <DappConnectivityButton
+              title="Connected dApps"
+              onClick={() => {}}
+              connected={isConnectedToDApp}
+            />
+          }
+          size="full"
+          isOpen={isActiveDAppConnectionInfoOpen}
+          close={() => {
+            setIsActiveDAppConnectionInfoOpen(false)
+          }}
+        >
+          <WalletConnectedDAppInfo
+            currentPermission={currentPermission}
+            permissions={allowedPages}
+            close={() => {}}
+          />
+        </SharedSlideUpMenu>
 
         <SharedSlideUpMenu
           title="Manage Wallets"
