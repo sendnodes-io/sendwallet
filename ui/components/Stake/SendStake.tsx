@@ -46,6 +46,8 @@ import { formatFixed, parseFixed } from "@ethersproject/bignumber"
 import StatTotalStaked from "./Stat/StatTotalStaked"
 import StatTotalPendingStaked from "./Stat/StatTotalPendingStaked"
 import { isEqual } from "lodash"
+import usePocketNetworkFee from "../../hooks/pocket-network/use-network-fee"
+import StakePausedModal from "./StakePausedModal"
 
 export default function SendStake(): ReactElement {
   const location = useLocation<FungibleAsset>()
@@ -83,8 +85,13 @@ export default function SendStake(): ReactElement {
     isError: isUserStakingDataError,
   } = useStakingUserData(currentAccount)
 
-  // TODO: write a network data hook
-  const networkFee = 1e4
+  const { networkFee } = usePocketNetworkFee()
+  const isStakingEnabled = !!(
+    stakingPoktParamsData && stakingPoktParamsData.stakingEnabled
+  )
+  const [isStakePausedModalOpen, setIsStakePausedModalOpen] = useState(
+    !isStakingEnabled
+  )
 
   const fungibleAssetAmounts =
     // Only look at fungible assets.
@@ -129,7 +136,8 @@ export default function SendStake(): ReactElement {
     if (
       assetAmount === undefined ||
       !areKeyringsUnlocked ||
-      !stakingPoktParamsData?.wallets?.siw
+      !stakingPoktParamsData?.wallets?.siw ||
+      !isStakingEnabled
     ) {
       console.warn("Somethings not right", {
         assetAmount,
@@ -198,7 +206,7 @@ export default function SendStake(): ReactElement {
     )
 
   return (
-    <div className="">
+    <div className="relative">
       <div className="flex gap-x-4 justify-center items-center">
         <div className="stake_icon bg-white w-12 h-12" />
         <h1>Stake</h1>
@@ -217,6 +225,7 @@ export default function SendStake(): ReactElement {
             onAssetSelect={setSelectedAsset}
             assetsAndAmounts={fungibleAssetAmounts}
             disableDropdown={true}
+            isDisabled={!stakingPoktParamsData?.stakingEnabled}
             onAmountChange={(value, errorMessage) => {
               // truncate to selected asset decimals
               try {
@@ -334,29 +343,47 @@ export default function SendStake(): ReactElement {
         <div
           style={{ "--icon-color": "var(--eerie-black-100)" } as CSSProperties}
         >
-          <SharedButton
-            type="primary"
-            size="large"
-            icon="stake"
-            iconPosition="left"
-            iconSize="large"
-            isDisabled={
-              isSendingTransactionRequest ||
-              Number(amount) === 0 ||
-              isStakingPoktParamsLoading ||
-              !!isStakingPoktParamsError ||
-              isAmountLessThanStakeMin ||
-              !termsAccepted ||
-              hasError
-            }
-            onClick={sendTransactionRequest}
-            isFormSubmit
-            isLoading={isSendingTransactionRequest}
-          >
-            STAKE
-          </SharedButton>
+          {isStakingEnabled ? (
+            <SharedButton
+              type="primary"
+              size="large"
+              icon="stake"
+              iconPosition="left"
+              iconSize="large"
+              isDisabled={
+                isSendingTransactionRequest ||
+                Number(amount) === 0 ||
+                isStakingPoktParamsLoading ||
+                !!isStakingPoktParamsError ||
+                isAmountLessThanStakeMin ||
+                !termsAccepted ||
+                !stakingPoktParamsData?.stakingEnabled ||
+                hasError
+              }
+              onClick={sendTransactionRequest}
+              isFormSubmit
+              isLoading={isSendingTransactionRequest}
+            >
+              STAKE
+            </SharedButton>
+          ) : (
+            <SharedButton
+              type="primary"
+              size="large"
+              icon="stake"
+              iconPosition="left"
+              iconSize="large"
+              onClick={() => setIsStakePausedModalOpen(true)}
+            >
+              STAKE
+            </SharedButton>
+          )}
         </div>
       </div>
+      <StakePausedModal
+        open={isStakePausedModalOpen}
+        setOpen={setIsStakePausedModalOpen}
+      />
       <style jsx>
         {`
           .form_input {
