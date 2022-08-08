@@ -45,7 +45,7 @@ const snActionBg = {
   [SnAction.COMPOUND]: "bg-transparent ",
   [SnAction.STAKE]: "bg-aqua",
   [SnAction.UNSTAKE]: "bg-white bg-opacity-75",
-  [SnAction.REWARD]: "bg-emerald",
+  [SnAction.REWARD]: "bg-aqua",
 }
 
 const snActionIcon: Record<SnAction, (props: any) => JSX.Element> = {
@@ -67,7 +67,14 @@ const snActionIcon: Record<SnAction, (props: any) => JSX.Element> = {
       `}
     />
   ),
-  [SnAction.REWARD]: TrendingUpIcon,
+  [SnAction.REWARD]: ({ className }: { className: string }) => (
+    <div
+      className={clsx(className, "icon-mask")}
+      css={`
+        mask-image: url("../../public/images/rewards@2x.png");
+      `}
+    />
+  ),
 }
 
 export default function StakeRequestsTransactions(): ReactElement {

@@ -4,6 +4,7 @@ const MEMO_TO_SNACTION: Record<string, SnAction> = {
   c: SnAction.COMPOUND,
   u: SnAction.UNSTAKE,
   s: SnAction.STAKE,
+  r: SnAction.REWARD,
 }
 
 export default function getSnActionFromMemo(memo?: string): SnAction | null {
