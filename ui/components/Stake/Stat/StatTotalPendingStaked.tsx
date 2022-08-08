@@ -16,32 +16,43 @@ export default function StatTotalStaked({
   const { data, isLoading, isError } = useStakingUserData(aon)
 
   return (
-    <div className="relative pt-5 px-4 pb-12 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden">
-      <dt>
-        <div className="absolute bg-spanish-gray rounded-md p-3">
-          <div className="stake_icon bg-white w-8 h-8 inline-block" />
+    <div
+      title={formatFixed(
+        data?.userStakingData[0]?.staked ?? 0,
+        aon.network.baseAsset.decimals
+      )}
+      className="relative border border-spanish-gray h-32 rounded-md"
+    >
+      <div className="absolute flex items-center justify-center -top-6 left-0 right-0 text-white">
+        <span>Pending Staked</span>
+      </div>
+      <div className="w-full h-full grow flex gap-1 justify-space items-center">
+        <div className="relative grow h-full">
+          <div className="flex flex-col grow items-center justify-center h-full">
+            <div className="text-6xl font-semibold text-white">
+              {isError ? (
+                (isError as any).toString()
+              ) : isLoading ? (
+                <SharedLoadingSpinner />
+              ) : (
+                <p className="text-2xl font-semibold text-white">
+                  {formatTokenAmount(
+                    formatFixed(
+                      data?.userStakingData[0]?.pendingStaked ?? 0,
+                      aon.network.baseAsset.decimals
+                    ),
+                    3,
+                    0
+                  )}
+                </p>
+              )}
+            </div>
+          </div>
         </div>
-        <p className="ml-16 text-sm font-medium text-spanish-gray truncate">
-          Pending Staked
-        </p>
-      </dt>
-
-      <dd className="ml-16 flex items-baseline">
-        {isError ? (
-          (isError as any).toString()
-        ) : isLoading ? (
-          <SharedLoadingSpinner />
-        ) : (
-          <p className="text-2xl font-semibold text-white">
-            {formatTokenAmount(
-              formatFixed(
-                data?.userStakingData[0]?.pendingStaked ?? 0,
-                asset.decimals
-              )
-            )}
-          </p>
-        )}
-      </dd>
+        <div className="absolute flex items-center justify-center text-center inset-x-0 bottom-1 mx-auto text-white text-xs px-2">
+          Stake earns rewards ~24 hrs after tx confirmation
+        </div>
+      </div>
     </div>
   )
 }

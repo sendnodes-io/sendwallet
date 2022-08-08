@@ -41,6 +41,8 @@ import {
 } from "chart.js"
 import { Line } from "react-chartjs-2"
 import StakeToggleAutocompounding from "./StakeToggleAutocompounding"
+import StatAPY from "./Stat/StatAPY"
+import StatTotalStaked from "./Stat/StatTotalStaked"
 
 ChartJS.register(
   CategoryScale,
@@ -274,33 +276,10 @@ export default function StakeRewards(): ReactElement {
         </div>
         <div className="mt-16 flex flex-col">
           <div className="grid md:grid-cols-8 gap-4 gap-y-12 lg:gap-8">
-            <div className="relative border border-spanish-gray h-32 rounded-md md:col-span-4">
-              <div className="absolute flex items-center justify-center -top-6 left-0 right-0 text-white">
-                <span>Current APY</span>
-              </div>
-              <div className="w-full h-full grow flex gap-1 justify-space items-center">
-                <div className="relative grow h-full">
-                  <div className="flex flex-col grow items-center justify-center h-full">
-                    <div className="text-3xl sm:text-4xl font-semibold text-white">
-                      {stakingUserData?.rewardsData?.apy.toFixed(2)}%
-                    </div>
-                  </div>
-                  <div className="absolute flex items-center justify-center text-center inset-x-0 bottom-1 mx-auto text-white text-xs">
-                    Autocompounding
-                  </div>
-                </div>
-                <div className="relative grow h-full">
-                  <div className="flex flex-col grow items-center justify-center h-full">
-                    <div className="text-3xl sm:text-4xl font-semibold text-white">
-                      {stakingUserData?.rewardsData?.apyNoCompounding.toFixed(
-                        2
-                      )}
-                      %
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <StatAPY
+              aon={currentAccount}
+              asset={currentAccount.network.baseAsset}
+            />
             <div
               title={formatFixed(
                 stakingUserData?.userStakingData[0]?.rewards ?? 0,
@@ -328,33 +307,10 @@ export default function StakeRewards(): ReactElement {
                 </div>
               </div>
             </div>
-            <div
-              title={formatFixed(
-                stakingUserData?.userStakingData[0]?.staked ?? 0,
-                currentAccount.network.baseAsset.decimals
-              )}
-              className="relative border border-spanish-gray h-32 rounded-md  md:col-span-2"
-            >
-              <div className="absolute flex items-center justify-center -top-6 left-0 right-0 text-white">
-                <span>Total Staked</span>
-              </div>
-              <div className="w-full h-full grow flex gap-1 justify-space items-center">
-                <div className="relative grow h-full">
-                  <div className="flex flex-col grow items-center justify-center h-full">
-                    <div className="text-6xl font-semibold text-white">
-                      {formatTokenAmount(
-                        formatFixed(
-                          stakingUserData?.userStakingData[0]?.staked ?? 0,
-                          currentAccount.network.baseAsset.decimals
-                        ),
-                        3,
-                        0
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <StatTotalStaked
+              aon={currentAccount}
+              asset={currentAccount.network.baseAsset}
+            />
           </div>
 
           <div className="mt-8">
