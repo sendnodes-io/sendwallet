@@ -13,11 +13,7 @@ import { capitalize, isEqual, uniqBy } from "lodash"
 import { useStakingRequestsTransactions } from "../../hooks/staking-hooks/use-staking-requests-transactions"
 import clsx from "clsx"
 import { Link } from "react-router-dom"
-import {
-  DownloadIcon,
-  TrendingUpIcon,
-  UploadIcon,
-} from "@heroicons/react/solid"
+import { DownloadIcon, UploadIcon } from "@heroicons/react/solid"
 import { BigNumber, formatFixed } from "@ethersproject/bignumber"
 
 import dayjs from "dayjs"
@@ -42,34 +38,66 @@ dayjs.extend(relativeTime.default)
 dayjs.extend(utc.default)
 
 const snActionBg = {
-  [SnAction.COMPOUND]: "bg-transparent ",
+  [SnAction.COMPOUND]: "text-white",
   [SnAction.STAKE]: "bg-aqua",
   [SnAction.UNSTAKE]: "bg-white bg-opacity-75",
   [SnAction.REWARD]: "bg-aqua",
 }
 
 const snActionIcon: Record<SnAction, (props: any) => JSX.Element> = {
-  [SnAction.COMPOUND]: ({ className }: { className: string }) => {
+  [SnAction.COMPOUND]: ({
+    className,
+    pending,
+  }: {
+    className: string
+    pending: boolean
+  }) => {
     return className.includes("uncompound") ? (
-      <UploadIcon className={className} />
+      <UploadIcon
+        className={clsx(className, "h-8 w-8 text-opacity-75", {
+          "text-orange-500": pending,
+        })}
+      />
     ) : (
-      <DownloadIcon className={className} />
+      <DownloadIcon
+        className={clsx(className, "h-8 w-8", { "text-orange-500": pending })}
+      />
     )
   },
-  [SnAction.STAKE]: ({ className }: { className: string }) => (
-    <div className={clsx("stake_icon", className)}></div>
-  ),
-  [SnAction.UNSTAKE]: ({ className }: { className: string }) => (
+  [SnAction.STAKE]: ({
+    className,
+    pending,
+  }: {
+    className: string
+    pending: boolean
+  }) => (
     <div
-      className={clsx(className, "icon-mask")}
+      className={clsx("stake_icon", className, { "bg-orange-500": pending })}
+    ></div>
+  ),
+  [SnAction.UNSTAKE]: ({
+    className,
+    pending,
+  }: {
+    className: string
+    pending: boolean
+  }) => (
+    <div
+      className={clsx(className, "icon-mask", { "bg-orange-500": pending })}
       css={`
         mask-image: url("../../public/images/unstake@2x.png");
       `}
     />
   ),
-  [SnAction.REWARD]: ({ className }: { className: string }) => (
+  [SnAction.REWARD]: ({
+    className,
+    pending,
+  }: {
+    className: string
+    pending: boolean
+  }) => (
     <div
-      className={clsx(className, "icon-mask")}
+      className={clsx(className, "icon-mask", { "bg-orange-500": pending })}
       css={`
         mask-image: url("../../public/images/rewards@2x.png");
       `}
@@ -283,8 +311,8 @@ function StakeTransactionItem({ color, Icon, tx }: StakeTransactionItemProps) {
               )}
             >
               <Icon
+                pending={isPending}
                 className={clsx("h-10 w-10", color, {
-                  "bg-orange-500 text-orange-500": !tx.timestamp,
                   uncompound: isUncompound,
                 })}
                 aria-hidden="true"
