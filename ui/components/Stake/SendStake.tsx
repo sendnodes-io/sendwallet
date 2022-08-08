@@ -48,6 +48,7 @@ import StatTotalPendingStaked from "./Stat/StatTotalPendingStaked"
 import { isEqual } from "lodash"
 import usePocketNetworkFee from "../../hooks/pocket-network/use-network-fee"
 import StakePausedModal from "./StakePausedModal"
+import StatAPY from "./Stat/StatAPY"
 
 export default function SendStake(): ReactElement {
   const location = useLocation<FungibleAsset>()
@@ -211,13 +212,14 @@ export default function SendStake(): ReactElement {
         <div className="stake_icon bg-white w-12 h-12" />
         <h1>Stake</h1>
       </div>
-      <div>
-        <dl className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-16 flex flex-col ">
+        <div className="grid md:grid-cols-8 gap-4 gap-y-12 lg:gap-8">
+          <div className="md:col-span-1" />
           <StatTotalStaked aon={currentAccount} asset={selectedAsset} />
-          <StatTotalPendingStaked aon={currentAccount} asset={selectedAsset} />
-        </dl>
+          <StatAPY aon={currentAccount} asset={selectedAsset} />
+        </div>
       </div>
-      <div className=" relative mb-2">
+      <div className="mt-8 md:mt-12 relative mb-2">
         <div className="mb-4">
           <SharedAssetInput
             autoFocus
@@ -287,28 +289,28 @@ export default function SendStake(): ReactElement {
             }}
           />
           <small>
-            Autocompound automatically stakes your rewards instead of sending it
-            to your address. You can disable it at any time.
+            Auto Compound automatically stakes your rewards. This feature can be
+            disabled at anytime.{" "}
+            <a
+              href="https://docs.sendnodes.io/"
+              title="More information on Auto Compound with SendNodes"
+              className="inline text-aqua hover:text-white"
+              target="_blank"
+            >
+              Read more<span className="sr-only">Information on Staking</span>
+              <InformationCircleIcon className="ml-1 h-4 w-4 inline-block" />
+            </a>
           </small>
-          <a
-            href="https://docs.sendnodes.io/"
-            title="More information on Auto Compound with SendNodes"
-            className="inline hover:text-white"
-            target="_blank"
-          >
-            <span className="sr-only">Information on Staking</span>
-            <InformationCircleIcon className="ml-1 h-4 w-4 inline" />
-          </a>
         </div>
       </div>
 
       <div className=" border-b-2 border-spanish-gray border-opacity-25 mb-4 pb-2">
         <div className="form_input">
-          <small className="pb-1 inline-block">
-            By checking this box, you agree the{" "}
+          <small className="mb-2 inline-block">
+            By checking this box, you agree to the{" "}
             <a
               href="https://docs.sendnodes.io/legal/terms-of-service"
-              className="underline"
+              className="underline text-aqua hover:text-white"
               target={"_blank"}
             >
               terms of service
