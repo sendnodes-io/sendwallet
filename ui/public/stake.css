@@ -12,7 +12,7 @@ body {
 }
 
 #pokt-wallet-root {
-  @apply h-full flex-1;
+  @apply h-full flex-1 flex;
 }
 
 * {
