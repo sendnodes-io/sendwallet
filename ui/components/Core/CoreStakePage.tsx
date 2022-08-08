@@ -297,7 +297,7 @@ export default function CoreStakePage(props: Props): ReactElement {
   }
 
   return (
-    <div className="w-full h-screen flex flex-col items-center ">
+    <div className="w-full flex flex-col items-center ">
       <div className="w-full grid grid-cols-2 md:grid-cols-3 xl:max-w-7xl lg:max-w-4xl mx-auto  py-8 md:px-8 px-4">
         <div className="hidden md:block col-span-1"></div>
         <div className="col-span-1 flex justify-center items-center">
@@ -309,6 +309,7 @@ export default function CoreStakePage(props: Props): ReactElement {
               className="border border-solid border-spanish-gray group"
               address={currentAccountData!.address}
               showAvatar
+              name={currentAccountData?.name}
               onClick={() => setIsAccountsPanelOpen(true)}
               title={`Current Account: ${
                 currentAccountData?.name
