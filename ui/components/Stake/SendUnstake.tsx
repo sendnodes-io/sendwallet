@@ -10,7 +10,6 @@ import {
   selectMainCurrencySymbol,
 } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
 import { FungibleAsset } from "@sendnodes/pokt-wallet-background/assets"
-import { POKT } from "@sendnodes/pokt-wallet-background/constants"
 import {
   convertFixedPointNumber,
   parseToFixedPointNumber,
@@ -32,7 +31,6 @@ import {
   useAreKeyringsUnlocked,
 } from "../../hooks"
 import SharedSplashScreen from "../Shared/SharedSplashScreen"
-import SharedCheckbox from "../Shared/SharedCheckbox"
 import formatTokenAmount from "../../utils/formatTokenAmount"
 import { InformationCircleIcon } from "@heroicons/react/solid"
 import {
@@ -48,35 +46,20 @@ import SharedLoadingSpinner from "../Shared/SharedLoadingSpinner"
 import StatTotalStaked from "./Stat/StatTotalStaked"
 import StatTotalPendingStaked from "./Stat/StatTotalPendingStaked"
 import { formatFixed, parseFixed } from "@ethersproject/bignumber"
-import SharedModal from "../Shared/SharedModal"
 import { selectTransactionData } from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction"
 import { stylesheet } from "astroturf"
-import SignTransaction from "../../pages/SignTransaction"
-
-const styles = stylesheet`
-  .accountsModal :global(.switcher_wrap) {
-    @apply rounded-none -mx-4 sm:-mx-6 !important;
-  }
-  .accountsModalScrollbar :global(.switcher_wrap:-webkit-scrollbar-track) {
-    @apply bg-eerie-black;
-  }
-`
+import usePocketNetworkFee from "../../hooks/pocket-network/use-network-fee"
+import StatAPY from "./Stat/StatAPY"
+import StatTotalUnstaked from "./Stat/StatTotalUnstaked"
 
 export default function SendUnstake(): ReactElement {
   const history = useHistory()
 
   const dispatch = useBackgroundDispatch()
   const currentAccount = useBackgroundSelector(selectCurrentAccount, isEqual)
-  const balanceData = useBackgroundSelector(
-    selectCurrentAccountBalances,
-    isEqual
-  )
+
   const mainCurrencySymbol = useBackgroundSelector(
     selectMainCurrencySymbol,
-    isEqual
-  )
-  const transactionDetails = useBackgroundSelector(
-    selectTransactionData,
     isEqual
   )
   const {
@@ -91,8 +74,7 @@ export default function SendUnstake(): ReactElement {
     isError: isUserStakingDataError,
   } = useStakingUserData(currentAccount)
 
-  // TODO: write a network data hook
-  const networkFee = 1e4
+  const { networkFee } = usePocketNetworkFee()
 
   const [selectedAsset, setSelectedAsset] = useState<FungibleAsset>(
     currentAccount.network.baseAsset
@@ -104,11 +86,7 @@ export default function SendUnstake(): ReactElement {
 
   const totalStakedBalance = BigNumber.from(
     userStakingData?.userStakingData[0]?.staked ?? 0
-  )
-    .add(userStakingData?.userStakingData[0]?.pendingStaked ?? 0)
-    .sub(
-      BigNumber.from(userStakingData?.userStakingData[0]?.pendingUnstaked ?? 0)
-    )
+  ).add(userStakingData?.userStakingData[0]?.pendingStaked ?? 0)
 
   const totalStakedBalanceDecimals = Number(
     formatFixed(totalStakedBalance, selectedAsset.decimals)
@@ -214,77 +192,20 @@ export default function SendUnstake(): ReactElement {
   return (
     <div className=" pb-4">
       <div className="flex gap-x-4 justify-center items-center pt-4 pb-8">
-        <ReceiptRefundIcon className="w-8 h-8 text-white" />
+        <div
+          className={"w-8 h-8 bg-white"}
+          css={`
+            mask-image: url("../../public/images/unstake@2x.png");
+          `}
+        />
         <h1>Unstake</h1>
       </div>
-      <div>
-        <dl className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          <div className="relative pt-5 px-4 pb-6 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden">
-            <dt>
-              <div className="absolute bg-spanish-gray rounded-md p-3">
-                <div className="stake_icon bg-white w-8 h-8 inline-block" />
-              </div>
-              <p className="ml-16 text-sm font-medium text-spanish-gray truncate">
-                Total Unstaked
-              </p>
-            </dt>
-            {isUserStakingDataLoading ? (
-              <SharedLoadingSpinner />
-            ) : (
-              <dd className="ml-16 pb-6 flex items-baseline sm:pb-7">
-                {isUserStakingDataError ? (
-                  (isUserStakingDataError as any).toString()
-                ) : isUserStakingDataLoading ? (
-                  <SharedLoadingSpinner />
-                ) : (
-                  <p className="text-2xl font-semibold text-white">
-                    {formatTokenAmount(
-                      formatFixed(
-                        userStakingData?.userStakingData[0]?.unstaked ?? 0,
-                        selectedAsset.decimals
-                      )
-                    )}
-                  </p>
-                )}
-              </dd>
-            )}
-          </div>
-
-          <div className="relative pt-5 px-4 pb-6 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden">
-            <dt>
-              <div className="absolute bg-spanish-gray rounded-md p-3">
-                <div className="stake_icon bg-white w-8 h-8 inline-block" />
-              </div>
-              <p className="ml-16 text-sm font-medium text-spanish-gray truncate">
-                Pending Unstaked
-              </p>
-            </dt>
-            {isUserStakingDataLoading ? (
-              <SharedLoadingSpinner />
-            ) : (
-              <dd className="ml-16 pb-6 flex items-baseline sm:pb-7">
-                {isUserStakingDataError ? (
-                  (isUserStakingDataError as any).toString()
-                ) : isUserStakingDataLoading ? (
-                  <SharedLoadingSpinner />
-                ) : (
-                  <p className="text-2xl font-semibold text-white">
-                    {formatTokenAmount(
-                      formatFixed(
-                        userStakingData?.userStakingData[0]?.pendingUnstaked ??
-                          0,
-                        selectedAsset.decimals
-                      )
-                    )}
-                  </p>
-                )}
-              </dd>
-            )}
-          </div>
-
+      <div className="mt-16 flex flex-col ">
+        <div className="grid md:grid-cols-8 gap-4 gap-y-12 lg:gap-8">
+          <StatTotalUnstaked aon={currentAccount} asset={selectedAsset} />
           <StatTotalStaked aon={currentAccount} asset={selectedAsset} />
-          <StatTotalPendingStaked aon={currentAccount} asset={selectedAsset} />
-        </dl>
+          <StatAPY aon={currentAccount} asset={selectedAsset} />
+        </div>
       </div>
       <div className="flex pt-4 pb-8">
         <p className="text-lg">

@@ -6,7 +6,7 @@ import formatTokenAmount from "../../../utils/formatTokenAmount"
 import SharedLoadingSpinner from "../../Shared/SharedLoadingSpinner"
 import { FungibleAsset } from "@sendnodes/pokt-wallet-background/assets"
 
-export default function StatTotalStaked({
+export default function StatTotalUnstaked({
   aon,
   asset,
 }: {
@@ -18,13 +18,13 @@ export default function StatTotalStaked({
   return (
     <div
       title={formatFixed(
-        data?.userStakingData[0]?.staked ?? 0,
-        aon.network.baseAsset.decimals
+        data?.userStakingData[0]?.unstaked ?? 0,
+        asset.decimals
       )}
       className="relative border border-spanish-gray h-32 rounded-md md:col-span-2"
     >
       <div className="absolute flex items-center justify-center -top-6 left-0 right-0 text-white">
-        <span>Total Staked</span>
+        <span>Total Unstaked</span>
       </div>
       <div className="w-full h-full grow flex gap-1 justify-space items-center">
         <div className="relative grow h-full">
@@ -37,10 +37,10 @@ export default function StatTotalStaked({
               ) : (
                 formatTokenAmount(
                   formatFixed(
-                    BigNumber.from(data?.userStakingData[0]?.staked ?? 0).add(
-                      data?.userStakingData[0]?.pendingStaked ?? 0
+                    BigNumber.from(data?.userStakingData[0]?.unstaked ?? 0).add(
+                      data?.userStakingData[0]?.pendingUnstaked ?? 0
                     ),
-                    aon.network.baseAsset.decimals
+                    asset.decimals
                   ),
                   4,
                   0
