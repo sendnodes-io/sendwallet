@@ -223,7 +223,9 @@ export default function SignStakeTransaction(): ReactElement {
             as="h3"
             className="text-lg leading-6 font-medium text-white text-center "
           >
-            {isUncompound ? <span>Disable Autocompounding</span> : humanAction}
+            {isCompound && "Enable Autocompound"}
+            {isUncompound && "Disable Autocompound"}
+            {!(isUncompound || isCompound) && humanAction}
           </Dialog.Title>
           <div className="mt-2">
             <p className="text-sm text-spanish-gray text-center ">
