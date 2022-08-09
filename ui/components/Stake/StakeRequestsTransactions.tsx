@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react"
+import React, { ReactElement, useEffect, useState } from "react"
 import {
   selectBlockExplorerForTxHash,
   selectCurrentAccount,
@@ -282,10 +282,12 @@ function StakeTransactionItem({ color, Icon, tx }: StakeTransactionItemProps) {
   )
 
   const isPending = !tx.timestamp
-  let timestamp = !isPending
-    ? dayjs.utc(tx.timestamp)
-    : // the next block is committed 30 minutes after the start of the previous one
-      dayjs.utc(poktWatchLatestBlock?.timestamp).add(30, "minute")
+  let [timestamp, setTimestamp] = useState(
+    !isPending
+      ? dayjs.utc(tx.timestamp)
+      : // the next block is committed 30 minutes after the start of the previous one
+        dayjs.utc(poktWatchLatestBlock?.timestamp).add(30, "minute")
+  )
   const rewardTimestamp = timestamp.clone().add(24, "hour")
   const earningRewards = dayjs.utc().isAfter(rewardTimestamp)
   const isCompound =
@@ -304,6 +306,18 @@ function StakeTransactionItem({ color, Icon, tx }: StakeTransactionItemProps) {
     (isPending && isUnstake ? tx.memo.split(":")[1] : tx.amount) ??
       BigNumber.from(0)
   )
+
+  useEffect(() => {
+    if (isPending) {
+      setTimestamp(dayjs.utc(poktWatchLatestBlock?.timestamp).add(30, "minute"))
+      const interval = setInterval(() => {
+        setTimestamp(
+          dayjs.utc(poktWatchLatestBlock?.timestamp).add(30, "minute")
+        )
+      }, 60 * 1e3)
+      return () => clearInterval(interval)
+    }
+  }, [tx, poktWatchLatestBlock])
 
   return (
     <li key={tx.hash} className="list-item hover:bg-gray-700 rounded-sm">
