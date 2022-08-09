@@ -288,7 +288,7 @@ export default function SendStake(): ReactElement {
             }}
           />
           <small>
-            Auto Compound automatically stakes your rewards. This feature can be
+            Autocompound automatically stakes your rewards. This feature can be
             disabled at anytime.{" "}
             <a
               href="https://sendnodes.gitbook.io/sendnodes/start-here/frequently-asked-questions#how-do-i-get-my-rewards"
