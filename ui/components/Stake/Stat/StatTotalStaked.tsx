@@ -31,7 +31,7 @@ export default function StatTotalStaked({
       <div className="w-full h-full grow flex gap-1 justify-space items-center">
         <div className="relative grow h-full">
           <div className="flex flex-col grow items-center justify-center h-full">
-            <div className="text-6xl font-semibold text-white">
+            <div className="text-4xl xl:text-5xl font-semibold text-white">
               {isError ? (
                 (isError as any).toString()
               ) : isLoading ? (
