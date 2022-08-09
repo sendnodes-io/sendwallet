@@ -31,6 +31,7 @@ import getSnActionFromMemo from "../../helpers/get-sn-action-from-memo"
 import { POKTActivityItem } from "@sendnodes/pokt-wallet-background/redux-slices/activities"
 import { usePoktWatchLatestBlock } from "../../hooks/pokt-watch/use-latest-block"
 import { useStakingRewardsTransactions } from "../../hooks/staking-hooks/use-staking-rewards-transactions"
+import formatTokenAmount from "../../utils/formatTokenAmount"
 
 dayjs.extend(updateLocale.default)
 dayjs.extend(localizedFormat.default)
@@ -299,6 +300,10 @@ function StakeTransactionItem({ color, Icon, tx }: StakeTransactionItemProps) {
     timestamp = rewardTimestamp
   }
   const relativeTimestamp = timestamp.fromNow()
+  const amount = BigNumber.from(
+    (isPending && isUnstake ? tx.memo.split(":")[1] : tx.amount) ??
+      BigNumber.from(0)
+  )
 
   return (
     <li key={tx.hash} className="list-item hover:bg-gray-700 rounded-sm">
@@ -329,6 +334,10 @@ function StakeTransactionItem({ color, Icon, tx }: StakeTransactionItemProps) {
               <div className="ml-2 flex-shrink-0 flex">
                 {!(isUncompound || isCompound) && (
                   <div
+                    title={formatFixed(
+                      amount,
+                      currentAccount.network.baseAsset.decimals
+                    )}
                     className={clsx(
                       "px-2 inline-flex items-center gap-2 text-sm sm:text-lg leading-5 font-semibold rounded-full"
                     )}
@@ -340,13 +349,13 @@ function StakeTransactionItem({ color, Icon, tx }: StakeTransactionItemProps) {
                         alt="POKT"
                       />
                     </div>
-                    {formatFixed(
-                      BigNumber.from(
-                        isPending && isUnstake
-                          ? tx.memo.split(":")[1]
-                          : tx.amount
+                    {formatTokenAmount(
+                      formatFixed(
+                        amount,
+                        currentAccount.network.baseAsset.decimals
                       ),
-                      currentAccount.network.baseAsset.decimals
+                      7,
+                      2
                     )}
                   </div>
                 )}

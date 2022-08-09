@@ -300,7 +300,7 @@ export default function StakeRewards(): ReactElement {
                           currentAccount.network.baseAsset.decimals
                         ),
                         3,
-                        0
+                        1
                       )}
                     </div>
                   </div>
