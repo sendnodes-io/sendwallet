@@ -63,35 +63,16 @@ export default function formatTokenAmount(
   }
 
   let digits = (amount ?? "").toString().split(".")
-  let lengths = digits.map((d) => d.length)
   let [integers = 0, decimals = 0] = digits.map((s) => Number(s))
   let [integersLength = 0, decimalsLength = 0] = digits.map((s) => s.length)
 
   if ((digits[0] && isNaN(integers)) || (digits[1] && isNaN(decimals))) {
-    console.log("Invalid amount", {
-      digits,
-      lengths,
-      amount,
-    })
     return abbreviateNumber(0, maxDecimals)
   }
 
   if (integersLength > maxIntegers) {
     integers = floor(Number(amount), maxIntegers - integersLength)
     integersLength = integers.toString().length
-    console.log({
-      maxi: true,
-      result: abbreviateNumber(integers, maxDecimals),
-      amount,
-      digits,
-      lengths,
-      integers,
-      decimals,
-      integersLength,
-      decimalsLength,
-      maxIntegers,
-      maxDecimals,
-    })
     return abbreviateNumber(integers, maxDecimals)
   }
 

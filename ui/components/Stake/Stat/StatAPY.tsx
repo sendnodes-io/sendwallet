@@ -21,35 +21,34 @@ export default function StatAPY({
         <span>Current APY</span>
       </div>
       <div className="w-full h-full grow flex gap-1 justify-space items-center">
-        <div className="relative grow h-full">
-          <div className="flex flex-col grow items-center justify-center h-full">
-            <div className="text-3xl sm:text-4xl font-semibold text-white">
-              {isError ? (
-                (isError as any).toString()
-              ) : isLoading ? (
-                <SharedLoadingSpinner />
-              ) : (
+        {isError ? (
+          (isError as any).toString()
+        ) : isLoading ? (
+          <div className="relative grow h-full">
+            <div className="flex flex-col grow items-center justify-center h-full">
+              <SharedLoadingSpinner />
+            </div>
+          </div>
+        ) : data?.userStakingData[0].compound ? (
+          <div className="relative grow h-full">
+            <div className="flex flex-col grow items-center justify-center h-full">
+              <div className="text-3xl sm:text-4xl font-semibold text-white">
                 <span>{data?.rewardsData?.apy.toFixed(2)}%</span>
-              )}
+              </div>
+            </div>
+            <div className="absolute flex items-center justify-center text-center inset-x-0 bottom-1 mx-auto text-white text-xs">
+              Autocompounding
             </div>
           </div>
-          <div className="absolute flex items-center justify-center text-center inset-x-0 bottom-1 mx-auto text-white text-xs">
-            Autocompounding
-          </div>
-        </div>
-        <div className="relative grow h-full">
-          <div className="flex flex-col grow items-center justify-center h-full">
-            <div className="text-3xl sm:text-4xl font-semibold text-white">
-              {isError ? (
-                (isError as any).toString()
-              ) : isLoading ? (
-                <SharedLoadingSpinner />
-              ) : (
+        ) : (
+          <div className="relative grow h-full">
+            <div className="flex flex-col grow items-center justify-center h-full">
+              <div className="text-3xl sm:text-4xl font-semibold text-white">
                 <span>{data?.rewardsData?.apyNoCompounding.toFixed(2)}%</span>
-              )}
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   )
