@@ -1,6 +1,6 @@
 import { floor } from "lodash"
 
-const defaultSymbols = ["", "k", "M", "G", "T", "P", "E"]
+const defaultSymbols = ["", "K", "M", "G", "T", "P", "E"]
 
 interface AbbreviateOptions {
   padding?: boolean
@@ -71,12 +71,12 @@ export default function formatTokenAmount(
   }
 
   if (integersLength > maxIntegers) {
-    integers = floor(Number(amount), maxIntegers - integersLength)
+    integers = floor(Number(amount), maxIntegers + maxDecimals - integersLength)
     integersLength = integers.toString().length
     return abbreviateNumber(integers, maxDecimals)
   }
 
-  return Number(amount).toLocaleString(undefined, {
+  return Number(floor(Number(amount), maxDecimals)).toLocaleString(undefined, {
     useGrouping: true,
     maximumFractionDigits: maxDecimals,
   })
