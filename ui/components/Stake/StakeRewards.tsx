@@ -25,7 +25,6 @@ import {
 } from "../../hooks/staking-hooks"
 import { useStakingRewardsTransactions } from "../../hooks/staking-hooks/use-staking-rewards-transactions"
 
-import formatTokenAmount from "../../utils/formatTokenAmount"
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -44,6 +43,7 @@ import StakeToggleAutocompounding from "./StakeToggleAutocompounding"
 import StatAPY from "./Stat/StatAPY"
 import StatTotalStaked from "./Stat/StatTotalStaked"
 import StatTotalUpcomingRewards from "./Stat/StatTotalUpcomingRewards"
+import StatTotalRewards from "./Stat/StatTotalRewards"
 
 ChartJS.register(
   CategoryScale,
@@ -62,8 +62,6 @@ dayjs.extend(utc.default)
 dayjs.extend(isSameOrBefore.default)
 
 export default function StakeRewards(): ReactElement {
-  const [showAutocompoundingModal, setShowAutocompoundingModal] =
-    useState(false)
   const areKeyringsUnlocked = useAreKeyringsUnlocked(true)
   const currentAccount = useBackgroundSelector(selectCurrentAccount, isEqual)
   const {
@@ -144,7 +142,7 @@ export default function StakeRewards(): ReactElement {
     backgroundColor: "rgba(255, 255, 255, 0.5)",
   } as ChartDataset<"line", number[]>
 
-  const labels = []
+  const labels: string[] = []
   let date = startDate.clone().subtract(1, "day")
   let cummReward = BigNumber.from(0)
   let cummStaked = BigNumber.from(0)
@@ -181,12 +179,19 @@ export default function StakeRewards(): ReactElement {
     )
     date = date.add(1, "day")
   }
-  const data = {
-    labels,
-    datasets: [rewardsDataset, stakedDataset, unstakedDataset],
-  }
   const options = {
     responsive: true,
+    aspectRatio: 1,
+    stacked: false,
+    onResize: (chart, size) => {
+      console.log({ size, aspectRatio: chart.options.aspectRatio })
+      if (size.width < 500) {
+        chart.options.aspectRatio = 1.25
+      } else {
+        chart.options.aspectRatio = 2.25
+      }
+      console.log({ size, aspectRatio: chart.options.aspectRatio })
+    },
     animations: {
       tension: {
         duration: 1000,
@@ -205,7 +210,7 @@ export default function StakeRewards(): ReactElement {
       },
       title: {
         display: true,
-        text: "Staking Rewards",
+
         color: "white",
       },
     },
@@ -216,6 +221,7 @@ export default function StakeRewards(): ReactElement {
         },
         ticks: { color: "white" },
       },
+
       y: {
         grid: {
           color: "rgba(255, 255, 255, 0.2)",
@@ -276,39 +282,8 @@ export default function StakeRewards(): ReactElement {
           </div>
         </div>
         <div className="mt-16 flex flex-col">
-          <div className="grid md:grid-cols-8 gap-4 gap-y-12 lg:gap-8">
+          <div className="grid grid-cols-4 sm:grid-cols-8 gap-4 gap-y-12 lg:gap-8">
             <StatAPY
-              aon={currentAccount}
-              asset={currentAccount.network.baseAsset}
-            />
-            <div
-              title={formatFixed(
-                stakingUserData?.userStakingData[0]?.rewards ?? 0,
-                currentAccount.network.baseAsset.decimals
-              )}
-              className="relative border border-spanish-gray h-32 rounded-md  md:col-span-2"
-            >
-              <div className="absolute flex items-center justify-center -top-6 left-0 right-0 text-white">
-                <span>Total Rewards</span>
-              </div>
-              <div className="w-full h-full grow flex gap-1 justify-space items-center">
-                <div className="relative grow h-full">
-                  <div className="flex flex-col grow items-center justify-center h-full">
-                    <div className="text-4xl xl:text-5xl font-semibold text-white">
-                      {formatTokenAmount(
-                        formatFixed(
-                          stakingUserData?.userStakingData[0]?.rewards ?? 0,
-                          currentAccount.network.baseAsset.decimals
-                        ),
-                        3,
-                        1
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <StatTotalUpcomingRewards
               aon={currentAccount}
               asset={currentAccount.network.baseAsset}
             />
@@ -316,10 +291,26 @@ export default function StakeRewards(): ReactElement {
               aon={currentAccount}
               asset={currentAccount.network.baseAsset}
             />
+            <div className="col-span-4 sm:hidden border-t border-t-spanish-gray" />
+
+            <StatTotalUpcomingRewards
+              aon={currentAccount}
+              asset={currentAccount.network.baseAsset}
+            />
+
+            <StatTotalRewards
+              aon={currentAccount}
+              asset={currentAccount.network.baseAsset}
+            />
           </div>
 
-          <div className="mt-8">
-            <Line options={options} data={data} />
+          <div className="mt-8 min-h-[20rem] max-h-[44vh] overflow-y-scroll pb-12 px-0 md:px-4">
+            {[stakedDataset, rewardsDataset, unstakedDataset].map((dataset) => (
+              <Line
+                options={options}
+                data={{ labels: labels, datasets: [dataset] }}
+              />
+            ))}
           </div>
 
           <div className="mt-8">

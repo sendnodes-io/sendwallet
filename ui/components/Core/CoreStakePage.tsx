@@ -298,7 +298,7 @@ export default function CoreStakePage(props: Props): ReactElement {
 
   return (
     <div className="w-full flex flex-col items-center ">
-      <div className="w-full grid grid-cols-3 xl:max-w-7xl lg:max-w-4xl mx-auto  py-8 md:px-8 px-4">
+      <div className="w-full grid grid-cols-3 xl:max-w-7xl lg:max-w-4xl mx-auto py-4 xl:py-8 md:px-8 px-4">
         <div className="col-span-1">
           <button
             type="button"
@@ -310,7 +310,12 @@ export default function CoreStakePage(props: Props): ReactElement {
           </button>
         </div>
         <div className="col-span-1 flex justify-center items-center">
-          <img src="images/pokt-wallet-logo@2x.png" width="227" height="48" />
+          <img
+            src="images/pokt-wallet-logo@2x.png"
+            width="227"
+            height="48"
+            className="max-w-[10rem]"
+          />
         </div>
         <div className="col-span-1 flex justify-end items-center">
           <div className="ml-auto flex-shrink-0">
@@ -342,15 +347,15 @@ export default function CoreStakePage(props: Props): ReactElement {
       <div className="px-4 md:px-8 xl:px-24 lg:px-8 w-full flex flex-col justify-center items-center flex-1">
         <div
           className={clsx(
-            "xl:max-w-7xl lg:max-w-4xl mx-auto relative rounded-lg lg:rounded-3xl bg-eerie-black w-full h-full ",
+            "xl:max-w-7xl lg:max-w-5xl mx-auto relative rounded-lg lg:rounded-3xl bg-eerie-black w-full h-full ",
             styles.mainPanel
           )}
         >
           <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-          <div className="xl:px-32  lg:px-24 lg:ml-16 flex flex-col grow w-full ">
-            <main className="flex flex-col flex-1 w-full min-h-[40rem] grow">
-              <div className="flex flex-col grow px-4 sm:px-8 lg:px-0 py-12 lg:py-16 justify-center w-full h-full">
+          <div className="xl:px-32 lg:px-24 lg:ml-8 flex flex-col grow w-full ">
+            <main className="flex flex-col flex-1 w-full min-h-[48rem] grow">
+              <div className="flex flex-col grow px-4 sm:px-8 lg:px-0 py-8 xl:py-12 justify-center w-full h-full">
                 {children}
               </div>
             </main>
