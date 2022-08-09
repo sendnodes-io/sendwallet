@@ -32,9 +32,7 @@ export default function StatTotalStaked({
         <div className="relative grow h-full">
           <div className="flex flex-col grow items-center justify-center h-full">
             <div className="text-4xl xl:text-5xl font-semibold text-white">
-              {isError ? (
-                (isError as any).toString()
-              ) : isLoading ? (
+              {isLoading ? (
                 <SharedLoadingSpinner />
               ) : (
                 formatTokenAmount(amount, 3, 1)

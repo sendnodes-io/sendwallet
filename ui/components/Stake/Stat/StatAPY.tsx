@@ -21,9 +21,7 @@ export default function StatAPY({
         <span>Current APY</span>
       </div>
       <div className="w-full h-full grow flex gap-1 justify-space items-center">
-        {isError ? (
-          (isError as any).toString()
-        ) : isLoading ? (
+        {isLoading ? (
           <div className="relative grow h-full">
             <div className="flex flex-col grow items-center justify-center h-full">
               <SharedLoadingSpinner />
