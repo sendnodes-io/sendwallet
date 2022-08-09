@@ -25,7 +25,7 @@ import {
 import SharedAccountItemSummary from "../Shared/SharedAccountItemSummary"
 import AccountItemOptionsMenu from "../AccountItem/AccountItemOptionsMenu"
 import { Network } from "@sendnodes/pokt-wallet-background/networks"
-import classNames from "clsx"
+import classNames from "classnames"
 import { HiOutlinePlusSm } from "react-icons/hi"
 import { useRemoteConfig } from "../../hooks/remote-config-hooks"
 

@@ -3,10 +3,10 @@ import { Provider } from "react-redux"
 import { HashRouter, Redirect, Route, Switch } from "react-router-dom"
 import { Store } from "webext-redux"
 import TabNotFound from "./TabNotFound"
-import pageList from "../routes/routes"
 import ErrorFallback from "./ErrorFallback"
 import { ErrorBoundary } from "react-error-boundary"
 
+import OnboardingAddWallet from "./Onboarding/OnboardingAddWallet"
 import SendStake from "../components/Stake/SendStake"
 import SendUnstake from "../components/Stake/SendUnstake"
 import CoreStakePage from "../components/Core/CoreStakePage"
@@ -49,6 +49,26 @@ export default function Stake({ store }: { store: Store }): ReactElement {
                   <div className="dashed_border">
                     <div className="p-4">
                       <KeyringUnlock />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ErrorBoundary>
+          </Route>
+          <Route path={"/onboarding/add-wallet"} exact>
+            <ErrorBoundary FallbackComponent={ErrorFallback}>
+              <div className="min-h-screen flex justify-center items-center mx-auto">
+                <div
+                  className="max-w-2xl base_texture p-1"
+                  style={
+                    {
+                      "--popup-width": "20rem",
+                    } as CSSProperties
+                  }
+                >
+                  <div className="dashed_border">
+                    <div className="p-4">
+                      <OnboardingAddWallet />
                     </div>
                   </div>
                 </div>
