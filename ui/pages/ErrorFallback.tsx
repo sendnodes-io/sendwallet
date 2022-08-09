@@ -28,11 +28,7 @@ export default function ErrorFallback({
           type="primary"
           size="medium"
           onClick={() => {
-            if (history.length > 2) {
-              history.goBack()
-            } else {
-              window.location.reload()
-            }
+            window.location.reload()
           }}
         >
           Reload
