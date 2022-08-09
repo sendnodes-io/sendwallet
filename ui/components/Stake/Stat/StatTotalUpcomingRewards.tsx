@@ -15,9 +15,7 @@ export default function StatTotalStaked({
 }) {
   const { data, isLoading, isError } = useStakingUserData(aon)
   const amount = formatFixed(
-    BigNumber.from(data?.userStakingData[0]?.staked ?? 0).add(
-      data?.userStakingData[0]?.pendingStaked ?? 0
-    ),
+    BigNumber.from(data?.userStakingData[0]?.pendingRewards ?? 0),
     asset.decimals
   )
   return (
@@ -26,7 +24,7 @@ export default function StatTotalStaked({
       className="relative border border-spanish-gray h-32 rounded-md md:col-span-2"
     >
       <div className="absolute flex items-center justify-center -top-6 left-0 right-0 text-white">
-        <span>Total Staked</span>
+        <span>Upcoming Rewards</span>
       </div>
       <div className="w-full h-full grow flex gap-1 justify-space items-center">
         <div className="relative grow h-full">
