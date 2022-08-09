@@ -298,8 +298,17 @@ export default function CoreStakePage(props: Props): ReactElement {
 
   return (
     <div className="w-full flex flex-col items-center ">
-      <div className="w-full grid grid-cols-2 md:grid-cols-3 xl:max-w-7xl lg:max-w-4xl mx-auto  py-8 md:px-8 px-4">
-        <div className="hidden md:block col-span-1"></div>
+      <div className="w-full grid grid-cols-3 xl:max-w-7xl lg:max-w-4xl mx-auto  py-8 md:px-8 px-4">
+        <div className="col-span-1">
+          <button
+            type="button"
+            className="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-white hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-aqua lg:hidden"
+            onClick={() => setSidebarOpen(true)}
+          >
+            <span className="sr-only">Open sidebar</span>
+            <MenuIcon className="h-6 w-6" aria-hidden="true" />
+          </button>
+        </div>
         <div className="col-span-1 flex justify-center items-center">
           <img src="images/pokt-wallet-logo@2x.png" width="227" height="48" />
         </div>
@@ -330,26 +339,16 @@ export default function CoreStakePage(props: Props): ReactElement {
         </div>
       </div>
 
-      <div className="px-4 md:px-8 xl:px-24 lg:px-8 py-4 md:py-8 w-full flex flex-col justify-center items-center flex-1">
+      <div className="px-4 md:px-8 xl:px-24 lg:px-8 w-full flex flex-col justify-center items-center flex-1">
         <div
           className={clsx(
-            "xl:max-w-7xl lg:max-w-4xl mx-auto relative rounded-lg lg:rounded-3xl bg-eerie-black w-full h-full  min-h-[36rem]",
+            "xl:max-w-7xl lg:max-w-4xl mx-auto relative rounded-lg lg:rounded-3xl bg-eerie-black w-full h-full ",
             styles.mainPanel
           )}
         >
           <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
           <div className="xl:px-32  lg:px-24 lg:ml-16 flex flex-col grow w-full ">
-            <div className="z-10 lg:hidden pl-1 pt-1 sm:pl-3 sm:pt-3 bg-eerie-black rounded-tl-lg rounded-tr-lg">
-              <button
-                type="button"
-                className="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-white hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-aqua"
-                onClick={() => setSidebarOpen(true)}
-              >
-                <span className="sr-only">Open sidebar</span>
-                <MenuIcon className="h-6 w-6" aria-hidden="true" />
-              </button>
-            </div>
             <main className="flex flex-col flex-1 w-full min-h-[40rem] grow">
               <div className="flex flex-col grow px-4 sm:px-8 lg:px-0 py-12 lg:py-16 justify-center w-full h-full">
                 {children}
