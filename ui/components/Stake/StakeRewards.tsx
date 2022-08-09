@@ -43,6 +43,7 @@ import { Line } from "react-chartjs-2"
 import StakeToggleAutocompounding from "./StakeToggleAutocompounding"
 import StatAPY from "./Stat/StatAPY"
 import StatTotalStaked from "./Stat/StatTotalStaked"
+import StatTotalUpcomingRewards from "./Stat/StatTotalUpcomingRewards"
 
 ChartJS.register(
   CategoryScale,
@@ -144,7 +145,7 @@ export default function StakeRewards(): ReactElement {
   } as ChartDataset<"line", number[]>
 
   const labels = []
-  let date = startDate.clone()
+  let date = startDate.clone().subtract(1, "day")
   let cummReward = BigNumber.from(0)
   let cummStaked = BigNumber.from(0)
   while (date.isSameOrBefore(endDate, "day")) {
@@ -293,7 +294,7 @@ export default function StakeRewards(): ReactElement {
               <div className="w-full h-full grow flex gap-1 justify-space items-center">
                 <div className="relative grow h-full">
                   <div className="flex flex-col grow items-center justify-center h-full">
-                    <div className="text-6xl font-semibold text-white">
+                    <div className="text-4xl xl:text-5xl font-semibold text-white">
                       {formatTokenAmount(
                         formatFixed(
                           stakingUserData?.userStakingData[0]?.rewards ?? 0,
@@ -307,6 +308,10 @@ export default function StakeRewards(): ReactElement {
                 </div>
               </div>
             </div>
+            <StatTotalUpcomingRewards
+              aon={currentAccount}
+              asset={currentAccount.network.baseAsset}
+            />
             <StatTotalStaked
               aon={currentAccount}
               asset={currentAccount.network.baseAsset}
