@@ -7,6 +7,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto pt-12 px-4 sm:px-6 md:flex md:items-center md:justify-between lg:px-8">
         <div className="flex justify-center space-x-6 md:order-2">
           <a
+            target="_blank"
             href={`https://twitter.com/_SendNodes_`}
             className="text-white hover:text-aqua"
           >
@@ -14,6 +15,7 @@ export default function Footer() {
             <Icon icon="akar-icons:twitter-fill" className="w-6 h-6" />
           </a>
           <a
+            target="_blank"
             href={`https://github.com/sendnodes-io`}
             className="text-white hover:text-aqua"
           >
@@ -21,6 +23,7 @@ export default function Footer() {
             <Icon icon="akar-icons:github-fill" className="w-6 h-6" />
           </a>
           <a
+            target="_blank"
             href={`https://discord.gg/TmfYqaXzGb`}
             className="text-white hover:text-aqua"
           >
@@ -28,6 +31,7 @@ export default function Footer() {
             <Icon icon="simple-icons:discord" className="w-6 h-6" />
           </a>
           <a
+            target="_blank"
             href={`https://t.me/poktwallet`}
             className="text-white hover:text-aqua"
           >
