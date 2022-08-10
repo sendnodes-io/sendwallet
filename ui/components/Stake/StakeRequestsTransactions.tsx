@@ -342,8 +342,8 @@ function StakeTransactionItem({ color, Icon, tx }: StakeTransactionItemProps) {
             <div className="flex items-center justify-between">
               <p className="text-sm sm:text-lg font-medium text-white truncate">
                 {!(isUncompound || isCompound) && capitalize(tx.action)}
-                {isCompound && "Enable Autocompound "}
-                {isUncompound && `Disable Autocompound`}
+                {isCompound && "Enable Compound "}
+                {isUncompound && `Disable Compound`}
               </p>
               <div className="ml-2 flex-shrink-0 flex">
                 {!(isUncompound || isCompound) && (
@@ -401,7 +401,7 @@ function StakeTransactionItem({ color, Icon, tx }: StakeTransactionItemProps) {
                         mask-image: url("../../public/images/rewards@2x.png");
                       `}
                     />
-                    <span>Autocompounded</span>
+                    <span>Compounded</span>
                   </div>
                 )}
               </div>

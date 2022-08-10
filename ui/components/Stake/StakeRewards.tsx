@@ -39,7 +39,7 @@ import {
   ChartOptions,
 } from "chart.js"
 import { Line } from "react-chartjs-2"
-import StakeToggleAutocompounding from "./StakeToggleAutocompounding"
+import StakeToggleCompounding from "./StakeToggleCompounding"
 import StatAPY from "./Stat/StatAPY"
 import StatTotalStaked from "./Stat/StatTotalStaked"
 import StatTotalUpcomingRewards from "./Stat/StatTotalUpcomingRewards"
@@ -265,7 +265,7 @@ export default function StakeRewards(): ReactElement {
             {BigNumber.from(
               stakingUserData?.userStakingData[0]?.staked ?? 0
             ).gt(0) ? (
-              <StakeToggleAutocompounding />
+              <StakeToggleCompounding />
             ) : (
               <Link
                 to="/"
