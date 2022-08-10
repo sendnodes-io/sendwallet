@@ -124,9 +124,11 @@ export default function StakeRequestsTransactions(): ReactElement {
     isLoading: isRewardsTransactionsLoading,
     isError: isRewardsTransactionsError,
   } = useStakingRewardsTransactions(currentAccount)
-  const pendingTransactions = useBackgroundSelector(
-    selectCurrentAccountActivitiesWithTimestamps,
-    isEqual
+  const pendingTransactions = (
+    useBackgroundSelector(
+      selectCurrentAccountActivitiesWithTimestamps,
+      isEqual
+    ) ?? []
   )
     .filter(
       (activity) =>
@@ -186,7 +188,7 @@ export default function StakeRequestsTransactions(): ReactElement {
   )
 
   return (
-    <div className="w-full">
+    <div className="w-full grow">
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="sm:flex sm:items-center">
           <div className="sm:flex-auto">

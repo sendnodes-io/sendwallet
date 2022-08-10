@@ -41,9 +41,11 @@ export default function StakeToggleCompounding() {
     isError: isUserStakingDataError,
   } = useStakingUserData(currentAccount)
 
-  const pendingCompoundTransactions = useBackgroundSelector(
-    selectCurrentAccountActivitiesWithTimestamps,
-    isEqual
+  const pendingCompoundTransactions = (
+    useBackgroundSelector(
+      selectCurrentAccountActivitiesWithTimestamps,
+      isEqual
+    ) ?? []
   )
     .filter(
       (activity) =>
