@@ -55,7 +55,7 @@ export default function SendStake(): ReactElement {
     location.state ?? POKT
   )
   const [amount, setAmount] = useState("")
-  const [autoCompound, setAutoCompound] = useState(true)
+  const [compound, setCompound] = useState(true)
   const [termsAccepted, setTermsAccepted] = useState(false)
   const [isSendingTransactionRequest, setIsSendingTransactionRequest] =
     useState(false)
@@ -149,8 +149,8 @@ export default function SendStake(): ReactElement {
     try {
       setIsSendingTransactionRequest(true)
 
-      // memo spec is s:autoCompound=[true|false]
-      const memo = `s:${autoCompound}`
+      // memo spec is s:compound=[true|false]
+      const memo = `s:${compound}`
 
       dispatch(
         transferAsset({
@@ -280,15 +280,15 @@ export default function SendStake(): ReactElement {
       <div className=" border-b-2 border-spanish-gray border-opacity-25 mb-4 pb-2">
         <div className="form_input">
           <SharedCheckbox
-            id="autoCompound"
-            label="Autocompound my rewards"
-            checked={autoCompound}
+            id="compound"
+            label="Compound my rewards"
+            checked={compound}
             onChange={(e) => {
-              setAutoCompound(e.currentTarget.checked)
+              setCompound(e.currentTarget.checked)
             }}
           />
           <small>
-            Autocompound automatically stakes your rewards. This feature can be
+            Compounding automatically stakes your rewards. This feature can be
             disabled at anytime.{" "}
             <a
               href="https://sendnodes.gitbook.io/sendnodes/start-here/frequently-asked-questions#how-do-i-get-my-rewards"

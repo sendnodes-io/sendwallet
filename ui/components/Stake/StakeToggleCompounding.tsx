@@ -23,7 +23,7 @@ import {
 } from "../../hooks/staking-hooks"
 import SharedSplashScreen from "../Shared/SharedSplashScreen"
 
-export default function StakeToggleAutocompounding() {
+export default function StakeToggleCompounding() {
   const areKeyringsUnlocked = useAreKeyringsUnlocked(true)
   const dispatch = useBackgroundDispatch()
   const currentAccount = useBackgroundSelector(selectCurrentAccount, isEqual)
@@ -140,13 +140,13 @@ export default function StakeToggleAutocompounding() {
       as={"div"}
       title={
         userStakingData?.userStakingData[0]?.compound
-          ? "Click to disable autocompounding"
-          : "Click to enable autocompounding"
+          ? "Click to disable compounding"
+          : "Click to enable compounding"
       }
     >
       <div className="flex items-center justify-center gap-x-2">
         <span className="font-medium inline-block align-baseline">
-          <Switch.Label>Autocompounding</Switch.Label>
+          <Switch.Label>Compounding</Switch.Label>
         </span>
         <Switch
           checked={!!userStakingData?.userStakingData[0]?.compound}

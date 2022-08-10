@@ -223,8 +223,8 @@ export default function StakeSignTransaction(): ReactElement {
             as="h3"
             className="text-lg leading-6 font-medium text-white text-center "
           >
-            {isCompound && "Enable Autocompound"}
-            {isUncompound && "Disable Autocompound"}
+            {isCompound && "Enable Compound"}
+            {isUncompound && "Disable Compound"}
             {!(isUncompound || isCompound) && humanAction}
           </Dialog.Title>
           <div className="mt-2">
