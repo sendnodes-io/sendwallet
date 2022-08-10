@@ -184,13 +184,11 @@ export default function StakeRewards(): ReactElement {
     aspectRatio: 1,
     stacked: false,
     onResize: (chart, size) => {
-      console.log({ size, aspectRatio: chart.options.aspectRatio })
       if (size.width < 500) {
         chart.options.aspectRatio = 1.25
       } else {
         chart.options.aspectRatio = 2.25
       }
-      console.log({ size, aspectRatio: chart.options.aspectRatio })
     },
     animations: {
       tension: {
@@ -307,6 +305,7 @@ export default function StakeRewards(): ReactElement {
           <div className="mt-8 min-h-[20rem] max-h-[44vh] overflow-y-scroll pb-12 px-0 md:px-4">
             {[stakedDataset, rewardsDataset, unstakedDataset].map((dataset) => (
               <Line
+                key={dataset.label}
                 options={options}
                 data={{ labels: labels, datasets: [dataset] }}
               />
