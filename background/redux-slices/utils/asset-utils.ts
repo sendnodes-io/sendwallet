@@ -153,10 +153,10 @@ export function enrichAssetAmountWithMainCurrencyValues<
         typeof unitPriceDecimalValue === "undefined"
           ? undefined
           : formatCurrencyAmount(
-            convertedAssetAmount.asset.symbol,
-            unitPriceDecimalValue,
-            desiredDecimals
-          ),
+              convertedAssetAmount.asset.symbol,
+              unitPriceDecimalValue,
+              desiredDecimals
+            ),
     }
   }
 
@@ -176,16 +176,16 @@ export function enrichAssetAmountWithDecimalValues<T extends AnyAssetAmount>(
   const decimalAmount = isFungibleAssetAmount(assetAmount)
     ? assetAmountToDesiredDecimals(assetAmount, desiredDecimals)
     : // If the asset is not fungible, the amount should have 0 decimals of
-    // precision.
-    assetAmountToDesiredDecimals(
-      { ...assetAmount, asset: { ...assetAmount.asset, decimals: 0 } },
-      desiredDecimals
-    )
+      // precision.
+      assetAmountToDesiredDecimals(
+        { ...assetAmount, asset: { ...assetAmount.asset, decimals: 0 } },
+        desiredDecimals
+      )
 
   return {
     ...assetAmount,
     decimalAmount,
-    localizedDecimalAmount: decimalAmount.toLocaleString("default", {
+    localizedDecimalAmount: decimalAmount.toLocaleString("en-US", {
       maximumFractionDigits: desiredDecimals,
     }),
   }
@@ -217,12 +217,12 @@ export function heuristicDesiredDecimalsForUnitPrice(
     typeof unitPrice === "undefined" || typeof unitPrice === "number"
       ? unitPrice
       : fromFixedPointNumber(
-        {
-          amount: unitPrice.unitPrice.amount,
-          decimals: unitPrice.unitPrice.asset.decimals,
-        },
-        10
-      )
+          {
+            amount: unitPrice.unitPrice.amount,
+            decimals: unitPrice.unitPrice.asset.decimals,
+          },
+          10
+        )
 
   return Math.max(
     // If no unit price is provided, just assume 0, which will use the minimum

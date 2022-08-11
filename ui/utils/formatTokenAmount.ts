@@ -76,7 +76,7 @@ export default function formatTokenAmount(
     return abbreviateNumber(integers, maxDecimals)
   }
 
-  return Number(floor(Number(amount), maxDecimals)).toLocaleString(undefined, {
+  return Number(floor(Number(amount), maxDecimals)).toLocaleString("en-US", {
     useGrouping: true,
     maximumFractionDigits: maxDecimals,
   })
