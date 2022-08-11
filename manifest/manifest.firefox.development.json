@@ -4,5 +4,8 @@
     "scripts": [
       "dev-utils/extension-reload.js"
     ]
+  },
+  "browser_action": {
+    "default_title": "[DEV] POKT Wallet"
   }
 }
