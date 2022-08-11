@@ -95,7 +95,7 @@ export default function OnboardingRecoveryPhrase(
             left: 0;
             font-size: 0.75rem;
             color: var(--white);
-            margin-left: 1.5rem;
+            margin-left: 1rem;
           }
 
           .word:before {

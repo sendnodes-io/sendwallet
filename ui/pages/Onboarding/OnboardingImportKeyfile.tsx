@@ -185,6 +185,7 @@ export default function OnboardingImportKeyfile() {
       )
     } catch (e) {
       setErrorMessage("Invalid import, reason: " + e)
+      setIsImporting(false)
     }
   }, [dispatch, importPassphrase, importKeyfileContents])
 
@@ -441,6 +442,7 @@ export default function OnboardingImportKeyfile() {
           <>
             <div>
               <span
+                className="text-xs"
                 style={{
                   color: "var(--error)",
                   margin: "0.5rem 0 1rem",
