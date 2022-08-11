@@ -584,8 +584,7 @@ export default class Main extends BaseService<never> {
       clearTransactionState(TransactionConstructionStatus.Idle)
     )
 
-    // no longer needed now that webext-redux automatically reconnects ports
-    // this.connectPopupMonitor()
+    this.connectPopupMonitor()
   }
 
   async addAccount(addressNetwork: AddressOnNetwork): Promise<void> {
