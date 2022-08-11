@@ -34,10 +34,6 @@
   "icons": {
     "128": "icon-128-black.png"
   },
-  "browser_action": {
-    "default_title": "POKT Wallet",
-    "default_popup": "popup.html"
-  },
   "permissions": [
     "alarms",
     "storage",
