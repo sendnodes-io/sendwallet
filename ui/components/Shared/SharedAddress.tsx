@@ -78,7 +78,7 @@ export default function SharedAddress({
           )}
         </div>
       )}
-      <small>{primaryText}</small>
+      <small className="whitespace-nowrap">{primaryText}</small>
       {name === undefined || nameResolverSystem === undefined ? (
         <></>
       ) : (
