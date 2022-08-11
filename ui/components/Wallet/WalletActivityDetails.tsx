@@ -170,7 +170,7 @@ export default function WalletActivityDetails(
           label="Timestamp"
           value={
             typeof activityItem.timestamp !== "undefined"
-              ? new Date(activityItem.timestamp * 1000).toLocaleString()
+              ? new Date(activityItem.timestamp * 1000).toLocaleString("en-US")
               : "(Unknown)"
           }
           valueDetail=""
