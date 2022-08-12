@@ -71,7 +71,8 @@ export async function attachUiToRootElement(
     // detect controller change and refresh the page
     navigator.serviceWorker.addEventListener("controllerchange", async () => {
       if (!refreshing) {
-        browser.runtime.reload()
+        console.warn("browser runtime needs to reload!")
+        // browser.runtime.reload()
       }
     })
   }
