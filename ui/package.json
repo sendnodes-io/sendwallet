@@ -66,6 +66,6 @@
     "@types/react-transition-group": "^4.4.4",
     "clsx": "^1.2.1",
     "react-devtools": "^4.24.4",
-    "webext-redux": "git+ssh://git@github.com:0xBigBoss/webext-redux.git#9c9572832a6a8dacefff6128792da5d98833ec30"
+    "webext-redux": "2.2.0"
   }
 }
