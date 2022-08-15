@@ -1,5 +1,8 @@
 import { convertToEth, weiToGwei } from "../../lib/utils"
-import { EnrichedEVMTransaction, EnrichedPOKTTransaction } from "../../services/enrichment"
+import {
+  EnrichedEVMTransaction,
+  EnrichedPOKTTransaction,
+} from "../../services/enrichment"
 import { HexString } from "../../types"
 
 export type ActivityRecipient = {
@@ -7,7 +10,9 @@ export type ActivityRecipient = {
   name?: string
 }
 
-export function getRecipient(activityItem: ActivityItem): ActivityRecipient | undefined {
+export function getRecipient(
+  activityItem: ActivityItem
+): ActivityRecipient | undefined {
   const { annotation } = activityItem
 
   switch (activityItem.network.family) {
@@ -77,8 +82,8 @@ type AdditionalActivityInfo = {
   }
 }
 
-export type EVMActivityItem = (EnrichedEVMTransaction & AdditionalActivityInfo)
-export type POKTActivityItem = (EnrichedPOKTTransaction & AdditionalActivityInfo)
+export type EVMActivityItem = EnrichedEVMTransaction & AdditionalActivityInfo
+export type POKTActivityItem = EnrichedPOKTTransaction & AdditionalActivityInfo
 export type ActivityItem = EVMActivityItem | POKTActivityItem
 
 /**
@@ -90,12 +95,12 @@ export function adaptForUI<T>(
   fieldAdapters: UIAdaptationMap<T>,
   item: T
 ): {
-    [key in keyof UIAdaptationMap<T>]: {
-      label: string
-      value: string
-      valueDetail: string
-    }
-  } {
+  [key in keyof UIAdaptationMap<T>]: {
+    label: string
+    value: string
+    valueDetail: string
+  }
+} {
   // The as below is dicey but reasonable in our usage.
   return Object.keys(fieldAdapters).reduce(
     (adaptedFields, key) => {
@@ -169,7 +174,7 @@ export const keysMapPokt: UIAdaptationMap<EnrichedPOKTTransaction> = {
   height: {
     readableName: "Block Height",
     transformer: (height: number | null) =>
-      (height === 0 || height === null) ? "(pending)" : height.toString(),
+      height === 0 || height === null ? "(pending)" : height.toString(),
     detailTransformer: () => {
       return ""
     },
