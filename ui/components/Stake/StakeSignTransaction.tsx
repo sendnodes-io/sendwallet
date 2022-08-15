@@ -46,6 +46,7 @@ import { InformationCircleIcon, XIcon } from "@heroicons/react/outline"
 import getSnActionFromMemo from "../../helpers/get-sn-action-from-memo"
 import { usePoktWatchLatestBlock } from "../../hooks/pokt-watch/use-latest-block"
 import usePocketNetworkFee from "../../hooks/pocket-network/use-network-fee"
+import formatTokenAmount from "../../utils/formatTokenAmount"
 
 export default function StakeSignTransaction(): ReactElement {
   const history = useHistory()
@@ -249,15 +250,27 @@ export default function StakeSignTransaction(): ReactElement {
                     <dt className="text-sm font-medium text-spanish-gray">
                       {action.toUpperCase().substring(0, action.length - 1)}ING
                     </dt>
-                    <dd className="mt-1 text-lg text-white sm:mt-0 sm:col-span-2 text-right">
+                    <dd
+                      title={Number(
+                        formatFixed(
+                          BigNumber.from(amount),
+                          currentAccount.network.baseAsset.decimals
+                        )
+                      ).toLocaleString()}
+                      className="mt-1 text-lg text-white sm:mt-0 sm:col-span-2 text-right"
+                    >
                       <img
                         src="/images/pokt_icon@2x.svg"
                         className="h-5 w-5 inline mr-2"
                         alt="POKT"
                       />
-                      {formatFixed(
-                        BigNumber.from(amount),
-                        currentAccount.network.baseAsset.decimals
+                      {formatTokenAmount(
+                        formatFixed(
+                          BigNumber.from(amount),
+                          currentAccount.network.baseAsset.decimals
+                        ),
+                        9,
+                        2
                       )}
                     </dd>
                   </div>

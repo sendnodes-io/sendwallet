@@ -180,14 +180,7 @@ export const selectCurrentAccountBalances = createSelector(
 
     return {
       assetAmounts: combinedAssetAmounts,
-      totalMainCurrencyValue:
-        totalMainCurrencyAmount !== undefined
-          ? formatCurrencyAmount(
-              mainCurrencySymbol,
-              totalMainCurrencyAmount,
-              desiredDecimals
-            )
-          : undefined,
+      totalMainCurrencyValue: totalMainCurrencyAmount,
     }
   }
 )

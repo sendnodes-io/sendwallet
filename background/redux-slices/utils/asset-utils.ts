@@ -75,18 +75,15 @@ export function formatCurrencyAmount(
   currencyAmount: number,
   desiredDecimals: number
 ): string {
-  return (
-    new Intl.NumberFormat("default", {
-      style: "currency",
-      currency: currencySymbol,
-      minimumFractionDigits: desiredDecimals,
-      maximumFractionDigits: desiredDecimals,
-    })
-      .format(currencyAmount)
-      // FIXME This assumes the assetSymbol passed is USD
-      // FIXME Instead, we should use formatToParts.
-      .split("$")[1]
-  )
+  return new Intl.NumberFormat("default", {
+    style: "currency",
+    currency: currencySymbol,
+    minimumFractionDigits: desiredDecimals,
+    maximumFractionDigits: desiredDecimals,
+  })
+    .format(currencyAmount)
+    .replaceAll(/^[A-Z$]/g, "")
+    .replaceAll(currencySymbol, "")
 }
 
 /**
