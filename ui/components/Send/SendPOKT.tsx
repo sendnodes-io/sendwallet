@@ -25,10 +25,7 @@ import {
 import { CompleteAssetAmount } from "@sendnodes/pokt-wallet-background/redux-slices/accounts"
 import { enrichAssetAmountWithMainCurrencyValues } from "@sendnodes/pokt-wallet-background/redux-slices/utils/asset-utils"
 import { useHistory, useLocation } from "react-router-dom"
-import classNames from "clsx"
-import NetworkSettingsChooser from "../NetworkFees/NetworkSettingsChooser"
 import SharedAssetInput from "../Shared/SharedAssetInput"
-import SharedBackButton from "../Shared/SharedBackButton"
 import SharedButton from "../Shared/SharedButton"
 import {
   useAddressOrNameValidation,
@@ -36,11 +33,11 @@ import {
   useBackgroundSelector,
   useAreKeyringsUnlocked,
 } from "../../hooks"
-import SharedSlideUpMenu from "../Shared/SharedSlideUpMenu"
-import FeeSettingsButton from "../NetworkFees/FeeSettingsButton"
-import SharedLoadingSpinner from "../Shared/SharedLoadingSpinner"
 import SharedInput from "../Shared/SharedInput"
 import SharedSplashScreen from "../Shared/SharedSplashScreen"
+import usePocketNetworkFee from "../../hooks/pocket-network/use-network-fee"
+import formatTokenAmount from "../../utils/formatTokenAmount"
+import { formatFixed } from "@ethersproject/bignumber"
 
 // TODO: v0.2.0 handle multiple assets
 export default function Send(): ReactElement {
@@ -154,6 +151,8 @@ export default function Send(): ReactElement {
     setNetworkSettingsModalOpen(false)
   }
 
+  const { networkFee } = usePocketNetworkFee()
+
   const {
     errorMessage: addressErrorMessage,
     isValidating: addressIsValidating,
@@ -209,7 +208,7 @@ export default function Send(): ReactElement {
             }}
             selectedAsset={selectedAsset}
             amount={amount}
-            networkFee={BigInt(1e4).toString()}
+            networkFee={networkFee.toString()}
           />
           <div className="value">
             ${assetAmount?.localizedMainCurrencyAmount ?? "-"}
@@ -251,7 +250,13 @@ export default function Send(): ReactElement {
       <div className="section">
         <div style={{ alignSelf: "flex-start", marginBottom: "1.5rem" }}>
           <p>
-            <small>TX Fees - 0.01 POKT</small>
+            <small>
+              TX Fees -{" "}
+              {formatTokenAmount(
+                formatFixed(networkFee, selectedAsset.decimals)
+              )}{" "}
+              POKT
+            </small>
           </p>
         </div>
       </div>

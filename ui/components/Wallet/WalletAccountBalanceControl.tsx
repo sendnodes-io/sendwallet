@@ -125,7 +125,7 @@ function BalanceReloader(): ReactElement {
 
 interface Props {
   assets: CompleteAssetAmount[]
-  balance?: string
+  balance?: number
   initializationLoadingTimeExpired: boolean
 }
 
@@ -185,11 +185,11 @@ export default function WalletAccountBalanceControl(
 
                 {formatTokenAmount(assetAmount?.decimalAmount, 7)}
               </button>
-              <span className={"balance"}>
+              <span className={"balance"} title={`$${balance}`}>
                 <span>
                   <DollarSvg />
                 </span>
-                {formatTokenAmount(balance)}
+                {formatTokenAmount(balance, 9, 2)}
               </span>
             </>
           )}

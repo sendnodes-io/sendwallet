@@ -1,6 +1,6 @@
 import { floor } from "lodash"
 
-const defaultSymbols = ["", "K", "M", "G", "T", "P", "E"]
+const defaultSymbols = ["", "K", "M", "B", "T", "P", "E"]
 
 interface AbbreviateOptions {
   padding?: boolean
@@ -32,7 +32,14 @@ function abbreviateNumber(
   const tier = (Math.log10(num) / 3) | 0
 
   // if zero, we don't need a suffix
-  if (tier == 0) return (!sign ? "-" : "") + num.toString()
+  if (tier == 0) {
+    return (
+      (!sign ? "-" : "") +
+      num.toLocaleString(undefined, {
+        maximumFractionDigits: digit,
+      })
+    )
+  }
 
   // get suffix and determine scale
   const suffix = symbols[tier]
@@ -43,9 +50,14 @@ function abbreviateNumber(
   // scale the number
   const scaled = num / scale
 
-  let rounded = scaled.toFixed(digit)
+  let rounded = scaled.toLocaleString(undefined, {
+    maximumFractionDigits: digit,
+  })
+
   if (!padding) {
-    rounded = String(Number(rounded))
+    rounded = Number(rounded).toLocaleString(undefined, {
+      maximumFractionDigits: digit,
+    })
   }
 
   // format number and add suffix

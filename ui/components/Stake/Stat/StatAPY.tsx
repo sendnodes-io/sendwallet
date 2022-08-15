@@ -31,8 +31,11 @@ export default function StatAPY({
           <div className="relative grow h-full">
             <div className="flex flex-col grow items-center justify-center h-full">
               <div className="text-3xl xl:text-4xl md:text-2xl font-semibold text-white">
-                <span title={data?.rewardsData?.apy.toString() ?? ""}>
-                  {data?.rewardsData?.apy.toFixed(1)}%
+                <span title={data?.rewardsData?.apy.toLocaleString() ?? ""}>
+                  {data?.rewardsData?.apy.toLocaleString(undefined, {
+                    maximumFractionDigits: 1,
+                  })}
+                  %
                 </span>
               </div>
             </div>
@@ -45,9 +48,15 @@ export default function StatAPY({
             <div className="flex flex-col grow items-center justify-center h-full">
               <div className="text-3xl xl:text-4xl md:text-2xl font-semibold text-white">
                 <span
-                  title={data?.rewardsData?.apyNoCompounding.toString() ?? ""}
+                  title={
+                    data?.rewardsData?.apyNoCompounding.toLocaleString() ?? ""
+                  }
                 >
-                  {data?.rewardsData?.apyNoCompounding.toFixed(1)}%
+                  {data?.rewardsData?.apyNoCompounding.toLocaleString(
+                    undefined,
+                    { maximumFractionDigits: 1 }
+                  )}
+                  %
                 </span>
               </div>
             </div>
