@@ -185,7 +185,7 @@ export function enrichAssetAmountWithDecimalValues<T extends AnyAssetAmount>(
   return {
     ...assetAmount,
     decimalAmount,
-    localizedDecimalAmount: decimalAmount.toLocaleString("en-US", {
+    localizedDecimalAmount: decimalAmount.toLocaleString(undefined, {
       maximumFractionDigits: desiredDecimals,
     }),
   }

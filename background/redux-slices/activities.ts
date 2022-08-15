@@ -88,7 +88,7 @@ const activitiesSlice = createSlice({
                 amount: tx.value,
               },
               desiredDecimals
-            ).toLocaleString("en-US", {
+            ).toLocaleString(undefined, {
               maximumFractionDigits: desiredDecimals,
             }),
             fromTruncated: truncateAddress(tx.from),
@@ -121,7 +121,7 @@ const activitiesSlice = createSlice({
                 amount: BigInt(tx.txMsg.value.amount),
               },
               desiredDecimals
-            ).toLocaleString("en-US", {
+            ).toLocaleString(undefined, {
               maximumFractionDigits: desiredDecimals,
             }),
             fromTruncated: truncateAddress(tx.from),

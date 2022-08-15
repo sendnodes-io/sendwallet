@@ -4,13 +4,13 @@ import { ActivityItem } from "@sendnodes/pokt-wallet-background/redux-slices/act
 import {
   isMaxUint256,
   sameEVMAddress,
-  truncateAddress,
 } from "@sendnodes/pokt-wallet-background/lib/utils"
 import { HexString } from "@sendnodes/pokt-wallet-background/types"
 import { getRecipient } from "@sendnodes/pokt-wallet-background/redux-slices/utils/activity-utils"
 import SharedAssetIcon from "../Shared/SharedAssetIcon"
 import formatTokenAmount from "../../utils/formatTokenAmount"
 import getTransactionResult from "../../helpers/get-transaction-result"
+import { formatFixed } from "@ethersproject/bignumber"
 
 interface Props {
   onClick: () => void
@@ -69,6 +69,12 @@ export default function WalletActivityListItem(props: Props): ReactElement {
     assetValue: activity.localizedDecimalValue,
   }
 
+  if ("txMsg" in activity)
+    renderDetails.assetValue = formatTokenAmount(
+      formatFixed(activity.txMsg?.value?.amount, network.baseAsset.decimals),
+      6
+    )
+
   if (network.family === "EVM") {
     switch (activity.annotation?.type) {
       case "asset-transfer":
@@ -122,7 +128,6 @@ export default function WalletActivityListItem(props: Props): ReactElement {
         }
     }
   }
-
   return (
     <li className={`${txResult.status}`}>
       <button type="button" onClick={onClick}>
@@ -142,9 +147,7 @@ export default function WalletActivityListItem(props: Props): ReactElement {
               symbol={renderDetails.assetSymbol}
               size="small"
             />
-            <div className="amount">
-              {formatTokenAmount(renderDetails.assetValue, 6)}
-            </div>
+            <div className="amount">{renderDetails.assetValue}</div>
           </div>
           <div className="right">
             {txResult.status}
