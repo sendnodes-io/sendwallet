@@ -14,40 +14,27 @@ import logger from "@sendnodes/pokt-wallet-background/lib/logger"
 
 export { Popup, Tab, Stake }
 
-function invokeServiceWorkerUpdateFlow(
-  registration: ServiceWorkerRegistration
-) {
-  // TODO implement your own UI notification element
-  if (
-    confirm(
-      "A new version of the extension is available. Would you like to update?"
-    )
-  ) {
+function invokeServiceWorkerUpdateFlow() {
+  if (confirm("POKT Wallet needs to be restarted to continue. Restart now?")) {
     browser.runtime.reload()
-  } else {
-    navigator.serviceWorker
-      .getRegistration()
-      .then((registration) => registration?.unregister())
   }
 }
-export async function attachUiToRootElement(
-  component: ComponentType<{ store: Store }>
-): Promise<void> {
+
+async function checkServiceWorker() {
   // monitoring service worker lifecycle only applies to manifest version 3
   if (browser.runtime.getManifest().manifest_version === 3) {
     // register the service worker from the file specified
     const registration = await navigator.serviceWorker.getRegistration()
 
     if (registration === undefined) {
-      console.warn("No regsitration found")
-      browser.runtime.reload()
+      invokeServiceWorkerUpdateFlow()
       return
     }
 
     // ensure the case when the updatefound event was missed is also handled
     // by re-invoking the prompt when there's a waiting Service Worker
     if (registration.waiting) {
-      invokeServiceWorkerUpdateFlow(registration)
+      invokeServiceWorkerUpdateFlow()
     }
 
     // detect Service Worker update available and wait for it to become installed
@@ -58,7 +45,7 @@ export async function attachUiToRootElement(
           if (registration.waiting) {
             // if there's an existing controller (previous Service Worker), show the prompt
             if (navigator.serviceWorker.controller) {
-              invokeServiceWorkerUpdateFlow(registration)
+              invokeServiceWorkerUpdateFlow()
             }
             // otherwise it's the first install, nothing to do
           }
@@ -72,11 +59,45 @@ export async function attachUiToRootElement(
     navigator.serviceWorker.addEventListener("controllerchange", async () => {
       if (!refreshing) {
         console.warn("browser runtime needs to reload!")
-        // browser.runtime.reload()
+        invokeServiceWorkerUpdateFlow()
       }
     })
-  }
 
+    backgroundMonitor()
+  }
+}
+
+function backgroundMonitor() {
+  let checking = false
+  setInterval(() => {
+    if (checking) {
+      return
+    }
+    checking = true
+    const msgId = Math.random() + "." + new Date().getTime()
+    const deadmanSwitch = setTimeout(() => {
+      logger.debug("deadmanSwitch on", { msgId })
+      invokeServiceWorkerUpdateFlow()
+    }, 3000)
+    browser.runtime.sendMessage(
+      browser.runtime.id,
+      { type: "HEARTBEAT" },
+      {},
+      (...args: any) => {
+        clearTimeout(deadmanSwitch)
+        checking = false
+        if (!args) {
+          logger.error("heartbeat error", browser.runtime.lastError)
+        }
+      }
+    )
+  }, 5000)
+}
+
+export async function attachUiToRootElement(
+  component: ComponentType<{ store: Store }>
+): Promise<void> {
+  await checkServiceWorker()
   await renderApp(component)
 }
 
@@ -93,7 +114,9 @@ async function renderApp(
   }
 
   try {
-    const backgroundStore = await newProxyStore()
+    // FIXME: remove when done debugging
+    const backgroundStore = ((globalThis as any).uiBackgroundStore =
+      await newProxyStore())
 
     if (!backgroundStore.getState().ui) {
       throw new Error("failed to parse data, trying again")
