@@ -3,6 +3,7 @@ import { Icon } from "@iconify/react"
 import { lockKeyrings } from "@sendnodes/pokt-wallet-background/redux-slices/keyrings"
 import { CgLock } from "react-icons/cg"
 import { useBackgroundDispatch } from "../../hooks"
+import browser from "webextension-polyfill"
 
 export default function () {
   const dispatch = useBackgroundDispatch()
@@ -66,7 +67,7 @@ export default function () {
         }}
       >
         <span style={{ color: "var(--davys-gray)" }}>
-          Version: {process.env.VERSION}
+          Version: {browser.runtime.getManifest()?.version ?? `<unknown>`}
         </span>
       </div>
 

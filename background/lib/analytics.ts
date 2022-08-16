@@ -27,7 +27,7 @@ export async function baseGaParams(args: AnalyticsBaseParams) {
   gaParams.append("ua", navigator.userAgent)
   gaParams.append("ul", navigator.language)
   gaParams.append("an", "POKT Wallet")
-  gaParams.append("av", process.env.VERSION ?? "0.0.0")
+  gaParams.append("av", browser.runtime.getManifest()?.version ?? `<unknown>`)
   if (args.session_control) {
     gaParams.append("sc", args.session_control)
   }
