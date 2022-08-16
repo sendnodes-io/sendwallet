@@ -1,7 +1,7 @@
 import React, { ReactElement } from "react"
 import { Provider } from "react-redux"
 import { HashRouter, Redirect, Route, Switch } from "react-router-dom"
-import { Store } from "webext-redux"
+import { Store } from "@0xbigboss/webext-redux"
 import Ledger from "./Ledger/Ledger"
 import TabNotFound from "./TabNotFound"
 import pageList from "../routes/routes"

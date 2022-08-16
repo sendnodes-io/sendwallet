@@ -1,7 +1,7 @@
 import React, { CSSProperties, ReactElement } from "react"
 import { Provider } from "react-redux"
 import { HashRouter, Redirect, Route, Switch } from "react-router-dom"
-import { Store } from "webext-redux"
+import { Store } from "@0xbigboss/webext-redux"
 import TabNotFound from "./TabNotFound"
 import ErrorFallback from "./ErrorFallback"
 import { ErrorBoundary } from "react-error-boundary"
