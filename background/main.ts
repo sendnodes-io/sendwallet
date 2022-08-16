@@ -1,5 +1,5 @@
 import browser, { runtime } from "webextension-polyfill"
-import { alias, wrapStore } from "webext-redux"
+import { alias, wrapStore } from "@0xbigboss/webext-redux"
 import { configureStore, isPlain, Middleware } from "@reduxjs/toolkit"
 import devToolsEnhancer from "remote-redux-devtools"
 import { PermissionRequest } from "@sendnodes/provider-bridge-shared"

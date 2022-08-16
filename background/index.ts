@@ -1,6 +1,6 @@
 import browser from "webextension-polyfill"
 
-import { Store as ProxyStore } from "webext-redux"
+import { Store as ProxyStore } from "@0xbigboss/webext-redux"
 import { AnyAction } from "@reduxjs/toolkit"
 
 import Main from "./main"

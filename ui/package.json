@@ -67,6 +67,6 @@
     "@types/react-transition-group": "^4.4.4",
     "clsx": "^1.2.1",
     "react-devtools": "^4.24.4",
-    "webext-redux": "2.2.0"
+    "@0xbigboss/webext-redux": "2.1.9"
   }
 }

@@ -71,6 +71,6 @@
     "remote-redux-devtools": "^0.5.16",
     "remotedev-server": "^0.3.1",
     "ts-node": "^10.4.0",
-    "webext-redux": "2.2.0"
+    "@0xbigboss/webext-redux": "2.1.9"
   }
 }
