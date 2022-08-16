@@ -28,10 +28,7 @@
     "watch": "webpack --mode=development --watch"
   },
   "dependencies": {
-    "webextension-polyfill": "^0.8.0",
-    "@sendnodes/provider-bridge-shared": "0.0.1"
-  },
-  "devDependencies": {
-    "@types/webextension-polyfill": "^0.8.0"
+    "@sendnodes/provider-bridge-shared": "0.0.1",
+    "webextension-polyfill": "^0.10.0"
   }
 }
