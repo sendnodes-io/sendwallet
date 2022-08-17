@@ -578,8 +578,7 @@ export default class Main extends BaseService<never> {
 
     await this.connectChainService()
 
-    // FIXME Should no longer be necessary once transaction queueing enters the
-    // FIXME picture.
+    // Start fresh but should no longer be necessary once transaction queueing enters the picture.
     this.store.dispatch(
       clearTransactionState(TransactionConstructionStatus.Idle)
     )
@@ -1055,7 +1054,7 @@ export default class Main extends BaseService<never> {
             // so dumb but decide network by 0x
             const network = address.match(/^0x/) ? ETHEREUM : POCKET
 
-            // FIXME: v0.2.0 once imported use the currect selected address and account instead of the first address emitted
+            // TODO: v0.2.0 once imported use the currect selected address and account instead of the first address emitted
             this.store.dispatch(
               setNewSelectedAccount({
                 address,
