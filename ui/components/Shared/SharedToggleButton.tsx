@@ -1,5 +1,5 @@
 import React, { useState, ReactElement } from "react"
-import classNames from "classnames"
+import classNames from "clsx"
 
 interface SharedToggleButtonProps {
   onChange: (toggleValue: boolean) => void

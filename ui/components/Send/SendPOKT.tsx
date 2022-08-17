@@ -25,7 +25,7 @@ import {
 import { CompleteAssetAmount } from "@sendnodes/pokt-wallet-background/redux-slices/accounts"
 import { enrichAssetAmountWithMainCurrencyValues } from "@sendnodes/pokt-wallet-background/redux-slices/utils/asset-utils"
 import { useHistory, useLocation } from "react-router-dom"
-import classNames from "classnames"
+import classNames from "clsx"
 import NetworkSettingsChooser from "../NetworkFees/NetworkSettingsChooser"
 import SharedAssetInput from "../Shared/SharedAssetInput"
 import SharedBackButton from "../Shared/SharedBackButton"
@@ -209,6 +209,7 @@ export default function Send(): ReactElement {
             }}
             selectedAsset={selectedAsset}
             amount={amount}
+            networkFee={BigInt(1e4).toString()}
           />
           <div className="value">
             ${assetAmount?.localizedMainCurrencyAmount ?? "-"}

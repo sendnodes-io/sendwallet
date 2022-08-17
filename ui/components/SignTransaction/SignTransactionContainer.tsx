@@ -17,6 +17,7 @@ export default function SignTransactionContainer({
   reviewPanel,
   extraPanel,
   confirmButtonLabel,
+  rejectButtonLabel,
   handleConfirm,
   handleReject,
   isTransactionSigning,
@@ -28,6 +29,7 @@ export default function SignTransactionContainer({
   reviewPanel: ReactNode
   extraPanel: ReactNode
   confirmButtonLabel: ReactNode
+  rejectButtonLabel?: ReactNode
   handleConfirm: () => void
   handleReject: () => void
   isTransactionSigning: boolean
@@ -81,7 +83,7 @@ export default function SignTransactionContainer({
               type="secondary"
               onClick={handleReject}
             >
-              REJECT
+              {rejectButtonLabel ?? "REJECT"}
             </SharedButton>
             {/* TODO: split into different components depending on signing method, to avoid convoluted logic below */}
             {signerAccountTotal.signingMethod &&

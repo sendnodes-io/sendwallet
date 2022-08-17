@@ -102,8 +102,6 @@ export default function OnboardingImportSeed() {
           .closest(".word")
           ?.nextElementSibling?.querySelector("input")
           ?.select()
-        e.preventDefault()
-        return
     }
     if (importMnemonic[wordIndex] === undefined) {
       throw new Error(

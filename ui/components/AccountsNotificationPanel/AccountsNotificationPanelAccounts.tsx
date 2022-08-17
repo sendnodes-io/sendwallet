@@ -144,10 +144,12 @@ function WalletTypeHeader({
 }
 
 type Props = {
+  showEasterEgg?: boolean
   onCurrentAddressChange: (newAddress: string) => void
 }
 
 export default function AccountsNotificationPanelAccounts({
+  showEasterEgg = true,
   onCurrentAddressChange,
 }: Props): ReactElement {
   const dispatch = useBackgroundDispatch()
@@ -156,9 +158,9 @@ export default function AccountsNotificationPanelAccounts({
 
   const [pendingSelectedAddress, setPendingSelectedAddress] = useState("")
 
-  const selectedAccount =
-    useBackgroundSelector(selectCurrentAccount)
-    const { address: selectedAccountAddress, network: selectedNetwork } = selectedAccount
+  const selectedAccount = useBackgroundSelector(selectCurrentAccount)
+  const { address: selectedAccountAddress, network: selectedNetwork } =
+    selectedAccount
 
   const updateCurrentAccount = (address: string) => {
     setPendingSelectedAddress(address)
@@ -296,9 +298,7 @@ export default function AccountsNotificationPanelAccounts({
                                     target.closest(".slide_up_menu")
                                   )
                                 )
-                                  updateCurrentAccount(
-                                    normalizedAddress
-                                  )
+                                  updateCurrentAccount(normalizedAddress)
                               }}
                             >
                               <SharedAccountItemSummary
@@ -321,7 +321,7 @@ export default function AccountsNotificationPanelAccounts({
               }
             )
           })}
-        {easterEggAvailable && (
+        {showEasterEgg && easterEggAvailable && (
           <section
             style={{
               height: "200rem",
@@ -361,7 +361,7 @@ export default function AccountsNotificationPanelAccounts({
                   width="128"
                   height="128"
                   draggable="false"
-                  className="pokt_pulse"
+                  className="pokt_pulse inline-block"
                   style={{
                     cursor: "pointer",
                     height: "1.5rem",

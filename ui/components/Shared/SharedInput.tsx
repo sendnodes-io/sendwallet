@@ -1,5 +1,5 @@
 import React, { ChangeEvent, ReactElement, useEffect, useRef } from "react"
-import classNames from "classnames"
+import classNames from "clsx"
 import { useParsedValidation, useRunOnFirstRender } from "../../hooks"
 
 interface Props<T> {
@@ -168,19 +168,19 @@ export function SharedTypedInput<T = string>(props: Props<T>): ReactElement {
             pointer-events: none;
             display: flex;
             width: fit-content;
-            margin-left: 16px;
+            margin-left: 1rem;
             border-radius: 5px;
             box-sizing: border-box;
             color: var(--spanish-gray);
             transition: font-size 0.2s ease, top 0.2s ease, left 0.2s ease,
               font-weight 0.2s ease, padding 0.2s ease;
             font-weight: 300;
-            top: 1rem;
+            top: 0.5rem;
           }
           .input:focus ~ label,
           .input:not(:placeholder-shown) ~ label,
           .input:not([placeholder=" "]) ~ label {
-            top: -0.5rem;
+            top: -0.725rem;
             left: -0.25rem;
             font-size: 0.75rem;
             font-weight: 500;

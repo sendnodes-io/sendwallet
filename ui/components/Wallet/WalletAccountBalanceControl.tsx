@@ -1,5 +1,10 @@
-import React, { ReactElement, useCallback, useState } from "react"
-import classNames from "classnames"
+import React, {
+  CSSProperties,
+  ReactElement,
+  useCallback,
+  useState,
+} from "react"
+import classNames from "clsx"
 import { useDispatch } from "react-redux"
 import { refreshBackgroundPage } from "@sendnodes/pokt-wallet-background/redux-slices/ui"
 import {
@@ -17,6 +22,7 @@ import { POKT } from "@sendnodes/pokt-wallet-background/constants"
 import formatTokenAmount from "../../utils/formatTokenAmount"
 import SharedLoadingSpinner from "../Shared/SharedLoadingSpinner"
 import SharedAssetIcon from "../Shared/SharedAssetIcon"
+import { browser } from "@sendnodes/pokt-wallet-background"
 
 function ReadOnlyNotice(): ReactElement {
   return (
@@ -188,21 +194,44 @@ export default function WalletAccountBalanceControl(
             </>
           )}
         </div>
-        <div className="wallet_control">
-          <div className="address_wrap">
+        <div className="wallet_control h-[3.5rem]">
+          <div className="address_wrap flex items-center">
             <SharedAddress address={selectedAccountAddress} showAvatar={true} />
           </div>
 
-          <div className="send_wrap">
-            <SharedButton
-              icon="send"
-              size="medium"
-              type="tertiary"
-              linkTo="/send"
-              title="Send POKT"
+          <div className="flex items-center gap-x-4">
+            <div
+              className="w-24"
+              style={{ "--icon-color": "var(--cod-gray-100)" } as CSSProperties}
             >
-              {" "}
-            </SharedButton>
+              <SharedButton
+                icon="stake"
+                size="medium"
+                iconPosition="left"
+                type="primary"
+                onClick={() =>
+                  window.open(
+                    browser.runtime.getURL("stake.html"),
+                    "poktwallet_stake"
+                  )
+                }
+                title="Stake POKT"
+                className="stake_button"
+              >
+                STAKE
+              </SharedButton>
+            </div>
+            <div className="send_wrap ">
+              <SharedButton
+                icon="send"
+                size="medium"
+                type="tertiary"
+                linkTo="/send"
+                title="Send POKT"
+              >
+                {" "}
+              </SharedButton>
+            </div>
           </div>
         </div>
       </div>
@@ -246,8 +275,6 @@ export default function WalletAccountBalanceControl(
             background-color: var(--cod-gray-100);
             width: 100%;
             height: 8rem;
-            padding: 0.75rem 0;
-            margin-bottom: 1rem;
           }
           .balance {
             color: var(--white);
@@ -282,6 +309,7 @@ export default function WalletAccountBalanceControl(
             flex-direction: row;
             justify-content: space-between;
             width: 100%;
+            height: 3.5rem;
             padding: 0 0.25rem;
           }
 
@@ -308,6 +336,21 @@ export default function WalletAccountBalanceControl(
             border-color: var(--white);
           }
           .send_wrap :global(.tertiary.icon_button:hover .icon) {
+            background-color: var(--white);
+          }
+
+          .wallet_control :global(.stake_button) {
+            letter-spacing: -0.025em;
+            font-weight: 600;
+          }
+
+          .wallet_control :global(.stake_button.icon_button .icon_left .icon) {
+            margin-right: 0.25rem;
+          }
+          .wallet_control :global(.stake_button:hover) {
+            border-color: var(--white);
+          }
+          .wallet_control :global(.stake_button.icon_button:hover .icon) {
             background-color: var(--white);
           }
         `}

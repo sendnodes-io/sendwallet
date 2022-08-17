@@ -19,7 +19,7 @@ import SharedAssetItem, {
   hasAmounts,
 } from "./SharedAssetItem"
 import SharedAssetIcon from "./SharedAssetIcon"
-import classNames from "classnames"
+import classNames from "clsx"
 
 // List of symbols we want to display first.  Lower array index === higher priority.
 // For now we just prioritize somewhat popular assets that we are able to load an icon for.
@@ -293,6 +293,8 @@ interface SharedAssetInputProps<AssetType extends AnyAsset> {
   isDisabled?: boolean
   onAssetSelect?: (asset: AssetType) => void
   onAmountChange?: (value: string, errorMessage: string | undefined) => void
+  /** Include a network fee in the max balance set*/
+  networkFee?: string
 }
 
 function isSameAsset(asset1: Asset, asset2: Asset) {
@@ -323,6 +325,7 @@ export default function SharedAssetInput<T extends AnyAsset>(
     onAssetSelect,
     onAmountChange,
     autoFocus = false,
+    networkFee,
   } = props
 
   const [openAssetMenu, setOpenAssetMenu] = useState(false)
@@ -367,7 +370,14 @@ export default function SharedAssetInput<T extends AnyAsset>(
       parsedGivenAmount,
       selectedAssetAndAmount.asset.decimals
     )
-    if (decimalMatched.amount > selectedAssetAndAmount.amount) {
+
+    let selectedAmount = selectedAssetAndAmount.amount
+
+    if (networkFee) {
+      selectedAmount -= BigInt(networkFee)
+    }
+
+    if (decimalMatched.amount > selectedAmount) {
       return "Insufficient balance"
     }
 
@@ -382,8 +392,14 @@ export default function SharedAssetInput<T extends AnyAsset>(
       return
     }
 
+    let selectedAmount = selectedAssetAndAmount.amount
+
+    if (networkFee) {
+      selectedAmount -= BigInt(networkFee)
+    }
+
     const fixedPointAmount = {
-      amount: selectedAssetAndAmount.amount,
+      amount: selectedAmount,
       decimals:
         "decimals" in selectedAssetAndAmount.asset
           ? selectedAssetAndAmount.asset.decimals
@@ -475,9 +491,9 @@ export default function SharedAssetInput<T extends AnyAsset>(
         <input
           ref={inputRef}
           id="asset_amount_input"
-          className={classNames("input_amount", {
-            blink: amount === "",
-          })}
+          className={classNames(
+            "input_amount focus:outline outline-1 outline-white px-1 rounded-sm"
+          )}
           type="number"
           step="any"
           min="0"
@@ -550,20 +566,6 @@ export default function SharedAssetInput<T extends AnyAsset>(
             text-align: left;
             width: 100%;
             caret-color: var(--aqua);
-          }
-          .blink {
-            caret-color: transparent;
-            border-left: 0.15em solid var(--aqua);
-            animation: blink-caret 0.8s step-end infinite;
-          }
-          @keyframes blink-caret {
-            from,
-            to {
-              border-color: transparent;
-            }
-            50% {
-              border-color: var(--aqua);
-            }
           }
           input::-webkit-outer-spin-button,
           input::-webkit-inner-spin-button {

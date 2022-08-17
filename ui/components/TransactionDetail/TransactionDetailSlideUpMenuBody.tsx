@@ -6,9 +6,12 @@ import {
 import TransactionSendDetail from "./TransactionSendDetail"
 import React, { ReactElement, useCallback, useState } from "react"
 import SharedButton from "../Shared/SharedButton"
-import { selectBlockExplorerForTxHash, selectCurrentAccountActivityForTxHash } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
+import {
+  selectBlockExplorerForTxHash,
+  selectCurrentAccountActivityForTxHash,
+} from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
 import { useBackgroundSelector } from "../../hooks"
-import classNames from "classnames"
+import classNames from "clsx"
 
 export type TransactionDetailSlideUpMenuBodyProps = {
   activity: POKTActivityItem | EVMActivityItem
@@ -17,7 +20,12 @@ export type TransactionDetailSlideUpMenuBodyProps = {
 export default function TransactionDetailSlideUpMenuBody({
   activity,
 }: TransactionDetailSlideUpMenuBodyProps): ReactElement {
-  const blockExplorerUrl = useBackgroundSelector((_) => selectBlockExplorerForTxHash({ network: activity.network, txHash: activity.hash }))
+  const blockExplorerUrl = useBackgroundSelector((_) =>
+    selectBlockExplorerForTxHash({
+      network: activity.network,
+      txHash: activity.hash,
+    })
+  )
   const openExplorer = useCallback(() => {
     window.open(blockExplorerUrl, "_blank")?.focus()
   }, [blockExplorerUrl])

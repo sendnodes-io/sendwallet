@@ -49,6 +49,7 @@ export default function OnboardingAccountCreated() {
                 width="128"
                 height="128"
                 draggable="false"
+                className="inline-block"
                 onClick={() => {
                   setEasterEggOpen(true)
                 }}

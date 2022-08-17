@@ -1,4 +1,4 @@
-import classNames from "classnames"
+import classNames from "clsx"
 import React, { ReactElement, ReactNode } from "react"
 
 export default function TransactionDetailItem({

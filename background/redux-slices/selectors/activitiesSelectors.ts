@@ -75,11 +75,13 @@ export const selectCurrentAccountActivitiesWithTimestamps = createSelector(
 )
 
 export const selectCurrentAccountActivityForTxHash = createSelector(
-  [selectCurrentAccountActivitiesWithTimestamps,
-    (_: RootState, txHash: string) => txHash
+  [
+    selectCurrentAccountActivitiesWithTimestamps,
+    (_: RootState, txHash: string) => txHash,
   ],
   (activities, txHash) => {
-    return activities?.find(a => a.hash == txHash)
-  })
+    return activities?.find((a) => a.hash == txHash)
+  }
+)
 
 export default selectCurrentAccountActivitiesWithTimestamps

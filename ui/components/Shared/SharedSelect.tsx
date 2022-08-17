@@ -5,7 +5,7 @@ import React, {
   useEffect,
   useMemo,
 } from "react"
-import classNames from "classnames"
+import classNames from "clsx"
 
 import { useOnClickOutside } from "../../hooks"
 

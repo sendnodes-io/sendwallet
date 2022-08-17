@@ -1,4 +1,7 @@
-import { EIP1559TransactionRequest, POKTTransactionRequest } from "@sendnodes/pokt-wallet-background/networks"
+import {
+  EIP1559TransactionRequest,
+  POKTTransactionRequest,
+} from "@sendnodes/pokt-wallet-background/networks"
 import { TransactionAnnotation } from "@sendnodes/pokt-wallet-background/services/enrichment"
 import { ReactElement, ReactNode } from "react"
 
@@ -7,6 +10,7 @@ export interface SignTransactionInfo {
   infoBlock: ReactNode
   textualInfoBlock: ReactNode
   confirmButtonLabel: ReactNode
+  rejectButtonLabel?: ReactNode
 }
 
 export interface SignTransactionInfoProviderProps<

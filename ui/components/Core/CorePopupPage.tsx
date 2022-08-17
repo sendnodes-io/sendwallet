@@ -1,14 +1,12 @@
 import React, { ReactElement } from "react"
 import Snackbar from "../Snackbar/Snackbar"
 
-import CoreStyles from "./CoreStyles"
-
 interface Props {
   children: React.ReactNode
   hasTopBar: boolean
 }
 
-export default function CorePage(props: Props): ReactElement {
+export default function CorePopupPage(props: Props): ReactElement {
   const { children, hasTopBar } = props
 
   return (
@@ -17,9 +15,6 @@ export default function CorePage(props: Props): ReactElement {
         {children}
         <Snackbar />
       </main>
-      <style jsx global>
-        {CoreStyles}
-      </style>
       <style jsx>
         {`
           main {
@@ -43,6 +38,6 @@ export default function CorePage(props: Props): ReactElement {
   )
 }
 
-CorePage.defaultProps = {
+CorePopupPage.defaultProps = {
   hasTopBar: true,
 }

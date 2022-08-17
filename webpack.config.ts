@@ -17,8 +17,8 @@ import HtmlWebpackPlugin from "html-webpack-plugin"
 import WebExtension from "webpack-target-webextension"
 const StatoscopeWebpackPlugin = require("@statoscope/webpack-plugin").default
 import MiniCssExtractPlugin from "mini-css-extract-plugin"
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin")
 import { CleanWebpackPlugin } from "clean-webpack-plugin"
-import HTMLInlineCSSWebpackPlugin from "html-inline-css-webpack-plugin"
 
 const supportedBrowsers = ["brave", "chrome", "edge", "firefox", "opera"]
 
@@ -32,6 +32,7 @@ const baseConfig: Configuration = {
   entry: {
     ui: "./src/ui.ts",
     "tab-ui": "./src/tab-ui.ts",
+    "stake-ui": "./src/stake-ui.ts",
     background: "./src/background.ts",
     "background-ui": "./src/background-ui.ts",
     "window-provider": "./src/window-provider.ts",
@@ -52,24 +53,38 @@ const baseConfig: Configuration = {
         ],
       },
       {
+        test: /\.(tsx|ts|jsx)?$/,
+        include: path.resolve(__dirname, "ui"),
+        exclude: /node_modules(?!\/@sendnodes)|webpack/,
+
+        use: [
+          {
+            loader: "babel-loader",
+            options: {
+              cacheDirectory: true,
+            },
+          },
+          {
+            loader: "astroturf/loader",
+            options: { extension: ".module.css" },
+          },
+        ],
+      },
+
+      {
         test: /\.css$/i,
+        exclude: /node_modules/,
+
         use: [
           MiniCssExtractPlugin.loader,
-          "css-loader",
+          {
+            loader: "css-loader",
+            options: {
+              importLoaders: 1,
+            },
+          },
           {
             loader: "postcss-loader",
-            options: {
-              postcssOptions: {
-                plugins: [
-                  [
-                    "postcss-preset-env",
-                    {
-                      // Options
-                    },
-                  ],
-                ],
-              },
-            },
           },
         ],
       },
@@ -153,7 +168,7 @@ const baseConfig: Configuration = {
       "process.env.VERSION": JSON.stringify(process.env.npm_package_version),
     }),
     new HtmlWebpackPlugin({
-      template: "ui/pages/popup.html",
+      template: "ui/pages/base.html",
       filename: "popup.html",
       chunks: ["ui"],
       inject: "body",
@@ -163,7 +178,7 @@ const baseConfig: Configuration = {
       htmlCssClass: "popup",
     }),
     new HtmlWebpackPlugin({
-      template: "ui/pages/popup.html",
+      template: "ui/pages/base.html",
       filename: "popout.html",
       chunks: ["ui"],
       inject: "body",
@@ -173,7 +188,7 @@ const baseConfig: Configuration = {
       htmlCssClass: "popup",
     }),
     new HtmlWebpackPlugin({
-      template: "ui/pages/popup.html",
+      template: "ui/pages/base.html",
       filename: "tab.html",
       chunks: ["tab-ui"],
       inject: "body",
@@ -181,6 +196,16 @@ const baseConfig: Configuration = {
         ignoreCustomComments: [/<!-- inline_css_plugin -->/],
       },
       htmlCssClass: "tab",
+    }),
+    new HtmlWebpackPlugin({
+      template: "ui/pages/base.html",
+      filename: "stake.html",
+      chunks: ["stake-ui"],
+      inject: "body",
+      minify: {
+        ignoreCustomComments: [/<!-- inline_css_plugin -->/],
+      },
+      htmlCssClass: "stake",
     }),
   ],
   optimization: {
@@ -203,6 +228,7 @@ const modeConfigs: {
         ? {
             ui: ["react-devtools", "./src/ui.ts"],
             "tab-ui": ["react-devtools", "./src/tab-ui.ts"],
+            "stake-ui": ["react-devtools", "./src/stake-ui.ts"],
           }
         : undefined,
     plugins: [
@@ -230,6 +256,7 @@ const modeConfigs: {
             },
           },
         }),
+        new CssMinimizerPlugin(),
       ],
     },
   }),
@@ -246,17 +273,10 @@ const modeConfigs: {
     return {
       devtool: false,
       plugins: [
-        new HTMLInlineCSSWebpackPlugin({
-          replace: {
-            removeTarget: true,
-            target: "<!-- inline_css_plugin -->",
-          },
-        }),
         new WebExtensionArchivePlugin({
-          filename: `POKTWallet-${browser}-${branch.replaceAll(
-            /[.\/]/gi,
-            "-"
-          )}-${date.toISOString().split("T")[0]}-${revision}`,
+          filename: `POKTWallet-${branch.replaceAll(/[.\/]/gi, "-")}-${
+            date.toISOString().split("T")[0]
+          }-${revision}-${browser}`,
         }),
       ],
       optimization: {

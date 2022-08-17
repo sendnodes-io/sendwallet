@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @import url(./fonts.css);
 @keyframes fadeIn {
   0% {
@@ -11,12 +15,6 @@
   100% {
     opacity: 0;
   }
-}
-
-html,
-body,
-#pokt-wallet-root {
-  background-color: var(--eerie-black-100);
 }
 
 html,
@@ -72,8 +70,7 @@ body {
 
 body {
   margin: 0;
-  font-family: "Poppins", -apple-system, BlinkMacSystemFont, "Helvetica Neue",
-    sans-serif;
+  font-family: theme("fontFamily.sans");
   position: relative;
   color: var(--text-body-color);
 }
@@ -117,13 +114,6 @@ h1 {
   font-size: 1.5rem;
 }
 
-.base_texture {
-  background-color: var(--eerie-black-100);
-  background-image: url("./images/textures/base_texture@2x.png");
-  background-size: cover;
-  border-radius: 1rem;
-}
-
 .base_pokt_logo {
   height: 0;
   opacity: 0;
@@ -140,21 +130,11 @@ h1 {
   display: none;
 }
 
-#pokt-wallet-root {
-  width: var(--popup-width);
-  height: var(--popup-height);
-  max-width: var(--popup-width);
-  max-height: var(--popup-height);
-  margin: auto;
-  scrollbar-width: none;
-  overflow: hidden;
+.base_texture {
   background-color: var(--eerie-black-100);
-  transition: bottom ease-in-out 0.4s;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  background-image: url("./images/textures/base_texture@2x.png");
+  background-size: cover;
+  border-radius: 1rem;
 }
 
 @media screen and (max-width: 500px) {
@@ -170,60 +150,24 @@ h1 {
   }
 }
 
-@media screen and (min-height: 792px) and (min-width: 512px) {
-  :root {
-    --popup-width: 512px;
-    --popup-height: 792px;
-  }
-
-  :root,
-  html,
-  body {
-    font-size: 20px;
-  }
-
-  .base_shadow {
-    display: block;
-    background-image: linear-gradient(
-      180deg,
-      rgba(0, 0, 0, 0) 0%,
-      var(--black) 100%
-    );
-    background-size: cover;
-    border: 1px solid var(--black);
-    filter: blur(94px);
-    width: calc(var(--popup-width) * 1.25);
-    height: calc(var(--popup-height) * 1.25);
-    position: absolute;
-    margin: auto;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    top: 0;
-  }
-}
-
 a {
-  all: unset;
   cursor: pointer;
   text-decoration: none;
 }
 
 button {
-  all: unset;
   cursor: pointer;
   padding: 0;
+  @apply outline-0;
 }
 
 input,
 textarea {
-  all: unset;
-  cursor: text;
+  @apply bg-transparent outline-0;
 }
 
 ul,
 li {
-  all: unset;
   list-style-type: none;
 }
 
@@ -285,8 +229,8 @@ img {
 label {
   display: flex;
   flex-direction: column;
-  line-height: 27px;
-  margin-top: -5.5px;
+  line-height: 1.6rem;
+  margin-top: -0.25rem;
 }
 
 .label {
@@ -341,4 +285,88 @@ label {
 
 .new_tab_link:hover .icon_new_tab {
   background-color: var(--aqua);
+}
+
+.icon_close {
+  mask-image: url("./images/close.svg");
+  mask-size: cover;
+  position: absolute;
+  right: 2em;
+  top: 1.2em;
+  width: 0.75rem;
+  height: 0.75rem;
+  background-color: var(--spanish-gray);
+}
+.icon_close:hover {
+  background-color: var(--white);
+}
+
+.dashed_border {
+  margin: var(--main-margin);
+  padding: var(--main-padding);
+  background-size: contain;
+  background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='16' ry='16' stroke='%23515151FF' stroke-width='4' stroke-dasharray='4%2c 10' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
+  border-radius: 16px;
+}
+
+.dashed_border_thin {
+  margin: var(--main-margin);
+  padding: var(--main-padding);
+  background-size: contain;
+  background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='16' ry='16' stroke='%23515151FF' stroke-width='3' stroke-dasharray='1.5%2c 7' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
+  border-radius: 16px;
+}
+
+.detail_items_wrap {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: scroll;
+}
+.detail_item {
+  width: 100%;
+  font-size: 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 0.5rem 0.75rem;
+}
+.detail_item :global(span, pre) {
+  color: var(--white);
+}
+
+.detail_item :global(pre) {
+  white-space: break-spaces;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+}
+.detail_item_value {
+  max-width: 60%;
+  max-height: 1rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex-grow: 1;
+  text-align: right;
+}
+.flex_col {
+  flex-direction: column;
+}
+.detail_item_row {
+  width: 100%;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+.stake_icon {
+  mask-image: url("./images/stake@2x.png");
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  display: block;
+}
+
+.icon-mask {
+  mask-size: cover;
+  mask-repeat: no-repeat;
+  mask-position: center;
 }

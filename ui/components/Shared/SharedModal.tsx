@@ -1,116 +1,59 @@
-import React, { ReactElement, ReactNode, useRef } from "react"
-import { createPortal } from "react-dom"
-import classNames from "classnames"
-import { useOnClickOutside } from "../../hooks"
+/* This example requires Tailwind CSS v2.0+ */
+import React, { ReactElement, Fragment, useState } from "react"
+import { Dialog, Transition } from "@headlessui/react"
+import { CheckIcon } from "@heroicons/react/outline"
+import clsx from "clsx"
 
-interface SharedModalProps {
-  children: ReactNode
-  header: string
-  onClose: () => void
+export type SharedModalProps = {
   isOpen: boolean
-  minHeight?: string
-  closeOnOverlayClick?: boolean
+  onClose: () => void
+  children: ReactElement
+  className?: string
 }
 
-const modalElement = document.getElementById("pokt-wallet-root") as HTMLElement
-
 export default function SharedModal({
-  children,
-  header,
-  onClose,
   isOpen,
-  minHeight,
-  closeOnOverlayClick = true,
+  onClose,
+  children,
+  className,
 }: SharedModalProps): ReactElement {
-  const ref = useRef(null)
+  return (
+    <Transition.Root show={isOpen} as={Fragment}>
+      <Dialog
+        as="div"
+        className={clsx("relative z-10", className)}
+        onClose={onClose}
+      >
+        <Transition.Child
+          as={Fragment}
+          enter="ease-out duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div className="fixed inset-0 bg-eerie-black bg-opacity-75 transition-opacity" />
+        </Transition.Child>
 
-  useOnClickOutside(ref, closeOnOverlayClick ? onClose : () => {})
-
-  return createPortal(
-    isOpen ? (
-      <>
-        <div className={classNames("modal", { open: isOpen })}>
-          <div className="modal_overlay" />
-          <div className="modal_content" ref={ref}>
-            <button type="button" aria-label="close modal">
-              <button
-                type="button"
-                className="icon_close"
-                onClick={onClose}
-                aria-label="close modal"
-              />
-            </button>
-            <div className="modal_body">
-              <h2 className="modal_header">{header}</h2>
-              {children}
-            </div>
+        <div className="fixed z-10 inset-0 overflow-y-auto">
+          <div className="flex items-end sm:items-center justify-center min-h-full p-4 text-center sm:p-0">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              enterTo="opacity-100 translate-y-0 sm:scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            >
+              <Dialog.Panel className="relative bg-rich-black rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:max-w-sm lg:max-w-md sm:w-full sm:p-6">
+                {children}
+              </Dialog.Panel>
+            </Transition.Child>
           </div>
         </div>
-        <style jsx>{`
-          .modal {
-            position: fixed;
-            display: none;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 999;
-            align-items: center;
-            justify-content: center;
-          }
-          .modal.open {
-            display: flex;
-          }
-          .modal_overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: var(--eerie-black-100);
-            opacity: 0.7;
-          }
-          .modal_content {
-            position: relative;
-            display: flex;
-            align-items: center;
-            z-index: 1;
-            box-sizing: border-box;
-            width: 312px;
-            background-color: var(--cod-gray-100);
-            padding: 24px;
-            box-shadow: 0px 24px 24px rgba(0, 20, 19, 0.14),
-              0px 14px 16px rgba(0, 20, 19, 0.24),
-              0px 10px 12px rgba(0, 20, 19, 0.34);
-            border-radius: 8px;
-            min-height: ${minHeight || "auto"};
-            transition: min-height 1.2s ease-in-out, opacity 0.2s ease-in-out;
-          }
-          .icon_close {
-            mask-image: url("./images/close.svg");
-            mask-size: cover;
-            width: 11px;
-            height: 11px;
-            padding: 2.5px;
-            position: absolute;
-            right: 16px;
-            top: 16px;
-            background-color: var(--spanish-gray);
-            z-index: 1;
-          }
-          .modal_body {
-            min-height: 320px;
-            flex: 1;
-          }
-          .modal_header {
-            color: var(--spanish-gray);
-            font-size: 18px;
-            line-height: 24px;
-            margin-bottom: 24px;
-          }
-        `}</style>
-      </>
-    ) : null,
-    modalElement
+      </Dialog>
+    </Transition.Root>
   )
 }

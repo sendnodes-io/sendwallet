@@ -1,0 +1,53 @@
+/* reset some stuff */
+:root {
+  --popup-width: auto;
+}
+
+body {
+  @apply justify-start min-h-screen w-full;
+}
+
+.base_pokt_logo {
+  @apply hidden;
+}
+
+#pokt-wallet-root {
+  @apply h-full flex-1 flex;
+}
+
+* {
+  scrollbar-color: aqua green;
+  scrollbar-width: 0.5rem;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 0.5rem;
+  scrollbar-gutter: stable both-edges;
+}
+
+body::-webkit-scrollbar {
+  width: 0;
+  scrollbar-width: 0;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 1px var(--eerie-black);
+  border-radius: 10px;
+  @apply cursor-pointer;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  @apply bg-gradient-to-b from-capri to-aqua hover:from-aqua hover:to-aqua;
+  border-radius: 0.667rem;
+}
+
+.snackbar_wrap {
+  @apply left-0 right-0 text-base mx-auto font-semibold py-5 border border-eerie-black bg-spanish-gray text-white w-80 sm:w-96 !important;
+}
+
+.asset_input_wrap .slide_up_menu_wrap {
+  @apply hidden;
+}
