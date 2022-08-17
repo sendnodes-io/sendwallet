@@ -159,13 +159,10 @@ const baseConfig: Configuration = {
           },
         },
       ],
-      // FIXME Forced cast below due to an incompatibility between the webpack
-      // FIXME version refed in @types/copy-webpack-plugin and our local
-      // FIXME webpack version.
+      // Forced cast below due to an incompatibility between the webpack version refed in @types/copy-webpack-plugin and our local webpack version.
     }) as unknown as WebpackPluginInstance,
     new DefinePlugin({
       "process.env.APP_NAME": JSON.stringify(process.env.npm_package_name),
-      "process.env.VERSION": JSON.stringify(process.env.npm_package_version),
     }),
     new HtmlWebpackPlugin({
       template: "ui/pages/base.html",
@@ -238,9 +235,7 @@ const modeConfigs: {
       }),
       new CopyPlugin({
         patterns: ["dev-utils/*.js"],
-        // FIXME Forced cast below due to an incompatibility between the webpack
-        // FIXME version refed in @types/copy-webpack-plugin and our local
-        // FIXME webpack version.
+        // Forced cast below due to an incompatibility between the webpack version refed in @types/copy-webpack-plugin and our local webpack version.
       }) as unknown as WebpackPluginInstance,
       new StatoscopeWebpackPlugin(),
     ],
@@ -352,9 +347,7 @@ export default (
               },
             } as unknown as ObjectPattern, // ObjectPattern doesn't include transformAll in current types
           ],
-          // FIXME Forced cast below due to an incompatibility between the webpack
-          // FIXME version refed in @types/copy-webpack-plugin and our local
-          // FIXME webpack version.
+          // Forced cast below due to an incompatibility between the webpack version refed in @types/copy-webpack-plugin and our local webpack version.
         }) as unknown as WebpackPluginInstance,
         new WebExtension({
           background: {

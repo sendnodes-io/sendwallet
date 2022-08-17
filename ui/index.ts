@@ -134,9 +134,7 @@ async function renderApp(
   }
 
   try {
-    // FIXME: remove when done debugging
-    const backgroundStore = ((globalThis as any).uiBackgroundStore =
-      await newProxyStore())
+    const backgroundStore = await newProxyStore()
 
     if (!backgroundStore.getState().ui) {
       throw new Error("failed to parse data, trying again")
