@@ -118,7 +118,7 @@ function genericLogger(level: LogLevel, input: unknown[]) {
 
   console.group(
     `%c ${styles[level].icon} sw-${
-      (globalThis as any).SERVICE_WORKER_ID
+      (globalThis as any).PROCESS_ID
     } [${logTime.replace(/Z$/, "")}] ${logLabel} %c [${logDate}]`,
     styles[level].css.join(";"),
     styles[level].dateCss ?? styles.debug.dateCss.join(";")

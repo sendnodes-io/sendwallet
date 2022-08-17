@@ -3,7 +3,7 @@ import { setActiveTab } from "@sendnodes/pokt-wallet-background/redux-slices/ui"
 import browser from "webextension-polyfill"
 import React, { ComponentType } from "react"
 import ReactDOM from "react-dom"
-import { Store } from "webext-redux"
+import { Store } from "@0xbigboss/webext-redux"
 import Popup from "./pages/Popup"
 import Tab from "./pages/Tab"
 import Stake from "./pages/Stake"
@@ -15,39 +15,29 @@ import logger from "@sendnodes/pokt-wallet-background/lib/logger"
 export { Popup, Tab, Stake }
 
 function invokeServiceWorkerUpdateFlow(
-  registration: ServiceWorkerRegistration
+  component: ComponentType<{ store: Store }>
 ) {
-  // TODO implement your own UI notification element
-  if (
-    confirm(
-      "A new version of the extension is available. Would you like to update?"
-    )
-  ) {
+  logger.debug("POKT Wallet needs to be restarted to continue")
+  if (confirm("POKT Wallet needs to be restarted to continue. Restart now?")) {
     browser.runtime.reload()
-  } else {
-    navigator.serviceWorker
-      .getRegistration()
-      .then((registration) => registration?.unregister())
   }
 }
-export async function attachUiToRootElement(
-  component: ComponentType<{ store: Store }>
-): Promise<void> {
+
+async function checkServiceWorker(component: ComponentType<{ store: Store }>) {
   // monitoring service worker lifecycle only applies to manifest version 3
   if (browser.runtime.getManifest().manifest_version === 3) {
     // register the service worker from the file specified
     const registration = await navigator.serviceWorker.getRegistration()
 
     if (registration === undefined) {
-      console.warn("No regsitration found")
-      browser.runtime.reload()
+      invokeServiceWorkerUpdateFlow(component)
       return
     }
 
     // ensure the case when the updatefound event was missed is also handled
     // by re-invoking the prompt when there's a waiting Service Worker
     if (registration.waiting) {
-      invokeServiceWorkerUpdateFlow(registration)
+      invokeServiceWorkerUpdateFlow(component)
     }
 
     // detect Service Worker update available and wait for it to become installed
@@ -58,7 +48,7 @@ export async function attachUiToRootElement(
           if (registration.waiting) {
             // if there's an existing controller (previous Service Worker), show the prompt
             if (navigator.serviceWorker.controller) {
-              invokeServiceWorkerUpdateFlow(registration)
+              invokeServiceWorkerUpdateFlow(component)
             }
             // otherwise it's the first install, nothing to do
           }
@@ -71,11 +61,63 @@ export async function attachUiToRootElement(
     // detect controller change and refresh the page
     navigator.serviceWorker.addEventListener("controllerchange", async () => {
       if (!refreshing) {
-        browser.runtime.reload()
+        console.warn("browser runtime needs to reload!")
+        invokeServiceWorkerUpdateFlow(component)
       }
     })
-  }
 
+    backgroundMonitor(component)
+  }
+}
+
+function backgroundMonitor(component: ComponentType<{ store: Store }>) {
+  let checking = false
+  let lastServiceWorkerId: string | null = null
+  setInterval(async () => {
+    if (checking) {
+      return
+    }
+    checking = true
+    const msgId = Math.random() + "." + new Date().getTime()
+    const deadmanSwitch = setTimeout(() => {
+      logger.debug("deadmanSwitch on", { msgId })
+      invokeServiceWorkerUpdateFlow(component)
+    }, 3000)
+
+    let resp = null
+    try {
+      resp = await browser.runtime.sendMessage(browser.runtime.id, {
+        type: "HEARTBEAT",
+      })
+
+      if (!resp) {
+        logger.error("heartbeat error", browser.runtime.lastError)
+      } else {
+        // received a heartbeat response, clear the deadman switch
+        logger.debug("heartbeat", { msgId, ...resp })
+        clearTimeout(deadmanSwitch)
+      }
+    } catch (e) {
+      logger.error("heartbeat error", { msgId, e })
+    }
+
+    if (lastServiceWorkerId !== resp.processId) {
+      logger.debug("service worker update detected", {
+        msgId,
+        lastServiceWorkerId,
+        resp,
+      })
+      lastServiceWorkerId = resp.processId
+    }
+
+    checking = false
+  }, 15000)
+}
+
+export async function attachUiToRootElement(
+  component: ComponentType<{ store: Store }>
+): Promise<void> {
+  await checkServiceWorker(component)
   await renderApp(component)
 }
 

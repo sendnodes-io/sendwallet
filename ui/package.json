@@ -37,6 +37,7 @@
     "@reduxjs/toolkit": "^1.6.0",
     "@sendnodes/pokt-wallet-background": "0.0.1",
     "@sendnodes/provider-bridge-shared": "0.0.1",
+    "@types/webextension-polyfill": "^0.9.0",
     "chart.js": "^3.9.1",
     "classnames": "^2.3.1",
     "dayjs": "^1.10.6",
@@ -55,7 +56,7 @@
     "react-transition-group": "^4.4.2",
     "redux": "^4.1.0",
     "swr": "^1.3.0",
-    "webextension-polyfill": "^0.8.0"
+    "webextension-polyfill": "^0.10.0"
   },
   "devDependencies": {
     "@headlessui/react": "^1.6.6",
@@ -66,6 +67,6 @@
     "@types/react-transition-group": "^4.4.4",
     "clsx": "^1.2.1",
     "react-devtools": "^4.24.4",
-    "webext-redux": "git+ssh://git@github.com:0xBigBoss/webext-redux.git#9c9572832a6a8dacefff6128792da5d98833ec30"
+    "@0xbigboss/webext-redux": "2.1.9"
   }
 }

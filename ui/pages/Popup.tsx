@@ -13,7 +13,7 @@ import {
   Location,
 } from "@sendnodes/pokt-wallet-background/redux-slices/ui"
 
-import { Store } from "webext-redux"
+import { Store } from "@0xbigboss/webext-redux"
 import { Provider } from "react-redux"
 import { TransitionGroup, CSSTransition } from "react-transition-group"
 import { isAllowedQueryParamPage } from "@sendnodes/provider-bridge-shared"

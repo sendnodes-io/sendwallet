@@ -71,6 +71,6 @@
     "remote-redux-devtools": "^0.5.16",
     "remotedev-server": "^0.3.1",
     "ts-node": "^10.4.0",
-    "webext-redux": "git+ssh://git@github.com:0xBigBoss/webext-redux.git#9c9572832a6a8dacefff6128792da5d98833ec30"
+    "@0xbigboss/webext-redux": "2.1.9"
   }
 }

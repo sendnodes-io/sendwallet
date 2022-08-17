@@ -9,6 +9,7 @@ import {
 import SharedButton from "../components/Shared/SharedButton"
 import SharedToggleButton from "../components/Shared/SharedToggleButton"
 import t from "../utils/i18n"
+import browser from "webextension-polyfill"
 
 function SettingRow(props: {
   title: string
@@ -106,7 +107,7 @@ export default function Menu(): ReactElement {
           </SharedButton>
         </div>
         <div className="version">
-          Version: {process.env.VERSION ?? `<unknown>`}
+          Version: {browser.runtime.getManifest()?.version ?? `<unknown>`}
         </div>
       </section>
       <style jsx>
