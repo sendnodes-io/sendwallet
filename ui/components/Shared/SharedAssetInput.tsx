@@ -295,6 +295,8 @@ interface SharedAssetInputProps<AssetType extends AnyAsset> {
   onAmountChange?: (value: string, errorMessage: string | undefined) => void
   /** Include a network fee in the max balance set*/
   networkFee?: string
+  /** Validate amount before calling amount changed. Should throw an error if amount is invalid */
+  validateAmount?: (amount: bigint) => void
 }
 
 function isSameAsset(asset1: Asset, asset2: Asset) {
@@ -326,6 +328,7 @@ export default function SharedAssetInput<T extends AnyAsset>(
     onAmountChange,
     autoFocus = false,
     networkFee,
+    validateAmount = () => {},
   } = props
 
   const [openAssetMenu, setOpenAssetMenu] = useState(false)
@@ -381,6 +384,13 @@ export default function SharedAssetInput<T extends AnyAsset>(
       return "Insufficient balance"
     }
 
+    if (validateAmount) {
+      try {
+        validateAmount(decimalMatched.amount)
+      } catch (error) {
+        return (error as Error)?.message
+      }
+    }
     return undefined
   }
 
@@ -533,7 +543,7 @@ export default function SharedAssetInput<T extends AnyAsset>(
           }
           .asset_wrap {
             width: 100%;
-            height: 3.75rem;
+            height: 4.25rem;
             border-radius: 0.5rem;
             background-color: var(--black);
             display: flex;
@@ -583,9 +593,9 @@ export default function SharedAssetInput<T extends AnyAsset>(
             color: var(--error);
             position: absolute;
             font-weight: 500;
-            font-size: 0.6rem;
+            font-size: 0.75rem;
             line-height: 1rem;
-            transform: translateY(1.33rem);
+            transform: translateY(1.7rem);
             display: block;
             right: 1rem;
           }

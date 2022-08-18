@@ -206,12 +206,12 @@ export default function SendStake(): ReactElement {
     )
 
   return (
-    <div className="relative">
+    <div className="grow h-full relative">
       <div className="flex gap-x-4 justify-center items-center">
         <div className="stake_icon bg-white w-12 h-12" />
         <h1>Stake</h1>
       </div>
-      <div className="mt-8 flex flex-col ">
+      <div className="mt-6 flex flex-col mb-6">
         <div className="grid md:grid-cols-8 gap-4 gap-y-12 lg:gap-8">
           <div className="md:col-span-2" />
           <StatTotalStaked aon={currentAccount} asset={selectedAsset} />
