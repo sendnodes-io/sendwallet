@@ -186,7 +186,7 @@ export default function SendUnstake(): ReactElement {
 
   return (
     <div className=" pb-4">
-      <div className="flex gap-x-4 justify-center items-center pt-4 pb-8">
+      <div className="flex gap-x-4 justify-center items-center pt-4 pb-4">
         <div
           className={"icon-mask w-12 h-12 bg-white"}
           css={`
@@ -195,7 +195,7 @@ export default function SendUnstake(): ReactElement {
         />
         <h1>Unstake</h1>
       </div>
-      <div className="mt-16 flex flex-col ">
+      <div className="mt-4 flex flex-col ">
         <div className="grid md:grid-cols-8 gap-4 gap-y-12 lg:gap-8">
           <div className="md:col-span-1" />
           <StatTotalUnstaked aon={currentAccount} asset={selectedAsset} />
@@ -203,7 +203,7 @@ export default function SendUnstake(): ReactElement {
           <StatAPY aon={currentAccount} asset={selectedAsset} />
         </div>
       </div>
-      <div className="mt-8 flex pb-8">
+      <div className="mt-4 flex pb-8">
         <p className="text-lg">
           We're sad to see you go! To unstake, please enter an amount below (up
           to your staked amount). The amount will be sent back to the address{" "}
