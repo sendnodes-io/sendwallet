@@ -279,7 +279,7 @@ export default function StakeRewards(): ReactElement {
             )}
           </div>
         </div>
-        <div className="mt-16 flex flex-col">
+        <div className="mt-8 flex flex-col">
           <div className="grid grid-cols-4 sm:grid-cols-8 gap-4 gap-y-12 lg:gap-8">
             <StatAPY
               aon={currentAccount}
