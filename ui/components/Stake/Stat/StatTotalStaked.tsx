@@ -15,9 +15,9 @@ export default function StatTotalStaked({
 }) {
   const { data, isLoading, isError } = useStakingUserData(aon)
   const amount = formatFixed(
-    BigNumber.from(data?.userStakingData[0]?.staked ?? 0).add(
-      data?.userStakingData[0]?.pendingStaked ?? 0
-    ),
+    BigNumber.from(data?.userStakingData[0]?.staked ?? 0)
+      .add(data?.userStakingData[0]?.pendingStaked ?? 0)
+      .sub(data?.userStakingData[0]?.pendingUnstaked ?? 0),
     asset.decimals
   )
   return (
