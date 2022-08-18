@@ -25,9 +25,13 @@ import { SigningMethod } from "@sendnodes/pokt-wallet-background/utils/signing"
 import { POKTTransactionRequest } from "@sendnodes/pokt-wallet-background/networks"
 import SharedSplashScreen from "../Shared/SharedSplashScreen"
 import { useHistory } from "react-router-dom"
-import { SnAction, useStakingPoktParams } from "../../hooks/staking-hooks"
+import {
+  SnAction,
+  useStakingPoktParams,
+  useStakingUserData,
+} from "../../hooks/staking-hooks"
 import SharedButton from "../Shared/SharedButton"
-import { capitalize, isEqual } from "lodash"
+import { capitalize, floor, isEqual } from "lodash"
 import { Dialog } from "@headlessui/react"
 import clsx from "clsx"
 import { BigNumber, formatFixed } from "@ethersproject/bignumber"
@@ -72,6 +76,8 @@ export default function StakeSignTransaction(): ReactElement {
 
   const { isLoading: isStakingPoktParamsLoading } =
     useStakingPoktParams(currentAccount)
+
+  const { data: stakingUserData } = useStakingUserData(currentAccount)
   const [isTransactionSigning, setIsTransactionSigning] = useState(false)
   const signingMethod = signerAccountTotal?.signingMethod ?? null
   const isLocked = useIsSigningMethodLocked(signingMethod as SigningMethod)
@@ -232,7 +238,7 @@ export default function StakeSignTransaction(): ReactElement {
             <p className="text-sm text-spanish-gray text-center ">
               {isCompound || isUncompound ? (
                 <span>
-                  You are about to {isUncompound ? "disable" : "enable"} auto
+                  You are about to {isUncompound ? "disable" : "enable"}{" "}
                   {humanAction.toLowerCase()}ing of your POKT rewards with
                   SendNodes.
                 </span>
@@ -243,93 +249,125 @@ export default function StakeSignTransaction(): ReactElement {
                 </span>
               )}
             </p>
-            {isStake || isUnstake ? (
-              <div className="px-4 py-5 sm:p-0 rounded-sm">
-                <dl className="sm:divide-y sm:divide-gray-200">
-                  <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 items-center">
-                    <dt className="text-sm font-medium text-spanish-gray">
-                      {action.toUpperCase().substring(0, action.length - 1)}ING
-                    </dt>
-                    <dd
-                      title={Number(
-                        formatFixed(
-                          BigNumber.from(amount),
-                          currentAccount.network.baseAsset.decimals
-                        )
-                      ).toLocaleString()}
-                      className="mt-1 text-lg text-white sm:mt-0 sm:col-span-2 text-right"
-                    >
-                      <img
-                        src="/images/pokt_icon@2x.svg"
-                        className="h-5 w-5 inline mr-2"
-                        alt="POKT"
-                      />
-                      {formatTokenAmount(
-                        formatFixed(
-                          BigNumber.from(amount),
-                          currentAccount.network.baseAsset.decimals
-                        ),
-                        9,
-                        2
-                      )}
-                    </dd>
-                  </div>
-                  <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 items-center">
-                    <dt className="text-sm font-medium text-spanish-gray">
-                      FROM
-                    </dt>
-                    {from}
-                  </div>
-                  <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 items-center">
-                    <dt className="text-sm font-medium text-spanish-gray">
-                      TO
-                    </dt>
-                    {to}
-                  </div>
-                  <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 items-center group">
-                    <dt className="text-sm font-medium text-spanish-gray">
-                      <a
-                        href={
-                          action === SnAction.UNSTAKE
-                            ? "https://sendnodes.gitbook.io/sendnodes/start-here/frequently-asked-questions#how-do-i-unstake"
-                            : "https://docs.sendnodes.io/start-here/frequently-asked-questions#what-is-the-staking-schedule"
-                        }
-                        target={"_blank"}
-                        className="hover:text-white"
-                        title={
-                          action === SnAction.STAKE
-                            ? "What is the staking schedule?"
-                            : "How do I unstake?"
-                        }
+
+            <div className="px-4 py-5 sm:p-0 rounded-sm">
+              <dl className="sm:divide-y sm:divide-gray-200">
+                {(isCompound || isUncompound) && (
+                  <>
+                    <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 items-center">
+                      <dt className="text-sm font-medium text-spanish-gray whitespace-nowrap relative">
+                        Compounding APY*
+                      </dt>
+                      <dd className="mt-1 text-sm text-white sm:mt-0 sm:col-span-2 text-right ">
+                        {floor(
+                          Number(stakingUserData?.rewardsData.apy),
+                          2
+                        ).toLocaleString()}{" "}
+                        %
+                      </dd>
+                    </div>
+                    <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 items-center">
+                      <dt className="text-sm font-medium text-spanish-gray whitespace-nowrap relative">
+                        No Compounding APY*
+                      </dt>
+                      <dd className="mt-1 text-sm text-white sm:mt-0 sm:col-span-2 text-right ">
+                        {floor(
+                          Number(stakingUserData?.rewardsData.apyNoCompounding),
+                          2
+                        ).toLocaleString()}
+                        %
+                      </dd>
+                    </div>
+                  </>
+                )}
+                {isStake || isUnstake ? (
+                  <>
+                    <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 items-center">
+                      <dt className="text-sm font-medium text-spanish-gray">
+                        {action.toUpperCase().substring(0, action.length - 1)}
+                        ING
+                      </dt>
+                      <dd
+                        title={Number(
+                          formatFixed(
+                            BigNumber.from(amount),
+                            currentAccount.network.baseAsset.decimals
+                          )
+                        ).toLocaleString()}
+                        className="mt-1 text-lg text-white sm:mt-0 sm:col-span-2 text-right"
                       >
-                        {capitalize(action.toLowerCase())} ETA{" "}
-                        <InformationCircleIcon className="inline h-4 w-4" />
-                      </a>
-                    </dt>
-                    <dd className="mt-1 text-sm text-white sm:mt-0 sm:col-span-2 text-right ">
-                      <p>
-                        <span className="group-hover:hidden">
-                          <time
-                            dateTime={estimatedDeliveryTime.format("L LT")}
-                            title={estimatedDeliveryTime.format("L LT")}
-                          >
-                            {estimatedDeliveryTime.fromNow()}
-                          </time>
-                        </span>
-                        <span className="hidden group-hover:inline">
-                          <time
-                            dateTime={estimatedDeliveryTime.format("L LT")}
-                            title={estimatedDeliveryTime.format("L LT")}
-                          >
-                            {estimatedDeliveryTime.format("L LT")}
-                          </time>
-                        </span>
-                      </p>
-                    </dd>
-                  </div>
-                </dl>
-              </div>
-            ) : null}
+                        <img
+                          src="/images/pokt_icon@2x.svg"
+                          className="h-5 w-5 inline mr-2"
+                          alt="POKT"
+                        />
+                        {formatTokenAmount(
+                          formatFixed(
+                            BigNumber.from(amount),
+                            currentAccount.network.baseAsset.decimals
+                          ),
+                          9,
+                          2
+                        )}
+                      </dd>
+                    </div>
+                    <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 items-center">
+                      <dt className="text-sm font-medium text-spanish-gray">
+                        FROM
+                      </dt>
+                      {from}
+                    </div>
+                    <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 items-center">
+                      <dt className="text-sm font-medium text-spanish-gray">
+                        TO
+                      </dt>
+                      {to}
+                    </div>
+                    <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 items-center group">
+                      <dt className="text-sm font-medium text-spanish-gray">
+                        <a
+                          href={
+                            action === SnAction.UNSTAKE
+                              ? "https://sendnodes.gitbook.io/sendnodes/start-here/frequently-asked-questions#how-do-i-unstake"
+                              : "https://docs.sendnodes.io/start-here/frequently-asked-questions#what-is-the-staking-schedule"
+                          }
+                          target={"_blank"}
+                          className="hover:text-white"
+                          title={
+                            action === SnAction.STAKE
+                              ? "What is the staking schedule?"
+                              : "How do I unstake?"
+                          }
+                        >
+                          {capitalize(action.toLowerCase())} ETA{" "}
+                          <InformationCircleIcon className="inline h-4 w-4" />
+                        </a>
+                      </dt>
+                      <dd className="mt-1 text-sm text-white sm:mt-0 sm:col-span-2 text-right ">
+                        <p>
+                          <span className="group-hover:hidden">
+                            <time
+                              dateTime={estimatedDeliveryTime.format("L LT")}
+                              title={estimatedDeliveryTime.format("L LT")}
+                            >
+                              {estimatedDeliveryTime.fromNow()}
+                            </time>
+                          </span>
+                          <span className="hidden group-hover:inline">
+                            <time
+                              dateTime={estimatedDeliveryTime.format("L LT")}
+                              title={estimatedDeliveryTime.format("L LT")}
+                            >
+                              {estimatedDeliveryTime.format("L LT")}
+                            </time>
+                          </span>
+                        </p>
+                      </dd>
+                    </div>
+                  </>
+                ) : null}
+              </dl>
+            </div>
           </div>
         </div>
       </div>
@@ -348,6 +386,18 @@ export default function StakeSignTransaction(): ReactElement {
               {avgBlocksPerDay * estimatedDays} blocks) for your POKT to become
               unstaked. You stop earning rewards on this amount immediately.
             </span>
+          )}
+          {(isCompound || isUncompound) && (
+            <a
+              href="https://docs.sendnodes.io/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span className="">
+                <b>*</b>Estimated net rewards after fees. Actual rewards may be
+                different. <InformationCircleIcon className="h-4 w-4 inline" />{" "}
+              </span>
+            </a>
           )}
           {isCompound && <span>Rewards will be automatically staked.</span>}
           {isUncompound && (
