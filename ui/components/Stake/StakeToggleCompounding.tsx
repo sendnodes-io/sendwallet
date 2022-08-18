@@ -8,19 +8,16 @@ import {
 import clsx from "clsx"
 import { isEqual } from "lodash"
 import React, { useCallback, useState } from "react"
-import getSnActionFromMemo from "../../helpers/get-sn-action-from-memo"
-import getTransactionResult from "../../helpers/get-transaction-result"
 import {
   useAreKeyringsUnlocked,
   useBackgroundDispatch,
   useBackgroundSelector,
 } from "../../hooks"
 import {
-  ISnTransactionFormatted,
-  SnAction,
   useStakingPoktParams,
   useStakingUserData,
 } from "../../hooks/staking-hooks"
+import useStakingPendingTransactions from "../../hooks/staking-hooks/use-staking-pending-transactions"
 import SharedSplashScreen from "../Shared/SharedSplashScreen"
 
 export default function StakeToggleCompounding() {
@@ -41,39 +38,9 @@ export default function StakeToggleCompounding() {
     isError: isUserStakingDataError,
   } = useStakingUserData(currentAccount)
 
-  const pendingCompoundTransactions = (
-    useBackgroundSelector(
-      selectCurrentAccountActivitiesWithTimestamps,
-      isEqual
-    ) ?? []
+  const pendingCompoundTransactions = useStakingPendingTransactions().filter(
+    (activity) => activity !== null && activity.compound === true
   )
-    .filter(
-      (activity) =>
-        getTransactionResult(activity).status === "pending" &&
-        activity.to === stakingPoktParamsData?.wallets.siw
-    )
-    .map((activity) => {
-      activity = activity as POKTActivityItem
-      const action = getSnActionFromMemo(activity.memo)
-      if (action === null) {
-        return null
-      }
-      return {
-        height: activity.blockHeight?.toString(),
-        signer: activity.from,
-        userWalletAddress: activity.from,
-        hash: activity.hash,
-        memo: activity.memo,
-        amount: activity.txMsg.value.amount,
-        action,
-        index: "-1",
-        compound: action === SnAction.COMPOUND,
-        reward: action === SnAction.REWARD,
-        timestamp: activity.unixTimestamp,
-      } as ISnTransactionFormatted
-    })
-    .filter((activity) => activity !== null && activity.compound === true)
-    .reverse() as ISnTransactionFormatted[]
 
   if (isStakingPoktParamsError) throw isStakingPoktParamsError
   if (isUserStakingDataError) throw isUserStakingDataError

@@ -34,6 +34,7 @@ import SharedSplashScreen from "../Shared/SharedSplashScreen"
 import formatTokenAmount from "../../utils/formatTokenAmount"
 import { InformationCircleIcon } from "@heroicons/react/solid"
 import {
+  SnAction,
   useStakingPoktParams,
   useStakingUserData,
 } from "../../hooks/staking-hooks"
@@ -46,6 +47,7 @@ import { formatFixed, parseFixed } from "@ethersproject/bignumber"
 import usePocketNetworkFee from "../../hooks/pocket-network/use-network-fee"
 import StatAPY from "./Stat/StatAPY"
 import StatTotalUnstaked from "./Stat/StatTotalUnstaked"
+import useStakingPendingTransactions from "../../hooks/staking-hooks/use-staking-pending-transactions"
 
 export default function SendUnstake(): ReactElement {
   const history = useHistory()
@@ -69,6 +71,10 @@ export default function SendUnstake(): ReactElement {
     isError: isUserStakingDataError,
   } = useStakingUserData(currentAccount)
 
+  const pendingUnstakeTransactions = useStakingPendingTransactions().filter(
+    (activity) => activity !== null && activity.action === SnAction.UNSTAKE
+  )
+
   const { networkFee } = usePocketNetworkFee()
 
   const [selectedAsset, setSelectedAsset] = useState<FungibleAsset>(
@@ -81,7 +87,16 @@ export default function SendUnstake(): ReactElement {
 
   const totalStakedBalance = BigNumber.from(
     userStakingData?.userStakingData[0]?.staked ?? 0
-  ).add(userStakingData?.userStakingData[0]?.pendingStaked ?? 0)
+  )
+    .add(userStakingData?.userStakingData[0]?.pendingStaked ?? 0)
+    .sub(userStakingData?.userStakingData[0]?.pendingUnstaked ?? 0)
+    .sub(
+      pendingUnstakeTransactions.reduce((pendingUnstaked, transaction) => {
+        return pendingUnstaked.add(
+          BigNumber.from(transaction.memo.split(":")[1])
+        )
+      }, BigNumber.from(0))
+    )
 
   const totalStakedBalanceDecimals = Number(
     formatFixed(totalStakedBalance, selectedAsset.decimals)
