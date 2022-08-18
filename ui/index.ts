@@ -94,7 +94,6 @@ function backgroundMonitor(component: ComponentType<{ store: Store }>) {
         logger.error("heartbeat error", browser.runtime.lastError)
       } else {
         // received a heartbeat response, clear the deadman switch
-        logger.debug("heartbeat", { msgId, ...resp })
         clearTimeout(deadmanSwitch)
       }
     } catch (e) {
