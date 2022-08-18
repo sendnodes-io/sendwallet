@@ -26,12 +26,10 @@ import {
   SnAction,
   useStakingPoktParams,
 } from "../../hooks/staking-hooks"
-import getTransactionResult from "../../helpers/get-transaction-result"
-import getSnActionFromMemo from "../../helpers/get-sn-action-from-memo"
-import { POKTActivityItem } from "@sendnodes/pokt-wallet-background/redux-slices/activities"
 import { usePoktWatchLatestBlock } from "../../hooks/pokt-watch/use-latest-block"
 import { useStakingRewardsTransactions } from "../../hooks/staking-hooks/use-staking-rewards-transactions"
 import formatTokenAmount from "../../utils/formatTokenAmount"
+import useStakingPendingTransactions from "../../hooks/staking-hooks/use-staking-pending-transactions"
 
 dayjs.extend(updateLocale.default)
 dayjs.extend(localizedFormat.default)
@@ -124,39 +122,7 @@ export default function StakeRequestsTransactions(): ReactElement {
     isLoading: isRewardsTransactionsLoading,
     isError: isRewardsTransactionsError,
   } = useStakingRewardsTransactions(currentAccount)
-  const pendingTransactions = (
-    useBackgroundSelector(
-      selectCurrentAccountActivitiesWithTimestamps,
-      isEqual
-    ) ?? []
-  )
-    .filter(
-      (activity) =>
-        getTransactionResult(activity).status === "pending" &&
-        activity.to === stakingPoktParams?.wallets.siw
-    )
-    .map((activity) => {
-      activity = activity as POKTActivityItem
-      const action = getSnActionFromMemo(activity.memo)
-      if (action === null) {
-        return null
-      }
-      return {
-        height: activity.blockHeight?.toString(),
-        signer: activity.from,
-        userWalletAddress: activity.from,
-        hash: activity.hash,
-        memo: activity.memo,
-        amount: activity.txMsg.value.amount,
-        action,
-        index: "-1",
-        compound: action === SnAction.COMPOUND,
-        reward: action === SnAction.REWARD,
-        timestamp: activity.unixTimestamp,
-      } as ISnTransactionFormatted
-    })
-    .filter((activity) => activity !== null)
-    .reverse() as ISnTransactionFormatted[]
+  const pendingTransactions = useStakingPendingTransactions()
 
   if (isStakingParamsError) throw isStakingParamsError
   if (isRewardsTransactionsError) throw isRewardsTransactionsError
