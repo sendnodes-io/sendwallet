@@ -198,6 +198,15 @@ export default function SendUnstake(): ReactElement {
     )
   }
 
+  const isDisabled =
+    isSendingTransactionRequest ||
+    isStakingPoktParamsLoading ||
+    !!isStakingPoktParamsError ||
+    Number(amount) === 0 ||
+    Number(amount) > totalStakedBalanceDecimals ||
+    hasError ||
+    pendingUnstakeTransactions?.length > 0
+
   return (
     <div className="h-full grow pb-4">
       <div className="flex gap-x-4 justify-center items-center pt-4 pb-4">
@@ -314,14 +323,7 @@ export default function SendUnstake(): ReactElement {
           <SharedButton
             type="secondary"
             size="large"
-            isDisabled={
-              isSendingTransactionRequest ||
-              isStakingPoktParamsLoading ||
-              !!isStakingPoktParamsError ||
-              Number(amount) === 0 ||
-              Number(amount) > totalStakedBalanceDecimals ||
-              hasError
-            }
+            isDisabled={isDisabled}
             onClick={sendTransactionRequest}
             isFormSubmit
             isLoading={isSendingTransactionRequest}
@@ -329,6 +331,11 @@ export default function SendUnstake(): ReactElement {
             UNSTAKE
           </SharedButton>
         </div>
+        {isDisabled && (
+          <p className="text-xs font-light text-center mt-2">
+            Awaiting TX confirmation
+          </p>
+        )}
       </div>
       <style jsx>
         {`
