@@ -201,7 +201,7 @@ export default function Send(): ReactElement {
               amount={amount}
             />
             <div className="value">
-              ${assetAmount?.localizedMainCurrencyAmount ?? "-"}
+              {assetAmount?.localizedMainCurrencyAmount ?? "-"}
             </div>
           </div>
         </div>

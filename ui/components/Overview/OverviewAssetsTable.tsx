@@ -69,10 +69,7 @@ export default function OverviewAssetsTable(props: Props): ReactElement {
             </td>
             <td>
               {asset.localizedMainCurrencyAmount && (
-                <div>
-                  <span className="lighter_color">$</span>
-                  {asset.localizedMainCurrencyAmount}
-                </div>
+                <div>{asset.localizedMainCurrencyAmount}</div>
               )}
               <div className="balance_token_amount">
                 {asset.localizedDecimalAmount}

@@ -98,8 +98,8 @@ export default function TransactionSendDetail({
             ? formatTokenAmount(tokenValue, 1, 6)
             : formatTokenAmount(tokenValue)}
         </span>
-        <span className="dollar_amount" title={`$${localizedDollarValue}`}>
-          ${formatTokenAmount(dollarValue, 3)}
+        <span className="dollar_amount" title={`${localizedDollarValue}`}>
+          {localizedDollarValue}
         </span>
       </div>
       <div className="spacing"></div>

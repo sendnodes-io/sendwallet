@@ -49,7 +49,7 @@ export default function WalletAssetListItem(props: Props): ReactElement {
                   {isMissingLocalizedUserValue ? (
                     <SharedLoadingSpinner size="small" />
                   ) : (
-                    `$${assetAmount.localizedMainCurrencyAmount}`
+                    `${assetAmount.localizedMainCurrencyAmount}`
                   )}
                 </div>
               )}

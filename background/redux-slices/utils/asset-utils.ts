@@ -80,10 +80,7 @@ export function formatCurrencyAmount(
     currency: currencySymbol,
     minimumFractionDigits: desiredDecimals,
     maximumFractionDigits: desiredDecimals,
-  })
-    .format(currencyAmount)
-    .replaceAll(/^[A-Z$]/g, "")
-    .replaceAll(currencySymbol, "")
+  }).format(currencyAmount)
 }
 
 /**

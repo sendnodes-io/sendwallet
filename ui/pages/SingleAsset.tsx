@@ -23,7 +23,7 @@ type SingleAssetRouteParams = {
 }
 
 export default function SingleAsset(): ReactElement {
-  const { asset: symbol, contractAddress } = useParams <SingleAssetRouteParams>()
+  const { asset: symbol, contractAddress } = useParams<SingleAssetRouteParams>()
   const currentAccountSigningMethod = useBackgroundSelector(
     selectCurrentAccountSigningMethod
   )
@@ -124,7 +124,7 @@ export default function SingleAsset(): ReactElement {
             </div>
             <div className="balance">{localizedDecimalAmount}</div>
             {typeof localizedMainCurrencyAmount !== "undefined" ? (
-              <div className="usd_value">${localizedMainCurrencyAmount}</div>
+              <div className="usd_value">{localizedMainCurrencyAmount}</div>
             ) : (
               <></>
             )}
