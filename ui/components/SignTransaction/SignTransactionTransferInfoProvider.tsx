@@ -53,7 +53,7 @@ export default function SignTransactionTransferInfoProvider({
             <span className="spend_amount">
               {assetAmount.localizedDecimalAmount} {assetAmount.asset.symbol}
             </span>
-            <span className="label">${`${localizedMainCurrencyAmount}`}</span>
+            <span className="label">{`${localizedMainCurrencyAmount}`}</span>
           </div>
 
           <style jsx>

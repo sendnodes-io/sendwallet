@@ -79,7 +79,7 @@ export default function FeeSettingsText(): ReactElement {
 
   return (
     <div>
-      ~${dollarValue}
+      ~{dollarValue}
       <span className="fee_gwei">({gweiValue})</span>
       <style jsx>{`
         .fee_gwei {

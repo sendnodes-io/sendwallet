@@ -258,7 +258,7 @@ export default function SendStake(): ReactElement {
             }
           />
           <div className="value">
-            ${assetAmount?.localizedMainCurrencyAmount ?? "-"}
+            {assetAmount?.localizedMainCurrencyAmount ?? "-"}
           </div>
         </div>
         {amount && isAmountLessThanStakeMin ? (

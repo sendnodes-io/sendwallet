@@ -211,7 +211,7 @@ export default function Send(): ReactElement {
             networkFee={networkFee.toString()}
           />
           <div className="value">
-            ${assetAmount?.localizedMainCurrencyAmount ?? "-"}
+            {assetAmount?.localizedMainCurrencyAmount ?? "-"}
           </div>
         </div>
       </div>

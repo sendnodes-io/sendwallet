@@ -297,7 +297,7 @@ export default function SendUnstake(): ReactElement {
             amount={amount}
           />
           <div className="value">
-            ${assetAmount?.localizedMainCurrencyAmount ?? "-"}
+            {assetAmount?.localizedMainCurrencyAmount ?? "-"}
           </div>
         </div>
       </div>
