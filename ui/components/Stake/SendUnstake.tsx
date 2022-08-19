@@ -198,6 +198,7 @@ export default function SendUnstake(): ReactElement {
     )
   }
 
+  const hasPendingUnstakeTransactions = pendingUnstakeTransactions.length > 0
   const isDisabled =
     isSendingTransactionRequest ||
     isStakingPoktParamsLoading ||
@@ -205,7 +206,7 @@ export default function SendUnstake(): ReactElement {
     Number(amount) === 0 ||
     Number(amount) > totalStakedBalanceDecimals ||
     hasError ||
-    pendingUnstakeTransactions?.length > 0
+    hasPendingUnstakeTransactions
 
   return (
     <div className="h-full grow pb-4">
@@ -331,7 +332,7 @@ export default function SendUnstake(): ReactElement {
             UNSTAKE
           </SharedButton>
         </div>
-        {isDisabled && (
+        {hasPendingUnstakeTransactions && (
           <p className="text-xs font-light text-center mt-2">
             Awaiting TX confirmation
           </p>
