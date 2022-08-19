@@ -387,6 +387,14 @@ export default function StakeSignTransaction(): ReactElement {
               unstaked. You stop earning rewards on this amount immediately.
             </span>
           )}
+
+          {isCompound && <span>Rewards will be automatically staked.</span>}
+          {isUncompound && (
+            <span>
+              Rewards will no longer be automatically staked and instead sent to
+              your wallet.
+            </span>
+          )}
           {(isCompound || isUncompound) && (
             <a
               href="https://docs.sendnodes.io/"
@@ -399,19 +407,13 @@ export default function StakeSignTransaction(): ReactElement {
               </span>
             </a>
           )}
-          {isCompound && <span>Rewards will be automatically staked.</span>}
-          {isUncompound && (
-            <span>
-              Rewards will no longer be automatically staked and instead sent to
-              your wallet.
-            </span>
-          )}
         </p>
       </div>
       <div className="mt-3 sm:mt-4 relative">
         <small className="font-light mb-2 inline-block">
           TX Fee:{" "}
-          {formatFixed(networkFee, currentAccount.network.baseAsset.decimals)}
+          {formatFixed(networkFee, currentAccount.network.baseAsset.decimals)}{" "}
+          {currentAccount.network.baseAsset.symbol}
         </small>
         <SharedButton
           size="medium"

@@ -309,7 +309,12 @@ function StakeTransactionItem({ color, Icon, tx }: StakeTransactionItemProps) {
           <div className="flex-1 ml-4 sm:ml-6">
             <div className="flex items-center justify-between">
               <p className="text-sm sm:text-lg font-medium text-white truncate">
-                {!(isUncompound || isCompound) && capitalize(tx.action)}
+                {!(isUncompound || isCompound) &&
+                  isStake &&
+                  `${tx.reward ? "Reward" : ""} ${capitalize(tx.action)}`}
+                {!(isUncompound || isCompound) &&
+                  !isStake &&
+                  capitalize(tx.action)}
                 {isCompound && "Enable Compound "}
                 {isUncompound && `Disable Compound`}
               </p>
@@ -358,7 +363,7 @@ function StakeTransactionItem({ color, Icon, tx }: StakeTransactionItemProps) {
                     {tx.hash.substring(tx.hash.length - 4, tx.hash.length)}
                   </span>
                 </div>
-                {isStake && tx.reward && (
+                {isStake && tx.compound && (
                   <div className="mt-2 flex items-center text-sm text-spanish-gray sm:mt-0 ">
                     <div
                       className={clsx(
@@ -369,7 +374,7 @@ function StakeTransactionItem({ color, Icon, tx }: StakeTransactionItemProps) {
                         mask-image: url("../../public/images/rewards@2x.png");
                       `}
                     />
-                    <span>Compounded</span>
+                    <span>Compounding</span>
                   </div>
                 )}
               </div>
