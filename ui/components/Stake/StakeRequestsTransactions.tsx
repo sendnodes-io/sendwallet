@@ -172,7 +172,7 @@ export default function StakeRequestsTransactions(): ReactElement {
     (tx) => tx.hash
   ) as SnTransaction[]
 
-  // enrich all staking request txs with the status of the unstake receipt tx
+  // enrich all unstaking requests with the status of the unstake receipt tx
   allTransactions.forEach((tx) => {
     if (tx.action === SnAction.UNSTAKE && isEmpty(tx.unstakeStatus)) {
       tx.unstakeStatus = "requested"
