@@ -375,16 +375,14 @@ export default function StakeSignTransaction(): ReactElement {
         <p className="text-sm text-spanish-gray text-center ">
           {isStake && (
             <span>
-              It takes around 24 hours (or exactly{" "}
-              {avgBlocksPerDay * estimatedDays} blocks) for your POKT to become
-              staked and start earning rewards.
+              It takes 24 hours for your POKT to become staked and start earning
+              rewards.
             </span>
           )}
           {isUnstake && (
             <span>
-              It takes around 21 days (or exactly{" "}
-              {avgBlocksPerDay * estimatedDays} blocks) for your POKT to become
-              unstaked. You stop earning rewards on this amount immediately.
+              It takes 21 days for your POKT to become unstaked. You stop
+              earning rewards on this amount immediately.
             </span>
           )}
 

@@ -48,6 +48,7 @@ import { isEqual } from "lodash"
 import usePocketNetworkFee from "../../hooks/pocket-network/use-network-fee"
 import StakePausedModal from "./StakePausedModal"
 import StatAPY from "./Stat/StatAPY"
+import { useStakingTotalStakedBalance } from "../../hooks/staking-hooks/use-staking-total-staked-balance"
 
 export default function SendStake(): ReactElement {
   const location = useLocation<FungibleAsset>()
@@ -73,6 +74,7 @@ export default function SendStake(): ReactElement {
     selectMainCurrencySymbol,
     isEqual
   )
+  const totalStakedBalance = useStakingTotalStakedBalance()
   const {
     data: stakingPoktParamsData,
     isLoading: isStakingPoktParamsLoading,
@@ -201,9 +203,9 @@ export default function SendStake(): ReactElement {
   const isAmountLessThanStakeMin =
     !amount ||
     isNaN(Number(amount)) ||
-    parseFixed(amount, selectedAsset.decimals).lt(
-      BigNumber.from(stakingPoktParamsData!.stakingMinAmount)
-    )
+    parseFixed(amount, selectedAsset.decimals)
+      .add(totalStakedBalance ?? 0)
+      .lt(BigNumber.from(stakingPoktParamsData!.stakingMinAmount))
 
   return (
     <div className="grow h-full relative">
@@ -227,6 +229,15 @@ export default function SendStake(): ReactElement {
             assetsAndAmounts={fungibleAssetAmounts}
             disableDropdown={true}
             isDisabled={!stakingPoktParamsData?.stakingEnabled}
+            validateAmount={(amount) => {
+              if (
+                BigNumber.from(amount).lt(
+                  parseFixed("1", selectedAsset.decimals)
+                )
+              ) {
+                throw new Error("Amount must be greater than 1")
+              }
+            }}
             onAmountChange={(value, errorMessage) => {
               // truncate to selected asset decimals
               try {
