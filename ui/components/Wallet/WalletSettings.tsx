@@ -45,14 +45,30 @@ export default function () {
           <li>
             <a target="_blank" href="https://discord.gg/Gh76tPkjTn">
               <div className="icon">
-                <Icon
-                  width="1.5rem"
-                  height="1.5rem"
-                  icon="clarity:bubble-exclamation-line"
-                />
+                <Icon icon="simple-icons:discord" className="w-6 h-6" />
               </div>
               <div>
-                <h3>Send Feedback</h3>
+                <h3>Discord</h3>
+              </div>
+            </a>
+          </li>
+          <li>
+            <a target="_blank" href="https://t.me/poktwallet">
+              <div className="icon">
+                <Icon icon="uit:telegram-alt" className="w-6 h-6" />
+              </div>
+              <div>
+                <h3>Telegram</h3>
+              </div>
+            </a>
+          </li>
+          <li>
+            <a target="_blank" href="https://github.com/sendnodes-io">
+              <div className="icon">
+                <Icon icon="akar-icons:github-fill" className="w-6 h-6" />
+              </div>
+              <div>
+                <h3>Github</h3>
               </div>
             </a>
           </li>
