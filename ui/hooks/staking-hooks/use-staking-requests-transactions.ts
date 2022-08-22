@@ -1,7 +1,11 @@
 import useSWR from "swr"
 import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts"
 import { lowerCase } from "lodash"
-import { ISnTransactionFormatted, SENDNODES_ONCHAIN_API_URL } from "./constants"
+import {
+  ISnTransactionFormatted,
+  SENDNODES_ONCHAIN_API_URL,
+  SnAction,
+} from "./constants"
 
 export function useStakingRequestsTransactions(
   addressOnNetwork: AddressOnNetwork
@@ -49,11 +53,12 @@ export function useStakingRequestsTransactions(
   )
 
   return {
-    data: data?.filter(
-      (user: any) =>
-        lowerCase(user.userWalletAddress) ===
-        lowerCase(addressOnNetwork.address)
-    ),
+    data:
+      data?.filter(
+        (user: any) =>
+          lowerCase(user.userWalletAddress) ===
+          lowerCase(addressOnNetwork.address)
+      ) ?? [],
     isLoading: !error && !data,
     isError: error,
   }

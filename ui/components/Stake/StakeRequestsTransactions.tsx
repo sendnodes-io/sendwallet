@@ -2,14 +2,13 @@ import React, { ReactElement, useEffect, useState } from "react"
 import {
   selectBlockExplorerForTxHash,
   selectCurrentAccount,
-  selectCurrentAccountActivitiesWithTimestamps,
 } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
 
 import { useBackgroundSelector, useAreKeyringsUnlocked } from "../../hooks"
 import SharedSplashScreen from "../Shared/SharedSplashScreen"
 import { InformationCircleIcon } from "@heroicons/react/outline"
 
-import { capitalize, isEqual, uniqBy } from "lodash"
+import { camelCase, isEmpty, isEqual, startCase, uniqBy } from "lodash"
 import { useStakingRequestsTransactions } from "../../hooks/staking-hooks/use-staking-requests-transactions"
 import clsx from "clsx"
 import { Link } from "react-router-dom"
@@ -39,8 +38,14 @@ dayjs.extend(utc.default)
 const snActionBg = {
   [SnAction.COMPOUND]: "text-white",
   [SnAction.STAKE]: "bg-aqua",
-  [SnAction.UNSTAKE]: "bg-white bg-opacity-75",
+  [SnAction.UNSTAKE]: "bg-white bg-opacity-50",
+  [SnAction.UNSTAKE_RECEIPT]: "bg-white",
   [SnAction.REWARD]: "bg-aqua",
+}
+
+type SnTransaction = ISnTransactionFormatted & {
+  unstakeStatus: "requested" | "filled"
+  unstakeReceiptAt?: string
 }
 
 const snActionIcon: Record<SnAction, (props: any) => JSX.Element> = {
@@ -75,6 +80,20 @@ const snActionIcon: Record<SnAction, (props: any) => JSX.Element> = {
     ></div>
   ),
   [SnAction.UNSTAKE]: ({
+    className,
+    pending,
+  }: {
+    className: string
+    pending: boolean
+  }) => (
+    <div
+      className={clsx(className, "icon-mask", { "bg-orange-500": pending })}
+      css={`
+        mask-image: url("../../public/images/unstake@2x.png");
+      `}
+    />
+  ),
+  [SnAction.UNSTAKE_RECEIPT]: ({
     className,
     pending,
   }: {
@@ -151,7 +170,26 @@ export default function StakeRequestsTransactions(): ReactElement {
       ),
     ],
     (tx) => tx.hash
-  )
+  ) as SnTransaction[]
+
+  // enrich all unstaking requests with the status of the unstake receipt tx
+  allTransactions.forEach((tx) => {
+    if (tx.action === SnAction.UNSTAKE && isEmpty(tx.unstakeStatus)) {
+      tx.unstakeStatus = "requested"
+      return true
+    }
+
+    const isUnstakeReceipt = tx.action === SnAction.UNSTAKE_RECEIPT
+    const unstakeReceiptHash = isUnstakeReceipt && tx.memo?.split(":")[1]
+    const unstakeRequest = allTransactions.find(
+      (tx) => tx.hash === unstakeReceiptHash
+    )
+    if (unstakeRequest) {
+      unstakeRequest.unstakeStatus = "filled"
+      unstakeRequest.unstakeReceiptAt = tx.timestamp
+    }
+    return
+  })
 
   return (
     <div className="w-full grow">
@@ -234,7 +272,7 @@ export default function StakeRequestsTransactions(): ReactElement {
 type StakeTransactionItemProps = {
   color: string
   Icon: (props: any) => JSX.Element
-  tx: ISnTransactionFormatted
+  tx: SnTransaction
 }
 
 function StakeTransactionItem({ color, Icon, tx }: StakeTransactionItemProps) {
@@ -262,9 +300,15 @@ function StakeTransactionItem({ color, Icon, tx }: StakeTransactionItemProps) {
     tx.action === SnAction.COMPOUND && tx.memo?.split(":")[1] === "true"
   const isUncompound =
     tx.action === SnAction.COMPOUND && tx.memo?.split(":")[1] === "false"
+  const isCompoundUpdate = isUncompound || isCompound
   const isRewards = tx.action === SnAction.REWARD
   const isStake = tx.action === SnAction.STAKE
   const isUnstake = tx.action === SnAction.UNSTAKE
+  const isUnstakeReceipt = tx.action === SnAction.UNSTAKE_RECEIPT
+  const unstakeReceiptHash = isUnstakeReceipt && tx.memo?.split(":")[1]
+  const unstakeReceiptAt = isUnstake && tx.unstakeReceiptAt
+  if (unstakeReceiptAt) timestamp = dayjs.utc(unstakeReceiptAt) // use the timestamp of the unstake receipt
+  const humanReadableAction = startCase(camelCase(tx.action))
 
   if (!isPending && isStake) {
     timestamp = rewardTimestamp
@@ -309,17 +353,15 @@ function StakeTransactionItem({ color, Icon, tx }: StakeTransactionItemProps) {
           <div className="flex-1 ml-4 sm:ml-6">
             <div className="flex items-center justify-between">
               <p className="text-sm sm:text-lg font-medium text-white truncate">
-                {!(isUncompound || isCompound) &&
+                {!isCompoundUpdate &&
                   isStake &&
-                  `${tx.reward ? "Reward" : ""} ${capitalize(tx.action)}`}
-                {!(isUncompound || isCompound) &&
-                  !isStake &&
-                  capitalize(tx.action)}
+                  `${tx.reward ? "Reward" : ""} ${humanReadableAction}`}
+                {!isCompoundUpdate && !isStake && humanReadableAction}
                 {isCompound && "Enable Compound "}
                 {isUncompound && `Disable Compound`}
               </p>
               <div className="ml-2 flex-shrink-0 flex">
-                {!(isUncompound || isCompound) && (
+                {!isCompoundUpdate && (
                   <div
                     title={formatFixed(
                       amount,
@@ -377,6 +419,19 @@ function StakeTransactionItem({ color, Icon, tx }: StakeTransactionItemProps) {
                     <span>Compounding</span>
                   </div>
                 )}
+                {isUnstakeReceipt &&
+                  unstakeReceiptHash &&
+                  !isEmpty(unstakeReceiptHash) && (
+                    <div className="mt-2 flex items-center text-sm text-spanish-gray sm:mt-0 ">
+                      <span title={unstakeReceiptHash}>
+                        Original tx: {unstakeReceiptHash.substring(0, 4)}...
+                        {unstakeReceiptHash.substring(
+                          unstakeReceiptHash.length - 4,
+                          unstakeReceiptHash.length
+                        )}{" "}
+                      </span>
+                    </div>
+                  )}
               </div>
               <div className="mt-2 flex items-center text-sm text-spanish-gray sm:mt-0">
                 <p className="group">
@@ -387,7 +442,7 @@ function StakeTransactionItem({ color, Icon, tx }: StakeTransactionItemProps) {
                       (earningRewards
                         ? "earning rewards since "
                         : "rewards start (estimated) ")}
-                    {!isPending && isUnstake && "unstaked since "}
+                    {!isPending && isUnstake && ` ${tx.unstakeStatus} since `}
                     <time
                       dateTime={timestamp.format("YYYY-MM-DD HH:mm:ss [UTC]")}
                       title={timestamp.format("YYYY-MM-DD HH:mm:ss [UTC]")}
