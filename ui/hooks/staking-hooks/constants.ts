@@ -3,6 +3,7 @@ export const SENDNODES_ONCHAIN_API_URL =
 export enum SnAction {
   STAKE = "STAKE",
   UNSTAKE = "UNSTAKE",
+  UNSTAKE_RECEIPT = "UNSTAKE_RECEIPT",
   COMPOUND = "COMPOUND",
   REWARD = "REWARD",
 }
@@ -16,7 +17,7 @@ export interface ISnTransactionFormatted {
   memo: string
   amount: string | null
   action: SnAction
-  compound: boolean
+  compound: boolean | null
   reward: boolean
   timestamp: string
 }
