@@ -10,7 +10,7 @@ export default function DisclaimerAPY({
     <div className="absolute flex items-center justify-center -top-6 left-0 right-0 whitespace-nowrap text-xs">
       <div className="relative flex flex-col items-center group">
         <a
-          href="https://docs.sendnodes.io/"
+          href="https://docs.sendnodes.io/sendnodes/start-here/frequently-asked-questions/all-about-rewards"
           target="_blank"
           rel="noopener noreferrer"
         >

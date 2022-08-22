@@ -397,7 +397,7 @@ export default function StakeSignTransaction(): ReactElement {
           )}
           {(isCompound || isUncompound) && (
             <a
-              href="https://docs.sendnodes.io/"
+              href="https://docs.sendnodes.io/sendnodes/start-here/frequently-asked-questions/all-about-rewards"
               target="_blank"
               rel="noopener noreferrer"
             >
