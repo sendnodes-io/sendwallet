@@ -1,5 +1,4 @@
 import {
-  ActivityItem,
   EVMActivityItem,
   POKTActivityItem,
 } from "@sendnodes/pokt-wallet-background/redux-slices/activities"
@@ -12,6 +11,9 @@ import {
 } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
 import { useBackgroundSelector } from "../../hooks"
 import classNames from "clsx"
+import useStakingAllTransactions from "../../hooks/staking-hooks/use-staking-all-transactions"
+import { StakeTransactionInfo } from "../Stake/StakeRequestsTransactions"
+import WalletStakeTransactionSendDetail from "../Wallet/WalletStakeTransactionSendDetail"
 
 export type TransactionDetailSlideUpMenuBodyProps = {
   activity: POKTActivityItem | EVMActivityItem
@@ -20,6 +22,11 @@ export type TransactionDetailSlideUpMenuBodyProps = {
 export default function TransactionDetailSlideUpMenuBody({
   activity,
 }: TransactionDetailSlideUpMenuBodyProps): ReactElement {
+  const { data: allStakingTransactions } = useStakingAllTransactions()
+
+  const stakingTransaction = allStakingTransactions.find(
+    (tx) => tx.hash === activity.hash
+  )
   const blockExplorerUrl = useBackgroundSelector((_) =>
     selectBlockExplorerForTxHash({
       network: activity.network,
@@ -47,7 +54,18 @@ export default function TransactionDetailSlideUpMenuBody({
 
   return (
     <div className="tx_detail_wrap">
-      <TransactionSendDetail transaction={currentActivity} />
+      {stakingTransaction && (
+        <StakeTransactionInfo transaction={stakingTransaction}>
+          {(stakingTransaction) => (
+            <WalletStakeTransactionSendDetail
+              transaction={stakingTransaction}
+            />
+          )}
+        </StakeTransactionInfo>
+      )}
+      {!stakingTransaction && (
+        <TransactionSendDetail transaction={currentActivity} />
+      )}
       <div
         className={classNames("detail_items_wrap width_full", {
           has_memo: !!memo,

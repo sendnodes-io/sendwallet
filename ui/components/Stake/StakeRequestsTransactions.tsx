@@ -183,7 +183,7 @@ type StakeTransactionItemProps = {
   tx: SnTransaction
 }
 
-type StakeTransactionItemState = {
+export type StakeTransactionItemState = {
   latestBlock?: POKTWatchBlock
   currentAccount: AddressOnNetwork
   blockExplorerUrl: string
@@ -205,15 +205,19 @@ type StakeTransactionItemState = {
   amount: BigNumber
   color: string
   Icon: (props: any) => JSX.Element
+  signer: string
+  userWalletAddress: string
+  height: string
+  hash: string
 }
 
 type StakeTransactionInfoProps = {
-  tx: SnTransaction
+  transaction: SnTransaction
   children: (props: StakeTransactionItemState) => JSX.Element
 }
 
 export function StakeTransactionInfo({
-  tx,
+  transaction: tx,
   children,
 }: StakeTransactionInfoProps) {
   const { latestBlock } = usePoktWatchLatestBlock()
@@ -248,7 +252,13 @@ export function StakeTransactionInfo({
   const unstakeReceiptHash = isUnstakeReceipt && tx.memo?.split(":")[1]
   const unstakeReceiptAt = isUnstake && tx.unstakeReceiptAt
   if (unstakeReceiptAt) timestamp = dayjs.utc(unstakeReceiptAt) // use the timestamp of the unstake receipt
-  const humanReadableAction = startCase(camelCase(tx.action))
+  let humanReadableAction = startCase(camelCase(tx.action))
+  if (isCompoundUpdate && isCompound) {
+    humanReadableAction = "Enable Compound"
+  }
+  if (isCompoundUpdate && isUncompound) {
+    humanReadableAction = "Disable Compound"
+  }
 
   if (!isPending && isStake) {
     timestamp = rewardTimestamp
@@ -291,12 +301,16 @@ export function StakeTransactionInfo({
     amount,
     color: snActionBg[tx.action],
     Icon: snActionIcon[tx.action],
+    signer: tx.signer,
+    userWalletAddress: tx.userWalletAddress,
+    height: tx.height,
+    hash: tx.hash,
   })
 }
 
 function StakeTransactionItem({ tx }: StakeTransactionItemProps) {
   return (
-    <StakeTransactionInfo tx={tx}>
+    <StakeTransactionInfo transaction={tx}>
       {({
         latestBlock,
         currentAccount,
@@ -345,8 +359,7 @@ function StakeTransactionItem({ tx }: StakeTransactionItemProps) {
                       isStake &&
                       `${tx.reward ? "Reward" : ""} ${humanReadableAction}`}
                     {!isCompoundUpdate && !isStake && humanReadableAction}
-                    {isCompound && "Enable Compound "}
-                    {isUncompound && `Disable Compound`}
+                    {isCompoundUpdate && humanReadableAction}
                   </p>
                   <div className="ml-2 flex-shrink-0 flex">
                     {!isCompoundUpdate && (

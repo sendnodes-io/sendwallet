@@ -15,9 +15,10 @@ import getTransactionResult, {
 import { formatFixed } from "@ethersproject/bignumber"
 import useStakingAllTransactions from "../../hooks/staking-hooks/use-staking-all-transactions"
 import { StakeTransactionInfo } from "../Stake/StakeRequestsTransactions"
+import TransactionDetailSlideUpMenuBody from "../TransactionDetail/TransactionDetailSlideUpMenuBody"
+import SharedSlideUpMenu from "../Shared/SharedSlideUpMenu"
 
 interface Props {
-  onClick: () => void
   activity: ActivityItem
   asAccount: string
 }
@@ -62,8 +63,9 @@ function WalletActivityListIcon({
 }
 
 export default function WalletActivityListItem(props: Props): ReactElement {
+  const [isOpen, setIsOpen] = React.useState(false)
   const { data: allStakingTransactions } = useStakingAllTransactions()
-  const { onClick, activity, asAccount } = props
+  const { activity, asAccount } = props
   const { network } = activity
 
   let from
@@ -179,34 +181,57 @@ export default function WalletActivityListItem(props: Props): ReactElement {
   }
 
   return stakingTransaction ? (
-    <StakeTransactionInfo tx={stakingTransaction}>
+    <StakeTransactionInfo transaction={stakingTransaction}>
       {(stakingTransaction) => (
-        <WalletActivityListItemComponent
-          status={txResult.status}
-          onClick={onClick}
-          activity={activity}
-          renderDetails={{
-            ...renderDetails,
-            icon: () => (
-              <stakingTransaction.Icon
-                pending={txResult.status === "pending"}
-                className={clsx("h-5 w-5", "bg-white", {
-                  uncompound: stakingTransaction.isUncompound,
-                })}
-                aria-hidden="true"
-              />
-            ),
-          }}
-        />
+        <>
+          <WalletActivityListItemComponent
+            status={txResult.status}
+            onClick={() => setIsOpen(true)}
+            activity={activity}
+            renderDetails={{
+              ...renderDetails,
+              icon: () => (
+                <stakingTransaction.Icon
+                  pending={txResult.status === "pending"}
+                  className={clsx("h-5 w-5", stakingTransaction.color, {
+                    uncompound: stakingTransaction.isUncompound,
+                  })}
+                  aria-hidden="true"
+                />
+              ),
+            }}
+          />
+
+          <SharedSlideUpMenu
+            title={
+              stakingTransaction?.humanReadableAction ?? "Signed Transaction"
+            }
+            isOpen={isOpen}
+            close={() => setIsOpen(false)}
+            size="full"
+          >
+            <TransactionDetailSlideUpMenuBody activity={activity} />
+          </SharedSlideUpMenu>
+        </>
       )}
     </StakeTransactionInfo>
   ) : (
-    <WalletActivityListItemComponent
-      status={txResult.status}
-      renderDetails={renderDetails}
-      activity={activity}
-      onClick={onClick}
-    />
+    <>
+      <WalletActivityListItemComponent
+        status={txResult.status}
+        renderDetails={renderDetails}
+        activity={activity}
+        onClick={() => setIsOpen(true)}
+      />
+      <SharedSlideUpMenu
+        title={"Signed Transaction"}
+        isOpen={isOpen}
+        close={() => setIsOpen(false)}
+        size="full"
+      >
+        <TransactionDetailSlideUpMenuBody activity={activity} />
+      </SharedSlideUpMenu>
+    </>
   )
 }
 

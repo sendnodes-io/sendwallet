@@ -1,16 +1,12 @@
-import React, { ReactElement, useCallback, useEffect, useState } from "react"
-import { setShowingActivityDetail } from "@sendnodes/pokt-wallet-background/redux-slices/ui"
+import React, { ReactElement } from "react"
 import {
   selectBlockExplorerForAddress,
   selectCurrentAccount,
-  selectShowingActivityDetail,
 } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
 import { ActivityItem } from "@sendnodes/pokt-wallet-background/redux-slices/activities"
-import { useBackgroundDispatch, useBackgroundSelector } from "../../hooks"
+import { useBackgroundSelector } from "../../hooks"
 import WalletActivityListItem from "./WalletActivityListItem"
 import css from "styled-jsx/css"
-import TransactionDetailSlideUpMenuBody from "../TransactionDetail/TransactionDetailSlideUpMenuBody"
-import SharedSlideUpMenu from "../Shared/SharedSlideUpMenu"
 import useStakingAllTransactions from "../../hooks/staking-hooks/use-staking-all-transactions"
 import SharedSplashScreen from "../Shared/SharedSplashScreen"
 
@@ -47,38 +43,10 @@ export default function WalletActivityList({
   activities,
 }: Props): ReactElement {
   const { isLoading } = useStakingAllTransactions()
-
-  const dispatch = useBackgroundDispatch()
-  const showingActivityDetail = useBackgroundSelector(
-    selectShowingActivityDetail
-  )
-
-  // Used to fix Tx Details Slide-up menu should close
-  // when extension closes. (#618)
-  const [instantlyHideActivityDetails, setInstantlyHideActivityDetails] =
-    useState(true)
-
-  useEffect(() => {
-    setInstantlyHideActivityDetails(true)
-    dispatch(setShowingActivityDetail(null))
-  }, [dispatch])
-
   const currentAccount = useBackgroundSelector(selectCurrentAccount)
   const blockExplorerUrl = useBackgroundSelector((_) =>
     selectBlockExplorerForAddress(currentAccount)
   )
-
-  const handleOpen = useCallback(
-    (activityItem: ActivityItem) => {
-      setInstantlyHideActivityDetails(false)
-      dispatch(setShowingActivityDetail(activityItem.hash))
-    },
-    [dispatch]
-  )
-
-  const handleClose = useCallback(() => {
-    dispatch(setShowingActivityDetail(null))
-  }, [dispatch])
 
   if (!activities || activities.length === 0)
     return (
@@ -173,22 +141,6 @@ export default function WalletActivityList({
 
   return (
     <>
-      {!instantlyHideActivityDetails && (
-        <SharedSlideUpMenu
-          title={"Signed Transaction"}
-          isOpen={showingActivityDetail !== null}
-          close={handleClose}
-          size="full"
-        >
-          {showingActivityDetail ? (
-            <TransactionDetailSlideUpMenuBody
-              activity={showingActivityDetail}
-            />
-          ) : (
-            <></>
-          )}
-        </SharedSlideUpMenu>
-      )}
       <div className="wrap">
         <div className="row">
           <h2>
@@ -210,9 +162,6 @@ export default function WalletActivityList({
                 if (activityItem) {
                   return (
                     <WalletActivityListItem
-                      onClick={() => {
-                        handleOpen(activityItem)
-                      }}
                       key={activityItem?.hash}
                       activity={activityItem}
                       asAccount={currentAccount.address}
@@ -225,6 +174,7 @@ export default function WalletActivityList({
           )}
         </div>
       </div>
+
       <style jsx>{walletActivityCss}</style>
       <style jsx>
         {`
