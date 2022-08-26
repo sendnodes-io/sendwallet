@@ -8,14 +8,10 @@ import getSnActionFromMemo from "../../helpers/get-sn-action-from-memo"
 import getTransactionResult from "../../helpers/get-transaction-result"
 import { useBackgroundSelector } from "../redux-hooks"
 import { ISnTransactionFormatted, SnAction } from "./constants"
-import { useStakingPoktParams } from "./use-staking-pokt-params"
+import useStakingPoktParams from "./use-staking-pokt-params"
 
 export default function useStakingPendingTransactions() {
-  const currentAccount = useBackgroundSelector(selectCurrentAccount)
-  const { data: stakingPoktParams } = useStakingPoktParams(currentAccount)
-  if (!stakingPoktParams) {
-    return []
-  }
+  const { data: stakingPoktParams } = useStakingPoktParams()
   return (
     useBackgroundSelector(
       selectCurrentAccountActivitiesWithTimestamps,

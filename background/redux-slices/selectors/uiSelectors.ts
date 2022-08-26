@@ -10,48 +10,10 @@ import {
   KOVAN,
   POLYGON,
 } from "../../constants"
-import { Network, NetworkBlockExplorerUrl } from "../../networks"
-import { ActivityItem } from "../activities"
+import { Network } from "../../networks"
 
 // FIXME Make this configurable.
 const hardcodedMainCurrencySymbol = "USD"
-
-export const selectShowingActivityDetail = createSelector(
-  (state: RootState) => state.activities,
-  (state: RootState) => state.ui.showingActivityDetailID,
-  (state: RootState) => {
-    const { network } = state.ui.selectedAccount
-    if (network.family == "POKT" && state.networks.pokt[network.chainID] && state.networks.pokt[network.chainID].blocks)
-      return state.networks.pokt[network.chainID].blocks
-    else if (network.family == "EVM" && state.networks.evm[network.chainID] && state.networks.evm[network.chainID].blocks)
-      return state.networks.evm[network.chainID].blocks
-    else
-      return []
-  },
-  (activities, showingActivityDetailID, blocks) => {
-
-    return showingActivityDetailID === null
-      ? null
-      : Object.values(activities)
-        .map<ActivityItem | undefined>(
-          (accountActivities) =>
-            accountActivities.entities[showingActivityDetailID]
-        )
-        // Filter/slice lets us use map after instead of assigning a var.
-        .filter(
-          (activity): activity is ActivityItem =>
-            typeof activity !== "undefined"
-        )
-        .slice(0, 1)
-        .map((activityItem) => ({
-          ...activityItem,
-          timestamp:
-            activityItem.blockHeight === null
-              ? undefined
-              : blocks[activityItem.blockHeight]?.timestamp,
-        }))[0]
-  }
-)
 
 export const selectCurrentAccount = createSelector(
   (state: RootState) => state.ui.selectedAccount,

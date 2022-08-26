@@ -25,11 +25,7 @@ import { SigningMethod } from "@sendnodes/pokt-wallet-background/utils/signing"
 import { POKTTransactionRequest } from "@sendnodes/pokt-wallet-background/networks"
 import SharedSplashScreen from "../Shared/SharedSplashScreen"
 import { useHistory } from "react-router-dom"
-import {
-  SnAction,
-  useStakingPoktParams,
-  useStakingUserData,
-} from "../../hooks/staking-hooks"
+import { SnAction, useStakingUserData } from "../../hooks/staking-hooks"
 import SharedButton from "../Shared/SharedButton"
 import { capitalize, floor, isEqual } from "lodash"
 import { Dialog } from "@headlessui/react"
@@ -51,6 +47,7 @@ import getSnActionFromMemo from "../../helpers/get-sn-action-from-memo"
 import { usePoktWatchLatestBlock } from "../../hooks/pokt-watch/use-latest-block"
 import usePocketNetworkFee from "../../hooks/pocket-network/use-network-fee"
 import formatTokenAmount from "../../utils/formatTokenAmount"
+import useStakingPoktParams from "../../hooks/staking-hooks/use-staking-pokt-params"
 
 export default function StakeSignTransaction(): ReactElement {
   const history = useHistory()
@@ -74,8 +71,7 @@ export default function StakeSignTransaction(): ReactElement {
     return undefined
   }, isEqual)
 
-  const { isLoading: isStakingPoktParamsLoading } =
-    useStakingPoktParams(currentAccount)
+  const { isLoading: isStakingPoktParamsLoading } = useStakingPoktParams()
 
   const { data: stakingUserData } = useStakingUserData(currentAccount)
   const [isTransactionSigning, setIsTransactionSigning] = useState(false)

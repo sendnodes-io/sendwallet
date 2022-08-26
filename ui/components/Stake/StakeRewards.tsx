@@ -6,7 +6,6 @@ import SharedSplashScreen from "../Shared/SharedSplashScreen"
 import { InformationCircleIcon } from "@heroicons/react/outline"
 
 import { groupBy, isEqual, last, reduce, uniqBy } from "lodash"
-import { useStakingRequestsTransactions } from "../../hooks/staking-hooks/use-staking-requests-transactions"
 import clsx from "clsx"
 import { Link } from "react-router-dom"
 
@@ -18,12 +17,7 @@ import * as updateLocale from "dayjs/plugin/updateLocale"
 import * as localizedFormat from "dayjs/plugin/localizedFormat"
 import * as utc from "dayjs/plugin/utc"
 import * as isSameOrBefore from "dayjs/plugin/isSameOrBefore"
-import {
-  SnAction,
-  useStakingPoktParams,
-  useStakingUserData,
-} from "../../hooks/staking-hooks"
-import { useStakingRewardsTransactions } from "../../hooks/staking-hooks/use-staking-rewards-transactions"
+import { SnAction, useStakingUserData } from "../../hooks/staking-hooks"
 
 import {
   Chart as ChartJS,
@@ -44,6 +38,9 @@ import StatAPY from "./Stat/StatAPY"
 import StatTotalStaked from "./Stat/StatTotalStaked"
 import StatTotalUpcomingRewards from "./Stat/StatTotalUpcomingRewards"
 import StatTotalRewards from "./Stat/StatTotalRewards"
+import useStakingPoktParams from "../../hooks/staking-hooks/use-staking-pokt-params"
+import useStakingRewardsTransactions from "../../hooks/staking-hooks/use-staking-rewards-transactions"
+import useStakingRequestsTransactions from "../../hooks/staking-hooks/use-staking-requests-transactions"
 
 ChartJS.register(
   CategoryScale,
@@ -68,17 +65,17 @@ export default function StakeRewards(): ReactElement {
     data: stakingPoktParams,
     isLoading: isStakingParamsLoading,
     isError: isStakingParamsError,
-  } = useStakingPoktParams(currentAccount)
+  } = useStakingPoktParams()
   const {
     data: rewardsTransactions,
     isLoading: isRewardsTransactionsLoading,
     isError: isRewardsTransactionsError,
-  } = useStakingRewardsTransactions(currentAccount)
+  } = useStakingRewardsTransactions()
   const {
     data: stakingTransactions,
     isLoading: isStakingTransactionsLoading,
     isError: isStakingTransactionsError,
-  } = useStakingRequestsTransactions(currentAccount)
+  } = useStakingRequestsTransactions()
 
   const {
     data: stakingUserData,

@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react"
-import classNames from "clsx"
+import classNames, { clsx } from "clsx"
 import { ActivityItem } from "@sendnodes/pokt-wallet-background/redux-slices/activities"
 import {
   isMaxUint256,
@@ -9,11 +9,16 @@ import { HexString } from "@sendnodes/pokt-wallet-background/types"
 import { getRecipient } from "@sendnodes/pokt-wallet-background/redux-slices/utils/activity-utils"
 import SharedAssetIcon from "../Shared/SharedAssetIcon"
 import formatTokenAmount from "../../utils/formatTokenAmount"
-import getTransactionResult from "../../helpers/get-transaction-result"
+import getTransactionResult, {
+  TransactionStatus,
+} from "../../helpers/get-transaction-result"
 import { formatFixed } from "@ethersproject/bignumber"
+import useStakingAllTransactions from "../../hooks/staking-hooks/use-staking-all-transactions"
+import StakeTransactionInfo from "../Stake/StakeTransactionInfo"
+import TransactionDetailSlideUpMenuBody from "../TransactionDetail/TransactionDetailSlideUpMenuBody"
+import SharedSlideUpMenu from "../Shared/SharedSlideUpMenu"
 
 interface Props {
-  onClick: () => void
   activity: ActivityItem
   asAccount: string
 }
@@ -31,8 +36,36 @@ function isSendActivity(activity: ActivityItem, account: string): boolean {
     : true
 }
 
+type WalletActivityListRenderDetails = {
+  icon: (props: any) => JSX.Element
+  label: string
+  recipient:
+    | {
+        address: HexString | undefined
+        name?: string | undefined
+      }
+    | undefined
+  assetLogoURL: string | undefined
+  assetSymbol: string
+  assetValue: string
+}
+
+function WalletActivityListIcon({
+  label,
+  iconClass,
+}: {
+  label?: string
+  iconClass?: string
+}) {
+  return (
+    <div title={label} className={classNames("activity_icon", iconClass)} />
+  )
+}
+
 export default function WalletActivityListItem(props: Props): ReactElement {
-  const { onClick, activity, asAccount } = props
+  const [isOpen, setIsOpen] = React.useState(false)
+  const { data: allStakingTransactions } = useStakingAllTransactions()
+  const { activity, asAccount } = props
   const { network } = activity
 
   let from
@@ -40,29 +73,26 @@ export default function WalletActivityListItem(props: Props): ReactElement {
   if ("txResult" in activity) from = activity.txResult?.signer
   const txResult = getTransactionResult(activity)
 
-  // TODO Replace this with better conditional rendering.
-  let renderDetails: {
-    iconClass: string | undefined
-    label: string
-    recipient:
-      | {
-          address: HexString | undefined
-          name?: string | undefined
-        }
-      | undefined
-    assetLogoURL: string | undefined
-    assetSymbol: string
-    assetValue: string
-  } = {
-    iconClass: activity.to === asAccount ? "receive_icon" : "send_icon",
-    label:
-      activity.to === asAccount
-        ? txResult.status === "pending"
-          ? "Receiving"
-          : "Received"
-        : txResult.status === "pending"
-        ? "Sending"
-        : "Send",
+  let stakingTransaction = allStakingTransactions.find(
+    (tx) => tx.hash === activity.hash
+  )
+
+  let label =
+    activity.to === asAccount
+      ? txResult.status === "pending"
+        ? "Receiving"
+        : "Received"
+      : txResult.status === "pending"
+      ? "Sending"
+      : "Send"
+  let renderDetails: WalletActivityListRenderDetails = {
+    icon: () => (
+      <WalletActivityListIcon
+        label={label}
+        iconClass={activity.to === asAccount ? "receive_icon" : "send_icon"}
+      />
+    ),
+    label: label,
     recipient: getRecipient(activity),
     assetLogoURL: undefined,
     assetSymbol: activity.asset.symbol,
@@ -80,10 +110,19 @@ export default function WalletActivityListItem(props: Props): ReactElement {
       case "asset-transfer":
         renderDetails = {
           ...renderDetails,
+          icon: () => (
+            <WalletActivityListIcon
+              label={
+                isReceiveActivity(activity, asAccount) ? "Received" : "Send"
+              }
+              iconClass={
+                isReceiveActivity(activity, asAccount)
+                  ? "receive_icon"
+                  : "send_icon"
+              }
+            />
+          ),
           label: isReceiveActivity(activity, asAccount) ? "Received" : "Send",
-          iconClass: isReceiveActivity(activity, asAccount)
-            ? "receive_icon"
-            : "send_icon",
           assetLogoURL: activity.annotation.transactionLogoURL,
           assetSymbol: activity.annotation.assetAmount.asset.symbol,
           assetValue: activity.annotation.assetAmount.localizedDecimalAmount,
@@ -92,7 +131,12 @@ export default function WalletActivityListItem(props: Props): ReactElement {
       case "asset-approval":
         renderDetails = {
           label: "Token approval",
-          iconClass: "approve_icon",
+          icon: () => (
+            <WalletActivityListIcon
+              label={"Token approval"}
+              iconClass={"approve_icon"}
+            />
+          ),
           recipient: {
             address: activity.annotation.spenderAddress,
             name: activity.annotation.spenderName,
@@ -106,7 +150,9 @@ export default function WalletActivityListItem(props: Props): ReactElement {
         break
       case "asset-swap":
         renderDetails = {
-          iconClass: "swap_icon",
+          icon: () => (
+            <WalletActivityListIcon label={"Swap"} iconClass={"swap_icon"} />
+          ),
           label: "Swap",
           recipient: getRecipient(activity),
           assetLogoURL: activity.annotation.transactionLogoURL,
@@ -118,7 +164,12 @@ export default function WalletActivityListItem(props: Props): ReactElement {
       case "contract-interaction":
       default:
         renderDetails = {
-          iconClass: "contract_interaction_icon",
+          icon: () => (
+            <WalletActivityListIcon
+              label={"Contract Interaction"}
+              iconClass={"contract_interaction_icon"}
+            />
+          ),
           label: "Contract Interaction",
           recipient: getRecipient(activity),
           // TODO fall back to the asset URL we have in metadata
@@ -128,16 +179,82 @@ export default function WalletActivityListItem(props: Props): ReactElement {
         }
     }
   }
+
+  return stakingTransaction ? (
+    <StakeTransactionInfo transaction={stakingTransaction}>
+      {(stakingTransaction) => (
+        <>
+          <WalletActivityListItemComponent
+            status={txResult.status}
+            onClick={() => setIsOpen(true)}
+            activity={activity}
+            renderDetails={{
+              ...renderDetails,
+              icon: () => (
+                <stakingTransaction.Icon
+                  pending={txResult.status === "pending"}
+                  className={clsx("h-5 w-5", stakingTransaction.color, {
+                    uncompound: stakingTransaction.isUncompound,
+                  })}
+                  aria-hidden="true"
+                />
+              ),
+            }}
+          />
+
+          <SharedSlideUpMenu
+            title={
+              stakingTransaction?.humanReadableAction ?? "Signed Transaction"
+            }
+            isOpen={isOpen}
+            close={() => setIsOpen(false)}
+            size="full"
+          >
+            <TransactionDetailSlideUpMenuBody activity={activity} />
+          </SharedSlideUpMenu>
+        </>
+      )}
+    </StakeTransactionInfo>
+  ) : (
+    <>
+      <WalletActivityListItemComponent
+        status={txResult.status}
+        renderDetails={renderDetails}
+        activity={activity}
+        onClick={() => setIsOpen(true)}
+      />
+      <SharedSlideUpMenu
+        title={"Signed Transaction"}
+        isOpen={isOpen}
+        close={() => setIsOpen(false)}
+        size="full"
+      >
+        <TransactionDetailSlideUpMenuBody activity={activity} />
+      </SharedSlideUpMenu>
+    </>
+  )
+}
+
+type WalletActivityListItemComponentProps = {
+  status: TransactionStatus
+  onClick: () => void
+  renderDetails: WalletActivityListRenderDetails
+  activity: ActivityItem
+}
+
+function WalletActivityListItemComponent({
+  status,
+  onClick,
+  renderDetails,
+  activity,
+}: WalletActivityListItemComponentProps): ReactElement {
   return (
-    <li className={`${txResult.status}`}>
+    <li className={`${status}`}>
       <button type="button" onClick={onClick}>
         <div className="row">
           <div className="left">
             <div className="activity_icon_wrap">
-              <div
-                title={renderDetails.label}
-                className={classNames("activity_icon", renderDetails.iconClass)}
-              />
+              <renderDetails.icon />
             </div>
 
             <SharedAssetIcon
@@ -150,7 +267,7 @@ export default function WalletActivityListItem(props: Props): ReactElement {
             <div className="amount">{renderDetails.assetValue}</div>
           </div>
           <div className="right">
-            {txResult.status}
+            {status}
             {activity.timestamp ? (
               <>
                 &nbsp;-&nbsp;
@@ -235,7 +352,7 @@ export default function WalletActivityListItem(props: Props): ReactElement {
             color: var(--white);
           }
 
-          button:hover .activity_icon {
+          button:hover :global(.activity_icon) {
             background-color: var(--white);
             border-color: var(--white);
           }
@@ -270,30 +387,30 @@ export default function WalletActivityListItem(props: Props): ReactElement {
             align-items: center;
             justify-content: center;
           }
-          .activity_icon {
+          .activity_icon_wrap :global(.activity_icon) {
             /* background: url("./images/activity_contract_interaction@2x.png"); */
             background-size: cover;
             width: 0.75rem;
             height: 0.75rem;
           }
-          .send_icon,
-          .receive_icon {
+          .activity_icon_wrap :global(.send_icon),
+          .activity_icon_wrap :global(.receive_icon) {
             mask-image: url("./images/send@2x.png");
             mask-size: cover;
             background-color: var(--gray-web-200);
           }
-          .receive_icon {
+          .activity_icon_wrap :global(.receive_icon) {
             transform: rotate(180deg);
           }
-          .approve_icon {
+          .activity_icon_wrap :global(.approve_icon) {
             background: url("./images/activity_approve@2x.png");
             background-size: cover;
           }
-          .swap_icon {
+          .activity_icon_wrap :global(.swap_icon) {
             background: url("./images/activity_swap@2x.png");
             background-size: cover;
           }
-          .contract_interaction_icon {
+          .activity_icon_wrap :global(.contract_interaction_icon) {
             background: url("./images/activity_contract_interaction@2x.png");
             background-size: cover;
           }
