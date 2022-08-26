@@ -36,7 +36,6 @@ export default function SignTransaction(): ReactElement {
     selectIsTransactionLoaded
   )
 
-  const currentAccount = useBackgroundSelector(selectCurrentAccount, isEqual)
   const signerAccountTotal = useBackgroundSelector((state) => {
     if (typeof transactionDetails !== "undefined") {
       return getAccountTotal(state, transactionDetails.from)
