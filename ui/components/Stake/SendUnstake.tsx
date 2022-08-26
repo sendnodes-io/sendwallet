@@ -44,6 +44,7 @@ import StatAPY from "./Stat/StatAPY"
 import StatTotalUnstaked from "./Stat/StatTotalUnstaked"
 import useStakingPendingTransactions from "../../hooks/staking-hooks/use-staking-pending-transactions"
 import useStakingPoktParams from "../../hooks/staking-hooks/use-staking-pokt-params"
+import StatTotalUnstaking from "./Stat/StatTotalUnstaking"
 
 export default function SendUnstake(): ReactElement {
   const history = useHistory()
@@ -218,7 +219,7 @@ export default function SendUnstake(): ReactElement {
       </div>
       <div className="mt-6 flex flex-col mb-6">
         <div className="grid md:grid-cols-8 gap-4 gap-y-12 lg:gap-8">
-          <div className="md:col-span-1" />
+          <StatTotalUnstaking aon={currentAccount} asset={selectedAsset} />
           <StatTotalUnstaked aon={currentAccount} asset={selectedAsset} />
           <StatTotalStaked aon={currentAccount} asset={selectedAsset} />
           <StatAPY aon={currentAccount} asset={selectedAsset} />

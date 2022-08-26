@@ -377,7 +377,7 @@ export default function StakeSignTransaction(): ReactElement {
           )}
           {isUnstake && (
             <span>
-              It takes 21 days for your POKT to become unstaked. You stop
+              It takes 21-24 days for your POKT to become unstaked. You stop
               earning rewards on this amount immediately.
             </span>
           )}
