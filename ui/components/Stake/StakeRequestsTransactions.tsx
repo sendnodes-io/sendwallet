@@ -14,21 +14,10 @@ import { SnTransaction } from "../../hooks/staking-hooks"
 export default function StakeRequestsTransactions(): ReactElement {
   const areKeyringsUnlocked = useAreKeyringsUnlocked(true)
   const {
-    data: stakingPoktParams,
-    isLoading: isStakingParamsLoading,
-    isError: isStakingParamsError,
-  } = useStakingPoktParams(currentAccount)
-  const {
-    data: stakingTransactions,
-    isLoading: isStakingTransactionsLoading,
-    isError: isStakingTransactionsError,
-  } = useStakingRequestsTransactions(currentAccount)
-  const {
-    data: rewardsTransactions,
-    isLoading: isRewardsTransactionsLoading,
-    isError: isRewardsTransactionsError,
-  } = useStakingRewardsTransactions(currentAccount)
-  const pendingTransactions = useStakingPendingTransactions()
+    data: allTransactions,
+    isLoading,
+    isError,
+  } = useStakingAllTransactions()
 
   if (isError) throw isError
   if (!areKeyringsUnlocked || isLoading) {
