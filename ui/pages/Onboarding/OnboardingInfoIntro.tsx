@@ -54,7 +54,7 @@ const OnboardingIntroStep2 = (
     </h1>
     <p>
       Some of the best devs and designers contributing to the Pocket Ecosystem.
-      Open-source (after beta).
+      Open-source.
     </p>
     <style jsx global>
       {`
@@ -78,36 +78,36 @@ const OnboardingIntroStep2 = (
   </>
 )
 
-const OnboardingIntroStep3 = (
-  <>
-    <h1>
-      Test <span>responsibly</span>
-    </h1>
-    <p>
-      POKT Wallet is a work in progess!
-      <br />
-      This beta version includes
-      <br />
-      limited features & may have bugs.
-    </p>
-    <style jsx global>
-      {`
-        .illustration_section {
-          justify-content: center;
-        }
-        .illustration {
-          background-image: url("./images/onboarding/step-3@4x.png");
-          width: 232px;
-          height: 212px;
-          margin: auto;
-        }
-        p {
-          padding-bottom: 1rem;
-        }
-      `}
-    </style>
-  </>
-)
+// const OnboardingIntroStep3 = (
+//   <>
+//     <h1>
+//       Test <span>responsibly</span>
+//     </h1>
+//     <p>
+//       POKT Wallet is a work in progess!
+//       <br />
+//       This beta version includes
+//       <br />
+//       limited features & may have bugs.
+//     </p>
+//     <style jsx global>
+//       {`
+//         .illustration_section {
+//           justify-content: center;
+//         }
+//         .illustration {
+//           background-image: url("./images/onboarding/step-3@4x.png");
+//           width: 232px;
+//           height: 212px;
+//           margin: auto;
+//         }
+//         p {
+//           padding-bottom: 1rem;
+//         }
+//       `}
+//     </style>
+//   </>
+// )
 
 const steps: OnboardingIntroStep[] = [
   {
@@ -116,12 +116,12 @@ const steps: OnboardingIntroStep[] = [
   },
   {
     content: OnboardingIntroStep2,
-    buttonCopy: "CONTINUE",
-  },
-  {
-    content: OnboardingIntroStep3,
     buttonCopy: "GET STARTED",
   },
+  // {
+  //   content: OnboardingIntroStep3,
+  //   buttonCopy: "GET STARTED",
+  // },
 ]
 
 export default function OnboardingInfoIntro(): ReactElement {
@@ -162,7 +162,7 @@ export default function OnboardingInfoIntro(): ReactElement {
         </SharedButton>
         <div className="spacing" />
         <SharedProgressIndicator
-          numberOfSteps={3}
+          numberOfSteps={2}
           activeStep={activeStep}
           onProgressStepClicked={(step) => {
             setActiveStep(step)
