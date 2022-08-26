@@ -22,10 +22,10 @@ import { SigningMethod } from "@sendnodes/pokt-wallet-background/utils/signing"
 import { POKTTransactionRequest } from "@sendnodes/pokt-wallet-background/networks"
 import SharedSplashScreen from "../components/Shared/SharedSplashScreen"
 import { Redirect, useHistory } from "react-router-dom"
-import { useStakingPoktParams } from "../hooks/staking-hooks"
 import SharedButton from "../components/Shared/SharedButton"
 import { browser } from "@sendnodes/pokt-wallet-background"
 import { isEqual } from "lodash"
+import useStakingPoktParams from "../hooks/staking-hooks/use-staking-pokt-params"
 
 export default function SignTransaction(): ReactElement {
   const history = useHistory()
@@ -44,7 +44,7 @@ export default function SignTransaction(): ReactElement {
     return undefined
   }, isEqual)
 
-  const { data: stakingPoktData } = useStakingPoktParams(currentAccount)
+  const { data: stakingPoktData } = useStakingPoktParams()
 
   const [isTransactionSigning, setIsTransactionSigning] = useState(false)
 

@@ -8,8 +8,7 @@ import { useBackgroundSelector, useAreKeyringsUnlocked } from "../../hooks"
 import SharedSplashScreen from "../Shared/SharedSplashScreen"
 import { InformationCircleIcon } from "@heroicons/react/outline"
 
-import { camelCase, isEmpty, isEqual, startCase, uniqBy } from "lodash"
-import { useStakingRequestsTransactions } from "../../hooks/staking-hooks/use-staking-requests-transactions"
+import { camelCase, isEmpty, isEqual, startCase } from "lodash"
 import clsx from "clsx"
 import { Link } from "react-router-dom"
 import { DownloadIcon, UploadIcon } from "@heroicons/react/solid"
@@ -20,17 +19,12 @@ import * as relativeTime from "dayjs/plugin/relativeTime"
 import * as updateLocale from "dayjs/plugin/updateLocale"
 import * as localizedFormat from "dayjs/plugin/localizedFormat"
 import * as utc from "dayjs/plugin/utc"
-import {
-  ISnTransactionFormatted,
-  SnAction,
-  useStakingPoktParams,
-} from "../../hooks/staking-hooks"
+import { SnAction, SnTransaction } from "../../hooks/staking-hooks"
 import { usePoktWatchLatestBlock } from "../../hooks/pokt-watch/use-latest-block"
-import { useStakingRewardsTransactions } from "../../hooks/staking-hooks/use-staking-rewards-transactions"
 import formatTokenAmount from "../../utils/formatTokenAmount"
-import useStakingPendingTransactions from "../../hooks/staking-hooks/use-staking-pending-transactions"
 import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts"
 import { POKTWatchBlock } from "@sendnodes/pokt-wallet-background/services/chain/utils"
+import useStakingAllTransactions from "../../hooks/staking-hooks/use-staking-all-transactions"
 
 dayjs.extend(updateLocale.default)
 dayjs.extend(localizedFormat.default)
@@ -43,11 +37,6 @@ const snActionBg = {
   [SnAction.UNSTAKE]: "bg-white bg-opacity-50",
   [SnAction.UNSTAKE_RECEIPT]: "bg-white",
   [SnAction.REWARD]: "bg-aqua",
-}
-
-type SnTransaction = ISnTransactionFormatted & {
-  unstakeStatus: "requested" | "filled"
-  unstakeReceiptAt?: string
 }
 
 const snActionIcon: Record<SnAction, (props: any) => JSX.Element> = {
@@ -127,71 +116,20 @@ const snActionIcon: Record<SnAction, (props: any) => JSX.Element> = {
 
 export default function StakeRequestsTransactions(): ReactElement {
   const areKeyringsUnlocked = useAreKeyringsUnlocked(true)
-  const currentAccount = useBackgroundSelector(selectCurrentAccount, isEqual)
   const {
-    data: stakingPoktParams,
-    isLoading: isStakingParamsLoading,
-    isError: isStakingParamsError,
-  } = useStakingPoktParams(currentAccount)
-  const {
-    data: stakingTransactions,
-    isLoading: isStakingTransactionsLoading,
-    isError: isStakingTransactionsError,
-  } = useStakingRequestsTransactions(currentAccount)
-  const {
-    data: rewardsTransactions,
-    isLoading: isRewardsTransactionsLoading,
-    isError: isRewardsTransactionsError,
-  } = useStakingRewardsTransactions(currentAccount)
-  const pendingTransactions = useStakingPendingTransactions()
+    data: allTransactions,
+    isLoading,
+    isError,
+  } = useStakingAllTransactions()
 
-  if (isStakingParamsError) throw isStakingParamsError
-  if (isRewardsTransactionsError) throw isRewardsTransactionsError
-  if (isStakingTransactionsError) throw isStakingTransactionsError
-
-  if (
-    !areKeyringsUnlocked ||
-    isStakingParamsLoading ||
-    isStakingTransactionsLoading ||
-    isRewardsTransactionsLoading
-  ) {
+  if (isError) throw isError
+  if (!areKeyringsUnlocked || isLoading) {
     return (
       <div className="grow w-full relative flex flex-col justify-center items-center">
         <SharedSplashScreen />
       </div>
     )
   }
-
-  const allTransactions = uniqBy(
-    [
-      ...pendingTransactions,
-      ...[...(stakingTransactions ?? []), ...(rewardsTransactions ?? [])].sort(
-        (a, b) => {
-          return dayjs.utc(b.timestamp).unix() - dayjs.utc(a.timestamp).unix()
-        }
-      ),
-    ],
-    (tx) => tx.hash
-  ) as SnTransaction[]
-
-  // enrich all staking request txs with the status of the unstake receipt tx
-  allTransactions.forEach((tx) => {
-    if (tx.action === SnAction.UNSTAKE && isEmpty(tx.unstakeStatus)) {
-      tx.unstakeStatus = "requested"
-      return true
-    }
-
-    const isUnstakeReceipt = tx.action === SnAction.UNSTAKE_RECEIPT
-    const unstakeReceiptHash = isUnstakeReceipt && tx.memo?.split(":")[1]
-    const unstakeRequest = allTransactions.find(
-      (tx) => tx.hash === unstakeReceiptHash
-    )
-    if (unstakeRequest) {
-      unstakeRequest.unstakeStatus = "filled"
-      unstakeRequest.unstakeReceiptAt = tx.timestamp
-    }
-    return
-  })
 
   return (
     <div className="w-full grow">

@@ -21,3 +21,8 @@ export interface ISnTransactionFormatted {
   reward: boolean
   timestamp: string
 }
+
+export type SnTransaction = ISnTransactionFormatted & {
+  unstakeStatus: "requested" | "filled"
+  unstakeReceiptAt?: string
+}

@@ -12,7 +12,6 @@ import Snackbar from "../Snackbar/Snackbar"
 import { useHistory, Link, useLocation } from "react-router-dom"
 import { MenuIcon, XIcon } from "@heroicons/react/outline"
 
-import { SpeakerphoneIcon } from "@heroicons/react/outline"
 import SharedSplashScreen from "../Shared/SharedSplashScreen"
 import { isEqual } from "lodash"
 import SharedAddress from "../Shared/SharedAddress"
@@ -22,8 +21,8 @@ import { css, stylesheet } from "astroturf"
 import StakeSignTransaction from "../Stake/StakeSignTransaction"
 import { selectTransactionData } from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction"
 
-import { useStakingPoktParams } from "../../hooks/staking-hooks"
 import Footer from "../Stake/Footer"
+import useStakingPoktParams from "../../hooks/staking-hooks/use-staking-pokt-params"
 
 const sidebarIconCss = css`
   mask-size: cover;
@@ -278,11 +277,7 @@ export default function CoreStakePage(props: Props): ReactElement {
     getCurrentAccountState,
     isEqual
   )
-  const {
-    data: stakingPoktParams,
-    isLoading,
-    isError,
-  } = useStakingPoktParams(currentAccount)
+  const { data: stakingPoktParams, isLoading, isError } = useStakingPoktParams()
 
   if (isLoading || currentAccountData === "loading") {
     return (

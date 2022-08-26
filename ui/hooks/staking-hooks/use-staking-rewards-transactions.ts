@@ -1,9 +1,11 @@
 import useSWR from "swr"
 import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts"
 import { ISnTransactionFormatted, SENDNODES_ONCHAIN_API_URL } from "./constants"
-import { lowerCase } from "lodash"
+import { isEqual, lowerCase } from "lodash"
+import { useBackgroundSelector } from "../redux-hooks"
+import { selectCurrentAccount } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
 
-export function useStakingRewardsTransactions(
+export function useStakingRewardsTransactionsForAddress(
   addressOnNetwork: AddressOnNetwork
 ) {
   var raw = JSON.stringify({
@@ -56,5 +58,18 @@ export function useStakingRewardsTransactions(
     ),
     isLoading: !error && !data,
     isError: error,
+  }
+}
+
+export default function useStakingRewardsTransactions() {
+  const currentAccount = useBackgroundSelector(selectCurrentAccount, isEqual)
+
+  const { data, isLoading, isError } =
+    useStakingRewardsTransactionsForAddress(currentAccount)
+
+  return {
+    data,
+    isLoading,
+    isError,
   }
 }

@@ -32,11 +32,7 @@ import {
 import SharedSplashScreen from "../Shared/SharedSplashScreen"
 import formatTokenAmount from "../../utils/formatTokenAmount"
 import { InformationCircleIcon } from "@heroicons/react/solid"
-import {
-  SnAction,
-  useStakingPoktParams,
-  useStakingUserData,
-} from "../../hooks/staking-hooks"
+import { SnAction, useStakingUserData } from "../../hooks/staking-hooks"
 import { BigNumber } from "ethers"
 import { AnyAssetWithOptionalAmount } from "../Shared/SharedAssetItem"
 import { isEqual } from "lodash"
@@ -47,6 +43,7 @@ import usePocketNetworkFee from "../../hooks/pocket-network/use-network-fee"
 import StatAPY from "./Stat/StatAPY"
 import StatTotalUnstaked from "./Stat/StatTotalUnstaked"
 import useStakingPendingTransactions from "../../hooks/staking-hooks/use-staking-pending-transactions"
+import useStakingPoktParams from "../../hooks/staking-hooks/use-staking-pokt-params"
 
 export default function SendUnstake(): ReactElement {
   const history = useHistory()
@@ -62,7 +59,7 @@ export default function SendUnstake(): ReactElement {
     data: stakingPoktParamsData,
     isLoading: isStakingPoktParamsLoading,
     isError: isStakingPoktParamsError,
-  } = useStakingPoktParams(currentAccount)
+  } = useStakingPoktParams()
 
   const {
     data: userStakingData,
