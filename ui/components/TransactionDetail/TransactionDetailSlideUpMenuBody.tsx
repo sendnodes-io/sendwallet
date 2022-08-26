@@ -12,7 +12,7 @@ import {
 import { useBackgroundSelector } from "../../hooks"
 import classNames from "clsx"
 import useStakingAllTransactions from "../../hooks/staking-hooks/use-staking-all-transactions"
-import { StakeTransactionInfo } from "../Stake/StakeRequestsTransactions"
+import StakeTransactionInfo from "../Stake/StakeTransactionInfo"
 import WalletStakeTransactionSendDetail from "../Wallet/WalletStakeTransactionSendDetail"
 
 export type TransactionDetailSlideUpMenuBodyProps = {

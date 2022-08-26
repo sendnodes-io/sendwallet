@@ -1,6 +1,6 @@
 import useSWR from "swr"
 import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts"
-import { SENDNODES_ONCHAIN_API_URL } from "./constants"
+import { fetcher, SENDNODES_ONCHAIN_API_URL } from "./constants"
 import { selectCurrentAccount } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
 import { useBackgroundSelector } from "../redux-hooks"
 
@@ -50,22 +50,9 @@ export function useStakingPoktParamsForAddress(
       `${SENDNODES_ONCHAIN_API_URL}pocket.${addressOnNetwork.network.chainID}`,
       request,
     ],
-    async (url: string, request: RequestInit) => {
-      const response = await window.fetch(url, {
-        headers: { "Content-Type": "application/json" },
-        ...request,
-      })
-
-      if (!response.ok) {
-        throw new Error(
-          "Failed to fetch staking params data: " + response.statusText
-        )
-      } else {
-        return response.json()
-      }
-    },
+    fetcher,
     {
-      refreshInterval: 30 * 1000,
+      refreshInterval: 60 * 1000,
     }
   )
 

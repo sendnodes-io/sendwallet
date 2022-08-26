@@ -17,7 +17,7 @@ import useStakingPoktParams from "../../hooks/staking-hooks/use-staking-pokt-par
 import formatTokenAmount from "../../utils/formatTokenAmount"
 import SharedAddress from "../Shared/SharedAddress"
 import SharedAssetIcon from "../Shared/SharedAssetIcon"
-import { StakeTransactionItemState } from "../Stake/StakeRequestsTransactions"
+import { StakeTransactionItemState } from "../Stake/StakeTransactionInfo"
 
 export type WalletStakeTransactionSendDetailProps = {
   transaction: StakeTransactionItemState

@@ -1,7 +1,12 @@
 import useSWR from "swr"
 import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts"
 import { isEmpty, isEqual, lowerCase } from "lodash"
-import { SENDNODES_ONCHAIN_API_URL, SnAction, SnTransaction } from "./constants"
+import {
+  fetcher,
+  SENDNODES_ONCHAIN_API_URL,
+  SnAction,
+  SnTransaction,
+} from "./constants"
 import { selectCurrentAccount } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
 import { useBackgroundSelector } from "../redux-hooks"
 
@@ -52,31 +57,16 @@ export function useStakingRequestsTransactionsForAddress(
       `${SENDNODES_ONCHAIN_API_URL}pocket.${addressOnNetwork.network.chainID}`,
       request,
     ],
-    async (url: string, request: RequestInit) => {
-      const response = await window.fetch(url, {
-        headers: { "Content-Type": "application/json" },
-        ...request,
-      })
-
-      if (!response.ok) {
-        throw new Error(
-          "Failed to fetch transaction data: " + response.statusText
-        )
-      } else {
-        return response.json()
-      }
-    },
+    fetcher,
     {
-      refreshInterval: 30 * 1000,
+      refreshInterval: 60 * 1000,
     }
   )
 
-  const allTransactions =
-    data?.filter(
-      (user: any) =>
-        lowerCase(user.userWalletAddress) ===
-        lowerCase(addressOnNetwork.address)
-    ) ?? []
+  const allTransactions = (data ?? []).filter(
+    (user: any) =>
+      lowerCase(user.userWalletAddress) === lowerCase(addressOnNetwork.address)
+  )
 
   // enrich all staking request txs with the status of the unstake receipt tx
   allTransactions.forEach((tx) => enrichWithUnstakeInfo(tx, allTransactions))

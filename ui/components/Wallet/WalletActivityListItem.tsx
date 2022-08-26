@@ -14,7 +14,7 @@ import getTransactionResult, {
 } from "../../helpers/get-transaction-result"
 import { formatFixed } from "@ethersproject/bignumber"
 import useStakingAllTransactions from "../../hooks/staking-hooks/use-staking-all-transactions"
-import { StakeTransactionInfo } from "../Stake/StakeRequestsTransactions"
+import StakeTransactionInfo from "../Stake/StakeTransactionInfo"
 import TransactionDetailSlideUpMenuBody from "../TransactionDetail/TransactionDetailSlideUpMenuBody"
 import SharedSlideUpMenu from "../Shared/SharedSlideUpMenu"
 
