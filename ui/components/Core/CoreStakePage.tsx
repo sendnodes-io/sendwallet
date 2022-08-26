@@ -357,12 +357,11 @@ export default function CoreStakePage(props: Props): ReactElement {
             <main className="flex flex-col flex-1 w-full min-h-[48rem] grow">
               <div className="flex flex-col grow px-4 sm:px-8 lg:px-0 py-8 xl:py-12 justify-center w-full h-full">
                 {children}
+                <Snackbar />
               </div>
             </main>
           </div>
         </div>
-
-        <Snackbar />
       </div>
 
       <SharedModal
