@@ -29,6 +29,8 @@ import { usePoktWatchLatestBlock } from "../../hooks/pokt-watch/use-latest-block
 import { useStakingRewardsTransactions } from "../../hooks/staking-hooks/use-staking-rewards-transactions"
 import formatTokenAmount from "../../utils/formatTokenAmount"
 import useStakingPendingTransactions from "../../hooks/staking-hooks/use-staking-pending-transactions"
+import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts"
+import { POKTWatchBlock } from "@sendnodes/pokt-wallet-background/services/chain/utils"
 
 dayjs.extend(updateLocale.default)
 dayjs.extend(localizedFormat.default)
@@ -251,12 +253,7 @@ export default function StakeRequestsTransactions(): ReactElement {
                     className="divide-y divide-spanish-gray w-full h-full flex-1"
                   >
                     {allTransactions.map((tx, txIdx) => (
-                      <StakeTransactionItem
-                        key={tx.hash}
-                        tx={tx}
-                        color={snActionBg[tx.action]}
-                        Icon={snActionIcon[tx.action]}
-                      />
+                      <StakeTransactionItem key={tx.hash} tx={tx} />
                     ))}
                   </ul>
                 )}
@@ -270,13 +267,43 @@ export default function StakeRequestsTransactions(): ReactElement {
 }
 
 type StakeTransactionItemProps = {
-  color: string
-  Icon: (props: any) => JSX.Element
   tx: SnTransaction
 }
 
-function StakeTransactionItem({ color, Icon, tx }: StakeTransactionItemProps) {
-  const { latestBlock: poktWatchLatestBlock } = usePoktWatchLatestBlock()
+type StakeTransactionItemState = {
+  latestBlock?: POKTWatchBlock
+  currentAccount: AddressOnNetwork
+  blockExplorerUrl: string
+  isPending: boolean
+  rewardTimestamp: dayjs.Dayjs
+  isEarningRewards: boolean
+  isCompound: boolean
+  isUncompound: boolean
+  isCompoundUpdate: boolean
+  isRewards: boolean
+  isStake: boolean
+  isUnstake: boolean
+  isUnstakeReceipt: boolean
+  unstakeReceiptHash: string | false
+  unstakeReceiptAt?: string | false
+  humanReadableAction: string
+  relativeTimestamp: string
+  timestamp: dayjs.Dayjs
+  amount: BigNumber
+  color: string
+  Icon: (props: any) => JSX.Element
+}
+
+type StakeTransactionInfoProps = {
+  tx: SnTransaction
+  children: (props: StakeTransactionItemState) => JSX.Element
+}
+
+export function StakeTransactionInfo({
+  tx,
+  children,
+}: StakeTransactionInfoProps) {
+  const { latestBlock } = usePoktWatchLatestBlock()
   const currentAccount = useBackgroundSelector(selectCurrentAccount, isEqual)
   const blockExplorerUrl = useBackgroundSelector(
     (_) =>
@@ -292,10 +319,10 @@ function StakeTransactionItem({ color, Icon, tx }: StakeTransactionItemProps) {
     !isPending
       ? dayjs.utc(tx.timestamp)
       : // the next block is committed 30 minutes after the start of the previous one
-        dayjs.utc(poktWatchLatestBlock?.timestamp).add(30, "minute")
+        dayjs.utc(latestBlock?.timestamp).add(30, "minute")
   )
   const rewardTimestamp = timestamp.clone().add(24, "hour")
-  const earningRewards = dayjs.utc().isAfter(rewardTimestamp)
+  const isEarningRewards = dayjs.utc().isAfter(rewardTimestamp)
   const isCompound =
     tx.action === SnAction.COMPOUND && tx.memo?.split(":")[1] === "true"
   const isUncompound =
@@ -321,149 +348,205 @@ function StakeTransactionItem({ color, Icon, tx }: StakeTransactionItemProps) {
 
   useEffect(() => {
     if (isPending) {
-      setTimestamp(dayjs.utc(poktWatchLatestBlock?.timestamp).add(30, "minute"))
+      setTimestamp(dayjs.utc(latestBlock?.timestamp).add(30, "minute"))
       const interval = setInterval(() => {
-        setTimestamp(
-          dayjs.utc(poktWatchLatestBlock?.timestamp).add(30, "minute")
-        )
+        setTimestamp(dayjs.utc(latestBlock?.timestamp).add(30, "minute"))
       }, 60 * 1e3)
       return () => clearInterval(interval)
     }
-  }, [tx, poktWatchLatestBlock])
+  }, [tx, latestBlock])
 
+  return children({
+    latestBlock,
+    currentAccount,
+    blockExplorerUrl,
+    isPending,
+    rewardTimestamp,
+    isEarningRewards,
+    isCompound,
+    isUncompound,
+    isCompoundUpdate,
+    isRewards,
+    isStake,
+    isUnstake,
+    isUnstakeReceipt,
+    unstakeReceiptHash,
+    unstakeReceiptAt,
+    humanReadableAction,
+    relativeTimestamp,
+    timestamp,
+    amount,
+    color: snActionBg[tx.action],
+    Icon: snActionIcon[tx.action],
+  })
+}
+
+function StakeTransactionItem({ tx }: StakeTransactionItemProps) {
   return (
-    <li key={tx.hash} className="list-item hover:bg-gray-700 rounded-sm">
-      <a href={blockExplorerUrl} target="_poktwatch" className="text-white">
-        <div className="px-4 py-4 sm:px-6 flex">
-          <div className="flex items-center flex-shrink-0">
-            <div
-              className={clsx(
-                "h-16 w-16 rounded-full flex items-center justify-center"
-              )}
-            >
-              <Icon
-                pending={isPending}
-                className={clsx("h-10 w-10", color, {
-                  uncompound: isUncompound,
-                })}
-                aria-hidden="true"
-              />
-            </div>
-          </div>
-          <div className="flex-1 ml-4 sm:ml-6">
-            <div className="flex items-center justify-between">
-              <p className="text-sm sm:text-lg font-medium text-white truncate">
-                {!isCompoundUpdate &&
-                  isStake &&
-                  `${tx.reward ? "Reward" : ""} ${humanReadableAction}`}
-                {!isCompoundUpdate && !isStake && humanReadableAction}
-                {isCompound && "Enable Compound "}
-                {isUncompound && `Disable Compound`}
-              </p>
-              <div className="ml-2 flex-shrink-0 flex">
-                {!isCompoundUpdate && (
-                  <div
-                    title={formatFixed(
-                      amount,
-                      currentAccount.network.baseAsset.decimals
-                    )}
-                    className={clsx(
-                      "px-2 inline-flex items-center gap-2 text-sm sm:text-lg leading-5 font-semibold rounded-full"
-                    )}
-                  >
-                    <div className="inline">
-                      <img
-                        src="/images/pokt_icon@2x.svg"
-                        className="h-5 w-5"
-                        alt="POKT"
-                      />
-                    </div>
-                    {formatTokenAmount(
-                      formatFixed(
-                        amount,
-                        currentAccount.network.baseAsset.decimals
-                      ),
-                      7,
-                      2
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="mt-2 sm:flex sm:justify-between">
-              <div className="sm:flex gap-4">
-                <div className="mt-2 flex items-center text-sm text-spanish-gray hover:text-white sm:mt-0 ">
-                  <img
-                    src="/images/pokt-watch.png"
-                    className="h-4 w-4 mr-2"
-                    width={"158"}
-                    height={"158"}
-                    alt="https://pokt.watch/"
+    <StakeTransactionInfo tx={tx}>
+      {({
+        latestBlock,
+        currentAccount,
+        blockExplorerUrl,
+        isPending,
+        rewardTimestamp,
+        isEarningRewards,
+        isCompound,
+        isUncompound,
+        isCompoundUpdate,
+        isRewards,
+        isStake,
+        isUnstake,
+        isUnstakeReceipt,
+        unstakeReceiptHash,
+        unstakeReceiptAt,
+        humanReadableAction,
+        relativeTimestamp,
+        timestamp,
+        amount,
+        color,
+        Icon,
+      }) => (
+        <li key={tx.hash} className="list-item hover:bg-gray-700 rounded-sm">
+          <a href={blockExplorerUrl} target="_poktwatch" className="text-white">
+            <div className="px-4 py-4 sm:px-6 flex">
+              <div className="flex items-center flex-shrink-0">
+                <div
+                  className={clsx(
+                    "h-16 w-16 rounded-full flex items-center justify-center"
+                  )}
+                >
+                  <Icon
+                    pending={isPending}
+                    className={clsx("h-10 w-10", color, {
+                      uncompound: isUncompound,
+                    })}
+                    aria-hidden="true"
                   />
-                  <span title={tx.hash}>
-                    {tx.hash.substring(0, 4)}...
-                    {tx.hash.substring(tx.hash.length - 4, tx.hash.length)}
-                  </span>
                 </div>
-                {isStake && tx.compound && (
-                  <div className="mt-2 flex items-center text-sm text-spanish-gray sm:mt-0 ">
-                    <div
-                      className={clsx(
-                        "icon-mask",
-                        "h-4 w-4 inline bg-white mr-2"
-                      )}
-                      css={`
-                        mask-image: url("../../public/images/rewards@2x.png");
-                      `}
-                    />
-                    <span>Compounding</span>
+              </div>
+              <div className="flex-1 ml-4 sm:ml-6">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm sm:text-lg font-medium text-white truncate">
+                    {!isCompoundUpdate &&
+                      isStake &&
+                      `${tx.reward ? "Reward" : ""} ${humanReadableAction}`}
+                    {!isCompoundUpdate && !isStake && humanReadableAction}
+                    {isCompound && "Enable Compound "}
+                    {isUncompound && `Disable Compound`}
+                  </p>
+                  <div className="ml-2 flex-shrink-0 flex">
+                    {!isCompoundUpdate && (
+                      <div
+                        title={formatFixed(
+                          amount,
+                          currentAccount.network.baseAsset.decimals
+                        )}
+                        className={clsx(
+                          "px-2 inline-flex items-center gap-2 text-sm sm:text-lg leading-5 font-semibold rounded-full"
+                        )}
+                      >
+                        <div className="inline">
+                          <img
+                            src="/images/pokt_icon@2x.svg"
+                            className="h-5 w-5"
+                            alt="POKT"
+                          />
+                        </div>
+                        {formatTokenAmount(
+                          formatFixed(
+                            amount,
+                            currentAccount.network.baseAsset.decimals
+                          ),
+                          7,
+                          2
+                        )}
+                      </div>
+                    )}
                   </div>
-                )}
-                {isUnstakeReceipt &&
-                  unstakeReceiptHash &&
-                  !isEmpty(unstakeReceiptHash) && (
-                    <div className="mt-2 flex items-center text-sm text-spanish-gray sm:mt-0 ">
-                      <span title={unstakeReceiptHash}>
-                        Original tx: {unstakeReceiptHash.substring(0, 4)}...
-                        {unstakeReceiptHash.substring(
-                          unstakeReceiptHash.length - 4,
-                          unstakeReceiptHash.length
-                        )}{" "}
+                </div>
+                <div className="mt-2 sm:flex sm:justify-between">
+                  <div className="sm:flex gap-4">
+                    <div className="mt-2 flex items-center text-sm text-spanish-gray hover:text-white sm:mt-0 ">
+                      <img
+                        src="/images/pokt-watch.png"
+                        className="h-4 w-4 mr-2"
+                        width={"158"}
+                        height={"158"}
+                        alt="https://pokt.watch/"
+                      />
+                      <span title={tx.hash}>
+                        {tx.hash.substring(0, 4)}...
+                        {tx.hash.substring(tx.hash.length - 4, tx.hash.length)}
                       </span>
                     </div>
-                  )}
-              </div>
-              <div className="mt-2 flex items-center text-sm text-spanish-gray sm:mt-0">
-                <p className="group">
-                  <span className="inline group-hover:hidden">
-                    {isPending && "awaiting confirmation "}
-                    {!isPending &&
-                      isStake &&
-                      (earningRewards
-                        ? "earning rewards since "
-                        : "rewards start (estimated) ")}
-                    {!isPending && isUnstake && ` ${tx.unstakeStatus} since `}
-                    <time
-                      dateTime={timestamp.format("YYYY-MM-DD HH:mm:ss [UTC]")}
-                      title={timestamp.format("YYYY-MM-DD HH:mm:ss [UTC]")}
-                    >
-                      {relativeTimestamp}
-                    </time>
-                  </span>
-                  <span className="hidden group-hover:inline">
-                    <time
-                      dateTime={timestamp.format("YYYY-MM-DD HH:mm:ss [UTC]")}
-                      title={timestamp.format("YYYY-MM-DD HH:mm:ss [UTC]")}
-                    >
-                      {timestamp.format("YYYY-MM-DD HH:mm:ss [UTC]")}
-                    </time>
-                  </span>
-                </p>
+                    {isStake && tx.compound && (
+                      <div className="mt-2 flex items-center text-sm text-spanish-gray sm:mt-0 ">
+                        <div
+                          className={clsx(
+                            "icon-mask",
+                            "h-4 w-4 inline bg-white mr-2"
+                          )}
+                          css={`
+                            mask-image: url("../../public/images/rewards@2x.png");
+                          `}
+                        />
+                        <span>Compounding</span>
+                      </div>
+                    )}
+                    {isUnstakeReceipt &&
+                      unstakeReceiptHash &&
+                      !isEmpty(unstakeReceiptHash) && (
+                        <div className="mt-2 flex items-center text-sm text-spanish-gray sm:mt-0 ">
+                          <span title={unstakeReceiptHash}>
+                            Original tx: {unstakeReceiptHash.substring(0, 4)}...
+                            {unstakeReceiptHash.substring(
+                              unstakeReceiptHash.length - 4,
+                              unstakeReceiptHash.length
+                            )}{" "}
+                          </span>
+                        </div>
+                      )}
+                  </div>
+                  <div className="mt-2 flex items-center text-sm text-spanish-gray sm:mt-0">
+                    <p className="group">
+                      <span className="inline group-hover:hidden">
+                        {isPending && "awaiting confirmation "}
+                        {!isPending &&
+                          isStake &&
+                          (isEarningRewards
+                            ? "earning rewards since "
+                            : "rewards start (estimated) ")}
+                        {!isPending &&
+                          isUnstake &&
+                          ` ${tx.unstakeStatus} since `}
+                        <time
+                          dateTime={timestamp.format(
+                            "YYYY-MM-DD HH:mm:ss [UTC]"
+                          )}
+                          title={timestamp.format("YYYY-MM-DD HH:mm:ss [UTC]")}
+                        >
+                          {relativeTimestamp}
+                        </time>
+                      </span>
+                      <span className="hidden group-hover:inline">
+                        <time
+                          dateTime={timestamp.format(
+                            "YYYY-MM-DD HH:mm:ss [UTC]"
+                          )}
+                          title={timestamp.format("YYYY-MM-DD HH:mm:ss [UTC]")}
+                        >
+                          {timestamp.format("YYYY-MM-DD HH:mm:ss [UTC]")}
+                        </time>
+                      </span>
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-      </a>
-    </li>
+          </a>
+        </li>
+      )}
+    </StakeTransactionInfo>
   )
 }
