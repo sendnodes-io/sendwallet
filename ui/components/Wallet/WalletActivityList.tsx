@@ -11,6 +11,8 @@ import WalletActivityListItem from "./WalletActivityListItem"
 import css from "styled-jsx/css"
 import TransactionDetailSlideUpMenuBody from "../TransactionDetail/TransactionDetailSlideUpMenuBody"
 import SharedSlideUpMenu from "../Shared/SharedSlideUpMenu"
+import useStakingAllTransactions from "../../hooks/staking-hooks/use-staking-all-transactions"
+import SharedSplashScreen from "../Shared/SharedSplashScreen"
 
 type Props = {
   activities: ActivityItem[]
@@ -44,6 +46,8 @@ const walletActivityCss = css`
 export default function WalletActivityList({
   activities,
 }: Props): ReactElement {
+  const { isLoading } = useStakingAllTransactions()
+
   const dispatch = useBackgroundDispatch()
   const showingActivityDetail = useBackgroundSelector(
     selectShowingActivityDetail
@@ -195,23 +199,30 @@ export default function WalletActivityList({
           </a>
         </div>
         <div className="row activites">
-          <ul>
-            {activities.map((activityItem) => {
-              if (activityItem) {
-                return (
-                  <WalletActivityListItem
-                    onClick={() => {
-                      handleOpen(activityItem)
-                    }}
-                    key={activityItem?.hash}
-                    activity={activityItem}
-                    asAccount={currentAccount.address}
-                  />
-                )
-              }
-              return <></>
-            })}
-          </ul>
+          {isLoading && (
+            <div className="h-full flex relative w-full">
+              <SharedSplashScreen />
+            </div>
+          )}
+          {!isLoading && (
+            <ul>
+              {activities.map((activityItem) => {
+                if (activityItem) {
+                  return (
+                    <WalletActivityListItem
+                      onClick={() => {
+                        handleOpen(activityItem)
+                      }}
+                      key={activityItem?.hash}
+                      activity={activityItem}
+                      asAccount={currentAccount.address}
+                    />
+                  )
+                }
+                return <></>
+              })}
+            </ul>
+          )}
         </div>
       </div>
       <style jsx>{walletActivityCss}</style>

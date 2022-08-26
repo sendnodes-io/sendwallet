@@ -39,15 +39,14 @@ const snActionBg = {
   [SnAction.REWARD]: "bg-aqua",
 }
 
+export type SnActionIconProps = {
+  className?: string
+  pending?: boolean
+}
+
 const snActionIcon: Record<SnAction, (props: any) => JSX.Element> = {
-  [SnAction.COMPOUND]: ({
-    className,
-    pending,
-  }: {
-    className: string
-    pending: boolean
-  }) => {
-    return className.includes("uncompound") ? (
+  [SnAction.COMPOUND]: ({ className, pending }: SnActionIconProps) => {
+    return className?.includes("uncompound") ? (
       <UploadIcon
         className={clsx(className, "h-8 w-8 text-opacity-75", {
           "text-orange-500": pending,
@@ -59,24 +58,12 @@ const snActionIcon: Record<SnAction, (props: any) => JSX.Element> = {
       />
     )
   },
-  [SnAction.STAKE]: ({
-    className,
-    pending,
-  }: {
-    className: string
-    pending: boolean
-  }) => (
+  [SnAction.STAKE]: ({ className, pending }: SnActionIconProps) => (
     <div
       className={clsx("stake_icon", className, { "bg-orange-500": pending })}
     ></div>
   ),
-  [SnAction.UNSTAKE]: ({
-    className,
-    pending,
-  }: {
-    className: string
-    pending: boolean
-  }) => (
+  [SnAction.UNSTAKE]: ({ className, pending }: SnActionIconProps) => (
     <div
       className={clsx(className, "icon-mask", { "bg-orange-500": pending })}
       css={`
@@ -84,13 +71,7 @@ const snActionIcon: Record<SnAction, (props: any) => JSX.Element> = {
       `}
     />
   ),
-  [SnAction.UNSTAKE_RECEIPT]: ({
-    className,
-    pending,
-  }: {
-    className: string
-    pending: boolean
-  }) => (
+  [SnAction.UNSTAKE_RECEIPT]: ({ className, pending }: SnActionIconProps) => (
     <div
       className={clsx(className, "icon-mask", { "bg-orange-500": pending })}
       css={`
@@ -98,13 +79,7 @@ const snActionIcon: Record<SnAction, (props: any) => JSX.Element> = {
       `}
     />
   ),
-  [SnAction.REWARD]: ({
-    className,
-    pending,
-  }: {
-    className: string
-    pending: boolean
-  }) => (
+  [SnAction.REWARD]: ({ className, pending }: SnActionIconProps) => (
     <div
       className={clsx(className, "icon-mask", { "bg-orange-500": pending })}
       css={`

@@ -12,9 +12,6 @@ import useStakingPoktParams from "./use-staking-pokt-params"
 
 export default function useStakingPendingTransactions() {
   const { data: stakingPoktParams } = useStakingPoktParams()
-  if (!stakingPoktParams) {
-    return []
-  }
   return (
     useBackgroundSelector(
       selectCurrentAccountActivitiesWithTimestamps,

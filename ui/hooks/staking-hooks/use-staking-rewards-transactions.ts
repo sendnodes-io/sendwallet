@@ -51,11 +51,12 @@ export function useStakingRewardsTransactionsForAddress(
   )
 
   return {
-    data: data?.filter(
-      (user: any) =>
-        lowerCase(user.userWalletAddress) ===
-        lowerCase(addressOnNetwork.address)
-    ),
+    data:
+      (data?.filter(
+        (user: any) =>
+          lowerCase(user.userWalletAddress) ===
+          lowerCase(addressOnNetwork.address)
+      ) as ISnTransactionFormatted[]) ?? [],
     isLoading: !error && !data,
     isError: error,
   }

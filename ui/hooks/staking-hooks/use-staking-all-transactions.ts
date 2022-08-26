@@ -38,9 +38,12 @@ export default function useStakingAllTransactions() {
     (tx) => tx.hash
   ) as SnTransaction[]
 
+  const isError = isStakingTransactionsError || isRewardsTransactionsError
   return {
-    data: allTransactions,
-    isLoading: isStakingTransactionsLoading || isRewardsTransactionsLoading,
-    isError: isStakingTransactionsError || isRewardsTransactionsError,
+    data: allTransactions ?? ([] as SnTransaction[]),
+    isLoading:
+      !isError &&
+      (isStakingTransactionsLoading || isRewardsTransactionsLoading),
+    isError,
   }
 }
