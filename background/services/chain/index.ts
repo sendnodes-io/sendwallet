@@ -72,7 +72,7 @@ const ALCHEMY_KEY = process.env.ALCHEMY_KEY // eslint-disable-line prefer-destru
 // How many queued transactions should be retrieved on every tx alarm, per
 // network. To get frequency, divide by the alarm period. 5 tx / 5 minutes →
 // max 1 tx/min.
-const MAX_CONCURRENT_TRANSACTION_REQUESTS = 5
+const MAX_CONCURRENT_TRANSACTION_REQUESTS = 20
 
 // The number of blocks to query at a time for historic asset transfers.
 // Unfortunately there's no "right" answer here that works well across different
