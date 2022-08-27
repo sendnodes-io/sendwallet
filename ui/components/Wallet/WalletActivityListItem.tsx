@@ -17,6 +17,8 @@ import useStakingAllTransactions from "../../hooks/staking-hooks/use-staking-all
 import StakeTransactionInfo from "../Stake/StakeTransactionInfo"
 import TransactionDetailSlideUpMenuBody from "../TransactionDetail/TransactionDetailSlideUpMenuBody"
 import SharedSlideUpMenu from "../Shared/SharedSlideUpMenu"
+import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts"
+import { isEmpty, lowerCase } from "lodash"
 
 interface Props {
   activity: ActivityItem
@@ -62,20 +64,12 @@ function WalletActivityListIcon({
   )
 }
 
-export default function WalletActivityListItem(props: Props): ReactElement {
-  const [isOpen, setIsOpen] = React.useState(false)
-  const { data: allStakingTransactions } = useStakingAllTransactions()
-  const { activity, asAccount } = props
-  const { network } = activity
-
-  let from
-  if ("from" in activity) from = activity.from
-  if ("txResult" in activity) from = activity.txResult?.signer
+export function renderDetailsForActivity(
+  activity: ActivityItem,
+  asAddressOnNetwork: AddressOnNetwork
+) {
   const txResult = getTransactionResult(activity)
-
-  let stakingTransaction = allStakingTransactions.find(
-    (tx) => tx.hash === activity.hash
-  )
+  const { address: asAccount, network } = asAddressOnNetwork
 
   let label =
     activity.to === asAccount
@@ -98,12 +92,6 @@ export default function WalletActivityListItem(props: Props): ReactElement {
     assetSymbol: activity.asset.symbol,
     assetValue: activity.localizedDecimalValue,
   }
-
-  if ("txMsg" in activity)
-    renderDetails.assetValue = formatTokenAmount(
-      formatFixed(activity.txMsg?.value?.amount, network.baseAsset.decimals),
-      6
-    )
 
   if (network.family === "EVM") {
     switch (activity.annotation?.type) {
@@ -179,6 +167,28 @@ export default function WalletActivityListItem(props: Props): ReactElement {
         }
     }
   }
+  return renderDetails
+}
+
+export default function WalletActivityListItem(props: Props): ReactElement {
+  const [isOpen, setIsOpen] = React.useState(false)
+  const { data: allStakingTransactions } = useStakingAllTransactions()
+  const { activity, asAccount } = props
+  const { network } = activity
+
+  let from
+  if ("from" in activity) from = activity.from
+  if ("txResult" in activity) from = activity.txResult?.signer
+  const txResult = getTransactionResult(activity)
+
+  let stakingTransaction = allStakingTransactions.find(
+    (tx) => tx.hash === activity.hash
+  )
+
+  const renderDetails = renderDetailsForActivity(activity, {
+    address: asAccount,
+    network,
+  })
 
   return stakingTransaction ? (
     <StakeTransactionInfo transaction={stakingTransaction}>
@@ -198,6 +208,12 @@ export default function WalletActivityListItem(props: Props): ReactElement {
                   })}
                   aria-hidden="true"
                 />
+              ),
+              label: stakingTransaction.humanReadableAction,
+              assetValue: formatTokenAmount(
+                stakingTransaction.tokenValue,
+                6,
+                2
               ),
             }}
           />
@@ -267,7 +283,9 @@ function WalletActivityListItemComponent({
             <div className="amount">{renderDetails.assetValue}</div>
           </div>
           <div className="right">
-            {status}
+            {isEmpty(renderDetails.label)
+              ? status
+              : lowerCase(renderDetails.label)}
             {activity.timestamp ? (
               <>
                 &nbsp;-&nbsp;

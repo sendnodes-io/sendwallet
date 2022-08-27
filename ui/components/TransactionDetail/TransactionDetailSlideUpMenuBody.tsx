@@ -48,7 +48,7 @@ export default function TransactionDetailSlideUpMenuBody({
   }
 
   const memo =
-    currentActivity.network.family == "POKT"
+    currentActivity.network.family == "POKT" && !stakingTransaction
       ? (currentActivity as POKTActivityItem).memo
       : null
 
@@ -119,16 +119,17 @@ export default function TransactionDetailSlideUpMenuBody({
           </div>
         </div>
 
-        {memo ? (
-          <div className="detail_item flex_col">
-            Memo{" "}
-            <div className="detail_item_row">
-              <pre title={memo}>{memo}</pre>
+        {!stakingTransaction &&
+          (memo ? (
+            <div className="detail_item flex_col">
+              Memo{" "}
+              <div className="detail_item_row">
+                <pre title={memo}>{memo}</pre>
+              </div>
             </div>
-          </div>
-        ) : (
-          <div className="detail_item flex_col">No Memo Set</div>
-        )}
+          ) : (
+            <div className="detail_item flex_col">No Memo Set</div>
+          ))}
       </div>
       <div className="buttons">
         <SharedButton type="primaryGhost" size="medium" onClick={openExplorer}>

@@ -20,6 +20,12 @@ import { SnAction, SnTransaction } from "../../hooks/staking-hooks"
 import { usePoktWatchLatestBlock } from "../../hooks/pokt-watch/use-latest-block"
 import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts"
 import { POKTWatchBlock } from "@sendnodes/pokt-wallet-background/services/chain/utils"
+import { selectAssetPricePoint } from "@sendnodes/pokt-wallet-background/redux-slices/assets"
+import { USD } from "@sendnodes/pokt-wallet-background/constants"
+import {
+  enrichAssetAmountWithDecimalValues,
+  enrichAssetAmountWithMainCurrencyValues,
+} from "@sendnodes/pokt-wallet-background/redux-slices/utils/asset-utils"
 
 dayjs.extend(updateLocale.default)
 dayjs.extend(localizedFormat.default)
@@ -110,6 +116,10 @@ export type StakeTransactionItemState = {
   userWalletAddress: string
   height: string
   hash: string
+  tokenValue: number
+  dollarValue?: number
+  localizedTokenValue: string
+  localizedDollarValue?: string
 }
 
 type StakeTransactionInfoProps = {
@@ -169,6 +179,33 @@ export default function StakeTransactionInfo({
     (isPending && isUnstake ? tx.memo.split(":")[1] : tx.amount) ??
       BigNumber.from(0)
   )
+  const baseAssetPricePoint = useBackgroundSelector((state) =>
+    selectAssetPricePoint(
+      state.assets,
+      currentAccount.network.baseAsset.symbol,
+      USD.symbol
+    )
+  )
+
+  const decimalPlaces = 2
+  const transactionAssetAmount = enrichAssetAmountWithDecimalValues(
+    {
+      asset: currentAccount.network.baseAsset,
+      amount: amount.toBigInt(),
+    },
+    decimalPlaces
+  )
+
+  const {
+    decimalAmount: tokenValue,
+    mainCurrencyAmount: dollarValue,
+    localizedDecimalAmount: localizedTokenValue,
+    localizedMainCurrencyAmount: localizedDollarValue,
+  } = enrichAssetAmountWithMainCurrencyValues(
+    transactionAssetAmount,
+    baseAssetPricePoint,
+    decimalPlaces
+  )
 
   useEffect(() => {
     if (isPending) {
@@ -206,5 +243,9 @@ export default function StakeTransactionInfo({
     userWalletAddress: tx.userWalletAddress,
     height: tx.height,
     hash: tx.hash,
+    tokenValue,
+    dollarValue,
+    localizedTokenValue,
+    localizedDollarValue,
   })
 }
