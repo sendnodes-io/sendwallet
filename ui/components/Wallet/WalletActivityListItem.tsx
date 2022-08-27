@@ -240,7 +240,7 @@ export default function WalletActivityListItem(props: Props): ReactElement {
         onClick={() => setIsOpen(true)}
       />
       <SharedSlideUpMenu
-        title={"Signed Transaction"}
+        title={renderDetails.label}
         isOpen={isOpen}
         close={() => setIsOpen(false)}
         size="full"

@@ -79,12 +79,6 @@ export default function TransactionSendDetail({
 
   return (
     <div className="sign_block">
-      <div className="width_full">
-        <h2 className="label">
-          <small>{transaction.blockHeight ? "SENT" : "SENDING"}</small>
-        </h2>
-      </div>
-
       <div className="dashed_border width_full amount_row">
         <SharedAssetIcon
           symbol={transactionAssetAmount.asset.symbol}
