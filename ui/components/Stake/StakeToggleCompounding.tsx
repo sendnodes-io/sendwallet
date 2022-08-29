@@ -1,10 +1,6 @@
 import { Switch } from "@headlessui/react"
-import { POKTActivityItem } from "@sendnodes/pokt-wallet-background/redux-slices/activities"
 import { transferAsset } from "@sendnodes/pokt-wallet-background/redux-slices/assets"
-import {
-  selectCurrentAccount,
-  selectCurrentAccountActivitiesWithTimestamps,
-} from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
+import { selectCurrentAccount } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
 import clsx from "clsx"
 import { isEqual } from "lodash"
 import React, { useCallback, useState } from "react"
@@ -13,11 +9,9 @@ import {
   useBackgroundDispatch,
   useBackgroundSelector,
 } from "../../hooks"
-import {
-  useStakingPoktParams,
-  useStakingUserData,
-} from "../../hooks/staking-hooks"
+import { useStakingUserData } from "../../hooks/staking-hooks"
 import useStakingPendingTransactions from "../../hooks/staking-hooks/use-staking-pending-transactions"
+import useStakingPoktParams from "../../hooks/staking-hooks/use-staking-pokt-params"
 import SharedSplashScreen from "../Shared/SharedSplashScreen"
 
 export default function StakeToggleCompounding() {
@@ -30,7 +24,7 @@ export default function StakeToggleCompounding() {
     data: stakingPoktParamsData,
     isLoading: isStakingPoktParamsLoading,
     isError: isStakingPoktParamsError,
-  } = useStakingPoktParams(currentAccount)
+  } = useStakingPoktParams()
 
   const {
     data: userStakingData,

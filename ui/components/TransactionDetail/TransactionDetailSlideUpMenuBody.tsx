@@ -1,5 +1,4 @@
 import {
-  ActivityItem,
   EVMActivityItem,
   POKTActivityItem,
 } from "@sendnodes/pokt-wallet-background/redux-slices/activities"
@@ -12,6 +11,9 @@ import {
 } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
 import { useBackgroundSelector } from "../../hooks"
 import classNames from "clsx"
+import useStakingAllTransactions from "../../hooks/staking-hooks/use-staking-all-transactions"
+import StakeTransactionInfo from "../Stake/StakeTransactionInfo"
+import WalletStakeTransactionSendDetail from "../Wallet/WalletStakeTransactionSendDetail"
 
 export type TransactionDetailSlideUpMenuBodyProps = {
   activity: POKTActivityItem | EVMActivityItem
@@ -20,6 +22,11 @@ export type TransactionDetailSlideUpMenuBodyProps = {
 export default function TransactionDetailSlideUpMenuBody({
   activity,
 }: TransactionDetailSlideUpMenuBodyProps): ReactElement {
+  const { data: allStakingTransactions } = useStakingAllTransactions()
+
+  const stakingTransaction = allStakingTransactions.find(
+    (tx) => tx.hash === activity.hash
+  )
   const blockExplorerUrl = useBackgroundSelector((_) =>
     selectBlockExplorerForTxHash({
       network: activity.network,
@@ -41,13 +48,24 @@ export default function TransactionDetailSlideUpMenuBody({
   }
 
   const memo =
-    currentActivity.network.family == "POKT"
+    currentActivity.network.family == "POKT" && !stakingTransaction
       ? (currentActivity as POKTActivityItem).memo
       : null
 
   return (
     <div className="tx_detail_wrap">
-      <TransactionSendDetail transaction={currentActivity} />
+      {stakingTransaction && (
+        <StakeTransactionInfo transaction={stakingTransaction}>
+          {(stakingTransaction) => (
+            <WalletStakeTransactionSendDetail
+              transaction={stakingTransaction}
+            />
+          )}
+        </StakeTransactionInfo>
+      )}
+      {!stakingTransaction && (
+        <TransactionSendDetail transaction={currentActivity} />
+      )}
       <div
         className={classNames("detail_items_wrap width_full", {
           has_memo: !!memo,
@@ -101,16 +119,17 @@ export default function TransactionDetailSlideUpMenuBody({
           </div>
         </div>
 
-        {memo ? (
-          <div className="detail_item flex_col">
-            Memo{" "}
-            <div className="detail_item_row">
-              <pre title={memo}>{memo}</pre>
+        {!stakingTransaction &&
+          (memo ? (
+            <div className="detail_item flex_col">
+              Memo{" "}
+              <div className="detail_item_row">
+                <pre title={memo}>{memo}</pre>
+              </div>
             </div>
-          </div>
-        ) : (
-          <div className="detail_item flex_col">No Memo Set</div>
-        )}
+          ) : (
+            <div className="detail_item flex_col">No Memo Set</div>
+          ))}
       </div>
       <div className="buttons">
         <SharedButton type="primaryGhost" size="medium" onClick={openExplorer}>

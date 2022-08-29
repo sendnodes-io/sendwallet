@@ -1,10 +1,9 @@
 import { unitPricePointForPricePoint } from "@sendnodes/pokt-wallet-background/assets"
-import { POKT, USD } from "@sendnodes/pokt-wallet-background/constants"
-import { POKTTransactionRequest } from "@sendnodes/pokt-wallet-background/networks"
-import { ActivityItem } from "@sendnodes/pokt-wallet-background/redux-slices/activities"
+import { USD } from "@sendnodes/pokt-wallet-background/constants"
 import { selectAssetPricePoint } from "@sendnodes/pokt-wallet-background/redux-slices/assets"
 import {
   getAccountData,
+  selectCurrentAccountActivityForTxHash,
   selectCurrentAddressNetwork,
 } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
 import {
@@ -14,40 +13,38 @@ import {
 } from "@sendnodes/pokt-wallet-background/redux-slices/utils/asset-utils"
 import React, { ReactElement } from "react"
 import { useBackgroundSelector } from "../../hooks"
+import useStakingPoktParams from "../../hooks/staking-hooks/use-staking-pokt-params"
 import formatTokenAmount from "../../utils/formatTokenAmount"
 import SharedAddress from "../Shared/SharedAddress"
 import SharedAssetIcon from "../Shared/SharedAssetIcon"
+import { StakeTransactionItemState } from "../Stake/StakeTransactionInfo"
 
-export type TransactionSendDetailProps = {
-  transaction: ActivityItem
+export type WalletStakeTransactionSendDetailProps = {
+  transaction: StakeTransactionItemState
 }
 
-export default function TransactionSendDetail({
+export default function WalletStakeTransactionSendDetail({
   transaction,
-}: TransactionSendDetailProps): ReactElement {
+}: WalletStakeTransactionSendDetailProps): ReactElement {
+  const activity = useBackgroundSelector((state) =>
+    selectCurrentAccountActivityForTxHash(state, transaction.hash)
+  )
+  const { data: stakingPoktParams } = useStakingPoktParams()
+  const sendnodesWallets = Object.values(stakingPoktParams?.wallets ?? {})
   const { address, network } = useBackgroundSelector(
     selectCurrentAddressNetwork
   )
   const baseAssetPricePoint = useBackgroundSelector((state) =>
     selectAssetPricePoint(state.assets, network.baseAsset.symbol, USD.symbol)
   )
-  let amount: bigint = BigInt(0)
-  let from = address
-  let to: string | undefined
+  let amount = transaction.amount
+  let from = transaction.signer
+  let to = activity?.to ?? transaction.userWalletAddress
 
-  if ("value" in transaction) {
-    amount = transaction.value
-  }
-  if ("txMsg" in transaction) {
-    amount = BigInt(transaction.txMsg.value.amount)
-    to = transaction.to
-    from = transaction.from
-  }
-  if ("to" in transaction) to = transaction.to
   const transactionAssetAmount = enrichAssetAmountWithDecimalValues(
     {
       asset: network.baseAsset,
-      amount: amount,
+      amount: amount.toBigInt(),
     },
     heuristicDesiredDecimalsForUnitPrice(
       network.baseAsset.decimals,
@@ -79,76 +76,84 @@ export default function TransactionSendDetail({
 
   return (
     <div className="sign_block">
-      <div className="dashed_border width_full amount_row">
-        <SharedAssetIcon
-          symbol={transactionAssetAmount.asset.symbol}
-          size={"large"}
-        />
-        <span
-          className="spend_amount"
-          title={`${localizedTokenValue} ${transactionAssetAmount.asset.symbol}`}
-        >
-          {transactionAssetAmount.decimalAmount < 1
-            ? formatTokenAmount(tokenValue, 1, 6)
-            : formatTokenAmount(tokenValue)}
-        </span>
-        <span className="dollar_amount" title={`${localizedDollarValue}`}>
-          {localizedDollarValue}
-        </span>
-      </div>
+      {amount.gt(0) && (
+        <div className="dashed_border width_full amount_row">
+          <SharedAssetIcon
+            symbol={transactionAssetAmount.asset.symbol}
+            size={"large"}
+          />
+          <span
+            className="spend_amount"
+            title={`${localizedTokenValue} ${transactionAssetAmount.asset.symbol}`}
+          >
+            {transactionAssetAmount.decimalAmount < 1
+              ? formatTokenAmount(tokenValue, 1, 6)
+              : formatTokenAmount(tokenValue)}
+          </span>
+          <span className="dollar_amount" title={`${localizedDollarValue}`}>
+            {localizedDollarValue}
+          </span>
+        </div>
+      )}
       <div className="spacing"></div>
       <div className="width_full addresses_row">
         <div>
-          {typeof address === "undefined" ? (
-            <>
-              <div className="label">Send to</div>
-              <div className="send_to">Contract creation</div>
-            </>
-          ) : (
-            <>
-              <div className="width_full">
-                <h3 className="label">FROM</h3>
-              </div>
-              <div className="width_full">
-                <div className="dashed_border" style={{ margin: 0 }}>
-                  <SharedAddress
-                    name={
-                      fromAccountData !== "loading"
-                        ? (fromAccountData ?? undefined)?.name
-                        : undefined
-                    }
-                    address={from}
-                  />
-                </div>
-              </div>
-            </>
-          )}
+          <div className="width_full">
+            <h3 className="label">FROM</h3>
+          </div>
+          <div className="width_full">
+            <div className="dashed_border" style={{ margin: 0 }}>
+              {sendnodesWallets.includes(from) && (
+                <img
+                  src="/images/sendnodes.png"
+                  width={"558"}
+                  height="84"
+                  className="w-full block mx-auto max-w-[5rem]"
+                  alt="SendNodes"
+                  title={stakingPoktParams?.wallets.siw}
+                />
+              )}
+              {!sendnodesWallets.includes(from) && (
+                <SharedAddress
+                  name={
+                    fromAccountData !== "loading"
+                      ? (fromAccountData ?? undefined)?.name
+                      : undefined
+                  }
+                  address={to}
+                />
+              )}
+            </div>
+          </div>
         </div>
         <div>
-          {typeof to === "undefined" ? (
-            <>
-              <div className="label">Send to</div>
-              <div className="send_to">Contract creation</div>
-            </>
-          ) : (
-            <>
-              <div className="width_full">
-                <h3 className="label">TO</h3>
-              </div>
-              <div className="width_full">
-                <div className="dashed_border" style={{ margin: 0 }}>
-                  <SharedAddress
-                    name={
-                      toAccountData !== "loading"
-                        ? (toAccountData ?? undefined)?.name
-                        : undefined
-                    }
-                    address={to}
-                  />
-                </div>
-              </div>
-            </>
-          )}
+          <div className="width_full">
+            <h3 className="label">TO</h3>
+          </div>
+          <div className="width_full">
+            <div className="dashed_border" style={{ margin: 0 }}>
+              {sendnodesWallets.includes(to) && (
+                <img
+                  src="/images/sendnodes.png"
+                  width={"558"}
+                  height="84"
+                  className="w-full block mx-auto max-w-[5rem]"
+                  alt="SendNodes"
+                  title={stakingPoktParams?.wallets.siw}
+                />
+              )}
+              {!sendnodesWallets.includes(to) && (
+                <SharedAddress
+                  name={
+                    toAccountData !== "loading"
+                      ? (toAccountData ?? undefined)?.name
+                      : undefined
+                  }
+                  address={to}
+                />
+              )}
+            </div>
+          </div>
         </div>
       </div>
 

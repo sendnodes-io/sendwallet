@@ -1,3 +1,4 @@
+import { POKTWatchBlock } from "@sendnodes/pokt-wallet-background/services/chain/utils"
 import useSWR from "swr"
 
 const fetcher = () =>
@@ -17,7 +18,7 @@ export const usePoktWatchLatestBlock = () => {
   )
 
   return {
-    latestBlock: (data ?? [{}])[0],
+    latestBlock: ((data ?? [])[0] as POKTWatchBlock) || undefined,
     isLoading: !error && !data,
     isError: error,
   }

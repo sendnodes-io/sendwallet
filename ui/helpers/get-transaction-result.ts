@@ -1,6 +1,6 @@
 import { ActivityItem } from "@sendnodes/pokt-wallet-background/redux-slices/activities"
 
-enum TransactionStatus {
+export enum TransactionStatus {
   Failed = "failed",
   Success = "success",
   Pending = "pending",

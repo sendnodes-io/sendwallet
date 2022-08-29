@@ -18,7 +18,7 @@ import SignTransactionBaseInfoProvider, {
 import TransactionSendDetail from "../TransactionDetail/TransactionSendDetail"
 import { ActivityItem } from "@sendnodes/pokt-wallet-background/redux-slices/activities"
 import { isEqual, startsWith } from "lodash"
-import { useStakingPoktParams } from "../../hooks/staking-hooks"
+import { useStakingPoktParamsForAddress } from "../../hooks/staking-hooks"
 
 export default function SignTransactionSignInfoProvider({
   transactionDetails,
@@ -34,7 +34,7 @@ export default function SignTransactionSignInfoProvider({
   )
 
   const { data: stakingPoktData, isError } =
-    useStakingPoktParams(currentAccount)
+    useStakingPoktParamsForAddress(currentAccount)
 
   if (isError) {
     console.error("Error fetching staking params", isError)

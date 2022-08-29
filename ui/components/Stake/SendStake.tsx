@@ -37,10 +37,7 @@ import SharedCheckbox from "../Shared/SharedCheckbox"
 import formatTokenAmount from "../../utils/formatTokenAmount"
 import { InformationCircleIcon } from "@heroicons/react/solid"
 
-import {
-  useStakingUserData,
-  useStakingPoktParams,
-} from "../../hooks/staking-hooks"
+import { useStakingUserData } from "../../hooks/staking-hooks"
 import { BigNumber } from "ethers"
 import { formatFixed, parseFixed } from "@ethersproject/bignumber"
 import StatTotalStaked from "./Stat/StatTotalStaked"
@@ -49,6 +46,7 @@ import usePocketNetworkFee from "../../hooks/pocket-network/use-network-fee"
 import StakePausedModal from "./StakePausedModal"
 import StatAPY from "./Stat/StatAPY"
 import { useStakingTotalStakedBalance } from "../../hooks/staking-hooks/use-staking-total-staked-balance"
+import useStakingPoktParams from "../../hooks/staking-hooks/use-staking-pokt-params"
 
 export default function SendStake(): ReactElement {
   const location = useLocation<FungibleAsset>()
@@ -79,7 +77,7 @@ export default function SendStake(): ReactElement {
     data: stakingPoktParamsData,
     isLoading: isStakingPoktParamsLoading,
     isError: isStakingPoktParamsError,
-  } = useStakingPoktParams(currentAccount)
+  } = useStakingPoktParams()
 
   const {
     data: userStakingData,
