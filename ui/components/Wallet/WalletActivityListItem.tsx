@@ -75,7 +75,7 @@ export function renderDetailsForActivity(
     activity.to === asAccount
       ? txResult.status === "pending"
         ? "Receiving"
-        : "Received"
+        : "Receive"
       : txResult.status === "pending"
       ? "Sending"
       : "Send"
@@ -101,7 +101,7 @@ export function renderDetailsForActivity(
           icon: () => (
             <WalletActivityListIcon
               label={
-                isReceiveActivity(activity, asAccount) ? "Received" : "Send"
+                isReceiveActivity(activity, asAccount) ? "Receive" : "Send"
               }
               iconClass={
                 isReceiveActivity(activity, asAccount)
@@ -110,7 +110,7 @@ export function renderDetailsForActivity(
               }
             />
           ),
-          label: isReceiveActivity(activity, asAccount) ? "Received" : "Send",
+          label: isReceiveActivity(activity, asAccount) ? "Receive" : "Send",
           assetLogoURL: activity.annotation.transactionLogoURL,
           assetSymbol: activity.annotation.assetAmount.asset.symbol,
           assetValue: activity.annotation.assetAmount.localizedDecimalAmount,

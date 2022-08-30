@@ -2,11 +2,8 @@
 import React, { Fragment, ReactElement, useEffect, useState } from "react"
 import { Dialog, Transition } from "@headlessui/react"
 import classNames, { clsx } from "clsx"
-import { useBackgroundSelector } from "../../hooks"
-import {
-  getCurrentAccountState,
-  selectCurrentAccount,
-} from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
+import { useAreKeyringsUnlocked, useBackgroundSelector } from "../../hooks"
+import { getCurrentAccountState } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
 import { SharedIcon } from "../Shared/SharedIcon"
 import Snackbar from "../Snackbar/Snackbar"
 import { useHistory, Link, useLocation } from "react-router-dom"
@@ -32,6 +29,18 @@ const sidebarIconCss = css`
 `
 
 const navigation = [
+  {
+    name: "Analytics",
+    href: "/analytics",
+    icon: ({ className }: { className: string }) => (
+      <div
+        className={clsx(className, sidebarIconCss, "home-icon")}
+        css={`
+          mask-image: url("../../public/images/home@2x.png");
+        `}
+      />
+    ),
+  },
   {
     name: "Stake",
     href: "/",
@@ -267,8 +276,7 @@ export default function CoreStakePage(props: Props): ReactElement {
   const [isAccountsPanelOpen, setIsAccountsPanelOpen] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
-  const currentAccount = useBackgroundSelector(selectCurrentAccount, isEqual)
-
+  const keyringsUnlocked = useAreKeyringsUnlocked(true)
   const transactionDetails = useBackgroundSelector(
     selectTransactionData,
     isEqual
@@ -279,7 +287,7 @@ export default function CoreStakePage(props: Props): ReactElement {
   )
   const { data: stakingPoktParams, isLoading, isError } = useStakingPoktParams()
 
-  if (isLoading || currentAccountData === "loading") {
+  if (isLoading || currentAccountData === "loading" || !keyringsUnlocked) {
     return (
       <div className="md:py-12 xl:py-24 min-h-screen flex flex-col justify-center items-center flex-1">
         <SharedSplashScreen />
@@ -287,9 +295,7 @@ export default function CoreStakePage(props: Props): ReactElement {
     )
   }
 
-  if (isError) {
-    console.warn("failed to pull staking pokt params", isError)
-  }
+  if (isError) throw isError
 
   return (
     <div className="w-full flex flex-col items-center ">
