@@ -120,7 +120,7 @@ export default function StakeAnalytics(): ReactElement {
           </div>
         </div>
         <div className="mt-8 flex flex-col">
-          <div className="mt-8 min-h-[25rem] max-h-[50vh] overflow-y-scroll pb-12 px-0 md:px-4">
+          <div className="mt-8 pb-12 px-0 md:px-4">
             <div className="mb-4">
               <div className="py-4 mb-4 text-center">
                 <h2 className="text-base md:text-3xl">Pool</h2>
