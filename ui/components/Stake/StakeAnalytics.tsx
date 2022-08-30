@@ -45,10 +45,6 @@ export default function StakeAnalytics(): ReactElement {
     BigNumber.from(stakingUserData!.rewardsData.totalPendingStaked ?? 0),
     currentAccount.network.baseAsset.decimals
   )
-  const poolTotalGrossRewards = formatFixed(
-    BigNumber.from(stakingUserData!.rewardsData.grossRewardsTotal ?? 0),
-    currentAccount.network.baseAsset.decimals
-  )
   const stakingMinAmount = Number(
     formatFixed(
       stakingPoktParams!.stakingMinAmount,
@@ -126,7 +122,8 @@ export default function StakeAnalytics(): ReactElement {
                 <h2 className="text-base md:text-3xl">Pool</h2>
               </div>
 
-              <div className="grid grid-cols-3 md:grid-cols-9 gap-y-8 gap-x-4">
+              <div className="grid grid-cols-3 md:grid-cols-8 gap-y-8 gap-x-4">
+                <div className="hidden md:block col-span-1"></div>
                 <div
                   title={poolTotalStaked}
                   className="relative border border-spanish-gray h-24 rounded-md col-span-3"
@@ -159,23 +156,6 @@ export default function StakeAnalytics(): ReactElement {
                       <div className="flex flex-col grow items-center justify-center h-full">
                         <div className="text-3xl xl:text-4xl sm:text-3xl font-semibold text-white">
                           {formatTokenAmount(poolTotalUpcomingStakes, 3, 1)}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div
-                  title={poolTotalGrossRewards}
-                  className="relative border border-spanish-gray h-24 rounded-md col-span-3"
-                >
-                  <div className="absolute flex items-center justify-center -top-6 left-0 right-0 whitespace-nowrap text-xs">
-                    <span title="Total Gross Rewards">Total Rewards</span>
-                  </div>
-                  <div className="w-full h-full grow flex gap-1 justify-space items-center">
-                    <div className="relative grow h-full">
-                      <div className="flex flex-col grow items-center justify-center h-full">
-                        <div className="text-3xl xl:text-4xl sm:text-3xl font-semibold text-white">
-                          {formatTokenAmount(poolTotalGrossRewards, 3, 1)}
                         </div>
                       </div>
                     </div>
