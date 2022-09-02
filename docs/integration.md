@@ -43,7 +43,7 @@ let address = await window.pocketNetwork
   })
 ```
 
-After executing, that code, the wallet will show a popup requesting the user to approve your site to connect. The user should only have to approve your site domain once. You must execute `pokt_requestAccounts` on every site domain you wish integrate with POKT Wallet.
+After executing that code, the wallet will show a popup requesting the user to approve your site to connect. The user should only have to approve your site domain once. You must execute `pokt_requestAccounts` on every site domain you wish integrate with POKT Wallet.
 
 <img src="./img/integration-connect-wallet.png" height=500 style="margin: 0 auto; display: block;">
 
