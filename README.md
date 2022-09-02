@@ -8,6 +8,10 @@ Get the ease of accessing your $POKT with our secure POKT Wallet browser extensi
 
 The POKT Wallet is your gateway to the Pocket Network and broader ecosystem. Full EVM support soon.
 
+## Looking to integrate POKT Wallet into your site?
+
+POKT Wallet can turn your site into a Dapp on Pocket Network. You will be able to prepare and request transactions for your users to approve. Start here with [our integration guide](/docs/integration.md)!
+
 ## 🙋‍♀️ First time here?
 
 Start with our amazing docs, https://docs.poktwallet.io/.
@@ -33,4 +37,4 @@ You'll need a few tools to get started.
 yarn start --config-name chrome # or firefox
 ```
 
-Once that finishes, please find the built files in the `./dist` directory. Then, visit <a href="chrome://extensions">chrome://extensions</a> load the `./dist/chrome` directory as an unpacked extension. 
+Once that finishes, please find the built files in the `./dist` directory. Then, visit <a href="chrome://extensions">chrome://extensions</a> load the `./dist/chrome` directory as an unpacked extension.
