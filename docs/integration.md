@@ -103,7 +103,9 @@ let hash = await window.pocketNetwork
 
 <img src="./img/integration-sign-transaction.png" height=500 style="margin: 0 auto; display: block;">
 
-### TODO
+### Requesting Pocket Network Information
+
+These API calls are useful for requesting information about the current and past state of Pocket Network.
 
 ```js
 // Get Transaction
@@ -113,6 +115,7 @@ let tx = await window.pocketNetwork.send("pokt_tx", [{ hash: hash }])
 let { height } = await window.pocketNetwork.send("pokt_height")
 
 // Get Block
+// NOTE: careful with this request since Pocket Network blocks are YUUUUGGGE and will use a lot of the user's PC resources (CPU/Network/etc.
 let { block, block_id } = await window.pocketNetwork.send("pokt_block", [
   { height },
 ])
