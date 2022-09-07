@@ -218,7 +218,7 @@ export default function SendUnstake(): ReactElement {
         <h1>Unstake</h1>
       </div>
       <div className="mt-6 flex flex-col mb-6">
-        <div className="grid md:grid-cols-8 gap-4 gap-y-12 lg:gap-8">
+        <div className="grid sm:grid-cols-8 gap-4 gap-y-12 lg:gap-8">
           <StatTotalUnstaking aon={currentAccount} asset={selectedAsset} />
           <StatTotalUnstaked aon={currentAccount} asset={selectedAsset} />
           <StatTotalStaked aon={currentAccount} asset={selectedAsset} />

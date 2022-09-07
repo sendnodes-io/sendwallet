@@ -405,7 +405,8 @@ export default function SharedAssetInput<T extends AnyAsset>(
     let selectedAmount = selectedAssetAndAmount.amount
 
     if (networkFee) {
-      selectedAmount -= BigInt(networkFee)
+      // leave enough for 10 more transactions
+      selectedAmount -= BigInt(networkFee) * 10n
     }
 
     const fixedPointAmount = {

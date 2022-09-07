@@ -212,8 +212,8 @@ export default function SendStake(): ReactElement {
         <h1>Stake</h1>
       </div>
       <div className="mt-6 flex flex-col mb-6">
-        <div className="grid md:grid-cols-8 gap-4 gap-y-12 lg:gap-8">
-          <div className="md:col-span-2" />
+        <div className="grid sm:grid-cols-8 gap-4 gap-y-12 lg:gap-8">
+          <div className="sm:col-span-2" />
           <StatTotalStaked aon={currentAccount} asset={selectedAsset} />
           <StatAPY aon={currentAccount} asset={selectedAsset} />
         </div>

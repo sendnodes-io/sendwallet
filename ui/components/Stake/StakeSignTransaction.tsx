@@ -48,6 +48,7 @@ import { usePoktWatchLatestBlock } from "../../hooks/pokt-watch/use-latest-block
 import usePocketNetworkFee from "../../hooks/pocket-network/use-network-fee"
 import formatTokenAmount from "../../utils/formatTokenAmount"
 import useStakingPoktParams from "../../hooks/staking-hooks/use-staking-pokt-params"
+import useAssetInMainCurrency from "../../hooks/assets/use-asset-in-main-currency"
 
 export default function StakeSignTransaction(): ReactElement {
   const history = useHistory()
@@ -121,6 +122,19 @@ export default function StakeSignTransaction(): ReactElement {
 
   const { networkFee } = usePocketNetworkFee()
 
+  const action = getSnActionFromMemo(transactionDetails?.memo)!
+  const amount =
+    action === SnAction.UNSTAKE
+      ? transactionDetails?.memo?.split(":")[1]
+      : transactionDetails?.txMsg.value.amount
+
+  const amountInMainCurrency = useAssetInMainCurrency({
+    assetAmount: {
+      amount: BigNumber.from(amount ?? 0).toBigInt(),
+      asset: currentAccount.network.baseAsset,
+    },
+  })
+
   if (
     isLocked ||
     isStakingPoktParamsLoading ||
@@ -129,12 +143,6 @@ export default function StakeSignTransaction(): ReactElement {
   ) {
     return <SharedSplashScreen />
   }
-
-  const action = getSnActionFromMemo(transactionDetails.memo)!
-  const amount =
-    action === SnAction.UNSTAKE
-      ? transactionDetails!.memo!.split(":")[1]
-      : transactionDetails.txMsg.value.amount
 
   const signerComponent = (
     <dd
@@ -290,7 +298,7 @@ export default function StakeSignTransaction(): ReactElement {
                             currentAccount.network.baseAsset.decimals
                           )
                         ).toLocaleString()}
-                        className="mt-1 text-lg text-white sm:mt-0 sm:col-span-2 text-right"
+                        className="mt-1 text-lg text-white sm:mt-0 sm:col-span-2 text-right relative"
                       >
                         <img
                           src="/images/pokt_icon@2x.svg"
@@ -304,6 +312,11 @@ export default function StakeSignTransaction(): ReactElement {
                           ),
                           9,
                           2
+                        )}
+                        {amountInMainCurrency && (
+                          <small className="absolute left-0 right-0 top-6 text-spanish-gray text-xs">
+                            {amountInMainCurrency.localizedMainCurrencyAmount}
+                          </small>
                         )}
                       </dd>
                     </div>

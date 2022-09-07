@@ -5,6 +5,7 @@ import { useStakingUserData } from "../../../hooks/staking-hooks"
 import formatTokenAmount from "../../../utils/formatTokenAmount"
 import SharedLoadingSpinner from "../../Shared/SharedLoadingSpinner"
 import { FungibleAsset } from "@sendnodes/pokt-wallet-background/assets"
+import useAssetInMainCurrency from "../../../hooks/assets/use-asset-in-main-currency"
 
 export default function StatTotalStaked({
   aon,
@@ -13,16 +14,22 @@ export default function StatTotalStaked({
   aon: AddressOnNetwork
   asset: FungibleAsset
 }) {
-  const { data, isLoading, isError } = useStakingUserData(aon)
-  const amount = formatFixed(
-    BigNumber.from(data?.userStakingData[0]?.staked ?? 0)
-      .add(data?.userStakingData[0]?.pendingStaked ?? 0)
-      .sub(data?.userStakingData[0]?.pendingUnstaked ?? 0),
-    asset.decimals
+  const { data, isLoading } = useStakingUserData(aon)
+  const amount = BigNumber.from(data?.userStakingData[0]?.staked ?? 0).add(
+    data?.userStakingData[0]?.pendingStaked ?? 0
   )
+  const fixedAmount = formatFixed(amount, asset.decimals)
+
+  const amountInMainCurrency = useAssetInMainCurrency({
+    assetAmount: {
+      amount: amount.toBigInt(),
+      asset,
+    },
+  })
+
   return (
     <div
-      title={amount}
+      title={fixedAmount}
       className="relative border border-spanish-gray h-24 rounded-md col-span-2"
     >
       <div className="absolute flex items-center justify-center -top-6 left-0 right-0 whitespace-nowrap text-xs">
@@ -35,9 +42,13 @@ export default function StatTotalStaked({
               {isLoading ? (
                 <SharedLoadingSpinner />
               ) : (
-                formatTokenAmount(amount, 3, 1)
+                formatTokenAmount(fixedAmount, 3, 1)
               )}
+              <br />
             </div>
+            {amountInMainCurrency && (
+              <small>{amountInMainCurrency.localizedMainCurrencyAmount}</small>
+            )}
           </div>
         </div>
       </div>

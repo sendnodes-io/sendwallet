@@ -1,15 +1,14 @@
+import React, { ReactElement } from "react"
 import { formatFixed } from "@ethersproject/bignumber"
 import { InformationCircleIcon } from "@heroicons/react/outline"
 import { selectCurrentAccount } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
 import { BigNumber } from "ethers"
 import { floor, isEqual } from "lodash"
-import React, { ReactElement } from "react"
 import { Link } from "react-router-dom"
 import { useBackgroundSelector } from "../../hooks"
+import useAssetInMainCurrency from "../../hooks/assets/use-asset-in-main-currency"
 import { useStakingUserData } from "../../hooks/staking-hooks"
 import useStakingPoktParams from "../../hooks/staking-hooks/use-staking-pokt-params"
-import useStakingRequestsTransactions from "../../hooks/staking-hooks/use-staking-requests-transactions"
-import useStakingRewardsTransactions from "../../hooks/staking-hooks/use-staking-rewards-transactions"
 import formatTokenAmount from "../../utils/formatTokenAmount"
 import SharedSplashScreen from "../Shared/SharedSplashScreen"
 
@@ -29,6 +28,81 @@ export default function StakeAnalytics(): ReactElement {
 
   if (isStakingParamsError) throw isStakingParamsError
   if (isStakingUserDataError) throw isStakingUserDataError
+
+  const poolTotalStaked = BigNumber.from(
+    stakingUserData?.rewardsData.totalStaked ?? 0
+  ).add(BigNumber.from(stakingUserData?.rewardsData.totalPendingStaked ?? 0))
+  const poolTotalStakedMainCurrency = useAssetInMainCurrency({
+    assetAmount: {
+      amount: poolTotalStaked.toBigInt(),
+      asset: currentAccount.network.baseAsset,
+    },
+  })
+  const poolTotalStakedFixedAmount = formatFixed(
+    poolTotalStaked,
+    currentAccount.network.baseAsset.decimals
+  )
+  const poolTotalUpcomingStakes = BigNumber.from(
+    stakingUserData?.rewardsData.totalPendingStaked ?? 0
+  )
+  const poolTotalUpcomingStakesMainCurrency = useAssetInMainCurrency({
+    assetAmount: {
+      amount: poolTotalUpcomingStakes.toBigInt(),
+      asset: currentAccount.network.baseAsset,
+    },
+  })
+  const poolTotalUpcomingStakesFixedAmount = formatFixed(
+    poolTotalUpcomingStakes,
+    currentAccount.network.baseAsset.decimals
+  )
+  const stakingMinAmount = Number(
+    formatFixed(
+      stakingPoktParams?.stakingMinAmount ?? 0,
+      currentAccount.network.baseAsset.decimals
+    )
+  )
+  const netRewardsPer1000PerDay = BigNumber.from(
+    stakingUserData?.rewardsData.netRewardsPerPoktStakedPerDay ?? 0
+  ).mul(stakingMinAmount)
+  const netRewardsPer1000PerDayMainCurrency = useAssetInMainCurrency({
+    assetAmount: {
+      amount: netRewardsPer1000PerDay.toBigInt(),
+      asset: currentAccount.network.baseAsset,
+    },
+  })
+  const netRewardsPer1000PerDayFixedAmount = formatFixed(
+    netRewardsPer1000PerDay,
+    currentAccount.network.baseAsset.decimals
+  )
+  const staking15xMinAmount = stakingMinAmount * 15
+  const netRewardsPer15000PerDay = BigNumber.from(
+    stakingUserData?.rewardsData.netRewardsPerPoktStakedPerDay ?? 0
+  ).mul(staking15xMinAmount)
+  const netRewardsPer15000PerDayMainCurrency = useAssetInMainCurrency({
+    assetAmount: {
+      amount: netRewardsPer15000PerDay.toBigInt(),
+      asset: currentAccount.network.baseAsset,
+    },
+  })
+  const netRewardsPer15000PerDayFixedAmount = formatFixed(
+    netRewardsPer15000PerDay,
+    currentAccount.network.baseAsset.decimals
+  )
+  const staking60xMinAmount = stakingMinAmount * 60
+  const netRewardsPer60000PerDay = BigNumber.from(
+    stakingUserData?.rewardsData.netRewardsPerPoktStakedPerDay ?? 0
+  ).mul(staking60xMinAmount)
+  const netRewardsPer60000PerDayMainCurrency = useAssetInMainCurrency({
+    assetAmount: {
+      amount: netRewardsPer60000PerDay.toBigInt(),
+      asset: currentAccount.network.baseAsset,
+    },
+  })
+  const netRewardsPer60000PerDayFixedAmount = formatFixed(
+    netRewardsPer60000PerDay,
+    currentAccount.network.baseAsset.decimals
+  )
+
   if (isStakingParamsLoading || isStakingUserDataLoading) {
     return (
       <div className="grow w-full relative flex flex-col justify-center items-center">
@@ -36,41 +110,6 @@ export default function StakeAnalytics(): ReactElement {
       </div>
     )
   }
-
-  const poolTotalStaked = formatFixed(
-    BigNumber.from(stakingUserData!.rewardsData.totalStaked ?? 0),
-    currentAccount.network.baseAsset.decimals
-  )
-  const poolTotalUpcomingStakes = formatFixed(
-    BigNumber.from(stakingUserData!.rewardsData.totalPendingStaked ?? 0),
-    currentAccount.network.baseAsset.decimals
-  )
-  const stakingMinAmount = Number(
-    formatFixed(
-      stakingPoktParams!.stakingMinAmount,
-      currentAccount.network.baseAsset.decimals
-    )
-  )
-  const netRewardsPer1000PerDay = formatFixed(
-    BigNumber.from(
-      stakingUserData!.rewardsData.netRewardsPerPoktStakedPerDay ?? 0
-    ).mul(stakingMinAmount),
-    currentAccount.network.baseAsset.decimals
-  )
-  const staking15xMinAmount = stakingMinAmount * 15
-  const netRewardsPer15000PerDay = formatFixed(
-    BigNumber.from(
-      stakingUserData!.rewardsData.netRewardsPerPoktStakedPerDay ?? 0
-    ).mul(staking15xMinAmount),
-    currentAccount.network.baseAsset.decimals
-  )
-  const staking60xMinAmount = stakingMinAmount * 60
-  const netRewardsPer60000PerDay = formatFixed(
-    BigNumber.from(
-      stakingUserData!.rewardsData.netRewardsPerPoktStakedPerDay ?? 0
-    ).mul(staking60xMinAmount),
-    currentAccount.network.baseAsset.decimals
-  )
 
   return (
     <div className="w-full">
@@ -122,10 +161,10 @@ export default function StakeAnalytics(): ReactElement {
                 <h2 className="text-base md:text-3xl">Pool</h2>
               </div>
 
-              <div className="grid grid-cols-3 md:grid-cols-8 gap-y-8 gap-x-4">
-                <div className="hidden md:block col-span-1"></div>
+              <div className="grid grid-cols-3 sm:grid-cols-8 gap-y-8 gap-x-4">
+                <div className="hidden sm:block col-span-1"></div>
                 <div
-                  title={poolTotalStaked}
+                  title={poolTotalStakedFixedAmount}
                   className="relative border border-spanish-gray h-24 rounded-md col-span-3"
                 >
                   <div className="absolute flex items-center justify-center -top-6 left-0 right-0 whitespace-nowrap text-xs">
@@ -134,16 +173,23 @@ export default function StakeAnalytics(): ReactElement {
                   <div className="w-full h-full grow flex gap-1 justify-space items-center">
                     <div className="relative grow h-full">
                       <div className="flex flex-col grow items-center justify-center h-full">
-                        <div className="text-3xl xl:text-4xl sm:text-3xl font-semibold text-white">
-                          {formatTokenAmount(poolTotalStaked, 3, 1)}
+                        <div className="text-3xl xl:text-4xl sm:text-xl md:text-3xl font-semibold text-white">
+                          {formatTokenAmount(poolTotalStakedFixedAmount, 3, 1)}
                         </div>
+                        {poolTotalStakedMainCurrency && (
+                          <small>
+                            {
+                              poolTotalStakedMainCurrency.localizedMainCurrencyAmount
+                            }
+                          </small>
+                        )}
                       </div>
                     </div>
                   </div>
                 </div>
 
                 <div
-                  title={poolTotalUpcomingStakes}
+                  title={poolTotalUpcomingStakesFixedAmount}
                   className="relative border border-spanish-gray h-24 rounded-md col-span-3"
                 >
                   <div className="absolute flex items-center justify-center -top-6 left-0 right-0 whitespace-nowrap text-xs">
@@ -154,9 +200,20 @@ export default function StakeAnalytics(): ReactElement {
                   <div className="w-full h-full grow flex gap-1 justify-space items-center">
                     <div className="relative grow h-full">
                       <div className="flex flex-col grow items-center justify-center h-full">
-                        <div className="text-3xl xl:text-4xl sm:text-3xl font-semibold text-white">
-                          {formatTokenAmount(poolTotalUpcomingStakes, 3, 1)}
+                        <div className="text-3xl xl:text-4xl sm:text-xl md:text-3xl font-semibold text-white">
+                          {formatTokenAmount(
+                            poolTotalUpcomingStakesFixedAmount,
+                            3,
+                            1
+                          )}
                         </div>
+                        {poolTotalUpcomingStakesMainCurrency && (
+                          <small>
+                            {
+                              poolTotalUpcomingStakesMainCurrency.localizedMainCurrencyAmount
+                            }
+                          </small>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -166,67 +223,109 @@ export default function StakeAnalytics(): ReactElement {
 
             <div className="mb-4">
               <div className="py-4 mb-4 text-center">
-                <h2 className="text-base md:text-3xl">Performance</h2>
+                <h2 className="text-base sm:text-3xl">Performance</h2>
               </div>
 
-              <div className="grid grid-cols-3 md:grid-cols-9 gap-y-8 gap-x-4">
+              <div className="grid grid-cols-3 sm:grid-cols-9 gap-y-8 gap-x-4">
                 <div
-                  title={netRewardsPer1000PerDay}
+                  title={netRewardsPer1000PerDayFixedAmount}
                   className="relative border border-spanish-gray h-24 rounded-md col-span-3"
                 >
                   <div className="absolute flex items-center justify-center -top-6 left-0 right-0 whitespace-nowrap text-xs">
                     <span>
-                      Net Rewards Per {stakingMinAmount.toLocaleString()} POKT /
-                      24hr
+                      Net{" "}
+                      <span className="inline sm:hidden md:inline">
+                        Rewards
+                      </span>{" "}
+                      Per {stakingMinAmount.toLocaleString()} POKT / 24hr
                     </span>
                   </div>
                   <div className="w-full h-full grow flex gap-1 justify-space items-center">
                     <div className="relative grow h-full">
                       <div className="flex flex-col grow items-center justify-center h-full">
-                        <div className="text-3xl xl:text-4xl sm:text-3xl font-semibold text-white">
-                          {formatTokenAmount(netRewardsPer1000PerDay, 3, 1)}
+                        <div className="text-3xl xl:text-4xl sm:text-xl md:text-3xl font-semibold text-white">
+                          {formatTokenAmount(
+                            netRewardsPer1000PerDayFixedAmount,
+                            3,
+                            1
+                          )}
                         </div>
+                        {netRewardsPer1000PerDayMainCurrency && (
+                          <small>
+                            {
+                              netRewardsPer1000PerDayMainCurrency.localizedMainCurrencyAmount
+                            }
+                          </small>
+                        )}
                       </div>
                     </div>
                   </div>
                 </div>
                 <div
-                  title={netRewardsPer15000PerDay}
+                  title={netRewardsPer15000PerDayFixedAmount}
                   className="relative border border-spanish-gray h-24 rounded-md col-span-3"
                 >
                   <div className="absolute flex items-center justify-center -top-6 left-0 right-0 whitespace-nowrap text-xs">
                     <span>
-                      Net Rewards Per {staking15xMinAmount.toLocaleString()}{" "}
-                      POKT / 24hr
+                      Net{" "}
+                      <span className="inline sm:hidden md:inline">
+                        Rewards
+                      </span>{" "}
+                      Per {staking15xMinAmount.toLocaleString()} POKT / 24hr
                     </span>
                   </div>
                   <div className="w-full h-full grow flex gap-1 justify-space items-center">
                     <div className="relative grow h-full">
                       <div className="flex flex-col grow items-center justify-center h-full">
-                        <div className="text-3xl xl:text-4xl sm:text-3xl font-semibold text-white">
-                          {formatTokenAmount(netRewardsPer15000PerDay, 3, 1)}
+                        <div className="text-3xl xl:text-4xl sm:text-xl md:text-3xl font-semibold text-white">
+                          {formatTokenAmount(
+                            netRewardsPer15000PerDayFixedAmount,
+                            3,
+                            1
+                          )}
                         </div>
+                        {netRewardsPer15000PerDayMainCurrency && (
+                          <small>
+                            {
+                              netRewardsPer15000PerDayMainCurrency.localizedMainCurrencyAmount
+                            }
+                          </small>
+                        )}
                       </div>
                     </div>
                   </div>
                 </div>
 
                 <div
-                  title={netRewardsPer60000PerDay}
+                  title={netRewardsPer60000PerDayFixedAmount}
                   className="relative border border-spanish-gray h-24 rounded-md col-span-3"
                 >
                   <div className="absolute flex items-center justify-center -top-6 left-0 right-0 whitespace-nowrap text-xs">
-                    <span title="Staking requests made in the last 24 hours">
-                      Net Rewards per {staking60xMinAmount.toLocaleString()}{" "}
-                      POKT / 24hr
+                    <span>
+                      Net{" "}
+                      <span className="inline sm:hidden md:inline">
+                        Rewards
+                      </span>{" "}
+                      per {staking60xMinAmount.toLocaleString()} POKT / 24hr
                     </span>
                   </div>
                   <div className="w-full h-full grow flex gap-1 justify-space items-center">
                     <div className="relative grow h-full">
                       <div className="flex flex-col grow items-center justify-center h-full">
-                        <div className="text-3xl xl:text-4xl sm:text-3xl font-semibold text-white">
-                          {formatTokenAmount(netRewardsPer60000PerDay, 3, 1)}
+                        <div className="text-3xl xl:text-4xl sm:text-xl md:text-3xl font-semibold text-white">
+                          {formatTokenAmount(
+                            netRewardsPer60000PerDayFixedAmount,
+                            3,
+                            1
+                          )}
                         </div>
+                        {netRewardsPer60000PerDayMainCurrency && (
+                          <small>
+                            {
+                              netRewardsPer60000PerDayMainCurrency.localizedMainCurrencyAmount
+                            }
+                          </small>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -236,7 +335,7 @@ export default function StakeAnalytics(): ReactElement {
 
             <div className="mb-4">
               <div className="py-4 mb-4 text-center">
-                <h2 className="text-base md:text-3xl">APY</h2>
+                <h2 className="text-base sm:text-3xl">APY</h2>
               </div>
 
               <div className="relative border border-spanish-gray rounded-md col-span-2 p-4">
@@ -247,13 +346,13 @@ export default function StakeAnalytics(): ReactElement {
                     </div>
                     <div
                       title={"Compounding Rewards On"}
-                      className="text-center grow  text-xs md:text-base col-span-5"
+                      className="text-center grow  text-xs sm:text-base col-span-5"
                     >
                       Compounding{" "}
-                      <span className="hidden md:inline">Rewards</span>
+                      <span className="hidden sm:inline">Rewards</span>
                     </div>
-                    <div className="text-center grow  text-xs md:text-base col-span-5">
-                      <span className="hidden md:inline">No Compounding</span>{" "}
+                    <div className="text-center grow  text-xs sm:text-base col-span-5">
+                      <span className="hidden sm:inline">No Compounding</span>{" "}
                     </div>
                   </div>
 
@@ -263,7 +362,7 @@ export default function StakeAnalytics(): ReactElement {
                     </div>
                     <div className="relative grow h-full col-span-5">
                       <div className="flex flex-col grow items-center justify-center h-full">
-                        <div className="text-sm xl:text-4xl md:text-2xl font-semibold text-white">
+                        <div className="text-sm xl:text-4xl sm:text-2xl font-semibold text-white">
                           <span className="underline">
                             {stakingUserData!.rewardsData?.apy1d
                               ? `${floor(
@@ -279,7 +378,7 @@ export default function StakeAnalytics(): ReactElement {
                     </div>
                     <div className="relative grow h-full col-span-5">
                       <div className="flex flex-col grow items-center justify-center h-full">
-                        <div className="text-sm xl:text-4xl md:text-2xl font-semibold text-white">
+                        <div className="text-sm xl:text-4xl sm:text-2xl font-semibold text-white">
                           <span className="underline">
                             {stakingUserData!.rewardsData?.apyNoCompounding1d
                               ? `${floor(
@@ -301,7 +400,7 @@ export default function StakeAnalytics(): ReactElement {
                     </div>
                     <div className="relative grow h-full col-span-5">
                       <div className="flex flex-col grow items-center justify-center h-full">
-                        <div className="text-sm xl:text-4xl md:text-2xl font-semibold text-white">
+                        <div className="text-sm xl:text-4xl sm:text-2xl font-semibold text-white">
                           <span className="underline">
                             {stakingUserData!.rewardsData?.apy7d
                               ? `${floor(
@@ -317,7 +416,7 @@ export default function StakeAnalytics(): ReactElement {
                     </div>
                     <div className="relative grow h-full col-span-5">
                       <div className="flex flex-col grow items-center justify-center h-full">
-                        <div className="text-sm xl:text-4xl md:text-2xl font-semibold text-white">
+                        <div className="text-sm xl:text-4xl sm:text-2xl font-semibold text-white">
                           <span className="underline">
                             {stakingUserData!.rewardsData?.apyNoCompounding7d
                               ? `${floor(

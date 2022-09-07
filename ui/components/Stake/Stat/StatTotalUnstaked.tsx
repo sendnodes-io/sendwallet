@@ -5,6 +5,7 @@ import { useStakingUserData } from "../../../hooks/staking-hooks"
 import formatTokenAmount from "../../../utils/formatTokenAmount"
 import SharedLoadingSpinner from "../../Shared/SharedLoadingSpinner"
 import { FungibleAsset } from "@sendnodes/pokt-wallet-background/assets"
+import useAssetInMainCurrency from "../../../hooks/assets/use-asset-in-main-currency"
 
 export default function StatTotalUnstaked({
   aon,
@@ -14,13 +15,18 @@ export default function StatTotalUnstaked({
   asset: FungibleAsset
 }) {
   const { data, isLoading, isError } = useStakingUserData(aon)
-  const amount = formatFixed(
-    BigNumber.from(data?.userStakingData[0]?.unstaked ?? 0),
-    asset.decimals
-  )
+  const amount = BigNumber.from(data?.userStakingData[0]?.unstaked ?? 0)
+  const fixedAmount = formatFixed(amount, asset.decimals)
+
+  const amountInMainCurrency = useAssetInMainCurrency({
+    assetAmount: {
+      amount: amount.toBigInt(),
+      asset,
+    },
+  })
   return (
     <div
-      title={amount}
+      title={fixedAmount}
       className="relative border border-spanish-gray h-24 rounded-md col-span-2"
     >
       <div className="absolute flex items-center justify-center -top-6 left-0 right-0 whitespace-nowrap text-xs">
@@ -33,9 +39,12 @@ export default function StatTotalUnstaked({
               {isLoading ? (
                 <SharedLoadingSpinner />
               ) : (
-                formatTokenAmount(amount, 3, 1)
+                formatTokenAmount(fixedAmount, 3, 1)
               )}
             </div>
+            {amountInMainCurrency && (
+              <small>{amountInMainCurrency.localizedMainCurrencyAmount}</small>
+            )}
           </div>
         </div>
       </div>
