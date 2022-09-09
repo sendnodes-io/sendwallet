@@ -65,8 +65,8 @@ export const BTC: FungibleAsset = {
 }
 
 export const BASE_ASSETS = [
-  POKT
-  // TODO: v0.2.1 re-enable EVM support
+  POKT,
+  // TODO: v0.4.0 wPOKT bridge: re-enable EVM support
   // , ETH, MATIC
 ]
 

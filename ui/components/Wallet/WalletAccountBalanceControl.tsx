@@ -152,7 +152,7 @@ export default function WalletAccountBalanceControl(
     <>
       <div className="wallet_summary">
         {
-          // TODO: v0.2.1 re-enable network selector
+          // TODO: v0.4.0 wPOKT bridge: re-enable network selector
           process.env.NODE_ENV === "development" ? (
             <div
               style={{

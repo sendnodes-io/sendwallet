@@ -5,7 +5,7 @@ const defaultPreferences: Preferences = {
   tokenLists: {
     autoUpdate: false,
     urls: [
-      // TODO: v0.2.1 re-enable EVM support
+      // TODO: v0.4.0 wPOKT bridge: re-enable EVM support
       // "https://ipfs.fleek.co/ipfs/bafybeicovpqvb533alo5scf7vg34z6fjspdytbzsa2es2lz35sw3ksh2la", // the Tally community-curated list
       // "https://gateway.ipfs.io/ipns/tokens.uniswap.org", // the Uniswap default list
       // "https://yearn.science/static/tokenlist.json", // the Yearn list
@@ -23,7 +23,7 @@ const defaultPreferences: Preferences = {
   },
   customAssets: [
     POKT,
-    // TODO: v0.2.1 re-enable EVM support
+    // TODO: v0.4.0 wPOKT bridge: re-enable EVM support
     // , ETH, MATIC
   ],
 }

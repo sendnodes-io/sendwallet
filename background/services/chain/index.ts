@@ -219,7 +219,7 @@ export default class ChainService extends BaseService<Events> {
           this.handleRecentAssetTransferAlarm()
         },
       },
-      // TODO: v0.2.1 re-enable EVM support
+      // TODO: v0.4.0 wPOKT bridge: re-enable EVM support
       // historicAssetTransfers: {
       //   schedule: {
       //     periodInMinutes: 1,

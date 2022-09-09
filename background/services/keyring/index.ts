@@ -574,7 +574,7 @@ export default class KeyringService extends BaseService<Events> {
       new HDKeyring({ mnemonic, path: defaultPathPokt }),
       keyringMetadata
     )
-    // TODO: v0.2.1 re-enable evm support
+    // TODO: v0.4.0 wPOKT bridge: re-enable evm support
     // const evmKeyring = await this.saveKeyring(
     //   new HDKeyring({ mnemonic, path: defaultPathEth }),
     //   keyringMetadata

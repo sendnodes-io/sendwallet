@@ -154,7 +154,7 @@ export default function WalletHeader() {
         </div>
         <div className="end">
           {
-            // TODO: v0.2.1 re-enable network selector
+            // TODO: v0.4.0 wPOKT bridge: re-enable network selector
             process.env.NODE_ENV == "development" ? (
               <a
                 href="#_"
@@ -214,7 +214,7 @@ export default function WalletHeader() {
             setIsWalletsOpen(false)
           }}
           closeOnClickOutside={!isNetworksOpen}
-          // TODO: v0.2.1 re-enable network selector
+          // TODO: v0.4.0 wPOKT bridge: re-enable network selector
           leftButton={
             process.env.NODE_ENV == "development" ? (
               <a
@@ -252,7 +252,7 @@ export default function WalletHeader() {
         </SharedSlideUpMenu>
 
         {
-          // TODO: v0.2.1 re-enable network selector
+          // TODO: v0.4.0 wPOKT bridge: re-enable network selector
           process.env.NODE_ENV == "development" ? (
             <SharedSlideUpMenu
               isOpen={isNetworksOpen}
