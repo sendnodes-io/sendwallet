@@ -21,11 +21,7 @@ const defaultPreferences: Preferences = {
     address: "",
     network: POCKET,
   },
-  customAssets: [
-    POKT,
-    // TODO: v0.4.0 wPOKT bridge: re-enable EVM support
-    // , ETH, MATIC
-  ],
+  customAssets: [POKT, ETH, MATIC],
 }
 
 export default defaultPreferences

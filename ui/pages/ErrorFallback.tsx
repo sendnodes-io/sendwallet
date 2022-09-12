@@ -21,7 +21,9 @@ export default function ErrorFallback({
         <p className="text-white">Apologies, but something went wrong.</p>
         <div className="py-4 mb-4 w-full">
           <h2 className="text-spanish-gray">For the devs:</h2>
-          <pre className="block whitespace-pre-wrap">{error.message}</pre>
+          <pre className="block whitespace-pre-wrap max-h-48 overflow-y-auto">
+            {error.message}
+          </pre>
         </div>
 
         <SharedButton

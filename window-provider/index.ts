@@ -62,17 +62,17 @@ export class EthereumWindowProvider extends EventEmitter {
       }
 
       if (isPoktWalletConfigPayload(result)) {
-        // if (!result.defaultWallet) {
-        //   // if poktWallet is NOT set to be default wallet
-        //   // AND window.ethereum was taken
-        //   if (window.oldEthereum) {
-        //     // then let's reset window.ethereum to the original value
-        //     window.ethereum = window.oldEthereum
-        //   }
+        if (!result.defaultWallet) {
+          // if poktWallet is NOT set to be default wallet
+          // AND window.ethereum was taken
+          if (window.oldEthereum) {
+            // then let's reset window.ethereum to the original value
+            window.ethereum = window.oldEthereum
+          }
 
-        //   // NOTE: we do not remove the PoktWalletWindowProvider from window.ethereum
-        //   // if there is nothing else that want's to use it.
-        // }
+          // NOTE: we do not remove the PoktWalletWindowProvider from window.ethereum
+          // if there is nothing else that want's to use it.
+        }
       } else if (isPoktWalletAccountPayload(result)) {
         this.handleAddressChange.bind(this)(result.address)
       }
@@ -132,7 +132,7 @@ export class EthereumWindowProvider extends EventEmitter {
         method,
         params,
       },
-      network: NetworkFamily.EVM
+      network: NetworkFamily.EVM,
     }
 
     this.requestID += 1n
@@ -305,7 +305,7 @@ export class PocketWindowProvider extends EventEmitter {
         method,
         params,
       },
-      network: "POKT"
+      network: "POKT",
     }
 
     this.requestID += 1n

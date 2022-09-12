@@ -28,8 +28,6 @@
     "watch": "webpack --mode=development --watch"
   },
   "dependencies": {
-    "@ethereumjs/common": "^2.4.0",
-    "@ethereumjs/tx": "^3.3.0",
     "@ethersproject/abstract-provider": "^5.5.1",
     "@ethersproject/abstract-signer": "^5.5.0",
     "@ethersproject/networks": "^5.5.1",
@@ -55,12 +53,12 @@
     "dexie": "^3.0.3",
     "emittery": "^0.9.2",
     "ethers": "^5.5.1",
-    "node-fetch": "^2.6.1",
     "siwe": "^1.1.0",
     "util": "^0.12.4",
     "webextension-polyfill": "^0.8.0"
   },
   "devDependencies": {
+    "@0xbigboss/webext-redux": "2.1.9",
     "@reduxjs/toolkit": "^1.6.1",
     "@types/chrome": "^0.0.190",
     "@types/webextension-polyfill": "^0.9.0",
@@ -70,7 +68,6 @@
     "redux": "^4.1.1",
     "remote-redux-devtools": "^0.5.16",
     "remotedev-server": "^0.3.1",
-    "ts-node": "^10.4.0",
-    "@0xbigboss/webext-redux": "2.1.9"
+    "ts-node": "^10.4.0"
   }
 }

@@ -15,21 +15,22 @@ export default async function getBlockPrices(
   network: EVMNetwork,
   provider: Provider
 ): Promise<BlockPrices> {
+  // FIXME: this is broken in service workers
   // if BlockNative is configured and we're on mainnet, prefer their gas service
-  if (
-    typeof BLOCKNATIVE_API_KEY !== "undefined" &&
-    network.chainID === ETHEREUM.chainID
-  ) {
-    try {
-      const blocknative = Blocknative.connect(
-        BLOCKNATIVE_API_KEY,
-        BlocknativeNetworkIds.ethereum.mainnet
-      )
-      return await blocknative.getBlockPrices()
-    } catch (err) {
-      logger.error("Error getting block prices from BlockNative", err)
-    }
-  }
+  // if (
+  //   typeof BLOCKNATIVE_API_KEY !== "undefined" &&
+  //   network.chainID === ETHEREUM.chainID
+  // ) {
+  //   try {
+  //     const blocknative = Blocknative.connect(
+  //       BLOCKNATIVE_API_KEY,
+  //       BlocknativeNetworkIds.ethereum.mainnet
+  //     )
+  //     return await blocknative.getBlockPrices()
+  //   } catch (err) {
+  //     logger.error("Error getting block prices from BlockNative", err)
+  //   }
+  // }
 
   // otherwise, we're going it alone!
 
@@ -102,6 +103,6 @@ export default async function getBlockPrices(
     ],
     dataSource: BlockPriceDataSource.LOCAL,
   }
-  logger.debug('no base fee per gas', result)
+  logger.debug("no base fee per gas", result)
   return result
 }

@@ -6,6 +6,7 @@ import {
   getNetwork as getEthNetwork,
   JsonRpcProvider,
   WebSocketProvider,
+  PocketProvider as EvmPocketProvider,
 } from "@ethersproject/providers"
 import { Transaction as PoktJSTransaction } from "@pokt-network/pocket-js/dist/index"
 import { utils } from "ethers"
@@ -219,27 +220,26 @@ export default class ChainService extends BaseService<Events> {
           this.handleRecentAssetTransferAlarm()
         },
       },
-      // TODO: v0.4.0 wPOKT bridge: re-enable EVM support
-      // historicAssetTransfers: {
-      //   schedule: {
-      //     periodInMinutes: 1,
-      //   },
-      //   handler: () => {
-      //     this.handleHistoricEVMAssetTransferAlarm()
-      //   },
-      //   runAtStart: true,
-      // },
-      // blockPrices: {
-      //   runAtStart: false,
-      //   schedule: {
-      //     // periodInMinutes: 0.5,
-      //     periodInMinutes:
-      //       Number(process.env.GAS_PRICE_POLLING_FREQUENCY ?? "120") / 60,
-      //   },
-      //   handler: () => {
-      //     this.pollBlockPrices()
-      //   },
-      // },
+      historicAssetTransfers: {
+        schedule: {
+          periodInMinutes: 1,
+        },
+        handler: () => {
+          this.handleHistoricEVMAssetTransferAlarm()
+        },
+        runAtStart: true,
+      },
+      blockPrices: {
+        runAtStart: false,
+        schedule: {
+          // periodInMinutes: 0.5,
+          periodInMinutes:
+            Number(process.env.GAS_PRICE_POLLING_FREQUENCY ?? "120") / 60,
+        },
+        handler: () => {
+          this.pollBlockPrices()
+        },
+      },
     })
 
     this.subscribedAccounts = []
@@ -1046,13 +1046,13 @@ export default class ChainService extends BaseService<Events> {
     )
   }
 
-  // private async handleHistoricEVMAssetTransferAlarm(): Promise<void> {
-  //   const accountsToTrack = await this.getAccountsToTrack()
+  private async handleHistoricEVMAssetTransferAlarm(): Promise<void> {
+    const accountsToTrack = await this.getAccountsToTrack()
 
-  //   await Promise.allSettled(
-  //     accountsToTrack.map((an) => this.loadHistoricEVMAssetTransfers(an))
-  //   )
-  // }
+    await Promise.allSettled(
+      accountsToTrack.map((an) => this.loadHistoricEVMAssetTransfers(an))
+    )
+  }
 
   private async handleQueuedTransactionAlarm(): Promise<void> {
     const txsToRetrieve = await this.db.deQueueTransactionRetrieval(
@@ -1325,8 +1325,6 @@ export default class ChainService extends BaseService<Events> {
         provider: this.ethProvider,
       })
     }
-
-    // TODO: v0.2.0 add POKT network family transaction subscribing
   }
 
   /**
@@ -1433,6 +1431,11 @@ export default class ChainService extends BaseService<Events> {
             )
           : new SerialFallbackProvider(
               this.ethereumNetwork!,
+              () =>
+                new JsonRpcProvider(
+                  "https://poly-archival.gateway.pokt.network/v1/lb/631e9c9b4801c200399a37f0",
+                  getEthNetwork(Number(this.ethereumNetwork!.chainID))
+                ),
               () =>
                 new AlchemyWebSocketProvider(
                   getEthNetwork(Number(this.ethereumNetwork!.chainID)),
