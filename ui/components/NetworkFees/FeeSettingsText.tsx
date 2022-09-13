@@ -1,7 +1,4 @@
-import {
-  BASE_POKT_FEE,
-  ESTIMATED_FEE_MULTIPLIERS_BY_TYPE,
-} from "@sendnodes/pokt-wallet-background/constants/network-fees"
+import { ESTIMATED_FEE_MULTIPLIERS_BY_TYPE } from "@sendnodes/pokt-wallet-background/constants/network-fees"
 import {
   truncateDecimalAmount,
   weiToGwei,
@@ -12,17 +9,17 @@ import {
   selectEstimatedFeesPerGas,
   selectFeeType,
 } from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction"
-import { selectMainCurrencyPricePoint } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
 import {
-  enrichAssetAmountWithMainCurrencyValues,
-  enrichAssetAmountWithDecimalValues,
-  heuristicDesiredDecimalsForUnitPrice,
-} from "@sendnodes/pokt-wallet-background/redux-slices/utils/asset-utils"
+  selectCurrentAccount,
+  selectMainCurrencyPricePoint,
+} from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
+import { enrichAssetAmountWithMainCurrencyValues } from "@sendnodes/pokt-wallet-background/redux-slices/utils/asset-utils"
 import { PricePoint } from "@sendnodes/pokt-wallet-background/assets"
 import React, { ReactElement } from "react"
 import { useBackgroundSelector } from "../../hooks"
-import { POKT } from "@sendnodes/pokt-wallet-background/constants"
-import { selectAssetPricePoint } from "@sendnodes/pokt-wallet-background/redux-slices/assets"
+import usePocketNetworkFee from "../../hooks/pocket-network/use-network-fee"
+import { formatFixed } from "@ethersproject/bignumber"
+import formatTokenAmount from "../../utils/formatTokenAmount"
 
 const getFeeDollarValue = (
   currencyPrice: PricePoint | undefined,
@@ -50,12 +47,14 @@ const getFeeDollarValue = (
 }
 
 export default function FeeSettingsText(): ReactElement {
+  const selectedAccount = useBackgroundSelector(selectCurrentAccount)
   const estimatedFeesPerGas = useBackgroundSelector(selectEstimatedFeesPerGas)
   const selectedFeeType = useBackgroundSelector(selectFeeType)
   const networkSettings = useBackgroundSelector(selectDefaultNetworkFeeSettings)
   const mainCurrencyPricePoint = useBackgroundSelector(
     selectMainCurrencyPricePoint
   )
+  const { networkFee: poktNetworkFee } = usePocketNetworkFee()
 
   const estimatedGweiAmount =
     typeof estimatedFeesPerGas !== "undefined" &&
@@ -69,6 +68,24 @@ export default function FeeSettingsText(): ReactElement {
           0
         )
       : ""
+
+  if (!selectedAccount) {
+    return <>Unknown</>
+  }
+
+  if (selectedAccount?.network?.family === "POKT") {
+    return (
+      <div>
+        {formatTokenAmount(
+          formatFixed(
+            poktNetworkFee,
+            selectedAccount.network.baseAsset.decimals
+          )
+        )}
+        {" POKT"}
+      </div>
+    )
+  }
 
   if (typeof estimatedFeesPerGas === "undefined") return <div>Unknown</div>
 
