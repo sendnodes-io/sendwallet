@@ -356,7 +356,7 @@ export default function SendStake(): ReactElement {
               <small className="mb-2 inline-block">
                 Your stake is protected by{" "}
                 <a
-                  href="https://sendnodes.gitbook.io/sendnodes/start-here/frequently-asked-questions#does-sendnodes-have-insurance"
+                  href="https://docs.sendnodes.io/sendnodes/start-here/frequently-asked-questions#is-it-safe-to-use-sendnodes"
                   className="underline text-aqua hover:text-white"
                   target={"_blank"}
                 >
