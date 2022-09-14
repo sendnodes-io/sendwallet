@@ -207,18 +207,20 @@ export default function SendStake(): ReactElement {
 
   return (
     <div className="grow h-full relative">
-      <div className="flex gap-x-4 justify-center items-center mb-10">
-        <div className="stake_icon bg-white w-12 h-12" />
-        <h1>Stake</h1>
+      <div>
+        <div className="flex gap-x-4 justify-center items-center md:mb-8">
+          <h1>Stake</h1>
+          <div className="stake_icon bg-white w-12 h-12" />
+        </div>
       </div>
-      <div className="mt-6 flex flex-col mb-6">
+      <div className="md:mt-6 flex flex-col mb-6">
         <div className="grid sm:grid-cols-8 gap-4 gap-y-12 lg:gap-8">
           <div className="sm:col-span-2" />
           <StatTotalStaked aon={currentAccount} asset={selectedAsset} />
           <StatAPY aon={currentAccount} asset={selectedAsset} />
         </div>
       </div>
-      <div className="mt-8 md:mt-12 relative mb-2">
+      <div className="mt-12 relative mb-2">
         <div className="mb-4">
           <SharedAssetInput
             autoFocus
@@ -333,6 +335,43 @@ export default function SendStake(): ReactElement {
               setTermsAccepted(e.currentTarget.checked)
             }}
           />
+        </div>
+      </div>
+
+      <div className=" border-b-2 border-spanish-gray border-opacity-25 mb-4 pb-2">
+        <div className="form_input">
+          <div className="flex flex-wrap items-center text-sm">
+            <div className="flex items-center  flex-wrap ">
+              Staking provided by{" "}
+              <img
+                src="/images/sendnodes.png"
+                width={"558"}
+                height="84"
+                className="inline-flex w-36 md:w-42 ml-2 mb-2"
+                alt="SendNodes"
+                title="SendNodes"
+              />
+              <span className="sr-only">SendNodes, Inc.</span>
+              <div className="grow w-full"></div>
+              <small className="mb-2 inline-block">
+                Your stake is protected by{" "}
+                <a
+                  href="https://docs.sendnodes.io/sendnodes/start-here/frequently-asked-questions#is-it-safe-to-use-sendnodes"
+                  className="underline text-aqua hover:text-white"
+                  target={"_blank"}
+                >
+                  Coin Cover.
+                </a>
+              </small>
+            </div>
+            <div className="w-full grow sm:hidden"></div>
+            <img
+              src="/images/Protected_by_Coincover_Stamp.png"
+              width={"800"}
+              height="250"
+              className="inline-flex w-32 md:w-36 mx-auto"
+            />
+          </div>
         </div>
       </div>
 
