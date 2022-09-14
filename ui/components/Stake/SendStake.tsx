@@ -208,7 +208,7 @@ export default function SendStake(): ReactElement {
   return (
     <div className="grow h-full relative">
       <div>
-        <div className="flex gap-x-4 justify-center items-center md:mb-8">
+        <div className="flex gap-x-4 justify-center items-center sm:mb-8">
           <h1>Stake</h1>
           <div className="stake_icon bg-white w-12 h-12" />
         </div>
