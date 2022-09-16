@@ -360,7 +360,7 @@ export default function SendStake(): ReactElement {
                   className="underline text-aqua hover:text-white"
                   target={"_blank"}
                 >
-                  Coin Cover.
+                  coincover.
                 </a>
               </small>
             </div>
