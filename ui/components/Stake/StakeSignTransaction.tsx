@@ -122,7 +122,7 @@ export default function StakeSignTransaction(): ReactElement {
 
   const { networkFee } = usePocketNetworkFee()
 
-  const action = getSnActionFromMemo(transactionDetails?.memo)!
+  const action = getSnActionFromMemo(transactionDetails?.memo)
   const amount =
     action === SnAction.UNSTAKE
       ? transactionDetails?.memo?.split(":")[1]
@@ -194,7 +194,7 @@ export default function StakeSignTransaction(): ReactElement {
     "minutes"
   )
 
-  const humanAction = capitalize(action.toLowerCase())
+  const humanAction = capitalize(action?.toLowerCase())
 
   return (
     <div>

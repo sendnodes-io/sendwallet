@@ -51,6 +51,10 @@ export default function SignTransaction(): ReactElement {
 
   const isLocked = useIsSigningMethodLocked(signingMethod as SigningMethod)
 
+  const [showSendingToSiwWarning, setShowSendingToSiwWarning] = useState(
+    stakingPoktData?.wallets.siw === transactionDetails?.to
+  )
+
   const handleReject = async () => {
     dispatch(rejectTransactionSignature())
     history.push("/")
@@ -87,6 +91,13 @@ export default function SignTransaction(): ReactElement {
     }
   }, [handleReject])
 
+  // handle if we need to show a warning about sending to the staking wallet
+  useEffect(() => {
+    if (stakingPoktData?.wallets.siw === transactionDetails?.to) {
+      setShowSendingToSiwWarning(true)
+    }
+  }, [stakingPoktData, transactionDetails])
+
   if (isLocked) return <SharedSplashScreen />
 
   if (
@@ -99,10 +110,7 @@ export default function SignTransaction(): ReactElement {
   }
 
   // if staking, go to staking
-  if (
-    window.location.pathname !== "/stake.html" &&
-    stakingPoktData?.wallets.siw === transactionDetails.to
-  ) {
+  if (window.location.pathname !== "/stake.html" && showSendingToSiwWarning) {
     return (
       <div className="h-full min-h-[20rem] flex flex-col items-center justify-center">
         <h3>Please continue in the Staking app</h3>
@@ -129,6 +137,14 @@ export default function SignTransaction(): ReactElement {
         >
           Take me there
         </SharedButton>
+
+        <button
+          type="button"
+          onClick={(e) => setShowSendingToSiwWarning(false)}
+          className="text-sm text-gray-500 underline mt-2"
+        >
+          I know what I'm doing...
+        </button>
       </div>
     )
   }

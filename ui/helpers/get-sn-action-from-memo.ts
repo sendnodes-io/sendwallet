@@ -12,9 +12,6 @@ export default function getSnActionFromMemo(memo?: string): SnAction | null {
     return null
   }
   const [snAction] = memo.toString().split(":")
-  if (snAction.length !== 1) {
-    throw new Error(`Invalid memo: ${memo}`)
-  }
   if (snAction in MEMO_TO_SNACTION) {
     return MEMO_TO_SNACTION[snAction]
   }
