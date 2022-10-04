@@ -17,8 +17,8 @@ export { Popup, Tab, Stake }
 function invokeServiceWorkerUpdateFlow(
   component: ComponentType<{ store: Store }>
 ) {
-  logger.debug("POKT Wallet needs to be restarted to continue")
-  if (confirm("POKT Wallet needs to be restarted to continue. Restart now?")) {
+  logger.debug("SendWallet needs to be restarted to continue")
+  if (confirm("SendWallet needs to be restarted to continue. Restart now?")) {
     browser.runtime.reload()
   }
 }

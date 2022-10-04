@@ -269,7 +269,7 @@ const modeConfigs: {
       devtool: false,
       plugins: [
         new WebExtensionArchivePlugin({
-          filename: `POKTWallet-${branch.replaceAll(/[.\/]/gi, "-")}-${
+          filename: `SendWallet-${branch.replaceAll(/[.\/]/gi, "-")}-${
             date.toISOString().split("T")[0]
           }-${revision}-${browser}`,
         }),

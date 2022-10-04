@@ -51,7 +51,7 @@ export default function Send(): ReactElement {
     string | undefined
   >(undefined)
   const [amount, setAmount] = useState("")
-  const [memo, setMemo] = useState("Sent with POKTWallet.io")
+  const [memo, setMemo] = useState("Sent with SendWallet.io")
   const [memoError, setMemoError] = useState("")
   const [gasLimit, setGasLimit] = useState<bigint | undefined>(undefined)
   const [isSendingTransactionRequest, setIsSendingTransactionRequest] =

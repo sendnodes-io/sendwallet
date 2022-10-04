@@ -1,7 +1,7 @@
 {
   "name": "@sendnodes/window-provider",
   "version": "0.0.1",
-  "description": "POKTWallet: window provider is responsible for creating the in-page object for communication.",
+  "description": "SendWallet: window provider is responsible for creating the in-page object for communication.",
   "main": "index.ts",
   "repository": "git@github.com:sendnodes/pokt-wallet.git",
   "authors": [

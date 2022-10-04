@@ -313,7 +313,7 @@ export default function StakeRewards(): ReactElement {
             <p>
               Data presented here is informational only and is not intended to
               be used as investment advice. Before you make any financial,
-              legal, or other decisions involving POKT Wallet and/or SendNodes
+              legal, or other decisions involving SendWallet and/or SendNodes
               Inc., you should seek independent professional advice from an
               individual who is licensed and qualified in the area for which
               such advice would be appropriate.

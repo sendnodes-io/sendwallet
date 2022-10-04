@@ -64,7 +64,7 @@ export default function Menu(): ReactElement {
         ),
       },
 
-      // TODO POKT Wallet is incapable of being a default wallet
+      // TODO SendWallet is incapable of being a default wallet
       // {
       //   title: t("menuSetAsDefault"),
       //   component: () => (

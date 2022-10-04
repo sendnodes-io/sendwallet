@@ -1,7 +1,7 @@
 {
   "name": "@sendnodes/provider-bridge-shared",
   "version": "0.0.1",
-  "description": "POKTWallet: provider bridge to connect the in-page provider with the background script.",
+  "description": "SendWallet: provider bridge to connect the in-page provider with the background script.",
   "main": "index.ts",
   "repository": "git@github.com:sendnodes/pokt-wallet.git",
   "authors": [

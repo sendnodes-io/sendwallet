@@ -6,6 +6,6 @@
     ]
   },
   "browser_action": {
-    "default_title": "[DEV] POKT Wallet"
+    "default_title": "[DEV] SendWallet"
   }
 }

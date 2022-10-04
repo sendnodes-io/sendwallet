@@ -18,7 +18,7 @@ const OnboardingIntroStep1 = (
     </span>
     <img
       src="/images/onboarding/step-1-logo-simple@4x.png"
-      alt="POKT Wallet"
+      alt="SendWallet"
       width={232}
       height={32}
     />
@@ -84,7 +84,7 @@ const OnboardingIntroStep2 = (
 //       Test <span>responsibly</span>
 //     </h1>
 //     <p>
-//       POKT Wallet is a work in progess!
+//       SendWallet is a work in progess!
 //       <br />
 //       This beta version includes
 //       <br />

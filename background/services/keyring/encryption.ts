@@ -41,7 +41,8 @@ async function generateSalt(): Promise<string> {
 function requireCryptoGlobal(message?: string) {
   if (global.crypto === undefined) {
     throw new Error(
-      `${message || "POKTWallet"
+      `${
+        message || "SendWallet"
       } requires WebCrypto API support — is this being run in a modern browser?`
     )
   }

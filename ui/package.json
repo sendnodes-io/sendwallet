@@ -1,7 +1,7 @@
 {
   "name": "@sendnodes/pokt-wallet-ui",
   "version": "0.0.1",
-  "description": "POKTWallet: UI package.",
+  "description": "SendWallet: UI package.",
   "main": "index.ts",
   "repository": "git@github.com:sendnodes/pokt-wallet.git",
   "authors": [

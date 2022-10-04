@@ -5,28 +5,28 @@ export default function SharedSplashScreen() {
     <div className="">
       <img
         className="splash_screen one"
-        src="./images/splash/POKT Wallet 1@4x.png"
+        src="./images/splash/SendWallet 1@4x.png"
         width="100"
         height="100"
         draggable="false"
       />
       <img
         className="splash_screen two"
-        src="./images/splash/POKT Wallet 2@4x.png"
+        src="./images/splash/SendWallet 2@4x.png"
         width="100"
         height="100"
         draggable="false"
       />
       <img
         className="splash_screen three"
-        src="./images/splash/POKT Wallet 3@4x.png"
+        src="./images/splash/SendWallet 3@4x.png"
         width="100"
         height="100"
         draggable="false"
       />
       <img
         className="splash_screen four"
-        src="./images/splash/POKT Wallet 1@4x.png"
+        src="./images/splash/SendWallet 1@4x.png"
         width="100"
         height="100"
       />
