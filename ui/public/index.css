@@ -3,19 +3,6 @@
 @tailwind utilities;
 
 @import url(./fonts.css);
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-  }
-
-  50% {
-    opacity: 1;
-  }
-
-  100% {
-    opacity: 0;
-  }
-}
 
 html,
 body {
@@ -32,6 +19,20 @@ body {
   justify-content: center;
 }
 
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
 .splash_screen {
   position: absolute;
   top: 50%;
@@ -43,7 +44,7 @@ body {
   animation-timing-function: ease-in-out;
   animation-name: fadeIn;
   animation-iteration-count: infinite;
-  animation-duration: 3s;
+  animation-duration: 3.5s;
 }
 
 .one {
@@ -52,15 +53,27 @@ body {
 }
 
 .two {
-  animation-delay: 0.5s;
+  animation-delay: 0.25s;
 }
 
 .three {
-  animation-delay: 1.5s;
+  animation-delay: 0.75s;
 }
 
 .four {
-  animation-delay: 2.5s;
+  animation-delay: 1.25s;
+}
+
+.five {
+  animation-delay: 1.75s;
+}
+
+.six {
+  animation-delay: 2.25s;
+}
+
+.seven {
+  animation-delay: 2.75s;
 }
 
 ::-webkit-scrollbar {

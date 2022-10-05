@@ -128,9 +128,9 @@ export default function OnboardingInfoIntro(): ReactElement {
     (state) => Object.keys(state.account.accountsData).length > 0
   )
 
-  // If there's an account, return to /wallet
+  // If there's an account, return to /
   if (hasAccounts) {
-    return <Redirect to="/wallet" />
+    return <Redirect to="/" />
   }
 
   return (

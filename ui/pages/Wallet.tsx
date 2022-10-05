@@ -5,8 +5,6 @@ import {
   selectCurrentAccountBalances,
 } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
 import { useBackgroundSelector, useAreKeyringsUnlocked } from "../hooks"
-import SharedPanelSwitcher from "../components/Shared/SharedPanelSwitcher"
-import WalletAssetList from "../components/Wallet/WalletAssetList"
 import WalletActivityList from "../components/Wallet/WalletActivityList"
 import WalletAccountBalanceControl from "../components/Wallet/WalletAccountBalanceControl"
 import WalletHeader from "../components/Wallet/WalletHeader"
