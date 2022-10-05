@@ -312,7 +312,7 @@ export default function CoreStakePage(props: Props): ReactElement {
         </div>
         <div className="col-span-1 flex justify-center items-center">
           <img
-            src="images/pokt-wallet-logo@2x.png"
+            src="images/send-wallet-logo@2x.png"
             width="227"
             height="48"
             className="max-w-[10rem]"
