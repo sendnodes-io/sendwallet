@@ -53,7 +53,7 @@ export default function () {
             </a>
           </li>
           <li>
-            <a target="_blank" href="https://t.me/poktwallet">
+            <a target="_blank" href="https://t.me/send_wallet">
               <div className="icon">
                 <Icon icon="uit:telegram-alt" className="w-6 h-6" />
               </div>

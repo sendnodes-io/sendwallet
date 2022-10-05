@@ -18,9 +18,9 @@ Start with our amazing docs, https://docs.sendwallet.net/.
 
 More questions, please find us on:
 
-- [Twitter](https://twitter.com/POKTWallet)
+- [Twitter](https://twitter.com/SendWallet)
 - [Discord](https://discord.gg/Gh76tPkjTn)
-- [Telegram](https://t.me/poktwallet)
+- [Telegram](https://t.me/send_wallet)
 
 ## 👩🏻‍💻 Contributing
 

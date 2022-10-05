@@ -32,7 +32,7 @@ export default function Footer() {
           </a>
           <a
             target="_blank"
-            href={`https://t.me/poktwallet`}
+            href={`https://t.me/send_wallet`}
             className="text-white hover:text-aqua"
           >
             <span className="sr-only">Telegram</span>

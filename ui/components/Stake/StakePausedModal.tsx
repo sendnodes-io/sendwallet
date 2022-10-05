@@ -99,7 +99,7 @@ export default function StakePausedModal({
                     <a
                       className="bg-spanish-gray text-white rounded-full w-10 h-10 flex items-center justify-center"
                       target="_blank"
-                      href="https://t.me/poktwallet"
+                      href="https://t.me/send_wallet"
                     >
                       <Icon icon="uit:telegram-alt" className="w-6 h-6" />
                     </a>
