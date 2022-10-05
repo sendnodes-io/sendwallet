@@ -15,13 +15,13 @@ First, determine if the user has SendWallet installed, by checking if the `windo
 ```js
 if (window.pocketNetwork === undefined) {
   // uh oh no SendWallet found, request that the user install it first.
-  alert("SendWallet not found! Please visit https://poktwallet.io to install")
+  alert("SendWallet not found! Please visit https://sendwallet.net to install")
 } else {
   // we're ready to go!
 }
 ```
 
-If the `window.pocketNetwork` is not defined, instruct the user to visit [SendWallet.io](https://poktwallet.io/) to install it. SendWallet is available as a browser extension with full support for Chrome and Firefox.
+If the `window.pocketNetwork` is not defined, instruct the user to visit [SendWallet.net](https://sendwallet.net/) to install it. SendWallet is available as a browser extension with full support for Chrome and Firefox.
 
 ### Requesting dAPP Permissions
 

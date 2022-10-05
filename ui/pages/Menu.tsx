@@ -100,7 +100,7 @@ export default function Menu(): ReactElement {
             iconSize="large"
             iconPosition="left"
             onClick={() => {
-              window.open(`https://chat.poktwallet.io/`, "_blank")?.focus()
+              window.open(`https://discord.gg/TmfYqaXzGb`, "_blank")?.focus()
             }}
           >
             Join and give feedback

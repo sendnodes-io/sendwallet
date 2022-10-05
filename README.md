@@ -1,6 +1,6 @@
 <img src="./docs/img/1500x500.jpeg"/>
 
-# SendWallet - https://SendWallet.io
+# SendWallet - https://sendwallet.net
 
 Welcome to the official repo of SendWallet.
 
@@ -14,7 +14,7 @@ SendWallet can turn your site into a Dapp on Pocket Network. You will be able to
 
 ## 🙋‍♀️ First time here?
 
-Start with our amazing docs, https://docs.poktwallet.io/.
+Start with our amazing docs, https://docs.sendwallet.net/.
 
 More questions, please find us on:
 
