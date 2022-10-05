@@ -86,7 +86,7 @@ let hash = await window.pocketNetwork
       amount: "100000", // in uPOKT
       from: address,
       to: "some_pokt_address",
-      memo: "Sent with SendWallet.io",
+      memo: "Sent with SendWallet.net",
     },
   ])
   .then(({ hash }) => {
