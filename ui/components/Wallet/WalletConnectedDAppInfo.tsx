@@ -62,7 +62,7 @@ export default function (props: {
         })}
       </ul>
       {!permissions.length ? (
-        <p>You have not connected POKT Wallet to any dApps.</p>
+        <p>You have not connected SendWallet to any dApps.</p>
       ) : (
         <></>
       )}

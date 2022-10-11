@@ -119,7 +119,7 @@ export function parseERC20Tx(
 }
 
 /**
- * Information bundle from an ostensible ERC20 transfer log using POKT Wallet types.
+ * Information bundle from an ostensible ERC20 transfer log using SendWallet types.
  */
 export type ERC20TransferLog = {
   contractAddress: string

@@ -14,7 +14,7 @@ export default function LedgerImportDone({
         <>
           Congratulations!
           <br />
-          You can open POKT Wallet now.
+          You can open SendWallet now.
         </>
       }
       subHeading="Selected accounts were succesfully connected."

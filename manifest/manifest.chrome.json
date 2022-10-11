@@ -17,7 +17,7 @@
     }
   ],
   "action": {
-    "default_title": "POKT Wallet",
+    "default_title": "SendWallet",
     "default_popup": "popup.html"
   },
   "background": {

@@ -12,7 +12,7 @@
     "description": "in pages > Menu"
   },
   "menuSetAsDefault": {
-    "message": "Use POKT Wallet as default wallet",
+    "message": "Use SendWallet as default wallet",
     "description": "in pages > Menu"
   }
 }

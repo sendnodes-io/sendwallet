@@ -1,30 +1,30 @@
 <img src="./docs/img/1500x500.jpeg"/>
 
-# POKT Wallet - https://POKTWallet.io
+# SendWallet - https://sendwallet.net
 
-Welcome to the official repo of POKT Wallet.
+Welcome to the official repo of SendWallet.
 
-Get the ease of accessing your $POKT with our secure POKT Wallet browser extension.
+Get the ease of accessing your $POKT with our secure SendWallet browser extension.
 
-The POKT Wallet is your gateway to the Pocket Network and broader ecosystem. Full EVM support soon.
+The SendWallet is your gateway to the Pocket Network and broader ecosystem. Full EVM support soon.
 
-## Looking to integrate POKT Wallet into your site?
+## Looking to integrate SendWallet into your site?
 
-POKT Wallet can turn your site into a Dapp on Pocket Network. You will be able to prepare and request transactions for your users to approve. Start here with [our integration guide](/docs/integration.md)!
+SendWallet can turn your site into a Dapp on Pocket Network. You will be able to prepare and request transactions for your users to approve. Start here with [our integration guide](/docs/integration.md)!
 
 ## 🙋‍♀️ First time here?
 
-Start with our amazing docs, https://docs.poktwallet.io/.
+Start with our amazing docs, https://docs.sendwallet.net/.
 
 More questions, please find us on:
 
-- [Twitter](https://twitter.com/POKTWallet)
+- [Twitter](https://twitter.com/SendWallet)
 - [Discord](https://discord.gg/Gh76tPkjTn)
-- [Telegram](https://t.me/poktwallet)
+- [Telegram](https://t.me/send_wallet)
 
 ## 👩🏻‍💻 Contributing
 
-SendNodes, Inc. is looking for amazing contributors to make POKT Wallet the best browser extension wallet. Feel free to fork the repo and start shipping code! For the latest news on our roadmap and milestones, please join our Discord server.
+SendNodes, Inc. is looking for amazing contributors to make SendWallet the best browser extension wallet. Feel free to fork the repo and start shipping code! For the latest news on our roadmap and milestones, please join our Discord server.
 
 ## 👷‍♀️ Building
 

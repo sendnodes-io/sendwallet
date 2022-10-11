@@ -12,7 +12,7 @@
     "description": "in pages > Menu"
   },
   "menuSetAsDefault": {
-    "message": "將 POKT Wallet 設定成預設錢包",
+    "message": "將 SendWallet 設定成預設錢包",
     "description": "in pages > Menu"
   }
 }

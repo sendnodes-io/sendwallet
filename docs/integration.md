@@ -1,33 +1,33 @@
-# Integrating POKT Wallet into your dApp
+# Integrating SendWallet into your dApp
 
-This guide is all about connecting your users POKT Wallet to your site. This allows users to share Pocket Network wallet
+This guide is all about connecting your users SendWallet to your site. This allows users to share Pocket Network wallet
 information with your site. You'll be able to request things like their wallet address, current balance, and request transaction signatures.
 
-If you have used other wallets such as Metamask, this integration should be very familiar to you. POKT Wallet injects a
+If you have used other wallets such as Metamask, this integration should be very familiar to you. SendWallet injects a
 content script that adds a variable to the window object called `pocketNetwork`.
 
 ## Walkthrough
 
-### Determine POKT Wallet Exists
+### Determine SendWallet Exists
 
-First, determine if the user has POKT Wallet installed, by checking if the `window.pocketNetwork` variable exists and is defined.
+First, determine if the user has SendWallet installed, by checking if the `window.pocketNetwork` variable exists and is defined.
 
 ```js
 if (window.pocketNetwork === undefined) {
-  // uh oh no POKT Wallet found, request that the user install it first.
-  alert("POKT Wallet not found! Please visit https://poktwallet.io to install")
+  // uh oh no SendWallet found, request that the user install it first.
+  alert("SendWallet not found! Please visit https://sendwallet.net to install")
 } else {
   // we're ready to go!
 }
 ```
 
-If the `window.pocketNetwork` is not defined, instruct the user to visit [POKTWallet.io](https://poktwallet.io/) to install it. POKT Wallet is available as a browser extension with full support for Chrome and Firefox.
+If the `window.pocketNetwork` is not defined, instruct the user to visit [SendWallet.net](https://sendwallet.net/) to install it. SendWallet is available as a browser extension with full support for Chrome and Firefox.
 
 ### Requesting dAPP Permissions
 
 Next, you must have the user approve your site domain for a connection. This should be done after a user interaction
 such as clicking a "Connect Wallet" button. This will also allow you to view the public address of the user's currently
-selected POKT Wallet.
+selected SendWallet.
 
 ```js
 // Connect Wallet
@@ -43,7 +43,7 @@ let address = await window.pocketNetwork
   })
 ```
 
-After executing that code, the wallet will show a popup requesting the user to approve your site to connect. The user should only have to approve your site domain once. You must execute `pokt_requestAccounts` on every site domain you wish integrate with POKT Wallet.
+After executing that code, the wallet will show a popup requesting the user to approve your site to connect. The user should only have to approve your site domain once. You must execute `pokt_requestAccounts` on every site domain you wish integrate with SendWallet.
 
 <img src="./img/integration-connect-wallet.png" height=500 style="margin: 0 auto; display: block;">
 
@@ -86,7 +86,7 @@ let hash = await window.pocketNetwork
       amount: "100000", // in uPOKT
       from: address,
       to: "some_pokt_address",
-      memo: "Sent with POKTWallet.io",
+      memo: "Sent with SendWallet.net",
     },
   ])
   .then(({ hash }) => {

@@ -18,7 +18,7 @@ const OnboardingIntroStep1 = (
     </span>
     <img
       src="/images/onboarding/step-1-logo-simple@4x.png"
-      alt="POKT Wallet"
+      alt="SendWallet"
       width={232}
       height={32}
     />
@@ -27,9 +27,9 @@ const OnboardingIntroStep1 = (
       {`
         .illustration {
           background-image: url("./images/onboarding/step-1-logo-icon@2x.png");
-          width: 216px;
-          height: 290px;
-          margin-top: -18px;
+          width: 13.5rem;
+          height: 18.125rem;
+          margin-top: -1.1rem;
         }
         small {
           color: var(--white);
@@ -50,7 +50,7 @@ const OnboardingIntroStep1 = (
 const OnboardingIntroStep2 = (
   <>
     <h1>
-      <span>POKT</span> Wallet by SendNodes
+      <span>Send</span>Wallet by SendNodes
     </h1>
     <p>
       Some of the best devs and designers contributing to the Pocket Ecosystem.
@@ -63,12 +63,9 @@ const OnboardingIntroStep2 = (
         }
         .illustration {
           background-image: url("./images/onboarding/step-2@4x.png");
-          width: 232px;
-          height: 213px;
+          width: 14.5rem;
+          height: 13.125rem;
           margin: auto;
-        }
-        span {
-          text-transform: uppercase;
         }
         p {
           padding-bottom: 2rem;
@@ -84,7 +81,7 @@ const OnboardingIntroStep2 = (
 //       Test <span>responsibly</span>
 //     </h1>
 //     <p>
-//       POKT Wallet is a work in progess!
+//       SendWallet is a work in progess!
 //       <br />
 //       This beta version includes
 //       <br />
@@ -131,9 +128,9 @@ export default function OnboardingInfoIntro(): ReactElement {
     (state) => Object.keys(state.account.accountsData).length > 0
   )
 
-  // If there's an account, return to /wallet
+  // If there's an account, return to /
   if (hasAccounts) {
-    return <Redirect to="/wallet" />
+    return <Redirect to="/" />
   }
 
   return (

@@ -1,4 +1,4 @@
-// Global config for all babel-affected POKT Wallet packages.
+// Global config for all babel-affected SendWallet packages.
 module.exports = {
   plugins: ["styled-jsx/babel"],
   presets: [

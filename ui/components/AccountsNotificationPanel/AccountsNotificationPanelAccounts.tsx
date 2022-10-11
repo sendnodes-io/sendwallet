@@ -44,7 +44,7 @@ const walletTypeDetails: { [key in AccountType]: WalletTypeInfo } = {
     icon: "./images/imported@2x.png",
   },
   [AccountType.Internal]: {
-    title: "POKT Wallet",
+    title: "SendWallet",
     icon: "./icon-128.png",
   },
   [AccountType.Ledger]: {
@@ -357,7 +357,7 @@ export default function AccountsNotificationPanelAccounts({
 🟫➖➖➖`}
                 <img
                   src="./icon-128-black.png"
-                  alt="POKT Wallet Extension Icon"
+                  alt="SendWallet Extension Icon"
                   width="128"
                   height="128"
                   draggable="false"

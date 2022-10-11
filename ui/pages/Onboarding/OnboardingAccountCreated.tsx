@@ -45,7 +45,7 @@ export default function OnboardingAccountCreated() {
               extension icon (
               <img
                 src="./icon-128-black.png"
-                alt="POKT Wallet Extension Icon"
+                alt="SendWallet Extension Icon"
                 width="128"
                 height="128"
                 draggable="false"

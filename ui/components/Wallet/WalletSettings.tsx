@@ -12,7 +12,7 @@ export default function () {
       <nav>
         <ul style={{ flex: "1", height: "100%" }}>
           <li>
-            <a target="_blank" href="https://docs.poktwallet.io/">
+            <a target="_blank" href="https://docs.sendwallet.net/">
               <div className="icon">
                 <Icon
                   width="1.5rem"
@@ -28,7 +28,7 @@ export default function () {
           <li>
             <a
               target="_blank"
-              href="https://docs.poktwallet.io/the-wallet/frequently-asked-questions"
+              href="https://docs.sendwallet.net/the-wallet/frequently-asked-questions"
             >
               <div className="icon">
                 <Icon
@@ -53,7 +53,7 @@ export default function () {
             </a>
           </li>
           <li>
-            <a target="_blank" href="https://t.me/poktwallet">
+            <a target="_blank" href="https://t.me/send_wallet">
               <div className="icon">
                 <Icon icon="uit:telegram-alt" className="w-6 h-6" />
               </div>

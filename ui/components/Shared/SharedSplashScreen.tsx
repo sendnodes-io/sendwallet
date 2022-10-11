@@ -5,28 +5,46 @@ export default function SharedSplashScreen() {
     <div className="">
       <img
         className="splash_screen one"
-        src="./images/splash/POKT Wallet 1@4x.png"
+        src="./images/splash/1@4x.png"
         width="100"
         height="100"
         draggable="false"
       />
       <img
         className="splash_screen two"
-        src="./images/splash/POKT Wallet 2@4x.png"
+        src="./images/splash/2@4x.png"
         width="100"
         height="100"
         draggable="false"
       />
       <img
         className="splash_screen three"
-        src="./images/splash/POKT Wallet 3@4x.png"
+        src="./images/splash/3@4x.png"
         width="100"
         height="100"
         draggable="false"
       />
       <img
         className="splash_screen four"
-        src="./images/splash/POKT Wallet 1@4x.png"
+        src="./images/splash/4@4x.png"
+        width="100"
+        height="100"
+      />
+      <img
+        className="splash_screen five"
+        src="./images/splash/5@4x.png"
+        width="100"
+        height="100"
+      />
+      <img
+        className="splash_screen six"
+        src="./images/splash/6@4x.png"
+        width="100"
+        height="100"
+      />
+      <img
+        className="splash_screen seven"
+        src="./images/splash/7@4x.png"
         width="100"
         height="100"
       />
@@ -57,7 +75,7 @@ export default function SharedSplashScreen() {
             animation-timing-function: ease-in-out;
             animation-name: fadeIn;
             animation-iteration-count: infinite;
-            animation-duration: 3s;
+            animation-duration: 3.5s;
           }
 
           .one {
@@ -66,15 +84,27 @@ export default function SharedSplashScreen() {
           }
 
           .two {
-            animation-delay: 0.5s;
+            animation-delay: 0.25s;
           }
 
           .three {
-            animation-delay: 1.5s;
+            animation-delay: 0.75s;
           }
 
           .four {
-            animation-delay: 2.5s;
+            animation-delay: 1.25s;
+          }
+
+          .five {
+            animation-delay: 1.75s;
+          }
+
+          .six {
+            animation-delay: 2.25s;
+          }
+
+          .seven {
+            animation-delay: 2.75s;
           }
         `}
       </style>

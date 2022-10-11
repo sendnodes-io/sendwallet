@@ -64,7 +64,7 @@ export default function Menu(): ReactElement {
         ),
       },
 
-      // TODO POKT Wallet is incapable of being a default wallet
+      // TODO SendWallet is incapable of being a default wallet
       // {
       //   title: t("menuSetAsDefault"),
       //   component: () => (
@@ -100,7 +100,7 @@ export default function Menu(): ReactElement {
             iconSize="large"
             iconPosition="left"
             onClick={() => {
-              window.open(`https://chat.poktwallet.io/`, "_blank")?.focus()
+              window.open(`https://discord.gg/TmfYqaXzGb`, "_blank")?.focus()
             }}
           >
             Join and give feedback
