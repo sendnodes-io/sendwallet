@@ -1,11 +1,9 @@
 import React, { CSSProperties, useMemo, useState } from "react"
-import { Icon } from "@iconify/react"
-import { lockKeyrings } from "@sendnodes/pokt-wallet-background/redux-slices/keyrings"
-import { CgLock } from "react-icons/cg"
 import { useBackgroundDispatch, useBackgroundSelector } from "../../hooks"
 import { setNewSelectedAccount } from "@sendnodes/pokt-wallet-background/redux-slices/ui"
 import {
   ETHEREUM,
+  FIAGNET,
   FORK,
   POCKET,
   POCKET_LOCAL,
@@ -15,7 +13,6 @@ import SharedAssetIcon from "../Shared/SharedAssetIcon"
 import groupBy from "lodash/groupBy"
 import {
   selectCurrentAddressNetwork,
-  selectKeyringForAddress,
   selectKeyringMetadataForAddress,
   selectKeyrings,
   selectSiblingKeyrings,
@@ -54,7 +51,9 @@ export type NetworkSelectorProps = {
 /**
  *  Uses sibling keyrings of current keyring seed to allow for seemless switching between networks.
  */
-export default function NetworkSelector({ onAddressNetworkChange }: NetworkSelectorProps) {
+export default function NetworkSelector({
+  onAddressNetworkChange,
+}: NetworkSelectorProps) {
   const history = useHistory()
   const dispatch = useBackgroundDispatch()
   const { address: currentAddress, network: currentNetwork } =
@@ -70,7 +69,7 @@ export default function NetworkSelector({ onAddressNetworkChange }: NetworkSelec
   const allKeyrings = useBackgroundSelector(selectKeyrings)
 
   const availNetworks: Dictionary<AnyNetwork[]> = groupBy(
-    [ETHEREUM, POLYGON, POCKET, POCKET_LOCAL, FORK] as AnyNetwork[],
+    [ETHEREUM, POLYGON, POCKET, FIAGNET, POCKET_LOCAL, FORK] as AnyNetwork[],
     (n) => n.family
   )
   const sortedNetworks: Dictionary<AnyNetwork[]> = Object.entries(availNetworks)
@@ -284,8 +283,7 @@ function NetworkSelectorRow({
         href="#_"
         aria-disabled={!address}
         style={{
-          cursor:
-            !address ? "not-allowed" : "pointer",
+          cursor: !address ? "not-allowed" : "pointer",
         }}
         onClick={onClick}
       >

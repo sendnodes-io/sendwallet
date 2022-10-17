@@ -57,8 +57,16 @@ export default class ProviderBridgeService extends BaseService<Events> {
   static create: ServiceCreatorFunction<
     Events,
     ProviderBridgeService,
-    [Promise<InternalEthereumProviderService>, Promise<InternalPoktProviderService>, Promise<PreferenceService>]
-  > = async (internalEthereumProviderService, internalPoktProviderService, preferenceService) => {
+    [
+      Promise<InternalEthereumProviderService>,
+      Promise<InternalPoktProviderService>,
+      Promise<PreferenceService>
+    ]
+  > = async (
+    internalEthereumProviderService,
+    internalPoktProviderService,
+    preferenceService
+  ) => {
     return new this(
       await getOrCreateDB(),
       await internalEthereumProviderService,
@@ -126,7 +134,8 @@ export default class ProviderBridgeService extends BaseService<Events> {
 
     const response: PortResponseEvent = { id: event.id, result: [] }
     const originPermission = await this.checkPermission(origin)
-    const { address: accountAddress, network } = await this.preferenceService.getSelectedAccount()
+    const { address: accountAddress, network } =
+      await this.preferenceService.getSelectedAccount()
     if (isPoktWalletConfigPayload(event.request)) {
       // let's start with the internal communication
       response.id = "poktWallet"
@@ -136,7 +145,9 @@ export default class ProviderBridgeService extends BaseService<Events> {
       }
     } else if (network.family !== event.network) {
       // the request network is different than the active account network
-      response.result = new EIP1193Error(EIP1193_ERROR_CODES.chainDisconnected).toJSON()
+      response.result = new EIP1193Error(
+        EIP1193_ERROR_CODES.chainDisconnected
+      ).toJSON()
     } else if (typeof originPermission !== "undefined") {
       // if it's not internal but dapp has permission to communicate we proxy the request
       // TODO: here comes format validation
@@ -146,7 +157,7 @@ export default class ProviderBridgeService extends BaseService<Events> {
         event.request.params,
         event.network
       )
-    } 
+    }
     // TODO: this is a public method and required for eager loading of dapps, maybe allow user to block this?
     else if (event.request.method === "eth_chainId") {
       response.result = await this.routeContentScriptRPCRequest(
@@ -162,7 +173,10 @@ export default class ProviderBridgeService extends BaseService<Events> {
         event.request.params,
         event.network
       )
-    } else if (event.request.method === "eth_requestAccounts" || event.request.method === "pokt_requestAccounts") {
+    } else if (
+      event.request.method === "eth_requestAccounts" ||
+      event.request.method === "pokt_requestAccounts"
+    ) {
       // if it's external communication AND the dApp does not have permission BUT asks for it
       // then let's ask the user what he/she thinks
       const permissionRequest: PermissionRequest = {
@@ -186,7 +200,7 @@ export default class ProviderBridgeService extends BaseService<Events> {
 
         response.result = await this.routeContentScriptRPCRequest(
           persistedPermission,
-          event.network === POCKET.family ?  "pokt_accounts" : "eth_accounts",
+          event.network === POCKET.family ? "pokt_accounts" : "eth_accounts",
           event.request.params,
           event.network
         )
@@ -302,7 +316,10 @@ export default class ProviderBridgeService extends BaseService<Events> {
     network: string,
     popupPromise: Promise<browser.Windows.Window>
   ): Promise<unknown> {
-    const provider = network === POCKET.family ? this.internalPoktProviderService : this.internalEthereumProviderService;
+    const provider =
+      network === POCKET.family
+        ? this.internalPoktProviderService
+        : this.internalEthereumProviderService
     const response = await provider
       .routeSafeRPCRequest(method, params)
       .finally(async () => {
@@ -319,9 +336,10 @@ export default class ProviderBridgeService extends BaseService<Events> {
     enablingPermission: PermissionRequest,
     method: string,
     params: RPCRequest["params"],
-    network: string
+    networkFamily: string
   ): Promise<unknown> {
     try {
+      const { network } = await this.preferenceService.getSelectedAccount()
       switch (method) {
         case "requestAccounts":
         case "pokt_requestAccounts":
@@ -341,7 +359,7 @@ export default class ProviderBridgeService extends BaseService<Events> {
           return await this.routeSafeRequest(
             method,
             params,
-            network,
+            networkFamily,
             showExtensionPopup(AllowedQueryParamPage.signData)
           )
         case "eth_sign":
@@ -351,7 +369,7 @@ export default class ProviderBridgeService extends BaseService<Events> {
           return await this.routeSafeRequest(
             method,
             params,
-            network,
+            networkFamily,
             showExtensionPopup(AllowedQueryParamPage.personalSignData)
           )
         case "eth_signTransaction":
@@ -364,7 +382,7 @@ export default class ProviderBridgeService extends BaseService<Events> {
           return await this.routeSafeRequest(
             method,
             params,
-            network,
+            networkFamily,
             showExtensionPopup(AllowedQueryParamPage.signTransaction)
           )
         case "pokt_sendTransaction":
@@ -375,13 +393,21 @@ export default class ProviderBridgeService extends BaseService<Events> {
 
           return await this.routeSafeRequest(
             method,
-            [poktTransactionRequestFromPoktTransactionRPCRequest(params[0] as POKTTransactionRPCRequest)],
-            network,
+            [
+              {
+                ...poktTransactionRequestFromPoktTransactionRPCRequest(
+                  params[0] as POKTTransactionRPCRequest
+                ),
+                network,
+                chainID: network.chainID,
+              },
+            ],
+            networkFamily,
             showExtensionPopup(AllowedQueryParamPage.signTransaction)
           )
 
         default: {
-          if (network === POCKET.family) {
+          if (networkFamily === POCKET.family) {
             return await this.internalPoktProviderService.routeSafeRPCRequest(
               method,
               params

@@ -10,10 +10,13 @@ import logger from "../../lib/logger"
 import BaseService from "../base"
 import { ServiceCreatorFunction, ServiceLifecycleEvents } from "../types"
 import ChainService from "../chain"
-import { POKTTransactionRequest, SignedEVMTransaction, SignedPOKTTransaction } from "../../networks"
+import {
+  POKTTransactionRequest,
+  SignedEVMTransaction,
+  SignedPOKTTransaction,
+} from "../../networks"
 import PreferenceService from "../preferences"
 import { internalPoktProviderPort } from "../../redux-slices/utils/contract-utils"
-import { POCKET } from "../../constants"
 import { isValidPoktAddress } from "../../lib/utils"
 
 type DAppRequestEvent<T, E> = {
@@ -78,7 +81,8 @@ export default class InternalPoktProviderService extends BaseService<Events> {
     method: string,
     params: RPCRequest["params"]
   ): Promise<unknown> {
-    const { address, network } = await this.preferenceService.getSelectedAccount()
+    const { address, network } =
+      await this.preferenceService.getSelectedAccount()
     switch (method) {
       case "pokt_accounts": {
         return [address]
@@ -97,7 +101,7 @@ export default class InternalPoktProviderService extends BaseService<Events> {
               signed
             )
             if (!txHash) return undefined
-            const tx = await this.chainService.getTransaction(POCKET, txHash)
+            const tx = await this.chainService.getTransaction(network, txHash)
             return tx
           }
         )

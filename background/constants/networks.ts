@@ -17,6 +17,15 @@ export const POCKET: POKTNetwork = {
   blockExplorerUrl: NetworkBlockExplorerUrl.POKTWATCH,
 }
 
+export const FIAGNET: POKTNetwork = {
+  name: "Pocket FIAGnet",
+  baseAsset: POKT,
+  chainID: "fiagnet",
+  family: NetworkFamily.POKT,
+  blockExplorerUrl: NetworkBlockExplorerUrl.POKTWATCH,
+  rcpUrl: "http://node1.fiagnet.com:8081",
+}
+
 export const POCKET_LOCAL: POKTNetwork = {
   name: "Pocket Localnet",
   baseAsset: POKT,
