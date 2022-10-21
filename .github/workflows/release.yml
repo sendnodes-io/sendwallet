@@ -20,7 +20,10 @@ jobs:
           node-version: 16
           cache: yarn
       - name: install
-        run: yarn install
+        run: |
+          git config --global url."https://github.com/".insteadOf git@github.com:
+          git config --global url."https://".insteadOf git://
+          yarn install
       - run: yarn run build --config-name chrome
       - name: Create release
         uses: actions/github-script@v6
