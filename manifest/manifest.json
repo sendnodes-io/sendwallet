@@ -1,9 +1,9 @@
 {
   "name": "SendWallet",
-  "version": "0.3.8",
+  "version": "0.3.9",
   "description": "Secure your POKT with a modern and simple crypto wallet. It's your POKT, store it safely.",
-  "homepage_url": "https://poktwallet.io",
-  "author": "https://poktwallet.io",
+  "homepage_url": "https://sendwallet.net",
+  "author": "https://sendwallet.net",
   "manifest_version": 2,
   "default_locale": "en",
   "content_security_policy": "object-src 'self'; script-src 'self';",
