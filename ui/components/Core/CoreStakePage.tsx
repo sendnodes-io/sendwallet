@@ -20,6 +20,7 @@ import { selectTransactionData } from "@sendnodes/pokt-wallet-background/redux-s
 
 import Footer from "../Stake/Footer"
 import useStakingPoktParams from "../../hooks/staking-hooks/use-staking-pokt-params"
+import ErrorFallback from "../../pages/ErrorFallback"
 
 const sidebarIconCss = css`
   mask-size: cover;
@@ -295,8 +296,6 @@ export default function CoreStakePage(props: Props): ReactElement {
     )
   }
 
-  if (isError) throw isError
-
   return (
     <div className="w-full flex flex-col items-center ">
       <div className="w-full grid grid-cols-3 xl:max-w-7xl lg:max-w-4xl mx-auto py-4 xl:py-8 md:px-8 px-4">
@@ -357,7 +356,8 @@ export default function CoreStakePage(props: Props): ReactElement {
           <div className="xl:px-32 lg:px-24 lg:ml-8 flex flex-col grow w-full ">
             <main className="flex flex-col flex-1 w-full min-h-[48rem] grow">
               <div className="flex flex-col grow px-4 sm:px-8 lg:px-0 py-8 xl:py-12 justify-center w-full h-full">
-                {children}
+                {isError && <ErrorFallback error={isError as Error} />}
+                {!isError && children}
                 <Snackbar />
               </div>
             </main>
