@@ -10,7 +10,7 @@ import {
   RpcError,
   Transaction,
   Block,
-  RawTxResponse
+  RawTxResponse,
 } from "@pokt-network/pocket-js/dist/index"
 import { poll } from "@ethersproject/web"
 import { Event } from "@ethersproject/providers/lib/base-provider"
@@ -18,8 +18,12 @@ import { EventType, Listener } from "@ethersproject/abstract-provider"
 import { BigNumber } from "ethers"
 import { Logger, resolveProperties, hexDataLength } from "ethers/lib/utils"
 import BaseService from "../base"
-import { ServiceLifecycleEvents } from '../types'
-import { POKTNetwork, SignedPOKTTransaction, POKTTransaction } from "../../networks"
+import { ServiceLifecycleEvents } from "../types"
+import {
+  POKTNetwork,
+  SignedPOKTTransaction,
+  POKTTransaction,
+} from "../../networks"
 import { POCKET } from "../../constants"
 import { POKTWatchBlock } from "./utils"
 
@@ -47,6 +51,7 @@ const maxDispatchers = 5
 const maxSessions = 2000
 const requestTimeOut = 100000
 
+// i don't think these are actually used
 const dispatchers = [
   new URL("https://dispatch-1.nodes.pokt.network:4201"),
   new URL("https://dispatch-2.nodes.pokt.network:4201"),
@@ -54,7 +59,9 @@ const dispatchers = [
   new URL("https://dispatch-4.nodes.pokt.network:4201"),
   new URL("https://dispatch-5.nodes.pokt.network:4201"),
 ]
-const DefaultRPC = "https://mainnet-1.nodes.pokt.network:4201"
+const DefaultRPC =
+  process.env.POKT_MAINNET_RPC_URL ||
+  "https://mainnet.gateway.pokt.network/v1/lb/62ab7d95123e6f00396eb267"
 
 const configuration = new Configuration(
   maxDispatchers,
@@ -597,13 +604,13 @@ export default class PocketProvider extends BaseService<ServiceLifecycleEvents> 
             return undefined
           }
         } else {
-           const result = (await this.rpc.query.getBlock(
-             BigInt(blockNumber)
-           )) as any
-           if (result instanceof RpcError) {
-             return undefined
-           }
-           return result.block
+          const result = (await this.rpc.query.getBlock(
+            BigInt(blockNumber)
+          )) as any
+          if (result instanceof RpcError) {
+            return undefined
+          }
+          return result.block
         }
       },
       { retryLimit: 10 }
