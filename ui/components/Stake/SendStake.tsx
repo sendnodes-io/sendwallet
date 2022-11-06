@@ -302,7 +302,7 @@ export default function SendStake(): ReactElement {
             Compounding automatically stakes your rewards. This feature can be
             disabled at anytime.{" "}
             <a
-              href="https://sendnodes.gitbook.io/sendnodes/start-here/frequently-asked-questions#how-do-i-get-my-rewards"
+              href="https://docs.sendnodes.net/start-here/frequently-asked-questions/all-about-rewards"
               title="How do I get my rewards?"
               className="inline text-aqua hover:text-white"
               target="_blank"
@@ -356,7 +356,7 @@ export default function SendStake(): ReactElement {
               <small className="mb-2 inline-block">
                 Your stake is protected by{" "}
                 <a
-                  href="https://docs.sendnodes.io/sendnodes/start-here/frequently-asked-questions#is-it-safe-to-use-sendnodes"
+                  href="https://www.coincover.com/sendnodes"
                   className="underline text-aqua hover:text-white"
                   target={"_blank"}
                 >
@@ -365,12 +365,18 @@ export default function SendStake(): ReactElement {
               </small>
             </div>
             <div className="w-full grow sm:hidden"></div>
-            <img
-              src="/images/Protected_by_Coincover_Stamp.png"
-              width={"800"}
-              height="250"
-              className="inline-flex w-32 md:w-36 mx-auto"
-            />
+            <a
+              href="https://www.coincover.com/sendnodes"
+              className="ml-0 sm:ml-auto sm:mr-0"
+              target={"_blank"}
+            >
+              <img
+                src="/images/Protected_by_Coincover_Stamp.png"
+                width={"800"}
+                height="250"
+                className="inline-flex w-32 md:w-36"
+              />
+            </a>
           </div>
         </div>
       </div>
