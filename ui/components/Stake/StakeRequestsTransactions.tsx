@@ -63,7 +63,7 @@ export default function StakeRequestsTransactions(): ReactElement {
             {/* export transactions button */}
             <button
               type="button"
-              className="flex items-center justify-center mt-2 px-2 py-1 text-sm font-medium text-eerie-black bg-aqua rounded-md hover:bg-aqua-dark focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-aqua"
+              className="flex items-center justify-center mt-2 px-2 py-1 text-sm font-medium text-eerie-black bg-aqua rounded-md hover:bg-aqua-dark focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-aqua hover:bg-white hover:text-eerie-black"
               onClick={() => {
                 const rows = [
                   [
