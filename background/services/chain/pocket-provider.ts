@@ -59,9 +59,7 @@ const dispatchers = [
   new URL("https://dispatch-4.nodes.pokt.network:4201"),
   new URL("https://dispatch-5.nodes.pokt.network:4201"),
 ]
-const DefaultRPC =
-  process.env.POKT_MAINNET_RPC_URL ||
-  "https://mainnet.gateway.pokt.network/v1/lb/62ab7d95123e6f00396eb267"
+const DefaultRPC = POCKET.rcpUrl!
 
 const configuration = new Configuration(
   maxDispatchers,

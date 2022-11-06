@@ -15,6 +15,9 @@ export const POCKET: POKTNetwork = {
   chainID: "mainnet",
   family: NetworkFamily.POKT,
   blockExplorerUrl: NetworkBlockExplorerUrl.POKTWATCH,
+  rcpUrl:
+    process.env.POKT_MAINNET_RPC_URL ||
+    "https://mainnet-1.nodes.pokt.network:4201",
 }
 
 export const FIAGNET: POKTNetwork = {

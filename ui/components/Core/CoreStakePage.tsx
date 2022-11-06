@@ -21,6 +21,7 @@ import { selectTransactionData } from "@sendnodes/pokt-wallet-background/redux-s
 import Footer from "../Stake/Footer"
 import useStakingPoktParams from "../../hooks/staking-hooks/use-staking-pokt-params"
 import ErrorFallback from "../../pages/ErrorFallback"
+import { usePoktNetworkBlockHeight } from "../../hooks/pocket-network/use-latest-block"
 
 const sidebarIconCss = css`
   mask-size: cover;
@@ -286,12 +287,33 @@ export default function CoreStakePage(props: Props): ReactElement {
     getCurrentAccountState,
     isEqual
   )
+
+  const isInitializing = currentAccountData === "loading" || !keyringsUnlocked
+
   const { data: stakingPoktParams, isLoading, isError } = useStakingPoktParams()
 
-  if (isLoading || currentAccountData === "loading" || !keyringsUnlocked) {
+  // ensure block height from rpc matches block height from onchain API
+  const { data: pocketBlockHeight } = usePoktNetworkBlockHeight()
+
+  const isOnchainApiCatchingUp =
+    BigInt((pocketBlockHeight?.height ?? 1n).toString()) !==
+    BigInt(stakingPoktParams?.currentHeight ?? 0)
+
+  if (isLoading || isInitializing || isOnchainApiCatchingUp) {
     return (
       <div className="md:py-12 xl:py-24 min-h-screen flex flex-col justify-center items-center flex-1">
-        <SharedSplashScreen />
+        <div className="h-24 w-24 relative">
+          <SharedSplashScreen />
+        </div>
+        {isInitializing && <p className="mt-4">Initializing SendWallet.</p>}
+        {!isInitializing && isLoading && (
+          <p className="mt-4">Loading the latest SendNodes data.</p>
+        )}
+        {!isInitializing && !isLoading && isOnchainApiCatchingUp && (
+          <p className="mt-4">
+            Awaiting latest Pocket Network block information.
+          </p>
+        )}
       </div>
     )
   }
