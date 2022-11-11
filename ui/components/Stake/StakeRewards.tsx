@@ -117,11 +117,26 @@ export default function StakeRewards(): ReactElement {
     return dayjs.utc(transaction.timestamp).format("YYYY-MM-DD")
   })
 
-  const startDate = dayjs.utc(allTransactions[0]?.timestamp)
   const endDate = dayjs.utc(last(allTransactions)?.timestamp)
+  const thirtyDaysAgo = dayjs.utc().subtract(30, "day")
+  let startDate = dayjs.utc(allTransactions[0]?.timestamp)
 
-  const rewardsDataset = {
-    label: "Rewards",
+  // limit to 30 days for now
+  if (
+    endDate.diff(startDate, "day") > 30 &&
+    startDate.isSameOrBefore(thirtyDaysAgo)
+  ) {
+    startDate = endDate.subtract(30, "day")
+  }
+
+  const cummRewardsDataset = {
+    label: "Total Rewards",
+    data: [],
+    borderColor: "rgb(51, 184, 255)",
+    backgroundColor: "rgba(51, 184, 255, 0.5)",
+  } as ChartDataset<"line", number[]>
+  const dailyRewardsDataset = {
+    label: "Daily Rewards",
     data: [],
     borderColor: "rgb(51, 184, 255)",
     backgroundColor: "rgba(51, 184, 255, 0.5)",
@@ -152,19 +167,25 @@ export default function StakeRewards(): ReactElement {
       (sum, tx) => sum.add(BigNumber.from(tx.amount)),
       BigNumber.from(0)
     )
-    cummReward = reduce(
+    const dailyReward = reduce(
       txs.filter((tx) => tx.reward),
       (sum, tx) => sum.add(BigNumber.from(tx.amount)),
-      cummReward
+      BigNumber.from(0)
     )
+    cummReward = cummReward.add(dailyReward)
     cummStaked = reduce(
       txs.filter((tx) => tx.action === SnAction.STAKE),
       (sum, tx) => sum.add(BigNumber.from(tx.amount)),
       cummStaked
     ).sub(unstakedAmount)
 
-    rewardsDataset.data.push(
+    cummRewardsDataset.data.push(
       Number(formatFixed(cummReward, currentAccount.network.baseAsset.decimals))
+    )
+    dailyRewardsDataset.data.push(
+      Number(
+        formatFixed(dailyReward, currentAccount.network.baseAsset.decimals)
+      )
     )
     stakedDataset.data.push(
       Number(formatFixed(cummStaked, currentAccount.network.baseAsset.decimals))
@@ -300,7 +321,12 @@ export default function StakeRewards(): ReactElement {
           </div>
 
           <div className="mt-8 min-h-[20rem] max-h-[44vh] overflow-y-scroll pb-12 px-0 md:px-4">
-            {[stakedDataset, rewardsDataset, unstakedDataset].map((dataset) => (
+            {[
+              stakedDataset,
+              cummRewardsDataset,
+              dailyRewardsDataset,
+              unstakedDataset,
+            ].map((dataset) => (
               <Line
                 key={dataset.label}
                 options={options}

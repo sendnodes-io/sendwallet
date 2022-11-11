@@ -51,9 +51,7 @@ export default function SignTransaction(): ReactElement {
 
   const isLocked = useIsSigningMethodLocked(signingMethod as SigningMethod)
 
-  const [showSendingToSiwWarning, setShowSendingToSiwWarning] = useState(
-    stakingPoktData?.wallets.siw === transactionDetails?.to
-  )
+  const [showSendingToSiwWarning, setShowSendingToSiwWarning] = useState(false)
 
   const handleReject = async () => {
     dispatch(rejectTransactionSignature())
@@ -93,7 +91,10 @@ export default function SignTransaction(): ReactElement {
 
   // handle if we need to show a warning about sending to the staking wallet
   useEffect(() => {
-    if (stakingPoktData?.wallets.siw === transactionDetails?.to) {
+    if (
+      (stakingPoktData?.wallets?.siw !== undefined &&
+        stakingPoktData?.wallets.siw) === transactionDetails?.to
+    ) {
       setShowSendingToSiwWarning(true)
     }
   }, [stakingPoktData, transactionDetails])

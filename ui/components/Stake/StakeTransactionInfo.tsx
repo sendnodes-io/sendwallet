@@ -127,28 +127,14 @@ type StakeTransactionInfoProps = {
   children: (props: StakeTransactionItemState) => JSX.Element
 }
 
-export default function StakeTransactionInfo({
+export function getStakeTransactionInfo({
   transaction: tx,
-  children,
-}: StakeTransactionInfoProps) {
-  const { latestBlock } = usePoktWatchLatestBlock()
-  const currentAccount = useBackgroundSelector(selectCurrentAccount, isEqual)
-  const blockExplorerUrl = useBackgroundSelector(
-    (_) =>
-      selectBlockExplorerForTxHash({
-        network: currentAccount.network,
-        txHash: tx.hash,
-      }),
-    isEqual
-  )
-
+}: {
+  transaction: SnTransaction
+}) {
   const isPending = !tx.timestamp
-  let [timestamp, setTimestamp] = useState(
-    !isPending
-      ? dayjs.utc(tx.timestamp)
-      : // the next block is committed 30 minutes after the start of the previous one
-        dayjs.utc(latestBlock?.timestamp).add(30, "minute")
-  )
+
+  let timestamp = dayjs.utc(tx.timestamp)
   const rewardTimestamp = timestamp.clone().add(24, "hour")
   const isEarningRewards = dayjs.utc().isAfter(rewardTimestamp)
   const isCompound =
@@ -179,6 +165,74 @@ export default function StakeTransactionInfo({
     (isPending && isUnstake ? tx.memo.split(":")[1] : tx.amount) ??
       BigNumber.from(0)
   )
+  return {
+    isPending,
+    rewardTimestamp,
+    isEarningRewards,
+    isCompound,
+    isUncompound,
+    isCompoundUpdate,
+    isRewards,
+    isStake,
+    isUnstake,
+    isUnstakeReceipt,
+    unstakeReceiptHash,
+    unstakeReceiptAt,
+    humanReadableAction,
+    relativeTimestamp,
+    timestamp,
+    amount,
+    signer: tx.signer,
+    userWalletAddress: tx.userWalletAddress,
+    height: tx.height,
+    hash: tx.hash,
+  }
+}
+
+export default function StakeTransactionInfo({
+  transaction: tx,
+  children,
+}: StakeTransactionInfoProps) {
+  const {
+    isPending,
+    rewardTimestamp,
+    isEarningRewards,
+    isCompound,
+    isUncompound,
+    isCompoundUpdate,
+    isRewards,
+    isStake,
+    isUnstake,
+    isUnstakeReceipt,
+    unstakeReceiptHash,
+    unstakeReceiptAt,
+    humanReadableAction,
+    relativeTimestamp,
+    timestamp: txTimestamp,
+    amount,
+    signer,
+    userWalletAddress,
+    height,
+    hash,
+  } = getStakeTransactionInfo({ transaction: tx })
+
+  const { latestBlock } = usePoktWatchLatestBlock()
+  const currentAccount = useBackgroundSelector(selectCurrentAccount, isEqual)
+  const blockExplorerUrl = useBackgroundSelector(
+    (_) =>
+      selectBlockExplorerForTxHash({
+        network: currentAccount.network,
+        txHash: tx.hash,
+      }),
+    isEqual
+  )
+  let [timestamp, setTimestamp] = useState(
+    !isPending
+      ? txTimestamp
+      : // the next block is committed 30 minutes after the start of the previous one
+        dayjs.utc(latestBlock?.timestamp).add(30, "minute")
+  )
+
   const baseAssetPricePoint = useBackgroundSelector((state) =>
     selectAssetPricePoint(
       state.assets,

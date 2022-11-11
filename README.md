@@ -38,3 +38,13 @@ yarn start --config-name chrome # or firefox
 ```
 
 Once that finishes, please find the built files in the `./dist` directory. Then, visit <a href="chrome://extensions">chrome://extensions</a> load the `./dist/chrome` directory as an unpacked extension.
+
+Prepare safari build
+
+```sh
+xcrun safari-web-extension-converter --project-location ./ios \
+  --app-name SendWallet  \
+  --bundle-identifier com.sendnodes.sendwallet \
+  --force \
+  ./dist/safari
+```

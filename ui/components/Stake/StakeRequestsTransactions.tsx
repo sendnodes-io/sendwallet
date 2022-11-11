@@ -8,8 +8,11 @@ import { Link } from "react-router-dom"
 import { formatFixed } from "@ethersproject/bignumber"
 import formatTokenAmount from "../../utils/formatTokenAmount"
 import useStakingAllTransactions from "../../hooks/staking-hooks/use-staking-all-transactions"
-import StakeTransactionInfo from "./StakeTransactionInfo"
+import StakeTransactionInfo, {
+  getStakeTransactionInfo,
+} from "./StakeTransactionInfo"
 import { SnTransaction } from "../../hooks/staking-hooks"
+import { formatUnits } from "@ethersproject/units"
 
 export default function StakeRequestsTransactions(): ReactElement {
   const areKeyringsUnlocked = useAreKeyringsUnlocked(true)
@@ -57,6 +60,43 @@ export default function StakeRequestsTransactions(): ReactElement {
               </a>{" "}
               by SendNodes.
             </p>
+            {/* export transactions button */}
+            <button
+              type="button"
+              className="flex items-center justify-center mt-2 px-2 py-1 text-sm font-medium text-eerie-black bg-aqua rounded-md hover:bg-aqua-dark focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-aqua hover:bg-white hover:text-eerie-black"
+              onClick={() => {
+                const rows = [
+                  [
+                    "Transaction Hash",
+                    "Transaction Height",
+                    "Transaction Type",
+                    "Transaction Token",
+                    "Transaction Amount",
+                    "Transaction Date",
+                  ],
+                  ...allTransactions
+                    .filter((tx) => !!tx.timestamp)
+                    .map((transaction) => {
+                      const txInfo = getStakeTransactionInfo({ transaction })
+                      return [
+                        transaction.hash,
+                        transaction.height,
+                        txInfo.humanReadableAction,
+                        "POKT", // wishful thinking
+                        formatUnits(txInfo.amount, 6),
+                        txInfo.timestamp.toISOString(),
+                      ]
+                    }),
+                ]
+
+                let csvContent =
+                  "data:text/csv;charset=utf-8," +
+                  rows.map((e) => e.join(",")).join("\n")
+                window.open(encodeURI(csvContent))
+              }}
+            >
+              Export CSV
+            </button>
           </div>
           <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
             <Link

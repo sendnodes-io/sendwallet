@@ -82,7 +82,7 @@ function backgroundMonitor(component: ComponentType<{ store: Store }>) {
     const deadmanSwitch = setTimeout(() => {
       logger.debug("deadmanSwitch on", { msgId })
       invokeServiceWorkerUpdateFlow(component)
-    }, 3000)
+    }, 15_000)
 
     let resp = null
     try {
@@ -153,7 +153,7 @@ async function renderApp(
     )
   } catch (error) {
     logger.error("failed to start app", error)
-    if (attempts < 3) {
+    if (attempts < 10) {
       setTimeout(() => renderApp(component, attempts + 1), 1000)
     } else {
       if (process.env.NODE_ENV === "development") {

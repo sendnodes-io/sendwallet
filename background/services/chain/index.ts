@@ -64,6 +64,7 @@ import { ETHEREUM, FORK, HOUR, POCKET } from "../../constants"
 import SerialFallbackProvider from "./serial-fallback-provider"
 import PocketProvider from "./pocket-provider"
 import AssetDataHelper from "./asset-data-helper"
+import _ from "lodash"
 
 // We can't use destructuring because webpack has to replace all instances of
 // `process.env` variables in the bundled output
@@ -127,6 +128,14 @@ type NetworkProviders = {
   [NetworkFamily.POKT]: PocketProvider
 }
 
+type RemoteConfig = {
+  [NetworkFamily.POKT]: {
+    mainnet: {
+      rpc: string
+    }
+  }
+}
+
 /**
  * ChainService is responsible for basic network monitoring and interaction.
  * Other services rely on the chain service rather than polling networks
@@ -149,6 +158,7 @@ type NetworkProviders = {
 
 export default class ChainService extends BaseService<Events> {
   providers?: NetworkProviders
+  remoteConfig?: RemoteConfig
 
   subscribedAccounts: {
     account: string
@@ -217,6 +227,24 @@ export default class ChainService extends BaseService<Events> {
         },
         handler: () => {
           this.handleRecentAssetTransferAlarm()
+        },
+      },
+      fetchRemoteConfig: {
+        runAtStart: true,
+        schedule: {
+          delayInMinutes: 1,
+          periodInMinutes: 1,
+        },
+        handler: async () => {
+          const response = await fetch(
+            `${process.env.SENDWALLET_IO}api/remote-config`
+          )
+          if (response.status === 200) {
+            const body: RemoteConfig = await response.json()
+            if (body) {
+              this.remoteConfig = body
+            }
+          }
         },
       },
       // TODO: v0.4.0 wPOKT bridge: re-enable EVM support
@@ -1415,6 +1443,27 @@ export default class ChainService extends BaseService<Events> {
       this.ethereumNetwork = network
     } else if (network.family === "POKT") {
       this.pocketNetwork = network
+      // if mainnet, allow for remote config
+      if (network.chainID === "mainnet" && this.remoteConfig) {
+        try {
+          const pocketRPC = new URL(
+            _.get(
+              this.remoteConfig,
+              `${network.family}.${network.chainID}.rpc`,
+              this.pocketNetwork?.rcpUrl
+            ) ?? this.pocketNetwork?.rcpUrl
+          )
+          logger.debug("Attempted to configure with remote config", {
+            rpcUrl: pocketRPC.toString(),
+          })
+          this.pocketNetwork = {
+            ...this.pocketNetwork,
+            rcpUrl: pocketRPC.toString(),
+          }
+        } catch (e) {
+          // ignored
+        }
+      }
     }
 
     if (this.providers) {
