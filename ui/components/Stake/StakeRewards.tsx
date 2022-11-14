@@ -118,16 +118,7 @@ export default function StakeRewards(): ReactElement {
   })
 
   const endDate = dayjs.utc(last(allTransactions)?.timestamp)
-  const thirtyDaysAgo = dayjs.utc().subtract(30, "day")
-  let startDate = dayjs.utc(allTransactions[0]?.timestamp)
-
-  // limit to 30 days for now
-  if (
-    endDate.diff(startDate, "day") > 30 &&
-    startDate.isSameOrBefore(thirtyDaysAgo)
-  ) {
-    startDate = endDate.subtract(30, "day")
-  }
+  const startDate = dayjs.utc(allTransactions[0]?.timestamp)
 
   const cummRewardsDataset = {
     label: "Total Rewards",
@@ -197,6 +188,19 @@ export default function StakeRewards(): ReactElement {
     )
     date = date.add(1, "day")
   }
+
+  const thirtyDaysAgo = dayjs.utc().subtract(30, "day")
+  let index = startDate.clone()
+
+  while (index.isSameOrBefore(thirtyDaysAgo, "day")) {
+    cummRewardsDataset.data.shift()
+    dailyRewardsDataset.data.shift()
+    stakedDataset.data.shift()
+    unstakedDataset.data.shift()
+    labels.shift()
+    index = index.add(1, "day")
+  }
+
   const options = {
     responsive: true,
     aspectRatio: 1,
