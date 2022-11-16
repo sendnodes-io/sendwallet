@@ -165,7 +165,7 @@ export default function StakeAnalytics(): ReactElement {
                 <div className="hidden sm:block col-span-1"></div>
                 <div
                   title={poolTotalStakedFixedAmount}
-                  className="relative border border-spanish-gray h-24 rounded-md col-span-3"
+                  className="relative border border-spanish-gray text-white h-24 rounded-md col-span-3"
                 >
                   <div className="absolute flex items-center justify-center -top-6 left-0 right-0 whitespace-nowrap text-xs">
                     <span>Total Staked</span>
@@ -190,7 +190,7 @@ export default function StakeAnalytics(): ReactElement {
 
                 <div
                   title={poolTotalUpcomingStakesFixedAmount}
-                  className="relative border border-spanish-gray h-24 rounded-md col-span-3"
+                  className="relative border border-spanish-gray text-white h-24 rounded-md col-span-3"
                 >
                   <div className="absolute flex items-center justify-center -top-6 left-0 right-0 whitespace-nowrap text-xs">
                     <span title="Staking requests made in the last 24 hours">
@@ -229,7 +229,7 @@ export default function StakeAnalytics(): ReactElement {
               <div className="grid grid-cols-3 sm:grid-cols-9 gap-y-8 gap-x-4">
                 <div
                   title={netRewardsPer1000PerDayFixedAmount}
-                  className="relative border border-spanish-gray h-24 rounded-md col-span-3"
+                  className="relative border border-spanish-gray text-white h-24 rounded-md col-span-3"
                 >
                   <div className="absolute flex items-center justify-center -top-6 left-0 right-0 whitespace-nowrap text-xs">
                     <span>
@@ -263,7 +263,7 @@ export default function StakeAnalytics(): ReactElement {
                 </div>
                 <div
                   title={netRewardsPer15000PerDayFixedAmount}
-                  className="relative border border-spanish-gray h-24 rounded-md col-span-3"
+                  className="relative border border-spanish-gray text-white h-24 rounded-md col-span-3"
                 >
                   <div className="absolute flex items-center justify-center -top-6 left-0 right-0 whitespace-nowrap text-xs">
                     <span>
@@ -298,7 +298,7 @@ export default function StakeAnalytics(): ReactElement {
 
                 <div
                   title={netRewardsPer60000PerDayFixedAmount}
-                  className="relative border border-spanish-gray h-24 rounded-md col-span-3"
+                  className="relative border border-spanish-gray text-white h-24 rounded-md col-span-3"
                 >
                   <div className="absolute flex items-center justify-center -top-6 left-0 right-0 whitespace-nowrap text-xs">
                     <span>
@@ -338,7 +338,7 @@ export default function StakeAnalytics(): ReactElement {
                 <h2 className="text-base sm:text-3xl">APY</h2>
               </div>
 
-              <div className="relative border border-spanish-gray rounded-md col-span-2 p-4">
+              <div className="relative border border-spanish-gray text-white rounded-md col-span-2 p-4">
                 <div className="w-full h-full grow gap-1 space-y-4">
                   <div className="grid grid-cols-12 w-full items-center">
                     <div className="text-left grow col-span-2">
