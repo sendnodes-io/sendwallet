@@ -384,6 +384,10 @@ export default function SharedAssetInput<T extends AnyAsset>(
       return "Insufficient balance"
     }
 
+    if (decimalMatched.amount < BigInt(0)) {
+      return "Amount must be positive"
+    }
+
     if (validateAmount) {
       try {
         validateAmount(decimalMatched.amount)
