@@ -1,4 +1,4 @@
-<img src="./docs/img/1500x500.jpeg"/>
+<img src="./docs/img/sendwallet-doc.jpg"/>
 
 # SendWallet - https://sendwallet.net
 
