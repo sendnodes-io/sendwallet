@@ -3,6 +3,12 @@ import "mockzilla-webextension"
 import { webcrypto } from "crypto"
 import { Browser } from "webextension-polyfill"
 import { MockzillaDeep } from "mockzilla"
+import {
+  Keyring,
+  KeyringType,
+  KeyType,
+  SerializedKeyring,
+} from "@sendnodes/hd-keyring"
 import KeyringService, {
   ExtensionKeyring,
   KeyringEvents,
@@ -13,7 +19,6 @@ import { KeyringTypes } from "../types"
 import { EIP1559TransactionRequest } from "../networks"
 import { ETHEREUM, POCKET } from "../constants"
 import logger from "../lib/logger"
-import { Keyring, KeyringType, KeyType, SerializedKeyring } from "@sendnodes/hd-keyring"
 
 const originalCrypto = global.crypto
 beforeEach(() => {
@@ -356,13 +361,14 @@ describe("KeyringService when saving keyrings", () => {
         version: 1,
         vaults: [
           {
-            "timeSaved": 1655223222511,
-            "vault": {
-              "cipherText": "mush2xs6GrQFDWyUAyhUiux1YZvf2Ix0SkysV5YimIPWs0sELDNamyCJU1+gASCbZcSEhIa5wvS1g5rxIBp+yBDRPsOT5mHWadBU2xTLTpUWQ2VZSNcYuxb2ReovoXDDnCqkVIk7pUamtDYhTOumYGbNlPmb8qvvdW8Pk2oSRkMCVkZQeHZvFvheSjhOrT3n4hh3MMXPFQ1+zb0jg+2M0Nzvxs8Nu+UEAhyXOWALdW8nCLKfSV7IWxGRrYtx6O1S6Yoj6Um5TwBAkkplGHjO/M88pEKtU+b93mlwE3AnR4sKJtqh/YZvdLSQPkrte4uOfrpXPdoQPAP/rCUnvGl2pmHVQDCYIQzhVCUlu+KjVaFoR9q9RbB060OgxGvzxGou2XlLRpnbwEBKQDamqraVmrpLbn1Vwi3FcMACfKpXPHbCWIs3a5G/CGV+jDLeTKxMGRfuSUsvTTL6kXBomsklfX/I6E2esdkDa+12gjDXNLBlN+6tkxA+Ow/QaTQKXtH6o7iT5v0csnCqPLHLE7WNye6i8JO2Vc0pdvWBlJ1qwA==",
-              "initializationVector": "50gJvZlgQJLJk0zm9Jl3Ew==",
-              "salt": "w8a3e50Jh7+PKg97BwmexfdzEMgiFIYm0MEFJG2dVH2awIf7T5ixDttCRF2Cz8+s/QQ5WesyQ+wsXKQXNkqnxA=="
-            }
-          }
+            timeSaved: 1655223222511,
+            vault: {
+              cipherText:
+                "mush2xs6GrQFDWyUAyhUiux1YZvf2Ix0SkysV5YimIPWs0sELDNamyCJU1+gASCbZcSEhIa5wvS1g5rxIBp+yBDRPsOT5mHWadBU2xTLTpUWQ2VZSNcYuxb2ReovoXDDnCqkVIk7pUamtDYhTOumYGbNlPmb8qvvdW8Pk2oSRkMCVkZQeHZvFvheSjhOrT3n4hh3MMXPFQ1+zb0jg+2M0Nzvxs8Nu+UEAhyXOWALdW8nCLKfSV7IWxGRrYtx6O1S6Yoj6Um5TwBAkkplGHjO/M88pEKtU+b93mlwE3AnR4sKJtqh/YZvdLSQPkrte4uOfrpXPdoQPAP/rCUnvGl2pmHVQDCYIQzhVCUlu+KjVaFoR9q9RbB060OgxGvzxGou2XlLRpnbwEBKQDamqraVmrpLbn1Vwi3FcMACfKpXPHbCWIs3a5G/CGV+jDLeTKxMGRfuSUsvTTL6kXBomsklfX/I6E2esdkDa+12gjDXNLBlN+6tkxA+Ow/QaTQKXtH6o7iT5v0csnCqPLHLE7WNye6i8JO2Vc0pdvWBlJ1qwA==",
+              initializationVector: "50gJvZlgQJLJk0zm9Jl3Ew==",
+              salt: "w8a3e50Jh7+PKg97BwmexfdzEMgiFIYm0MEFJG2dVH2awIf7T5ixDttCRF2Cz8+s/QQ5WesyQ+wsXKQXNkqnxA==",
+            },
+          },
         ],
       },
     }

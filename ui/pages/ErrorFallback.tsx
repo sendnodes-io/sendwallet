@@ -2,6 +2,7 @@ import { Icon } from "@iconify/react"
 import React, { ReactElement } from "react"
 import { useHistory } from "react-router-dom"
 import SharedButton from "../components/Shared/SharedButton"
+
 export default function ErrorFallback({
   error,
 }: {

@@ -25,6 +25,7 @@ import {
 import { CompleteAssetAmount } from "@sendnodes/pokt-wallet-background/redux-slices/accounts"
 import { enrichAssetAmountWithMainCurrencyValues } from "@sendnodes/pokt-wallet-background/redux-slices/utils/asset-utils"
 import { useHistory, useLocation } from "react-router-dom"
+import { formatFixed } from "@ethersproject/bignumber"
 import SharedAssetInput from "../Shared/SharedAssetInput"
 import SharedButton from "../Shared/SharedButton"
 import {
@@ -37,7 +38,6 @@ import SharedInput from "../Shared/SharedInput"
 import SharedSplashScreen from "../Shared/SharedSplashScreen"
 import usePocketNetworkFee from "../../hooks/pocket-network/use-network-fee"
 import formatTokenAmount from "../../utils/formatTokenAmount"
-import { formatFixed } from "@ethersproject/bignumber"
 
 // TODO: v0.2.0 handle multiple assets
 export default function Send(): ReactElement {
@@ -196,7 +196,7 @@ export default function Send(): ReactElement {
             label="ENTER AMOUNT"
             onAssetSelect={setSelectedAsset}
             assetsAndAmounts={fungibleAssetAmounts}
-            disableDropdown={true}
+            disableDropdown
             onAmountChange={(value, errorMessage) => {
               setAmount(value)
               if (errorMessage) {

@@ -119,7 +119,7 @@ export default function StakeAnalytics(): ReactElement {
             <h1 className="text-xl font-semibold flex items-end">
               <img
                 src="/images/sendnodes.png"
-                width={"558"}
+                width="558"
                 height="84"
                 className="w-full inline-flex mr-2 max-w-[12rem]"
                 alt="SendNodes"
@@ -131,8 +131,9 @@ export default function StakeAnalytics(): ReactElement {
               Dashboard for{" "}
               <a
                 href="https://docs.sendnodes.io/"
-                target={"_blank"}
+                target="_blank"
                 className="hover:text-white"
+                rel="noreferrer"
               >
                 POKT Onchain Pool Staking (<b className="text-white">POPS</b>){" "}
                 <InformationCircleIcon className="inline h-4 w-4" />
@@ -145,10 +146,10 @@ export default function StakeAnalytics(): ReactElement {
               to="/"
               className="relative inline-flex items-center justify-center px-4 py-1 overflow-hidden font-medium text-eerie-black rounded-lg shadow-2xl group"
             >
-              <span className="absolute top-0 left-0 w-40 h-40 -mt-10 -ml-3 transition-all duration-700 bg-capri rounded-full blur-md ease"></span>
+              <span className="absolute top-0 left-0 w-40 h-40 -mt-10 -ml-3 transition-all duration-700 bg-capri rounded-full blur-md ease" />
               <span className="absolute inset-0 w-full h-full transition duration-700 group-hover:rotate-180 ease">
-                <span className="absolute bottom-0 left-0 w-24 h-24 -ml-10 bg-aqua rounded-full blur-md"></span>
-                <span className="absolute bottom-0 right-0 w-24 h-24 -mr-10 bg-capri rounded-full blur-md"></span>
+                <span className="absolute bottom-0 left-0 w-24 h-24 -ml-10 bg-aqua rounded-full blur-md" />
+                <span className="absolute bottom-0 right-0 w-24 h-24 -mr-10 bg-capri rounded-full blur-md" />
               </span>
               <span className="relative ">Stake</span>
             </Link>
@@ -162,7 +163,7 @@ export default function StakeAnalytics(): ReactElement {
               </div>
 
               <div className="grid grid-cols-3 sm:grid-cols-8 gap-y-8 gap-x-4">
-                <div className="hidden sm:block col-span-1"></div>
+                <div className="hidden sm:block col-span-1" />
                 <div
                   title={poolTotalStakedFixedAmount}
                   className="relative border border-spanish-gray text-white h-24 rounded-md col-span-3"
@@ -345,7 +346,7 @@ export default function StakeAnalytics(): ReactElement {
                       <p className="text-xs">Rolling avg. period</p>
                     </div>
                     <div
-                      title={"Compounding Rewards On"}
+                      title="Compounding Rewards On"
                       className="text-center grow  text-xs sm:text-base col-span-5"
                     >
                       Compounding{" "}

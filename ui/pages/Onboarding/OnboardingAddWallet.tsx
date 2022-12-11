@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react"
-import { Link } from "react-router-dom"
+import { Link, useHistory } from "react-router-dom"
 import {
   useAreKeyringsUnlocked,
   useBackgroundSelector,
@@ -13,7 +13,6 @@ import {
 import styles from "../../components/Onboarding/styles"
 import SharedPopoutOpen from "../../components/Shared/SharedPopoutOpen"
 import SharedSplashScreen from "../../components/Shared/SharedSplashScreen"
-import { useHistory } from "react-router-dom"
 
 export default function OnboardingAddAccount(): ReactElement {
   const history = useHistory()
@@ -92,7 +91,10 @@ export default function OnboardingAddAccount(): ReactElement {
               <Link to="/onboarding/import-keyfile">
                 <h2>Using Keyfile or Private Key</h2>
               </Link>
-              <p>Add a POKT keyfile wallet created on the official POKT network or a private key.</p>
+              <p>
+                Add a POKT keyfile wallet created on the official POKT network
+                or a private key.
+              </p>
             </div>
           </div>
         </div>

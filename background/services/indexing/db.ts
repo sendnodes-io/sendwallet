@@ -82,17 +82,17 @@ function normalizePricePoint(pricePoint: PricePoint): IndexedPricePoint {
   const asset2ID = assetID(pricePoint.pair[1])
   return asset1ID.localeCompare(asset2ID) > 0
     ? {
-      ...pricePoint,
-      asset1ID,
-      asset2ID,
-    }
+        ...pricePoint,
+        asset1ID,
+        asset2ID,
+      }
     : {
-      time: pricePoint.time,
-      pair: [pricePoint.pair[1], pricePoint.pair[0]],
-      amounts: [pricePoint.amounts[1], pricePoint.amounts[0]],
-      asset1ID: asset2ID,
-      asset2ID: asset1ID,
-    }
+        time: pricePoint.time,
+        pair: [pricePoint.pair[1], pricePoint.pair[0]],
+        amounts: [pricePoint.amounts[1], pricePoint.amounts[0]],
+        asset1ID: asset2ID,
+        asset2ID: asset1ID,
+      }
 }
 
 function numberArrayCompare(arr1: number[], arr2: number[]) {

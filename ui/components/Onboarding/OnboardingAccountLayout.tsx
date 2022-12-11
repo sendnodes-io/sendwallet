@@ -1,6 +1,6 @@
 import React, { ReactElement } from "react"
-import styles from "./styles"
 import { useHistory } from "react-router-dom"
+import styles from "./styles"
 
 export default function OnboardingAccountLayout(props: {
   title: ReactElement

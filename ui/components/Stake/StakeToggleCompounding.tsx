@@ -100,7 +100,7 @@ export default function StakeToggleCompounding() {
 
   return (
     <Switch.Group
-      as={"div"}
+      as="div"
       title={
         userStakingData?.userStakingData[0]?.compound
           ? "Click to disable compounding"

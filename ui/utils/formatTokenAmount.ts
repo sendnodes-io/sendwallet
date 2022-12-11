@@ -22,7 +22,7 @@ function abbreviateNumber(
     options = { symbols: options }
   }
 
-  const { symbols, padding } = Object.assign({}, defaultOptions, options)
+  const { symbols, padding } = { ...defaultOptions, ...options }
 
   // handle negatives
   const sign = Math.sign(num) >= 0
@@ -74,7 +74,7 @@ export default function formatTokenAmount(
     amount = amount.split(",").join("")
   }
 
-  let digits = (amount ?? "").toString().split(".")
+  const digits = (amount ?? "").toString().split(".")
   let [integers = 0, decimals = 0] = digits.map((s) => Number(s))
   let [integersLength = 0, decimalsLength = 0] = digits.map((s) => s.length)
 

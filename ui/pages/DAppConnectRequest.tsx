@@ -9,7 +9,11 @@ import {
 } from "@sendnodes/pokt-wallet-background/redux-slices/dapp-permission"
 
 import SharedButton from "../components/Shared/SharedButton"
-import { useBackgroundDispatch, useBackgroundSelector, useAreKeyringsUnlocked } from "../hooks"
+import {
+  useBackgroundDispatch,
+  useBackgroundSelector,
+  useAreKeyringsUnlocked,
+} from "../hooks"
 import SharedAccountItemSummary from "../components/Shared/SharedAccountItemSummary"
 
 function RequestingDAppBlock(props: {
@@ -151,7 +155,7 @@ export default function DAppConnectRequest(): ReactElement {
         >
           Reject
         </SharedButton>
-        <div className="button_spacer"></div>
+        <div className="button_spacer" />
         <SharedButton
           type="primary"
           iconSize="large"
@@ -220,8 +224,8 @@ export default function DAppConnectRequest(): ReactElement {
           background-color: var(--onyx-100);
           opacity: 0.33;
           border-radius: 1.25rem;
-          -webkit-transition: background-color 0.2s,opacity 0.2s;
-          transition: background-color 0.2s,opacity 0.2s;
+          -webkit-transition: background-color 0.2s, opacity 0.2s;
+          transition: background-color 0.2s, opacity 0.2s;
         }
         .row {
           width: 100%;

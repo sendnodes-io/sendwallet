@@ -1,13 +1,13 @@
 import useSWR from "swr"
 import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts"
 import { isEmpty, isEqual, lowerCase } from "lodash"
+import { selectCurrentAccount } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
 import {
   fetcher,
   SENDNODES_ONCHAIN_API_URL,
   SnAction,
   SnTransaction,
 } from "./constants"
-import { selectCurrentAccount } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
 import { useBackgroundSelector } from "../redux-hooks"
 
 const enrichWithUnstakeInfo = (
@@ -28,13 +28,12 @@ const enrichWithUnstakeInfo = (
     unstakeRequest.unstakeStatus = "filled"
     unstakeRequest.unstakeReceiptAt = tx.timestamp
   }
-  return
 }
 
 export function useStakingRequestsTransactionsForAddress(
   addressOnNetwork: AddressOnNetwork
 ) {
-  var raw = JSON.stringify({
+  const raw = JSON.stringify({
     method: "pokt_getStakingRequestsTransactions",
     id: 1,
     jsonrpc: "2.0",
@@ -42,7 +41,7 @@ export function useStakingRequestsTransactionsForAddress(
       userWalletAddress: addressOnNetwork.address,
     },
   })
-  var request = {
+  const request = {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

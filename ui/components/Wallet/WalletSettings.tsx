@@ -2,8 +2,8 @@ import React, { useState } from "react"
 import { Icon } from "@iconify/react"
 import { lockKeyrings } from "@sendnodes/pokt-wallet-background/redux-slices/keyrings"
 import { CgLock } from "react-icons/cg"
-import { useBackgroundDispatch } from "../../hooks"
 import browser from "webextension-polyfill"
+import { useBackgroundDispatch } from "../../hooks"
 
 export default function () {
   const dispatch = useBackgroundDispatch()
@@ -12,7 +12,11 @@ export default function () {
       <nav>
         <ul style={{ flex: "1", height: "100%" }}>
           <li>
-            <a target="_blank" href="https://docs.sendwallet.net/">
+            <a
+              target="_blank"
+              href="https://docs.sendwallet.net/"
+              rel="noreferrer"
+            >
               <div className="icon">
                 <Icon
                   width="1.5rem"
@@ -29,6 +33,7 @@ export default function () {
             <a
               target="_blank"
               href="https://docs.sendwallet.net/the-wallet/frequently-asked-questions"
+              rel="noreferrer"
             >
               <div className="icon">
                 <Icon
@@ -43,7 +48,11 @@ export default function () {
             </a>
           </li>
           <li>
-            <a target="_blank" href="https://discord.gg/Gh76tPkjTn">
+            <a
+              target="_blank"
+              href="https://discord.gg/Gh76tPkjTn"
+              rel="noreferrer"
+            >
               <div className="icon">
                 <Icon icon="simple-icons:discord" className="w-6 h-6" />
               </div>
@@ -53,7 +62,7 @@ export default function () {
             </a>
           </li>
           <li>
-            <a target="_blank" href="https://t.me/send_wallet">
+            <a target="_blank" href="https://t.me/send_wallet" rel="noreferrer">
               <div className="icon">
                 <Icon icon="uit:telegram-alt" className="w-6 h-6" />
               </div>
@@ -63,7 +72,11 @@ export default function () {
             </a>
           </li>
           <li>
-            <a target="_blank" href="https://github.com/sendnodes-io">
+            <a
+              target="_blank"
+              href="https://github.com/sendnodes-io"
+              rel="noreferrer"
+            >
               <div className="icon">
                 <Icon icon="akar-icons:github-fill" className="w-6 h-6" />
               </div>

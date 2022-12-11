@@ -6,23 +6,25 @@ import React, {
 } from "react"
 import classNames from "clsx"
 import { useDispatch } from "react-redux"
-import { refreshBackgroundPage } from "@sendnodes/pokt-wallet-background/redux-slices/ui"
+import {
+  refreshBackgroundPage,
+  setSnackbarMessage,
+} from "@sendnodes/pokt-wallet-background/redux-slices/ui"
 import {
   selectCurrentAccountSigningMethod,
   selectCurrentAccount,
 } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
+import { CompleteAssetAmount } from "@sendnodes/pokt-wallet-background/redux-slices/accounts"
+import { POKT } from "@sendnodes/pokt-wallet-background/constants"
+import { browser } from "@sendnodes/pokt-wallet-background"
 import { useBackgroundSelector, useLocalStorage } from "../../hooks"
 import SharedButton from "../Shared/SharedButton"
-import { setSnackbarMessage } from "@sendnodes/pokt-wallet-background/redux-slices/ui"
 import t from "../../utils/i18n"
-import { CompleteAssetAmount } from "@sendnodes/pokt-wallet-background/redux-slices/accounts"
 import DollarSvg from "../Icons/DollarSvg"
 import SharedAddress from "../Shared/SharedAddress"
-import { POKT } from "@sendnodes/pokt-wallet-background/constants"
 import formatTokenAmount from "../../utils/formatTokenAmount"
 import SharedLoadingSpinner from "../Shared/SharedLoadingSpinner"
 import SharedAssetIcon from "../Shared/SharedAssetIcon"
-import { browser } from "@sendnodes/pokt-wallet-background"
 
 function ReadOnlyNotice(): ReactElement {
   return (
@@ -176,7 +178,7 @@ export default function WalletAccountBalanceControl(
               <button
                 onClick={copyBalance(assetAmount?.decimalAmount.toString())}
                 title="Copy balance to clipboard"
-                className={"balance main_balance"}
+                className="balance main_balance"
               >
                 <SharedAssetIcon
                   size="large"
@@ -185,7 +187,7 @@ export default function WalletAccountBalanceControl(
 
                 {formatTokenAmount(assetAmount?.decimalAmount, 7)}
               </button>
-              <span className={"balance"} title={`$${balance}`}>
+              <span className="balance" title={`$${balance}`}>
                 <span>
                   <DollarSvg />
                 </span>
@@ -196,7 +198,7 @@ export default function WalletAccountBalanceControl(
         </div>
         <div className="wallet_control h-[3.5rem]">
           <div className="address_wrap flex items-center">
-            <SharedAddress address={selectedAccountAddress} showAvatar={true} />
+            <SharedAddress address={selectedAccountAddress} showAvatar />
           </div>
 
           <div className="flex items-center gap-x-4">

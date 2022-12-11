@@ -6,14 +6,8 @@
   },
   "web_accessible_resources": [
     {
-      "resources": [
-        "*.js",
-        "*.json",
-        "*.js.map"
-      ],
-      "matches": [
-        "<all_urls>"
-      ]
+      "resources": ["*.js", "*.json", "*.js.map"],
+      "matches": ["<all_urls>"]
     }
   ],
   "action": {
@@ -26,7 +20,5 @@
   "content_security_policy": {
     "extension_pages": "object-src 'self'; script-src 'self' http://localhost:8097 'wasm-unsafe-eval';"
   },
-  "host_permissions": [
-    "<all_urls>"
-  ]
+  "host_permissions": ["<all_urls>"]
 }

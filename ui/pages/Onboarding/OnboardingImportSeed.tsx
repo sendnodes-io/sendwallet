@@ -12,6 +12,7 @@ import {
 } from "@sendnodes/pokt-wallet-background/redux-slices/keyrings"
 import { isValidMnemonic } from "@ethersproject/hdnode"
 import { useHistory } from "react-router-dom"
+import { setSnackbarMessage } from "@sendnodes/pokt-wallet-background/redux-slices/ui"
 import SharedButton from "../../components/Shared/SharedButton"
 import OnboardingRecoveryPhrase from "../../components/Onboarding/OnboardingRecoveryPhrase"
 import OnboardingAccountLayout from "../../components/Onboarding/OnboardingAccountLayout"
@@ -22,7 +23,6 @@ import {
 } from "../../hooks"
 import { OnboardingImportRecoveryPhraseIcon } from "../../components/Onboarding/Icons"
 import SharedSplashScreen from "../../components/Shared/SharedSplashScreen"
-import { setSnackbarMessage } from "@sendnodes/pokt-wallet-background/redux-slices/ui"
 
 export default function OnboardingImportSeed() {
   const rootRef = useRef<HTMLDivElement>(null)
@@ -41,13 +41,13 @@ export default function OnboardingImportSeed() {
   const history = useHistory()
 
   useEffect(() => {
-    //always start fresh
+    // always start fresh
     dispatch(clearImporting())
   }, [dispatch])
 
   useEffect(() => {
     if (isImporting && keyringImport === "done") {
-      dispatch(clearImporting()) //clean up
+      dispatch(clearImporting()) // clean up
       // yay! account created
       history.push("/onboarding/account-created")
     }
@@ -72,7 +72,7 @@ export default function OnboardingImportSeed() {
       e.preventDefault()
 
       // Get pasted data via clipboard API
-      const clipboardData = nativeEvent.clipboardData
+      const { clipboardData } = nativeEvent
       const pastedData = clipboardData?.getData("Text")
       if (pastedData === undefined || rootRef.current === null) {
         return
@@ -105,7 +105,7 @@ export default function OnboardingImportSeed() {
     }
     if (importMnemonic[wordIndex] === undefined) {
       throw new Error(
-        "Mnemonic index out of bounds, tried to update word " + wordIndex
+        `Mnemonic index out of bounds, tried to update word ${wordIndex}`
       )
     }
     const input = e.target as HTMLInputElement
@@ -155,7 +155,7 @@ export default function OnboardingImportSeed() {
             </div>
           </>
         }
-        body={<OnboardingRecoveryPhrase importing={true} onInput={onInput} />}
+        body={<OnboardingRecoveryPhrase importing onInput={onInput} />}
         buttons={
           <div className="full_width">
             <p className="center_text">

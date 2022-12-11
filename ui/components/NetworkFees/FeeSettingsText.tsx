@@ -16,9 +16,9 @@ import {
 import { enrichAssetAmountWithMainCurrencyValues } from "@sendnodes/pokt-wallet-background/redux-slices/utils/asset-utils"
 import { PricePoint } from "@sendnodes/pokt-wallet-background/assets"
 import React, { ReactElement } from "react"
+import { formatFixed } from "@ethersproject/bignumber"
 import { useBackgroundSelector } from "../../hooks"
 import usePocketNetworkFee from "../../hooks/pocket-network/use-network-fee"
-import { formatFixed } from "@ethersproject/bignumber"
 import formatTokenAmount from "../../utils/formatTokenAmount"
 
 const getFeeDollarValue = (

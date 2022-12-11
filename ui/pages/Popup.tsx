@@ -11,6 +11,7 @@ import { ErrorBoundary } from "react-error-boundary"
 import {
   setRouteHistoryEntries,
   Location,
+  trackPageView,
 } from "@sendnodes/pokt-wallet-background/redux-slices/ui"
 
 import { Store } from "@0xbigboss/webext-redux"
@@ -40,7 +41,6 @@ import CorePopupPage from "../components/Core/CorePopupPage"
 import ErrorFallback from "./ErrorFallback"
 
 import pageList from "../routes/routes"
-import { trackPageView } from "@sendnodes/pokt-wallet-background/redux-slices/ui"
 import SharedSplashScreen from "../components/Shared/SharedSplashScreen"
 
 const pagePreferences = Object.fromEntries(

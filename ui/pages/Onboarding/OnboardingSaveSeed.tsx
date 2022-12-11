@@ -6,8 +6,9 @@ import {
   KeyringMnemonic,
 } from "@sendnodes/pokt-wallet-background/redux-slices/keyrings"
 import { useHistory } from "react-router-dom"
-import { useBackgroundDispatch, useAreKeyringsUnlocked } from "../../hooks"
 import { setSnackbarMessage } from "@sendnodes/pokt-wallet-background/redux-slices/ui"
+import { browser } from "@sendnodes/pokt-wallet-background"
+import { useBackgroundDispatch, useAreKeyringsUnlocked } from "../../hooks"
 import SharedButton from "../../components/Shared/SharedButton"
 import OnboardingRecoveryPhrase from "../../components/Onboarding/OnboardingRecoveryPhrase"
 import OnboardingAccountLayout from "../../components/Onboarding/OnboardingAccountLayout"
@@ -15,7 +16,6 @@ import OnboardingVerifySeed from "../../components/Onboarding/OnboardingVerifySe
 import { OnboardingNewAccountIcon } from "../../components/Onboarding/Icons"
 import SharedLoadingSpinner from "../../components/Shared/SharedLoadingSpinner"
 import SharedSplashScreen from "../../components/Shared/SharedSplashScreen"
-import { browser } from "@sendnodes/pokt-wallet-background"
 
 export default function OnboardingSaveSeed() {
   const dispatch = useBackgroundDispatch()
@@ -46,7 +46,7 @@ export default function OnboardingSaveSeed() {
       // ready to receive
       browser.runtime.onMessage.addListener(generateFreshMnemonicMessageHandler)
 
-      //request new keyring
+      // request new keyring
       dispatch(generateNewKeyring())
 
       // ensure no listeners left behind

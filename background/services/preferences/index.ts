@@ -83,7 +83,6 @@ export default class PreferenceService extends BaseService<Events> {
       EventNames.SELECTED_ACCOUNT_CHANGED,
       await this.getSelectedAccount()
     )
-    return
   }
 
   async getDefaultCustomAssets(): Promise<FungibleAsset[]> {

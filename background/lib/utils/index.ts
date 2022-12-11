@@ -143,7 +143,7 @@ export function isProbablyPOKTAddress(str: string): str is HexString {
   if (str.startsWith("0x")) {
     return false
   }
-  if (!(/^[A-Za-z0-9]*$/.test(str))) {
+  if (!/^[A-Za-z0-9]*$/.test(str)) {
     return false
   }
   if (str.length === 40) {
@@ -152,40 +152,38 @@ export function isProbablyPOKTAddress(str: string): str is HexString {
   return false
 }
 
-
 export function isValidPoktAddress(pokt_address: string) {
-  let valid_characters = [
-    'a',
-    'b',
-    'c',
-    'd',
-    'e',
-    'f',
-    '0',
-    '1',
-    '2',
-    '3',
-    '4',
-    '5',
-    '6',
-    '7',
-    '8',
-    '9'
-  ];
+  const valid_characters = [
+    "a",
+    "b",
+    "c",
+    "d",
+    "e",
+    "f",
+    "0",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+  ]
 
   if (pokt_address.length != 40) {
-    return false;
+    return false
   }
-  for (var i = 0; i < pokt_address.length; i++) {
+  for (let i = 0; i < pokt_address.length; i++) {
     if (valid_characters.includes(pokt_address[i].toLowerCase())) {
-      continue;
+      continue
     } else {
-      return false;
+      return false
     }
   }
-  return true;
+  return true
 }
-
 
 export function truncateAddress(address: string, lead = 5, tail = -3): string {
   return `${address.slice(0, lead)}…${address.slice(tail)}`

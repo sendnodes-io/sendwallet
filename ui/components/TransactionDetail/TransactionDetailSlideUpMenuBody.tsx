@@ -2,15 +2,15 @@ import {
   EVMActivityItem,
   POKTActivityItem,
 } from "@sendnodes/pokt-wallet-background/redux-slices/activities"
-import TransactionSendDetail from "./TransactionSendDetail"
 import React, { ReactElement, useCallback, useState } from "react"
-import SharedButton from "../Shared/SharedButton"
 import {
   selectBlockExplorerForTxHash,
   selectCurrentAccountActivityForTxHash,
 } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
-import { useBackgroundSelector } from "../../hooks"
 import classNames from "clsx"
+import TransactionSendDetail from "./TransactionSendDetail"
+import SharedButton from "../Shared/SharedButton"
+import { useBackgroundSelector } from "../../hooks"
 import useStakingAllTransactions from "../../hooks/staking-hooks/use-staking-all-transactions"
 import StakeTransactionInfo from "../Stake/StakeTransactionInfo"
 import WalletStakeTransactionSendDetail from "../Wallet/WalletStakeTransactionSendDetail"

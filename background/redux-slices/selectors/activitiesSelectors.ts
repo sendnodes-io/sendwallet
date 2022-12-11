@@ -1,13 +1,12 @@
 import { createSelector, current, EntityId } from "@reduxjs/toolkit"
-import { ActivityItem } from "../activities"
-import { selectCurrentAccount } from "./uiSelectors"
-import { sameNetwork } from "../../networks"
-import { RootState } from ".."
-
 import dayjs from "dayjs"
 import * as relativeTime from "dayjs/plugin/relativeTime"
 import * as updateLocale from "dayjs/plugin/updateLocale"
 import * as utc from "dayjs/plugin/utc"
+import { ActivityItem } from "../activities"
+import { selectCurrentAccount } from "./uiSelectors"
+import { sameNetwork } from "../../networks"
+import { RootState } from ".."
 
 dayjs.extend(updateLocale.default)
 dayjs.extend(relativeTime.default)

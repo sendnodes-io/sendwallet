@@ -2,9 +2,9 @@ import React, { CSSProperties, ReactElement } from "react"
 import { Provider } from "react-redux"
 import { HashRouter, Redirect, Route, Switch } from "react-router-dom"
 import { Store } from "@0xbigboss/webext-redux"
+import { ErrorBoundary } from "react-error-boundary"
 import TabNotFound from "./TabNotFound"
 import ErrorFallback from "./ErrorFallback"
-import { ErrorBoundary } from "react-error-boundary"
 
 import OnboardingAddWallet from "./Onboarding/OnboardingAddWallet"
 import SendStake from "../components/Stake/SendStake"
@@ -36,7 +36,7 @@ export default function Stake({ store }: { store: Store }): ReactElement {
               </Route>
             )
           })} */}
-          <Route path={"/keyring/unlock"} exact>
+          <Route path="/keyring/unlock" exact>
             <ErrorBoundary FallbackComponent={ErrorFallback}>
               <div className="min-h-screen flex justify-center items-center mx-auto">
                 <div
@@ -56,7 +56,7 @@ export default function Stake({ store }: { store: Store }): ReactElement {
               </div>
             </ErrorBoundary>
           </Route>
-          <Route path={"/onboarding/add-wallet"} exact>
+          <Route path="/onboarding/add-wallet" exact>
             <ErrorBoundary FallbackComponent={ErrorFallback}>
               <div className="min-h-screen flex justify-center items-center mx-auto">
                 <div
@@ -76,42 +76,42 @@ export default function Stake({ store }: { store: Store }): ReactElement {
               </div>
             </ErrorBoundary>
           </Route>
-          <Route path={"/sign-transaction"} exact>
+          <Route path="/sign-transaction" exact>
             <CoreStakePage>
               <ErrorBoundary FallbackComponent={ErrorFallback}>
                 <SignTransaction />
               </ErrorBoundary>
             </CoreStakePage>
           </Route>
-          <Route path={"/analytics"} exact>
+          <Route path="/analytics" exact>
             <CoreStakePage>
               <ErrorBoundary FallbackComponent={ErrorFallback}>
                 <StakeAnalytics />
               </ErrorBoundary>
             </CoreStakePage>
           </Route>
-          <Route path={"/rewards"} exact>
+          <Route path="/rewards" exact>
             <CoreStakePage>
               <ErrorBoundary FallbackComponent={ErrorFallback}>
                 <StakeRewards />
               </ErrorBoundary>
             </CoreStakePage>
           </Route>
-          <Route path={"/transactions"} exact>
+          <Route path="/transactions" exact>
             <CoreStakePage>
               <ErrorBoundary FallbackComponent={ErrorFallback}>
                 <StakeRequestsTransactions />
               </ErrorBoundary>
             </CoreStakePage>
           </Route>
-          <Route path={"/unstake"} exact>
+          <Route path="/unstake" exact>
             <CoreStakePage>
               <ErrorBoundary FallbackComponent={ErrorFallback}>
                 <SendUnstake />
               </ErrorBoundary>
             </CoreStakePage>
           </Route>
-          <Route path={"/"} exact>
+          <Route path="/" exact>
             <CoreStakePage>
               <ErrorBoundary FallbackComponent={ErrorFallback}>
                 <SendStake />

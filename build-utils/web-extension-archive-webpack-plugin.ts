@@ -55,7 +55,7 @@ function webextArchiveCreator(
 }
 
 export default class WebextArchive {
-  constructor(private options: ArchiveOptions) { }
+  constructor(private options: ArchiveOptions) {}
 
   apply(compiler: Compiler): void {
     compiler.hooks.done.tapAsync(

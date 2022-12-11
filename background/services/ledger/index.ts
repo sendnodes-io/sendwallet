@@ -158,8 +158,8 @@ export default class LedgerService extends BaseService<Events> {
     )
 
     this.#lastOperationPromise = newOperationPromise.then(
-      () => { },
-      () => { }
+      () => {},
+      () => {}
     )
 
     return newOperationPromise
@@ -249,7 +249,7 @@ export default class LedgerService extends BaseService<Events> {
 
     // FIXME: service workers no longer have access to navigator.usb
     if (!navigator.usb) {
-      return;
+      return
     }
 
     this.refreshConnectedLedger()
@@ -263,7 +263,7 @@ export default class LedgerService extends BaseService<Events> {
 
     // FIXME: service workers no longer have access to navigator.usb
     if (!navigator.usb) {
-      return;
+      return
     }
     navigator.usb.removeEventListener("disconnect", this.#handleUSBDisconnect)
     navigator.usb.removeEventListener("connect", this.#handleUSBConnect)
@@ -311,7 +311,8 @@ export default class LedgerService extends BaseService<Events> {
         return accountAddress
       } catch (err) {
         logger.error(
-          `Error encountered! ledgerID: ${this.#currentLedgerId
+          `Error encountered! ledgerID: ${
+            this.#currentLedgerId
           } accountID: ${accountID} error: ${err}`
         )
         throw err
@@ -411,7 +412,8 @@ export default class LedgerService extends BaseService<Events> {
         return signedTx
       } catch (err) {
         logger.error(
-          `Error encountered! ledgerID: ${this.#currentLedgerId
+          `Error encountered! ledgerID: ${
+            this.#currentLedgerId
           } transactionRequest: ${transactionRequest} error: ${err}`
         )
 

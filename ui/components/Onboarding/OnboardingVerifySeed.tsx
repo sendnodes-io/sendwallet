@@ -5,6 +5,7 @@ import {
   importKeyring,
   KeyringMnemonic,
 } from "@sendnodes/pokt-wallet-background/redux-slices/keyrings"
+import { setSnackbarMessage } from "@sendnodes/pokt-wallet-background/redux-slices/ui"
 import SharedButton from "../Shared/SharedButton"
 import {
   useAreKeyringsUnlocked,
@@ -14,7 +15,6 @@ import {
 import OnboardingAccountLayout from "./OnboardingAccountLayout"
 import OnboardingRecoveryPhrase from "./OnboardingRecoveryPhrase"
 import { OnboardingNewAccountIcon } from "./Icons"
-import { setSnackbarMessage } from "@sendnodes/pokt-wallet-background/redux-slices/ui"
 import SharedSplashScreen from "../Shared/SharedSplashScreen"
 
 export default function OnboardingVerifySeed({
@@ -82,7 +82,7 @@ export default function OnboardingVerifySeed({
   }
 
   useEffect(() => {
-    //always start fresh
+    // always start fresh
     dispatch(clearImporting())
   }, [dispatch])
 
@@ -101,7 +101,7 @@ export default function OnboardingVerifySeed({
 
   useEffect(() => {
     if (isImporting && keyringImport === "done") {
-      dispatch(clearImporting()) //clean up
+      dispatch(clearImporting()) // clean up
       // yay! account created
       history.push("/onboarding/account-created")
     }

@@ -4,7 +4,7 @@ import {
   EIP1193_ERROR_CODES,
   PermissionRequest,
 } from "@sendnodes/provider-bridge-shared"
-import { POKTTransactionRPCRequest } from '../../networks'
+import { POKTTransactionRPCRequest } from "../../networks"
 import { sameEVMAddress } from "../../lib/utils"
 import { HexString } from "../../types"
 

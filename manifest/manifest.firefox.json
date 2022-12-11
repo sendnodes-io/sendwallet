@@ -9,13 +9,9 @@
     "default_title": "SendWallet",
     "default_popup": "popup.html"
   },
-  "permissions": [
-    "<all_urls>"
-  ],
+  "permissions": ["<all_urls>"],
   "background": {
     "persistent": true,
-    "scripts": [
-      "background.js"
-    ]
+    "scripts": ["background.js"]
   }
 }

@@ -187,7 +187,7 @@ export default function Send(): ReactElement {
               label="ENTER AMOUNT"
               onAssetSelect={setSelectedAsset}
               assetsAndAmounts={fungibleAssetAmounts}
-              disableDropdown={true}
+              disableDropdown
               onAmountChange={(value, errorMessage) => {
                 setAmount(value)
                 if (errorMessage) {

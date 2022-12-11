@@ -37,9 +37,9 @@ export default function WalletStakeTransactionSendDetail({
   const baseAssetPricePoint = useBackgroundSelector((state) =>
     selectAssetPricePoint(state.assets, network.baseAsset.symbol, USD.symbol)
   )
-  let amount = transaction.amount
-  let from = transaction.signer
-  let to = activity?.to ?? transaction.userWalletAddress
+  const { amount } = transaction
+  const from = transaction.signer
+  const to = activity?.to ?? transaction.userWalletAddress
 
   const transactionAssetAmount = enrichAssetAmountWithDecimalValues(
     {
@@ -80,7 +80,7 @@ export default function WalletStakeTransactionSendDetail({
         <div className="dashed_border width_full amount_row">
           <SharedAssetIcon
             symbol={transactionAssetAmount.asset.symbol}
-            size={"large"}
+            size="large"
           />
           <span
             className="spend_amount"
@@ -95,7 +95,7 @@ export default function WalletStakeTransactionSendDetail({
           </span>
         </div>
       )}
-      <div className="spacing"></div>
+      <div className="spacing" />
       <div className="width_full addresses_row">
         <div>
           <div className="width_full">
@@ -106,7 +106,7 @@ export default function WalletStakeTransactionSendDetail({
               {sendnodesWallets.includes(from) && (
                 <img
                   src="/images/sendnodes.png"
-                  width={"558"}
+                  width="558"
                   height="84"
                   className="w-full block mx-auto max-w-[5rem]"
                   alt="SendNodes"
@@ -135,7 +135,7 @@ export default function WalletStakeTransactionSendDetail({
               {sendnodesWallets.includes(to) && (
                 <img
                   src="/images/sendnodes.png"
-                  width={"558"}
+                  width="558"
                   height="84"
                   className="w-full block mx-auto max-w-[5rem]"
                   alt="SendNodes"
@@ -157,7 +157,7 @@ export default function WalletStakeTransactionSendDetail({
         </div>
       </div>
 
-      <div className="spacing"></div>
+      <div className="spacing" />
 
       <style jsx>
         {`

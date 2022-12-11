@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react"
 import { PermissionRequest } from "@sendnodes/provider-bridge-shared"
 import { denyOrRevokePermission } from "@sendnodes/pokt-wallet-background/redux-slices/dapp-permission"
 import { useBackgroundDispatch } from "../../hooks"
+
 export default function (props: {
   currentPermission: PermissionRequest
   permissions: { [k: string]: PermissionRequest }
@@ -42,7 +43,7 @@ export default function (props: {
               }`}
             >
               <div className="left">
-                <div className={`favicon`} style={bkgStyle} />
+                <div className="favicon" style={bkgStyle} />
               </div>
               <div className="center">
                 <h3 className="title">{t}</h3>
@@ -54,7 +55,7 @@ export default function (props: {
                     dispatch(denyOrRevokePermission({ ...p, state: "deny" }))
                   }}
                 >
-                  <div className={`icon disconnect`} />
+                  <div className="icon disconnect" />
                 </button>
               </div>
             </li>

@@ -1,13 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit"
 import Emittery from "emittery"
 
+import { KeyType } from "@sendnodes/hd-keyring"
 import { createBackgroundAsyncThunk } from "./utils"
 import {
   ExtensionKeyring as Keyring,
   KeyringMetadata,
 } from "../services/keyring/index"
 import { emitteryDebugLogger } from "../utils/emittery"
-import { KeyType } from "@sendnodes/hd-keyring"
 import logger from "../lib/logger"
 
 type KeyringsState = {

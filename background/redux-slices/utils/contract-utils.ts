@@ -1,5 +1,8 @@
 import { Web3Provider } from "@ethersproject/providers"
-import { EthereumWindowProvider, PocketWindowProvider } from "@sendnodes/window-provider"
+import {
+  EthereumWindowProvider,
+  PocketWindowProvider,
+} from "@sendnodes/window-provider"
 import { Contract, ethers, ContractInterface } from "ethers"
 import Emittery from "emittery"
 import { emitteryDebugLogger } from "../../utils/emittery"

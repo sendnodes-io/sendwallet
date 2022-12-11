@@ -12,6 +12,7 @@ import {
   fixedPointNumberToString,
   parseToFixedPointNumber,
 } from "@sendnodes/pokt-wallet-background/lib/fixed-point"
+import classNames from "clsx"
 import SharedButton from "./SharedButton"
 import SharedSlideUpMenu from "./SharedSlideUpMenu"
 import SharedAssetItem, {
@@ -19,7 +20,6 @@ import SharedAssetItem, {
   hasAmounts,
 } from "./SharedAssetItem"
 import SharedAssetIcon from "./SharedAssetIcon"
-import classNames from "clsx"
 
 // List of symbols we want to display first.  Lower array index === higher priority.
 // For now we just prioritize somewhat popular assets that we are able to load an icon for.
@@ -252,7 +252,7 @@ function SelectedAssetButton(props: SelectedAssetButtonProps): ReactElement {
         <SharedAssetIcon
           logoURL={asset?.metadata?.logoURL}
           symbol={asset?.symbol}
-          size={"large"}
+          size="large"
         />
       </div>
 
@@ -293,7 +293,7 @@ interface SharedAssetInputProps<AssetType extends AnyAsset> {
   isDisabled?: boolean
   onAssetSelect?: (asset: AssetType) => void
   onAmountChange?: (value: string, errorMessage: string | undefined) => void
-  /** Include a network fee in the max balance set*/
+  /** Include a network fee in the max balance set */
   networkFee?: string
   /** Validate amount before calling amount changed. Should throw an error if amount is invalid */
   validateAmount?: (amount: bigint) => void
@@ -427,7 +427,7 @@ export default function SharedAssetInput<T extends AnyAsset>(
 
   // auto focus input after some delay cuz browsers are slow
   useEffect(() => {
-    let timeoutId = setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       if (autoFocus && inputRef.current) inputRef.current.focus()
     }, 200)
 

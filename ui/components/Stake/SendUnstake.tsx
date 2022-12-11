@@ -22,6 +22,11 @@ import {
   enrichAssetAmountWithMainCurrencyValues,
 } from "@sendnodes/pokt-wallet-background/redux-slices/utils/asset-utils"
 import { useHistory } from "react-router-dom"
+import { InformationCircleIcon } from "@heroicons/react/solid"
+import { BigNumber } from "ethers"
+import { isEqual } from "lodash"
+import { truncateAddress } from "@sendnodes/pokt-wallet-background/lib/utils"
+import { formatFixed, parseFixed } from "@ethersproject/bignumber"
 import SharedAssetInput from "../Shared/SharedAssetInput"
 import SharedButton from "../Shared/SharedButton"
 import {
@@ -31,14 +36,9 @@ import {
 } from "../../hooks"
 import SharedSplashScreen from "../Shared/SharedSplashScreen"
 import formatTokenAmount from "../../utils/formatTokenAmount"
-import { InformationCircleIcon } from "@heroicons/react/solid"
 import { SnAction, useStakingUserData } from "../../hooks/staking-hooks"
-import { BigNumber } from "ethers"
 import { AnyAssetWithOptionalAmount } from "../Shared/SharedAssetItem"
-import { isEqual } from "lodash"
-import { truncateAddress } from "@sendnodes/pokt-wallet-background/lib/utils"
 import StatTotalStaked from "./Stat/StatTotalStaked"
-import { formatFixed, parseFixed } from "@ethersproject/bignumber"
 import usePocketNetworkFee from "../../hooks/pocket-network/use-network-fee"
 import StatAPY from "./Stat/StatAPY"
 import StatTotalUnstaked from "./Stat/StatTotalUnstaked"
@@ -210,7 +210,7 @@ export default function SendUnstake(): ReactElement {
     <div className="h-full grow pb-4">
       <div className="flex gap-x-4 justify-center items-center pt-4 pb-4">
         <div
-          className={"icon-mask w-12 h-12 bg-white"}
+          className="icon-mask w-12 h-12 bg-white"
           css={`
             mask-image: url("../../public/images/unstake@2x.png");
           `}
@@ -238,6 +238,7 @@ export default function SendUnstake(): ReactElement {
             title="More information on unstaking with SendNodes"
             className="inline text-aqua hover:text-white"
             target="_blank"
+            rel="noreferrer"
           >
             Read more<span className="sr-only">Information on Unstaking</span>
             <InformationCircleIcon className="ml-1 h-4 w-4 inline-block" />
@@ -269,7 +270,7 @@ export default function SendUnstake(): ReactElement {
                 )
               }
             }}
-            disableDropdown={true}
+            disableDropdown
             onAmountChange={(value, errorMessage) => {
               // truncate to selected asset decimals
               try {

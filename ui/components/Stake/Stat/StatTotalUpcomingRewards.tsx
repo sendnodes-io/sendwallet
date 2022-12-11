@@ -1,10 +1,10 @@
 import React from "react"
 import { BigNumber, formatFixed } from "@ethersproject/bignumber"
 import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts"
+import { FungibleAsset } from "@sendnodes/pokt-wallet-background/assets"
 import { useStakingUserData } from "../../../hooks/staking-hooks"
 import formatTokenAmount from "../../../utils/formatTokenAmount"
 import SharedLoadingSpinner from "../../Shared/SharedLoadingSpinner"
-import { FungibleAsset } from "@sendnodes/pokt-wallet-background/assets"
 import useAssetInMainCurrency from "../../../hooks/assets/use-asset-in-main-currency"
 
 export default function StatTotalUpcomingRewards({

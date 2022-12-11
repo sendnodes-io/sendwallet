@@ -1,17 +1,17 @@
 import React, { useState, useCallback, useEffect } from "react"
-import SharedSlideUpMenu from "../Shared/SharedSlideUpMenu"
 import { PermissionRequest } from "@sendnodes/provider-bridge-shared"
-import AccountsNotificationPanel from "../AccountsNotificationPanel/AccountsNotificationPanel"
-import { useBackgroundSelector } from "../../hooks"
-import openPoktWalletTab from "../../helpers/open-pokt-wallet-tab"
 import {
   getCurrentAccountState,
   selectAllowedPages,
   selectActiveTab,
 } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
+import { Icon } from "@iconify/react"
+import SharedSlideUpMenu from "../Shared/SharedSlideUpMenu"
+import AccountsNotificationPanel from "../AccountsNotificationPanel/AccountsNotificationPanel"
+import { useBackgroundSelector } from "../../hooks"
+import openPoktWalletTab from "../../helpers/open-pokt-wallet-tab"
 import WalletSettings from "./WalletSettings"
 import WalletConnectedDAppInfo from "./WalletConnectedDAppInfo"
-import { Icon } from "@iconify/react"
 import NetworkSelector from "../NetworkSelector"
 
 function DappConnectivityButton(props: {

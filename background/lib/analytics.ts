@@ -12,8 +12,8 @@ const ANALYTICS_PATH =
 
 export async function clientId() {
   const { analytics } = await browser.storage.local.get("analytics")
-  if (analytics && analytics["client_id"]) return analytics["client_id"]
-  const client_id = Math.random() + "." + new Date().getTime()
+  if (analytics && analytics.client_id) return analytics.client_id
+  const client_id = `${Math.random()}.${new Date().getTime()}`
   await browser.storage.local.set({ analytics: { client_id } })
   return client_id
 }

@@ -1,5 +1,4 @@
 import React, { CSSProperties, useMemo, useState } from "react"
-import { useBackgroundDispatch, useBackgroundSelector } from "../../hooks"
 import { setNewSelectedAccount } from "@sendnodes/pokt-wallet-background/redux-slices/ui"
 import {
   ETHEREUM,
@@ -9,7 +8,6 @@ import {
   POCKET_LOCAL,
   POLYGON,
 } from "@sendnodes/pokt-wallet-background/constants"
-import SharedAssetIcon from "../Shared/SharedAssetIcon"
 import groupBy from "lodash/groupBy"
 import {
   selectCurrentAddressNetwork,
@@ -24,9 +22,11 @@ import {
 import { Dictionary } from "lodash"
 import { KeyType } from "@sendnodes/pokt-wallet-background/services/keyring"
 import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts"
+import { useHistory } from "react-router-dom"
 import SharedSlideUpMenu from "../Shared/SharedSlideUpMenu"
 import SharedButton from "../Shared/SharedButton"
-import { useHistory } from "react-router-dom"
+import SharedAssetIcon from "../Shared/SharedAssetIcon"
+import { useBackgroundDispatch, useBackgroundSelector } from "../../hooks"
 
 const networkFamilyToHeader = {
   [NetworkFamily.EVM]: "EVM / Ethereum",
@@ -138,7 +138,7 @@ export default function NetworkSelector({
           </div>
         ))}
         <SharedSlideUpMenu
-          title={"Need More Keys"}
+          title="Need More Keys"
           isOpen={needKeyringForNetwork !== null}
           close={() => {
             setNeedKeyringForNetwork(null)
@@ -277,7 +277,7 @@ function NetworkSelectorRow({
               color: "var(--text-body-color)",
             } as CSSProperties)
       }
-      className={"network_row"}
+      className="network_row"
     >
       <a
         href="#_"

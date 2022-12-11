@@ -1,7 +1,11 @@
 import { fetchJson } from "@ethersproject/web"
 import BlocknativeSdk from "bnc-sdk"
 
-import { BlockPrices, BlockEstimate, BlockPriceDataSource } from "../../networks"
+import {
+  BlockPrices,
+  BlockEstimate,
+  BlockPriceDataSource,
+} from "../../networks"
 import { EthereumTransactionData } from "./types"
 import { gweiToWei } from "../../lib/utils"
 import { ETHEREUM } from "../../constants/networks"

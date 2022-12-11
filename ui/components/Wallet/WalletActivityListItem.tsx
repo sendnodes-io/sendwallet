@@ -7,18 +7,18 @@ import {
 } from "@sendnodes/pokt-wallet-background/lib/utils"
 import { HexString } from "@sendnodes/pokt-wallet-background/types"
 import { getRecipient } from "@sendnodes/pokt-wallet-background/redux-slices/utils/activity-utils"
+import { formatFixed } from "@ethersproject/bignumber"
+import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts"
+import { isEmpty, lowerCase } from "lodash"
 import SharedAssetIcon from "../Shared/SharedAssetIcon"
 import formatTokenAmount from "../../utils/formatTokenAmount"
 import getTransactionResult, {
   TransactionStatus,
 } from "../../helpers/get-transaction-result"
-import { formatFixed } from "@ethersproject/bignumber"
 import useStakingAllTransactions from "../../hooks/staking-hooks/use-staking-all-transactions"
 import StakeTransactionInfo from "../Stake/StakeTransactionInfo"
 import TransactionDetailSlideUpMenuBody from "../TransactionDetail/TransactionDetailSlideUpMenuBody"
 import SharedSlideUpMenu from "../Shared/SharedSlideUpMenu"
-import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts"
-import { isEmpty, lowerCase } from "lodash"
 
 interface Props {
   activity: ActivityItem
@@ -71,7 +71,7 @@ export function renderDetailsForActivity(
   const txResult = getTransactionResult(activity)
   const { address: asAccount, network } = asAddressOnNetwork
 
-  let label =
+  const label =
     activity.to === asAccount
       ? txResult.status === "pending"
         ? "Receiving"
@@ -86,7 +86,7 @@ export function renderDetailsForActivity(
         iconClass={activity.to === asAccount ? "receive_icon" : "send_icon"}
       />
     ),
-    label: label,
+    label,
     recipient: getRecipient(activity),
     assetLogoURL: undefined,
     assetSymbol: activity.asset.symbol,
@@ -121,8 +121,8 @@ export function renderDetailsForActivity(
           label: "Token approval",
           icon: () => (
             <WalletActivityListIcon
-              label={"Token approval"}
-              iconClass={"approve_icon"}
+              label="Token approval"
+              iconClass="approve_icon"
             />
           ),
           recipient: {
@@ -139,7 +139,7 @@ export function renderDetailsForActivity(
       case "asset-swap":
         renderDetails = {
           icon: () => (
-            <WalletActivityListIcon label={"Swap"} iconClass={"swap_icon"} />
+            <WalletActivityListIcon label="Swap" iconClass="swap_icon" />
           ),
           label: "Swap",
           recipient: getRecipient(activity),
@@ -154,8 +154,8 @@ export function renderDetailsForActivity(
         renderDetails = {
           icon: () => (
             <WalletActivityListIcon
-              label={"Contract Interaction"}
-              iconClass={"contract_interaction_icon"}
+              label="Contract Interaction"
+              iconClass="contract_interaction_icon"
             />
           ),
           label: "Contract Interaction",
@@ -181,7 +181,7 @@ export default function WalletActivityListItem(props: Props): ReactElement {
   if ("txResult" in activity) from = activity.txResult?.signer
   const txResult = getTransactionResult(activity)
 
-  let stakingTransaction = allStakingTransactions.find(
+  const stakingTransaction = allStakingTransactions.find(
     (tx) => tx.hash === activity.hash
   )
 

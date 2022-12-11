@@ -4,9 +4,9 @@ import {
   selectCurrentAccount,
 } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
 import { ActivityItem } from "@sendnodes/pokt-wallet-background/redux-slices/activities"
+import css from "styled-jsx/css"
 import { useBackgroundSelector } from "../../hooks"
 import WalletActivityListItem from "./WalletActivityListItem"
-import css from "styled-jsx/css"
 import useStakingAllTransactions from "../../hooks/staking-hooks/use-staking-all-transactions"
 import SharedSplashScreen from "../Shared/SharedSplashScreen"
 
@@ -146,7 +146,12 @@ export default function WalletActivityList({
           <h2>
             <small>YOUR ACTIVITY</small>
           </h2>
-          <a href={blockExplorerUrl} title="See All Activity" target="_blank">
+          <a
+            href={blockExplorerUrl}
+            title="See All Activity"
+            target="_blank"
+            rel="noreferrer"
+          >
             See All
           </a>
         </div>

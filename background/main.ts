@@ -3,6 +3,8 @@ import { alias, wrapStore } from "@0xbigboss/webext-redux"
 import { configureStore, isPlain, Middleware } from "@reduxjs/toolkit"
 import devToolsEnhancer from "remote-redux-devtools"
 import { PermissionRequest } from "@sendnodes/provider-bridge-shared"
+import { TransactionResponse } from "@ethersproject/abstract-provider"
+import { KeyType } from "@sendnodes/hd-keyring"
 import { decodeJSON, encodeJSON } from "./lib/utils"
 import "./utils/emittery"
 
@@ -118,9 +120,7 @@ import {
   EnrichedPOKTTransactionRequest,
 } from "./services/enrichment"
 import { trackEvent } from "./lib/analytics"
-import { TransactionResponse } from "@ethersproject/abstract-provider"
 import { KeyringEvents } from "./services/keyring"
-import { KeyType } from "@sendnodes/hd-keyring"
 import { ChainEventNames } from "./services/chain"
 import { EventNames as PreferencesEventNames } from "./services/preferences"
 
@@ -600,7 +600,7 @@ export default class Main extends BaseService<never> {
     const defaultSelectedAccount =
       await this.preferenceService.getSelectedAccount()
     if (defaultSelectedAccount.address === address) {
-      const accountsData = this.store.getState().account.accountsData
+      const { accountsData } = this.store.getState().account
       const newAddress = Object.keys(accountsData).find((accountAddress) => {
         if (
           accountAddress !== address &&
@@ -713,7 +713,7 @@ export default class Main extends BaseService<never> {
 
     this.chainService.emitter.on("transactionSendFailure", async (error) => {
       this.store.dispatch(
-        setSnackbarMessage("Transaction failed to broadcast. " + error)
+        setSnackbarMessage(`Transaction failed to broadcast. ${error}`)
       )
       trackEvent({
         action: "transaction_failed",

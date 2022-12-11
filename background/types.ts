@@ -70,14 +70,13 @@ export type EIP712TypedData<T = Record<string, unknown>> = {
 
 export type EIP191Data = string
 
-
 /**
  * Result of ExportPrivateKey
  */
 export type ExportedPrivateKey = {
   exportedPrivateKey?: {
-    address?: string,
-    privateKey?: string,
+    address?: string
+    privateKey?: string
     error: string | false
   }
 }

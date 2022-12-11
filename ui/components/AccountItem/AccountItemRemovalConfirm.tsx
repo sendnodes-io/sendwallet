@@ -13,10 +13,10 @@ import {
   setSelectedAccount,
   setSnackbarMessage,
 } from "@sendnodes/pokt-wallet-background/redux-slices/ui"
+import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts"
 import SharedButton from "../Shared/SharedButton"
 import SharedAccountItemSummary from "../Shared/SharedAccountItemSummary"
 import { useBackgroundSelector } from "../../hooks"
-import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts"
 
 interface AccountItemRemovalConfirmProps {
   account: AccountTotal
@@ -66,7 +66,7 @@ export default function AccountItemRemovalConfirm({
     } else if (isRemovingAccount === "rejected") {
       dispatch(setSnackbarMessage("Something went wrong. Please try again."))
     }
-  }, [isRemovingAccount, close, dispatch]) //purposefully not tracking isMounted
+  }, [isRemovingAccount, close, dispatch]) // purposefully not tracking isMounted
 
   // needs to run last
   useEffect(() => {

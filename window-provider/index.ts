@@ -69,7 +69,6 @@ export class EthereumWindowProvider extends EventEmitter {
         //     // then let's reset window.ethereum to the original value
         //     window.ethereum = window.oldEthereum
         //   }
-
         //   // NOTE: we do not remove the PoktWalletWindowProvider from window.ethereum
         //   // if there is nothing else that want's to use it.
         // }
@@ -132,7 +131,7 @@ export class EthereumWindowProvider extends EventEmitter {
         method,
         params,
       },
-      network: NetworkFamily.EVM
+      network: NetworkFamily.EVM,
     }
 
     this.requestID += 1n
@@ -305,7 +304,7 @@ export class PocketWindowProvider extends EventEmitter {
         method,
         params,
       },
-      network: "POKT"
+      network: "POKT",
     }
 
     this.requestID += 1n

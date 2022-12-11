@@ -12,13 +12,14 @@ import TerserPlugin from "terser-webpack-plugin"
 import LiveReloadPlugin from "webpack-livereload-plugin"
 import CopyPlugin, { ObjectPattern } from "copy-webpack-plugin"
 import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin"
-import WebExtensionArchivePlugin from "./build-utils/web-extension-archive-webpack-plugin"
 import HtmlWebpackPlugin from "html-webpack-plugin"
 import WebExtension from "webpack-target-webextension"
-const StatoscopeWebpackPlugin = require("@statoscope/webpack-plugin").default
 import MiniCssExtractPlugin from "mini-css-extract-plugin"
-const CssMinimizerPlugin = require("css-minimizer-webpack-plugin")
 import { CleanWebpackPlugin } from "clean-webpack-plugin"
+import WebExtensionArchivePlugin from "./build-utils/web-extension-archive-webpack-plugin"
+
+const StatoscopeWebpackPlugin = require("@statoscope/webpack-plugin").default
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin")
 
 const supportedBrowsers = ["brave", "chrome", "edge", "firefox", "opera"]
 

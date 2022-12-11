@@ -35,7 +35,7 @@ export default function OnboardingAccountCreated() {
         buttons={
           <>
             <h1>Congratulations</h1>
-            <div className="spacing"></div>
+            <div className="spacing" />
             <h2>
               You can now safely use your wallet!
               <br />
@@ -56,7 +56,7 @@ export default function OnboardingAccountCreated() {
               />
               ).
             </h2>
-            <div className="spacing"></div>
+            <div className="spacing" />
 
             <SharedButton
               type="primary"

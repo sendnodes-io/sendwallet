@@ -11,7 +11,12 @@ import logger from "../../lib/logger"
 import BaseService from "../base"
 import { ServiceCreatorFunction, ServiceLifecycleEvents } from "../types"
 import ChainService from "../chain"
-import { EIP1559TransactionRequest, NetworkFamily, SignedEVMTransaction, SignedPOKTTransaction } from "../../networks"
+import {
+  EIP1559TransactionRequest,
+  NetworkFamily,
+  SignedEVMTransaction,
+  SignedPOKTTransaction,
+} from "../../networks"
 import {
   eip1559TransactionRequestFromEthersTransactionRequest,
   ethersTransactionFromSignedTransaction,
@@ -107,7 +112,8 @@ export default class InternalEthereumProviderService extends BaseService<Events>
     method: string,
     params: RPCRequest["params"]
   ): Promise<unknown> {
-    const { address, network } = await this.preferenceService.getSelectedAccount()
+    const { address, network } =
+      await this.preferenceService.getSelectedAccount()
 
     switch (method) {
       // supported alchemy methods: https://docs.alchemy.com/alchemy/apis/ethereum

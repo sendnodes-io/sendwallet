@@ -4,13 +4,13 @@ import browser from "webextension-polyfill"
 import React, { ComponentType } from "react"
 import ReactDOM from "react-dom"
 import { Store } from "@0xbigboss/webext-redux"
+import logger from "@sendnodes/pokt-wallet-background/lib/logger"
 import Popup from "./pages/Popup"
 import Tab from "./pages/Tab"
 import Stake from "./pages/Stake"
 
 import "./public/variables.css"
 import "./public/index.css"
-import logger from "@sendnodes/pokt-wallet-background/lib/logger"
 
 export { Popup, Tab, Stake }
 
@@ -56,7 +56,7 @@ async function checkServiceWorker(component: ComponentType<{ store: Store }>) {
       }
     })
 
-    let refreshing = false
+    const refreshing = false
 
     // detect controller change and refresh the page
     navigator.serviceWorker.addEventListener("controllerchange", async () => {
@@ -78,7 +78,7 @@ function backgroundMonitor(component: ComponentType<{ store: Store }>) {
       return
     }
     checking = true
-    const msgId = Math.random() + "." + new Date().getTime()
+    const msgId = `${Math.random()}.${new Date().getTime()}`
     const deadmanSwitch = setTimeout(() => {
       logger.debug("deadmanSwitch on", { msgId })
       invokeServiceWorkerUpdateFlow(component)
@@ -155,12 +155,10 @@ async function renderApp(
     logger.error("failed to start app", error)
     if (attempts < 10) {
       setTimeout(() => renderApp(component, attempts + 1), 1000)
+    } else if (process.env.NODE_ENV === "development") {
+      throw error
     } else {
-      if (process.env.NODE_ENV === "development") {
-        throw error
-      } else {
-        browser.runtime.reload()
-      }
+      browser.runtime.reload()
     }
   }
 }

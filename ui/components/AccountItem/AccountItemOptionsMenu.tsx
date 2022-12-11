@@ -1,15 +1,16 @@
 import { AccountTotal } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
 import { HexString } from "@sendnodes/pokt-wallet-background/types"
 import React, { ReactElement, useEffect, useRef, useState } from "react"
+import { FiMoreHorizontal } from "react-icons/fi"
 import { useOnClickOutside } from "../../hooks"
 import SharedSlideUpMenu from "../Shared/SharedSlideUpMenu"
 import AccountItemRemovalConfirm from "./AccountItemRemovalConfirm"
 import AccountItemEditName from "./AccountItemEditName"
 import RemoveAddressLabel from "./AccountItemRemoveAddressLabel"
 import EditWalletNameLabel from "./AccountItemEditWalletNameLabel"
-import { FiMoreHorizontal } from "react-icons/fi"
 import ExportPrivateKeyLabel from "./AccountItemExportPrivateKeyLabel"
 import AccountItemExportPrivateKeyConfirm from "./AccountItemExportPrivateKeyConfirm"
+
 type AccountItemOptionsMenuProps = {
   accountTotal: AccountTotal
   address: HexString

@@ -1,4 +1,8 @@
-import { isProbablyEVMAddress, isProbablyPOKTAddress, isValidPoktAddress } from "@sendnodes/pokt-wallet-background/lib/utils"
+import {
+  isProbablyEVMAddress,
+  isProbablyPOKTAddress,
+  isValidPoktAddress,
+} from "@sendnodes/pokt-wallet-background/lib/utils"
 import { resolveNameOnNetwork } from "@sendnodes/pokt-wallet-background/redux-slices/accounts"
 import { selectCurrentAccount } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
 import { HexString } from "@sendnodes/pokt-wallet-background/types"
@@ -162,7 +166,10 @@ export const useAddressOrNameValidation: AsyncValidationHook<
         validatingValue.current = trimmed
 
         const resolved = (await dispatch(
-          resolveNameOnNetwork({ name: trimmed, network: currentAccount.network })
+          resolveNameOnNetwork({
+            name: trimmed,
+            network: currentAccount.network,
+          })
         )) as unknown as string
 
         // Asynchronicity means we could already have started validating another
@@ -182,17 +189,19 @@ export const useAddressOrNameValidation: AsyncValidationHook<
     }
     // POKT address validation
     if (currentAccount.network.family === "POKT") {
-      console.log('trimmed', trimmed)
+      console.log("trimmed", trimmed)
       if (trimmed === "") {
         onValidChange(undefined)
-      } else if (isProbablyPOKTAddress(trimmed) && isValidPoktAddress(trimmed)) {
+      } else if (
+        isProbablyPOKTAddress(trimmed) &&
+        isValidPoktAddress(trimmed)
+      ) {
         onValidChange(trimmed)
       } else {
         onValidChange(undefined)
         setErrorMessage("Invalid Address")
       }
     }
-
   }
 
   return {

@@ -4,8 +4,6 @@ import {
   selectCurrentAccount,
 } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
 
-import { useBackgroundSelector } from "../../hooks"
-
 import { camelCase, isEqual, startCase } from "lodash"
 import clsx from "clsx"
 import { DownloadIcon, UploadIcon } from "@heroicons/react/solid"
@@ -16,8 +14,6 @@ import * as relativeTime from "dayjs/plugin/relativeTime"
 import * as updateLocale from "dayjs/plugin/updateLocale"
 import * as localizedFormat from "dayjs/plugin/localizedFormat"
 import * as utc from "dayjs/plugin/utc"
-import { SnAction, SnTransaction } from "../../hooks/staking-hooks"
-import { usePoktWatchLatestBlock } from "../../hooks/pokt-watch/use-latest-block"
 import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts"
 import { POKTWatchBlock } from "@sendnodes/pokt-wallet-background/services/chain/utils"
 import { selectAssetPricePoint } from "@sendnodes/pokt-wallet-background/redux-slices/assets"
@@ -26,6 +22,9 @@ import {
   enrichAssetAmountWithDecimalValues,
   enrichAssetAmountWithMainCurrencyValues,
 } from "@sendnodes/pokt-wallet-background/redux-slices/utils/asset-utils"
+import { usePoktWatchLatestBlock } from "../../hooks/pokt-watch/use-latest-block"
+import { SnAction, SnTransaction } from "../../hooks/staking-hooks"
+import { useBackgroundSelector } from "../../hooks"
 
 dayjs.extend(updateLocale.default)
 dayjs.extend(localizedFormat.default)
@@ -62,7 +61,7 @@ const snActionIcon: Record<SnAction, (props: any) => JSX.Element> = {
   [SnAction.STAKE]: ({ className, pending }: SnActionIconProps) => (
     <div
       className={clsx("stake_icon", className, { "bg-orange-500": pending })}
-    ></div>
+    />
   ),
   [SnAction.UNSTAKE]: ({ className, pending }: SnActionIconProps) => (
     <div
@@ -226,7 +225,7 @@ export default function StakeTransactionInfo({
       }),
     isEqual
   )
-  let [timestamp, setTimestamp] = useState(
+  const [timestamp, setTimestamp] = useState(
     !isPending
       ? txTimestamp
       : // the next block is committed 30 minutes after the start of the previous one

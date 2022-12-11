@@ -31,7 +31,7 @@ export default function OnboardingRecoveryPhrase(
                 <div
                   key={`mnemonic-word-${idx + 1}`}
                   style={{ "--word-index": idx + 1 } as React.CSSProperties}
-                  className={`word`}
+                  className="word"
                 >
                   <span>
                     {" "}

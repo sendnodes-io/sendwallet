@@ -2,6 +2,7 @@ import {
   WindowListener,
   WindowRequestEvent,
 } from "@sendnodes/provider-bridge-shared"
+;
 
 (async () => {
   const { PocketWindowProvider } = await import("@sendnodes/window-provider")
@@ -11,7 +12,7 @@ import {
   //   something like this: https://speakerdeck.com/fransrosen/owasp-appseceu-2018-attacking-modern-web-technologies?slide=95
   window.pocketNetwork = new PocketWindowProvider({
     postMessage: (data: WindowRequestEvent) => {
-      console.log('post message', data)
+      console.log("post message", data)
       return window.postMessage(data, window.location.origin)
     },
     addEventListener: (fn: WindowListener) =>
@@ -39,5 +40,4 @@ import {
   //     window.removeEventListener("message", fn, false),
   //   origin: window.location.origin,
   // })
-
 })()

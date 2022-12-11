@@ -26,7 +26,7 @@ export default function SharedAccountItemSummary(props: Props): ReactElement {
     networkTokenAmount,
   } = accountTotal
 
-  const nameOrDefaultName = name ? name : defaultName
+  const nameOrDefaultName = name || defaultName
   return (
     <div className="wrap">
       <div className="summary">
@@ -74,10 +74,8 @@ export default function SharedAccountItemSummary(props: Props): ReactElement {
             height: 3.25rem;
           }
           .avatar {
-            background: url("${avatarURL
-                ? avatarURL
-                : "./images/avatar@2x.png"}")
-              center no-repeat;
+            background: url("${avatarURL || "./images/avatar@2x.png"}") center
+              no-repeat;
             background-size: cover;
             width: 3rem;
             height: 3rem;

@@ -97,7 +97,7 @@ export default function SharedButton(props: Props): ReactElement {
         { secondary: type === "secondary" },
         { primaryGhost: type === "primaryGhost" },
         { primaryGreen: type === "primaryGreen" },
-        { disabled: disabled },
+        { disabled },
         { tertiary: type === "tertiary" },
         { "tertiary white": type === "tertiaryWhite" },
         { "tertiary gray": type === "tertiaryGray" },

@@ -8,6 +8,8 @@ import {
   heuristicDesiredDecimalsForUnitPrice,
 } from "@sendnodes/pokt-wallet-background/redux-slices/utils/asset-utils"
 import React, { ReactElement } from "react"
+import { ActivityItem } from "@sendnodes/pokt-wallet-background/redux-slices/activities"
+import { isEqual, startsWith } from "lodash"
 import { useBackgroundSelector } from "../../hooks"
 import TransactionDetailAddressValue from "../TransactionDetail/TransactionDetailAddressValue"
 import TransactionDetailContainer from "../TransactionDetail/TransactionDetailContainer"
@@ -16,8 +18,6 @@ import SignTransactionBaseInfoProvider, {
   SignTransactionInfoProviderProps,
 } from "./SignTransactionBaseInfoProvider"
 import TransactionSendDetail from "../TransactionDetail/TransactionSendDetail"
-import { ActivityItem } from "@sendnodes/pokt-wallet-background/redux-slices/activities"
-import { isEqual, startsWith } from "lodash"
 import { useStakingPoktParamsForAddress } from "../../hooks/staking-hooks"
 
 export default function SignTransactionSignInfoProvider({
@@ -40,7 +40,7 @@ export default function SignTransactionSignInfoProvider({
     console.error("Error fetching staking params", isError)
   }
 
-  let amount: bigint = BigInt(0)
+  let amount = BigInt(0)
   let to: string | undefined
   let memo: string | undefined
   if ("value" in transactionDetails) {
@@ -60,7 +60,7 @@ export default function SignTransactionSignInfoProvider({
   const transactionAssetAmount = enrichAssetAmountWithDecimalValues(
     {
       asset: network.baseAsset,
-      amount: amount,
+      amount,
     },
     heuristicDesiredDecimalsForUnitPrice(
       network.baseAsset.decimals,

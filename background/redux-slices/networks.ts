@@ -14,7 +14,7 @@ type POKTNetworkState = {
 export type NetworksState = {
   evm: {
     [chainID: string]: EVMNetworkState
-  },
+  }
   pokt: {
     [chainID: string]: POKTNetworkState
   }
@@ -28,18 +28,23 @@ export const initialState: NetworksState = {
     },
   },
   pokt: {
-    "mainnet": {
+    mainnet: {
       blockHeight: null,
-      blocks: {}
-    }
-  }
+      blocks: {},
+    },
+  },
 }
 
 const networksSlice = createSlice({
   name: "networks",
   initialState,
   reducers: {
-    blockSeen: (immerState, { payload: blockPayload }: { payload: AnyEVMBlock | POKTBlock | POKTSkinnyBlock }) => {
+    blockSeen: (
+      immerState,
+      {
+        payload: blockPayload,
+      }: { payload: AnyEVMBlock | POKTBlock | POKTSkinnyBlock }
+    ) => {
       if (blockPayload.network.family === "EVM") {
         const block = blockPayload as AnyEVMBlock
         if (!(block.network.chainID in immerState.evm)) {
@@ -66,9 +71,11 @@ const networksSlice = createSlice({
           block.header.height >
           (immerState.pokt[block.network.chainID].blockHeight || 0)
         ) {
-          immerState.pokt[block.network.chainID].blockHeight = block.header.height
+          immerState.pokt[block.network.chainID].blockHeight =
+            block.header.height
         }
-        immerState.pokt[block.network.chainID].blocks[block.header.height] = block
+        immerState.pokt[block.network.chainID].blocks[block.header.height] =
+          block
       }
     },
   },

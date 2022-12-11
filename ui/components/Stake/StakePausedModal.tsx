@@ -1,5 +1,4 @@
-import React from "react"
-import { Fragment, useState } from "react"
+import React, { Fragment, useState } from "react"
 import { Dialog, Transition } from "@headlessui/react"
 import { Icon } from "@iconify/react"
 import { XIcon } from "@heroicons/react/outline"
@@ -83,6 +82,7 @@ export default function StakePausedModal({
                       className="bg-spanish-gray text-white rounded-full w-10 h-10 flex items-center justify-center"
                       target="_blank"
                       href="https://discord.gg/Gh76tPkjTn"
+                      rel="noreferrer"
                     >
                       <Icon icon="simple-icons:discord" className="w-6 h-6" />
                     </a>
@@ -90,6 +90,7 @@ export default function StakePausedModal({
                       className="bg-spanish-gray text-white rounded-full w-10 h-10 flex items-center justify-center"
                       target="_blank"
                       href="https://twitter.com/_SendNodes_"
+                      rel="noreferrer"
                     >
                       <Icon
                         icon="akar-icons:twitter-fill"
@@ -100,6 +101,7 @@ export default function StakePausedModal({
                       className="bg-spanish-gray text-white rounded-full w-10 h-10 flex items-center justify-center"
                       target="_blank"
                       href="https://t.me/send_wallet"
+                      rel="noreferrer"
                     >
                       <Icon icon="uit:telegram-alt" className="w-6 h-6" />
                     </a>

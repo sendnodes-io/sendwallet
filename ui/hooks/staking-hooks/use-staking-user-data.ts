@@ -52,7 +52,7 @@ export interface IGetStakingUserData {
 }
 
 export function useStakingUserData(addressOnNetwork: AddressOnNetwork) {
-  var raw = JSON.stringify({
+  const raw = JSON.stringify({
     method: "pokt_getStakingUserData",
     id: 1,
     jsonrpc: "2.0",
@@ -61,7 +61,7 @@ export function useStakingUserData(addressOnNetwork: AddressOnNetwork) {
     },
   })
 
-  var request = {
+  const request = {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

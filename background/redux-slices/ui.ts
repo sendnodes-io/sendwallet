@@ -3,7 +3,12 @@ import Emittery from "emittery"
 import browser from "webextension-polyfill"
 import { AddressOnNetwork } from "../accounts"
 import { POCKET } from "../constants"
-import { AnalyticsTrackEvent, AnalyticsTrackPageView, trackEvent as analyticsTrackEvent, trackPageView as analyticsTrackPageView } from "../lib/analytics"
+import {
+  AnalyticsTrackEvent,
+  AnalyticsTrackPageView,
+  trackEvent as analyticsTrackEvent,
+  trackPageView as analyticsTrackPageView,
+} from "../lib/analytics"
 import { Network } from "../networks"
 import { emitteryDebugLogger } from "../utils/emittery"
 import { createBackgroundAsyncThunk } from "./utils"
@@ -25,8 +30,8 @@ export type UIState = {
   initializationLoadingTimeExpired: boolean
   settings: { hideDust: boolean; defaultWallet: boolean }
   snackbarMessage: string
-  routeHistoryEntries?: Partial<Location>[],
-  popoutWindowId: number | null,
+  routeHistoryEntries?: Partial<Location>[]
+  popoutWindowId: number | null
   activeTab: browser.Tabs.Tab | null
 }
 
@@ -47,9 +52,9 @@ export type Events = {
 
 export const emitter = new Emittery<Events>({
   debug: {
-    name: 'redux-slices/ui',
-    logger: emitteryDebugLogger()
-  }
+    name: "redux-slices/ui",
+    logger: emitteryDebugLogger(),
+  },
 })
 
 export const initialState: UIState = {
@@ -162,7 +167,7 @@ export const setNewDefaultWalletValue = createBackgroundAsyncThunk(
 
 export const setNewSelectedAccount = createBackgroundAsyncThunk(
   "ui/setNewCurrentAddressValue",
-async (addressNetwork: AddressOnNetwork, { dispatch }) => {
+  async (addressNetwork: AddressOnNetwork, { dispatch }) => {
     await emitter.emit(EventNames.NEW_SELECTED_ACCOUNT, addressNetwork)
     // Once the default value has persisted, propagate to the store.
     dispatch(uiSlice.actions.setSelectedAccount(addressNetwork))

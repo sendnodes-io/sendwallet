@@ -6,10 +6,10 @@ import {
   selectHideDust,
   toggleHideDust,
 } from "@sendnodes/pokt-wallet-background/redux-slices/ui"
+import browser from "webextension-polyfill"
 import SharedButton from "../components/Shared/SharedButton"
 import SharedToggleButton from "../components/Shared/SharedToggleButton"
 import t from "../utils/i18n"
-import browser from "webextension-polyfill"
 
 function SettingRow(props: {
   title: string

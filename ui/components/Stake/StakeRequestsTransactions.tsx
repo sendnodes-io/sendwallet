@@ -1,18 +1,18 @@
 import React, { ReactElement } from "react"
-import { useAreKeyringsUnlocked } from "../../hooks"
-import SharedSplashScreen from "../Shared/SharedSplashScreen"
 import { InformationCircleIcon } from "@heroicons/react/outline"
 import { isEmpty } from "lodash"
 import clsx from "clsx"
 import { Link } from "react-router-dom"
 import { formatFixed } from "@ethersproject/bignumber"
+import { formatUnits } from "@ethersproject/units"
+import { useAreKeyringsUnlocked } from "../../hooks"
+import SharedSplashScreen from "../Shared/SharedSplashScreen"
 import formatTokenAmount from "../../utils/formatTokenAmount"
 import useStakingAllTransactions from "../../hooks/staking-hooks/use-staking-all-transactions"
 import StakeTransactionInfo, {
   getStakeTransactionInfo,
 } from "./StakeTransactionInfo"
 import { SnTransaction } from "../../hooks/staking-hooks"
-import { formatUnits } from "@ethersproject/units"
 
 export default function StakeRequestsTransactions(): ReactElement {
   const areKeyringsUnlocked = useAreKeyringsUnlocked(true)
@@ -52,8 +52,9 @@ export default function StakeRequestsTransactions(): ReactElement {
               for{" "}
               <a
                 href="https://docs.sendnodes.io/"
-                target={"_blank"}
+                target="_blank"
                 className="hover:text-white"
+                rel="noreferrer"
               >
                 POKT Onchain Pool Staking (<b className="text-white">POPS</b>){" "}
                 <InformationCircleIcon className="inline h-4 w-4" />
@@ -89,9 +90,9 @@ export default function StakeRequestsTransactions(): ReactElement {
                     }),
                 ]
 
-                let csvContent =
-                  "data:text/csv;charset=utf-8," +
-                  rows.map((e) => e.join(",")).join("\n")
+                const csvContent = `data:text/csv;charset=utf-8,${rows
+                  .map((e) => e.join(","))
+                  .join("\n")}`
                 window.open(encodeURI(csvContent))
               }}
             >
@@ -103,10 +104,10 @@ export default function StakeRequestsTransactions(): ReactElement {
               to="/"
               className="relative inline-flex items-center justify-center px-4 py-1 overflow-hidden font-medium text-eerie-black rounded-lg shadow-2xl group"
             >
-              <span className="absolute top-0 left-0 w-40 h-40 -mt-10 -ml-3 transition-all duration-700 bg-capri rounded-full blur-md ease"></span>
+              <span className="absolute top-0 left-0 w-40 h-40 -mt-10 -ml-3 transition-all duration-700 bg-capri rounded-full blur-md ease" />
               <span className="absolute inset-0 w-full h-full transition duration-700 group-hover:rotate-180 ease">
-                <span className="absolute bottom-0 left-0 w-24 h-24 -ml-10 bg-aqua rounded-full blur-md"></span>
-                <span className="absolute bottom-0 right-0 w-24 h-24 -mr-10 bg-capri rounded-full blur-md"></span>
+                <span className="absolute bottom-0 left-0 w-24 h-24 -ml-10 bg-aqua rounded-full blur-md" />
+                <span className="absolute bottom-0 right-0 w-24 h-24 -mr-10 bg-capri rounded-full blur-md" />
               </span>
               <span className="relative ">Stake</span>
             </Link>
@@ -233,8 +234,8 @@ function StakeTransactionItem({ tx }: StakeTransactionItemProps) {
                       <img
                         src="/images/pokt-watch.png"
                         className="h-4 w-4 mr-2"
-                        width={"158"}
-                        height={"158"}
+                        width="158"
+                        height="158"
                         alt="https://pokt.watch/"
                       />
                       <span title={tx.hash}>

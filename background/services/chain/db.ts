@@ -32,10 +32,10 @@ type AccountAssetTransferLookup = {
 }
 
 export type TransactionRetrieval = {
-  network: EVMNetwork | POKTNetwork,
-  hash: string;
-  firstSeen: UNIXTime,
-  height?: bigint, 
+  network: EVMNetwork | POKTNetwork
+  hash: string
+  firstSeen: UNIXTime
+  height?: bigint
   txData?: AnyPOKTTransaction | AssetTransfer
 }
 
@@ -408,7 +408,9 @@ export class ChainDatabase extends Dexie {
     })
   }
 
-  async addBlock(block: AnyEVMBlock | POKTBlock | POKTSkinnyBlock): Promise<void> {
+  async addBlock(
+    block: AnyEVMBlock | POKTBlock | POKTSkinnyBlock
+  ): Promise<void> {
     // TODO Consider exposing whether the block was added or updated.
     // TODO Consider tracking history of block changes, e.g. in case of reorg.
 
@@ -433,39 +435,38 @@ export class ChainDatabase extends Dexie {
     return this.accountsToTrack.toArray()
   }
 
-  async queueTransactionRetrieval(
-    tx: TransactionRetrieval
-  ): Promise<void> {
-    const {network, hash, firstSeen, txData} = tx
+  async queueTransactionRetrieval(tx: TransactionRetrieval): Promise<void> {
+    const { network, hash, firstSeen, txData } = tx
     const queued = await this.queuedTransactionsToRetrieve.toArray()
-    const seen = new Set(queued.map(t => t.network.name+t.hash))
-    if (!seen.has(network.name+hash)) {
+    const seen = new Set(queued.map((t) => t.network.name + t.hash))
+    if (!seen.has(network.name + hash)) {
       await this.queuedTransactionsToRetrieve.add({
         network,
         hash,
         firstSeen,
-        txData
+        txData,
       })
     }
-    return
   }
 
   async deQueueTransactionRetrieval(
     count = 5
   ): Promise<TransactionRetrieval[]> {
-    const all = (await this.queuedTransactionsToRetrieve.toArray()).sort((a,b) => {
-      if (a.height && b.height) {
-        if (a.height < b.height) return -1
-        return 1
-      }
-      return 0
-    }).sort((a,b) => {
-      if (a.firstSeen < b.firstSeen) return -1
-      if (a.firstSeen > b.firstSeen) return 1
-      return 0
-    })
+    const all = (await this.queuedTransactionsToRetrieve.toArray())
+      .sort((a, b) => {
+        if (a.height && b.height) {
+          if (a.height < b.height) return -1
+          return 1
+        }
+        return 0
+      })
+      .sort((a, b) => {
+        if (a.firstSeen < b.firstSeen) return -1
+        if (a.firstSeen > b.firstSeen) return 1
+        return 0
+      })
     const queued = all.slice(0, count)
-    const keys: any[] = queued.map(t => [t.firstSeen,t.hash,t.network.name])
+    const keys: any[] = queued.map((t) => [t.firstSeen, t.hash, t.network.name])
     await this.queuedTransactionsToRetrieve.bulkDelete(keys)
     return queued
   }

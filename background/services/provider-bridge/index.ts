@@ -412,12 +412,11 @@ export default class ProviderBridgeService extends BaseService<Events> {
               method,
               params
             )
-          } else {
-            return await this.internalEthereumProviderService.routeSafeRPCRequest(
-              method,
-              params
-            )
           }
+          return await this.internalEthereumProviderService.routeSafeRPCRequest(
+            method,
+            params
+          )
         }
       }
     } catch (error) {

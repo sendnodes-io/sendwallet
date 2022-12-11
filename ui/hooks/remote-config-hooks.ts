@@ -13,7 +13,7 @@ export function useRemoteConfig() {
   useEffect(() => {
     const check = async () => {
       const controller = new AbortController()
-      const signal = controller.signal
+      const { signal } = controller
       const response = await fetch(
         `${process.env.SENDWALLET_IO}api/remote-config`,
         { signal }

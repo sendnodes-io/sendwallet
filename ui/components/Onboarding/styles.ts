@@ -1,4 +1,4 @@
-import css from 'styled-jsx/css'
+import css from "styled-jsx/css"
 
 export default css`
   :global(main, .dashed_border) {
@@ -51,7 +51,7 @@ export default css`
 
   :global(.button.large) {
     justify-content: center !important;
-    margin: auto
+    margin: auto;
   }
 
   .buttons {

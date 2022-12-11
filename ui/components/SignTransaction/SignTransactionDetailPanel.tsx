@@ -5,11 +5,12 @@ import {
   selectTransactionData,
   updateTransactionOptions,
 } from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction"
+import { EnrichedPOKTTransactionRequest } from "@sendnodes/pokt-wallet-background/services/enrichment"
 import { useBackgroundDispatch, useBackgroundSelector } from "../../hooks"
 import FeeSettingsText from "../NetworkFees/FeeSettingsText"
 import NetworkSettingsChooser from "../NetworkFees/NetworkSettingsChooser"
 import SharedSlideUpMenu from "../Shared/SharedSlideUpMenu"
-import { EnrichedPOKTTransactionRequest } from "@sendnodes/pokt-wallet-background/services/enrichment"
+
 export default function SignTransactionDetailPanel(): ReactElement {
   const dispatch = useBackgroundDispatch()
   const [networkSettingsModalOpen, setNetworkSettingsModalOpen] =

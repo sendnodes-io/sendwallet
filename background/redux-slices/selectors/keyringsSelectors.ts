@@ -1,6 +1,9 @@
 import { createSelector, OutputSelector } from "@reduxjs/toolkit"
 import { RootState } from ".."
-import { ExtensionKeyring as Keyring, KeyringMetadata } from "../../services/keyring"
+import {
+  ExtensionKeyring as Keyring,
+  KeyringMetadata,
+} from "../../services/keyring"
 
 export const selectKeyringStatus = createSelector(
   (state: RootState) => state.keyrings?.status,
@@ -8,7 +11,8 @@ export const selectKeyringStatus = createSelector(
 )
 
 export const selectKeyrings = (state: RootState) => state.keyrings.keyrings
-export const selectKeyringMetadata = (state: RootState) => state.keyrings.keyringMetadata
+export const selectKeyringMetadata = (state: RootState) =>
+  state.keyrings.keyringMetadata
 
 export const selectKeyringByAddress = (
   address: string
@@ -67,7 +71,6 @@ export const selectKeyringMetadataForAddress = createSelector(
   (_: RootState, address: string) => address,
   (metadataByAddress, address) => metadataByAddress[address]
 )
-
 
 export const selectSiblingKeyrings = createSelector(
   selectKeyrings,

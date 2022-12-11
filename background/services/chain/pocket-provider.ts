@@ -492,12 +492,13 @@ export default class PocketProvider extends BaseService<ServiceLifecycleEvents> 
         this.emit("error", error)
       })
   }
+
   /**
    * all methods are in the format pokt_[rpc-query]
    * ex: pokt_balance maps to rpc path /v1/query/balance
    */
   async send(method: string, params: unknown[]): Promise<unknown> {
-    const path = "/v1/query/" + method.split("pokt_")[1]
+    const path = `/v1/query/${method.split("pokt_")[1]}`
     const payload = params.length ? params[0] : {}
     const result = await this.provider.send(
       path,
@@ -536,10 +537,10 @@ export default class PocketProvider extends BaseService<ServiceLifecycleEvents> 
 
   async getTransactions(
     address: string,
-    received: boolean = false,
-    prove: boolean = false,
-    page: number = 1,
-    perPage: number = 100
+    received = false,
+    prove = false,
+    page = 1,
+    perPage = 100
   ): Promise<Transaction[]> {
     return poll(
       async () => {

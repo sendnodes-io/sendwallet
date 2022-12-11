@@ -11,8 +11,8 @@ const INJECTED_WINDOW_PROVIDER_SOURCE = "@@@WINDOW_PROVIDER@@@"
 
 export async function connectProviderBridge(): Promise<void> {
   let port: browser.Runtime.Port | null = null
-  
-  function windowListener(event: MessageEvent<any>){
+
+  function windowListener(event: MessageEvent<any>) {
     if (
       port &&
       event.origin === windowOriginAtLoadTime && // we want to recieve msgs only from the in-page script
@@ -30,7 +30,7 @@ export async function connectProviderBridge(): Promise<void> {
     }
   }
 
-  function portListener(data: any){
+  function portListener(data: any) {
     // TODO: replace with better logging before v1. Now it's invaluable in debugging.
     // eslint-disable-next-line no-console
     console.log(
@@ -46,7 +46,7 @@ export async function connectProviderBridge(): Promise<void> {
     )
   }
 
-  async function connectPort(): Promise<browser.Runtime.Port>{
+  async function connectPort(): Promise<browser.Runtime.Port> {
     try {
       if (port) {
         window.removeEventListener("message", windowListener)
@@ -65,17 +65,16 @@ export async function connectProviderBridge(): Promise<void> {
     }
     return port
   }
-  
+
   port = await connectPort()
 
   // let's grab the internal config
   port.postMessage({ request: { method: "poktWallet_getConfig" } })
 
-  // Service workers shut down after 5 min, 
+  // Service workers shut down after 5 min,
 }
 
 export function injectPoktWalletWindowProvider(): void {
-
   try {
     const ID = "poktwallet_inpage"
     const container = document.head || document.documentElement
@@ -100,5 +99,4 @@ export function injectPoktWalletWindowProvider(): void {
         It's time for a seppuku...🗡`
     )
   }
-  
 }

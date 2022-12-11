@@ -1,7 +1,8 @@
 ;(async () => {
   const browser = await import("webextension-polyfill")
-  const PROCESS_ID = ((globalThis as any).PROCESS_ID =
-    "background-" + Math.random() + "." + new Date().getTime())
+  const PROCESS_ID = ((
+    globalThis as any
+  ).PROCESS_ID = `background-${Math.random()}.${new Date().getTime()}`)
 
   const serviceWorker = self as unknown as ServiceWorkerGlobalScope
 

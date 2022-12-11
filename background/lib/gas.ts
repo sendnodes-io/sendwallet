@@ -102,6 +102,6 @@ export default async function getBlockPrices(
     ],
     dataSource: BlockPriceDataSource.LOCAL,
   }
-  logger.debug('no base fee per gas', result)
+  logger.debug("no base fee per gas", result)
   return result
 }

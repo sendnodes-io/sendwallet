@@ -25,6 +25,10 @@ import {
 import { CompleteAssetAmount } from "@sendnodes/pokt-wallet-background/redux-slices/accounts"
 import { enrichAssetAmountWithMainCurrencyValues } from "@sendnodes/pokt-wallet-background/redux-slices/utils/asset-utils"
 import { useHistory, useLocation } from "react-router-dom"
+import { InformationCircleIcon } from "@heroicons/react/solid"
+import { BigNumber } from "ethers"
+import { formatFixed, parseFixed } from "@ethersproject/bignumber"
+import { isEqual } from "lodash"
 import SharedAssetInput from "../Shared/SharedAssetInput"
 import SharedButton from "../Shared/SharedButton"
 import {
@@ -35,13 +39,9 @@ import {
 import SharedSplashScreen from "../Shared/SharedSplashScreen"
 import SharedCheckbox from "../Shared/SharedCheckbox"
 import formatTokenAmount from "../../utils/formatTokenAmount"
-import { InformationCircleIcon } from "@heroicons/react/solid"
 
 import { useStakingUserData } from "../../hooks/staking-hooks"
-import { BigNumber } from "ethers"
-import { formatFixed, parseFixed } from "@ethersproject/bignumber"
 import StatTotalStaked from "./Stat/StatTotalStaked"
-import { isEqual } from "lodash"
 import usePocketNetworkFee from "../../hooks/pocket-network/use-network-fee"
 import StakePausedModal from "./StakePausedModal"
 import StatAPY from "./Stat/StatAPY"
@@ -227,7 +227,7 @@ export default function SendStake(): ReactElement {
             label="ENTER AMOUNT"
             onAssetSelect={setSelectedAsset}
             assetsAndAmounts={fungibleAssetAmounts}
-            disableDropdown={true}
+            disableDropdown
             isDisabled={!stakingPoktParamsData?.stakingEnabled}
             validateAmount={(amount) => {
               if (
@@ -306,6 +306,7 @@ export default function SendStake(): ReactElement {
               title="How do I get my rewards?"
               className="inline text-aqua hover:text-white"
               target="_blank"
+              rel="noreferrer"
             >
               Read more<span className="sr-only">Information on Staking</span>
               <InformationCircleIcon className="ml-1 h-4 w-4 inline-block" />
@@ -321,7 +322,8 @@ export default function SendStake(): ReactElement {
             <a
               href="https://docs.sendnodes.io/legal/terms-of-service"
               className="underline text-aqua hover:text-white"
-              target={"_blank"}
+              target="_blank"
+              rel="noreferrer"
             >
               terms of service
             </a>
@@ -345,34 +347,36 @@ export default function SendStake(): ReactElement {
               Staking provided by{" "}
               <img
                 src="/images/sendnodes.png"
-                width={"558"}
+                width="558"
                 height="84"
                 className="inline-flex w-36 md:w-42 ml-2 mb-2"
                 alt="SendNodes"
                 title="SendNodes"
               />
               <span className="sr-only">SendNodes, Inc.</span>
-              <div className="grow w-full"></div>
+              <div className="grow w-full" />
               <small className="mb-2 inline-block">
                 Your stake is protected by{" "}
                 <a
                   href="https://www.coincover.com/sendnodes?utm_source=sendnodes&utm_medium=referral&utm_campaign=node_partners"
                   className="underline text-aqua hover:text-white"
-                  target={"_blank"}
+                  target="_blank"
+                  rel="noreferrer"
                 >
                   coincover.
                 </a>
               </small>
             </div>
-            <div className="w-full grow sm:hidden"></div>
+            <div className="w-full grow sm:hidden" />
             <a
               href="https://www.coincover.com/sendnodes?utm_source=sendnodes&utm_medium=referral&utm_campaign=node_partners"
               className="ml-0 sm:ml-auto sm:mr-0"
-              target={"_blank"}
+              target="_blank"
+              rel="noreferrer"
             >
               <img
                 src="/images/Protected_by_Coincover_Stamp.png"
-                width={"800"}
+                width="800"
                 height="250"
                 className="inline-flex w-32 md:w-36"
               />

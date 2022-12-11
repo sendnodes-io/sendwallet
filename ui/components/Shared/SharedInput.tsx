@@ -88,7 +88,7 @@ export function SharedTypedInput<T = string>(props: Props<T>): ReactElement {
             error: errorMessage,
           })}
           ref={textAreaRef}
-        ></textarea>
+        />
       ) : (
         <input
           id={id}

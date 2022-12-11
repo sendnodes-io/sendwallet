@@ -50,7 +50,7 @@ export default function SharedAddress({
     ? useBackgroundSelector(selectCurrentAccountTotal)
     : null
 
-  const primaryText = name ? name : truncateAddress(address, 5, -3)
+  const primaryText = name || truncateAddress(address, 5, -3)
   const isDefaultCopy = onClick === undefined
   const copyAddress = useCallback(
     (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {

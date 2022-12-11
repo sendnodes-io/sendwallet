@@ -118,7 +118,9 @@ export default class SigningService extends BaseService<Events> {
 
   private async _signTransaction(
     network: EVMNetwork | POKTNetwork,
-    transactionWithNonce: EIP1559TransactionRequest & { nonce: number } | POKTTransactionRequest,
+    transactionWithNonce:
+      | (EIP1559TransactionRequest & { nonce: number })
+      | POKTTransactionRequest,
     signingMethod: SigningMethod
   ): Promise<SignedEVMTransaction | SignedPOKTTransaction> {
     switch (signingMethod.type) {
@@ -126,26 +128,37 @@ export default class SigningService extends BaseService<Events> {
         if (network.family === "EVM") {
           return this.ledgerService.signTransaction(
             network,
-            transactionWithNonce as EIP1559TransactionRequest & { nonce: number },
+            transactionWithNonce as EIP1559TransactionRequest & {
+              nonce: number
+            },
             signingMethod.deviceID,
             signingMethod.path
           )
-        } else {
-          throw new Error("Ledger signing not supported")
         }
-        
+        throw new Error("Ledger signing not supported")
+
       case "keyring":
         if (network.family === "EVM") {
           return this.keyringService.signTransaction(
-            { address: (transactionWithNonce as EIP1559TransactionRequest & { nonce: number }).from, network },
+            {
+              address: (
+                transactionWithNonce as EIP1559TransactionRequest & {
+                  nonce: number
+                }
+              ).from,
+              network,
+            },
             transactionWithNonce
           )
         }
         return this.keyringService.signTransaction(
-          { address: (transactionWithNonce as POKTTransactionRequest).from, network },
+          {
+            address: (transactionWithNonce as POKTTransactionRequest).from,
+            network,
+          },
           transactionWithNonce
         )
-        
+
       default:
         throw new Error(`Unreachable!`)
     }
@@ -209,14 +222,14 @@ export default class SigningService extends BaseService<Events> {
     }
 
     const txReq = transactionRequest as POKTTransactionRequest
-    
+
     try {
       const signedTx = await this._signTransaction(
         network,
         txReq,
         signingMethod
       )
-      
+
       this.emitter.emit("signingTxResponse", {
         type: "success-tx",
         signedTx,
@@ -231,9 +244,6 @@ export default class SigningService extends BaseService<Events> {
 
       throw err
     }
-
-
-    
   }
 
   addTrackedAddress(address: string, handler: SignerType): void {

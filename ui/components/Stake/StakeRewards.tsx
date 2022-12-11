@@ -1,8 +1,6 @@
 import React, { ReactElement, useState } from "react"
 import { selectCurrentAccount } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
 
-import { useBackgroundSelector, useAreKeyringsUnlocked } from "../../hooks"
-import SharedSplashScreen from "../Shared/SharedSplashScreen"
 import { InformationCircleIcon } from "@heroicons/react/outline"
 
 import { groupBy, isEqual, last, reduce, uniqBy } from "lodash"
@@ -17,7 +15,6 @@ import * as updateLocale from "dayjs/plugin/updateLocale"
 import * as localizedFormat from "dayjs/plugin/localizedFormat"
 import * as utc from "dayjs/plugin/utc"
 import * as isSameOrBefore from "dayjs/plugin/isSameOrBefore"
-import { SnAction, useStakingUserData } from "../../hooks/staking-hooks"
 
 import {
   Chart as ChartJS,
@@ -33,6 +30,9 @@ import {
   ChartOptions,
 } from "chart.js"
 import { Line } from "react-chartjs-2"
+import { SnAction, useStakingUserData } from "../../hooks/staking-hooks"
+import SharedSplashScreen from "../Shared/SharedSplashScreen"
+import { useBackgroundSelector, useAreKeyringsUnlocked } from "../../hooks"
 import StakeToggleCompounding from "./StakeToggleCompounding"
 import StatAPY from "./Stat/StatAPY"
 import StatTotalStaked from "./Stat/StatTotalStaked"
@@ -272,8 +272,9 @@ export default function StakeRewards(): ReactElement {
               All POKT rewards delivered to you on the Pocket Network for{" "}
               <a
                 href="https://docs.sendnodes.io/"
-                target={"_blank"}
+                target="_blank"
                 className="hover:text-white"
+                rel="noreferrer"
               >
                 POKT Onchain Pool Staking (<b className="text-white">POPS</b>){" "}
                 <InformationCircleIcon className="inline h-4 w-4" />
@@ -291,10 +292,10 @@ export default function StakeRewards(): ReactElement {
                 to="/"
                 className="relative inline-flex items-center justify-center px-4 py-1 overflow-hidden font-medium text-eerie-black rounded-lg shadow-2xl group"
               >
-                <span className="absolute top-0 left-0 w-40 h-40 -mt-10 -ml-3 transition-all duration-700 bg-capri rounded-full blur-md ease"></span>
+                <span className="absolute top-0 left-0 w-40 h-40 -mt-10 -ml-3 transition-all duration-700 bg-capri rounded-full blur-md ease" />
                 <span className="absolute inset-0 w-full h-full transition duration-700 group-hover:rotate-180 ease">
-                  <span className="absolute bottom-0 left-0 w-24 h-24 -ml-10 bg-aqua rounded-full blur-md"></span>
-                  <span className="absolute bottom-0 right-0 w-24 h-24 -mr-10 bg-capri rounded-full blur-md"></span>
+                  <span className="absolute bottom-0 left-0 w-24 h-24 -ml-10 bg-aqua rounded-full blur-md" />
+                  <span className="absolute bottom-0 right-0 w-24 h-24 -mr-10 bg-capri rounded-full blur-md" />
                 </span>
                 <span className="relative ">Stake</span>
               </Link>
@@ -334,7 +335,7 @@ export default function StakeRewards(): ReactElement {
               <Line
                 key={dataset.label}
                 options={options}
-                data={{ labels: labels, datasets: [dataset] }}
+                data={{ labels, datasets: [dataset] }}
               />
             ))}
           </div>

@@ -2,6 +2,19 @@ import { Storage } from "webextension-polyfill"
 
 import { parse as parseRawTransaction } from "@ethersproject/transactions"
 
+import {
+  FixedKeyring,
+  HDKeyring,
+  v1KeyringDeserializer,
+  SerializedKeyring,
+  Keyring,
+  KeyringType,
+  KeyType,
+  defaultPathEth,
+  defaultPathPokt,
+  SerializedHDKeyring,
+  SeralizedFixedKeyring,
+} from "@sendnodes/hd-keyring"
 import { ServiceCreatorFunction, ServiceLifecycleEvents } from "../types"
 import { getEncryptedVaults, writeLatestEncryptedVault } from "./storage"
 import {
@@ -33,19 +46,6 @@ import {
 import { USE_MAINNET_FORK } from "../../features/features"
 import { AddressOnNetwork } from "../../accounts"
 import logger from "../../lib/logger"
-import {
-  FixedKeyring,
-  HDKeyring,
-  v1KeyringDeserializer,
-  SerializedKeyring,
-  Keyring,
-  KeyringType,
-  KeyType,
-  defaultPathEth,
-  defaultPathPokt,
-  SerializedHDKeyring,
-  SeralizedFixedKeyring,
-} from "@sendnodes/hd-keyring"
 
 export const MAX_KEYRING_IDLE_TIME = 30 * MINUTE
 export const MAX_OUTSIDE_IDLE_TIME = 30 * MINUTE
@@ -254,7 +254,7 @@ export default class KeyringService extends BaseService<Events> {
           lastKeyringActivity: this.lastKeyringActivity,
           lastOutsideActivity: this.lastOutsideActivity,
         }
-        sessionStorage.set({ keyringSession: keyringSession })
+        sessionStorage.set({ keyringSession })
       }
     }
   }
@@ -403,7 +403,7 @@ export default class KeyringService extends BaseService<Events> {
       const keyring = v1KeyringDeserializer(kr)
 
       if (!keyring) {
-        logger.error("Failed to deserialize keyring: " + kr.fingerprint)
+        logger.error(`Failed to deserialize keyring: ${kr.fingerprint}`)
         return
       }
 
@@ -592,7 +592,7 @@ export default class KeyringService extends BaseService<Events> {
   async importPrivateKey(privateKey: string, keyType: KeyType) {
     this.requireUnlocked()
     if (!Object.values(KeyType).includes(keyType)) {
-      throw new Error("Unsupported keyType: " + keyType)
+      throw new Error(`Unsupported keyType: ${keyType}`)
     }
     // track this mnemonic uniquely by using current time plus some pseudo randomness
     const seedId =
@@ -673,7 +673,7 @@ export default class KeyringService extends BaseService<Events> {
       kr.getAddressesSync().includes(address)
     )
     if (!keyring) {
-      logger.warn("Unknown keyring for address: " + address)
+      logger.warn(`Unknown keyring for address: ${address}`)
       return
     }
     const keyringAddresses = await keyring.getAddresses()

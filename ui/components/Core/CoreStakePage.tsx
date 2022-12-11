@@ -2,21 +2,21 @@
 import React, { Fragment, ReactElement, useEffect, useState } from "react"
 import { Dialog, Transition } from "@headlessui/react"
 import classNames, { clsx } from "clsx"
-import { useAreKeyringsUnlocked, useBackgroundSelector } from "../../hooks"
 import { getCurrentAccountState } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
-import { SharedIcon } from "../Shared/SharedIcon"
-import Snackbar from "../Snackbar/Snackbar"
 import { useHistory, Link, useLocation } from "react-router-dom"
 import { MenuIcon, XIcon } from "@heroicons/react/outline"
+import { isEqual } from "lodash"
+import { css, stylesheet } from "astroturf"
+import { selectTransactionData } from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction"
+import { useAreKeyringsUnlocked, useBackgroundSelector } from "../../hooks"
+import { SharedIcon } from "../Shared/SharedIcon"
+import Snackbar from "../Snackbar/Snackbar"
 
 import SharedSplashScreen from "../Shared/SharedSplashScreen"
-import { isEqual } from "lodash"
 import SharedAddress from "../Shared/SharedAddress"
 import AccountsNotificationPanel from "../AccountsNotificationPanel/AccountsNotificationPanel"
 import SharedModal from "../Shared/SharedModal"
-import { css, stylesheet } from "astroturf"
 import StakeSignTransaction from "../Stake/StakeSignTransaction"
-import { selectTransactionData } from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction"
 
 import Footer from "../Stake/Footer"
 import useStakingPoktParams from "../../hooks/staking-hooks/use-staking-pokt-params"
@@ -115,7 +115,7 @@ function Sidebar({ isOpen, onClose }: SidebarProps): ReactElement {
   }, [location])
 
   return (
-    <Fragment>
+    <>
       <Transition.Root show={isOpen} as={Fragment}>
         <Dialog as="div" className="relative z-40 lg:hidden" onClose={onClose}>
           <Transition.Child
@@ -253,7 +253,7 @@ function Sidebar({ isOpen, onClose }: SidebarProps): ReactElement {
           </div>
         </div>
       </div>
-    </Fragment>
+    </>
   )
 }
 
@@ -421,7 +421,7 @@ export default function CoreStakePage(props: Props): ReactElement {
           stakingPoktParams?.wallets?.siw === transactionDetails?.to
         }
         onClose={() => {
-          /**ignored */
+          /** ignored */
         }}
         className={styles.accountsModal}
       >

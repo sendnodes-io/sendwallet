@@ -20,7 +20,7 @@ export const usePoktNetworkBlockHeight = () => {
   )
 
   return {
-    data: data,
+    data,
     isLoading: !error && !data,
     isError: error,
   }

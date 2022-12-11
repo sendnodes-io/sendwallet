@@ -16,6 +16,9 @@ import {
   normalizeAddress,
   sameEVMAddress,
 } from "@sendnodes/pokt-wallet-background/lib/utils"
+import { Network } from "@sendnodes/pokt-wallet-background/networks"
+import classNames from "classnames"
+import { HiOutlinePlusSm } from "react-icons/hi"
 import SharedButton from "../Shared/SharedButton"
 import {
   useBackgroundDispatch,
@@ -24,9 +27,6 @@ import {
 } from "../../hooks"
 import SharedAccountItemSummary from "../Shared/SharedAccountItemSummary"
 import AccountItemOptionsMenu from "../AccountItem/AccountItemOptionsMenu"
-import { Network } from "@sendnodes/pokt-wallet-background/networks"
-import classNames from "classnames"
-import { HiOutlinePlusSm } from "react-icons/hi"
 import { useRemoteConfig } from "../../hooks/remote-config-hooks"
 
 type WalletTypeInfo = {
@@ -285,7 +285,7 @@ export default function AccountsNotificationPanelAccounts({
                               e.currentTarget.style.backgroundColor = ""
                             }}
                           >
-                            <div className="account_status"></div>
+                            <div className="account_status" />
                             <div
                               className="connect_account_link"
                               title={`Connect to account ${normalizedAddress}`}

@@ -97,7 +97,7 @@ function isConnectingWebSocketProvider(provider: JsonRpcProvider): boolean {
 
 /**
  * TODO: v0.2.0 handle removeAllListeners correctly by unsubscribing/destroying each provider
- * 
+ *
  * The SerialFallbackProvider is an Ethers JsonRpcProvider that can fall back
  * through a series of providers in case previous ones fail.
  *

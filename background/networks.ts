@@ -1,10 +1,10 @@
-import { HexString, UNIXTime } from "./types"
 import {
   CoinDenom as POKTCoinDenom,
   Fee as POKTFee,
   Signature as POKTSignature,
   Hex,
 } from "@pokt-network/pocket-js/dist/index"
+import { HexString, UNIXTime } from "./types"
 
 export enum NetworkBlockExplorerUrl {
   ETHERSCAN = "https://etherscan.io/",
@@ -21,9 +21,9 @@ export enum NetworkBlockExplorerUrl {
  * transaction, consensus, and/or wire format perspective.
  */
 export enum NetworkFamily {
-   EVM = "EVM" ,
-    BTC = "BTC" ,
-    POKT = "POKT",
+  EVM = "EVM",
+  BTC = "BTC",
+  POKT = "POKT",
 }
 
 // Should be structurally compatible with FungibleAsset or much code will

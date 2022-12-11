@@ -16,13 +16,13 @@ import { Service, ServiceLifecycleEvents } from "./types"
  */
 type AlarmSchedule =
   | {
-    when: number
-    periodInMinutes?: number
-  }
+      when: number
+      periodInMinutes?: number
+    }
   | {
-    delayInMinutes: number
-    periodInMinutes?: number
-  }
+      delayInMinutes: number
+      periodInMinutes?: number
+    }
   | { periodInMinutes: number }
 
 /**
@@ -101,9 +101,9 @@ export default abstract class BaseService<Events extends ServiceLifecycleEvents>
    */
   readonly emitter = new Emittery<Events>({
     debug: {
-      name: 'services',
-      logger: emitteryDebugLogger(`services/${this.constructor.name}`)
-    }
+      name: "services",
+      logger: emitteryDebugLogger(`services/${this.constructor.name}`),
+    },
   })
 
   // Used for listener adding/removing, where we need an identical reference.
@@ -115,7 +115,7 @@ export default abstract class BaseService<Events extends ServiceLifecycleEvents>
    */
   protected constructor(
     protected readonly alarmSchedules: AlarmHandlerScheduleMap = {}
-  ) { }
+  ) {}
 
   /**
    * Hook for subclass starting tasks. Subclasses should call

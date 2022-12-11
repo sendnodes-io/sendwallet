@@ -17,6 +17,11 @@ import {
   importPrivateKey as importPrivateKeyBackground,
 } from "@sendnodes/pokt-wallet-background/redux-slices/keyrings"
 import { useHistory } from "react-router-dom"
+import classNames from "clsx"
+import { IoIosCheckmark } from "react-icons/io"
+import { Buffer } from "buffer"
+import { ethers } from "ethers"
+import { KeyType } from "@sendnodes/pokt-wallet-background/services/keyring"
 import SharedButton from "../../components/Shared/SharedButton"
 import OnboardingAccountLayout from "../../components/Onboarding/OnboardingAccountLayout"
 import {
@@ -26,12 +31,7 @@ import {
 } from "../../hooks"
 import { OnboardingImportRecoveryPhraseIcon } from "../../components/Onboarding/Icons"
 import SharedInput from "../../components/Shared/SharedInput"
-import classNames from "clsx"
-import { IoIosCheckmark } from "react-icons/io"
 import { KeyringTypes } from "../../../background/types"
-import { Buffer } from "buffer"
-import { ethers } from "ethers"
-import { KeyType } from "@sendnodes/pokt-wallet-background/services/keyring"
 
 export default function OnboardingImportKeyfile() {
   const rootRef = useRef<HTMLDivElement>(null)
@@ -60,7 +60,7 @@ export default function OnboardingImportKeyfile() {
   const history = useHistory()
 
   useEffect(() => {
-    //always start fresh
+    // always start fresh
     dispatch(clearImporting())
   }, [dispatch])
 
@@ -68,7 +68,7 @@ export default function OnboardingImportKeyfile() {
   useEffect(() => {
     if (isImporting && keyringImport === "done") {
       // it worked
-      dispatch(clearImporting()) //clean up
+      dispatch(clearImporting()) // clean up
       history.push("/onboarding/account-created")
     }
 
@@ -179,12 +179,12 @@ export default function OnboardingImportKeyfile() {
 
       await dispatch(
         importPrivateKeyBackground({
-          privateKey: privateKey,
+          privateKey,
           keyType: KeyType.ED25519,
         })
       )
     } catch (e) {
-      setErrorMessage("Invalid import, reason: " + e)
+      setErrorMessage(`Invalid import, reason: ${e}`)
       setIsImporting(false)
     }
   }, [dispatch, importPassphrase, importKeyfileContents])
@@ -205,7 +205,7 @@ export default function OnboardingImportKeyfile() {
 
     try {
       let fixedKeyring: ImportPrivateKey
-      //ed25519 private are 64 bytes
+      // ed25519 private are 64 bytes
       if (ethers.utils.isHexString(`0x${importPrivateKey}`, 64)) {
         const pocketKeybase = new PocketKeybase(new PocketInMemoryKVStore())
         const account = await pocketKeybase.importAccount(
@@ -228,7 +228,7 @@ export default function OnboardingImportKeyfile() {
           keyType: KeyType.ED25519,
         }
       } else if (ethers.utils.isHexString(`0x${importPrivateKey}`, 32)) {
-        //secp25k1 private are 32 bytes
+        // secp25k1 private are 32 bytes
         fixedKeyring = {
           privateKey: importPrivateKey,
           keyType: KeyType.SECP256K1,
@@ -240,7 +240,7 @@ export default function OnboardingImportKeyfile() {
 
       await dispatch(importPrivateKeyBackground(fixedKeyring))
     } catch (e) {
-      setErrorMessage("Invalid import. " + e)
+      setErrorMessage(`Invalid import. ${e}`)
     }
   }, [dispatch, importPrivateKey])
 
@@ -336,7 +336,7 @@ export default function OnboardingImportKeyfile() {
                     onChange={() => setUsingPrivateKey(!usingPrivateKey)}
                     type="checkbox"
                   />
-                  <span className="slider round"></span>
+                  <span className="slider round" />
                 </label>
                 <h3 style={{ flex: 1, width: "8rem", textAlign: "left" }}>
                   <small>Using Private Key</small>

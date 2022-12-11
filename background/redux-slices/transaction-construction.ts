@@ -83,7 +83,6 @@ export interface SignatureRequest {
   method: SigningMethod
 }
 
-
 export enum EventNames {
   UPDATE_OPTIONS = "updateOptions",
   REQUEST_SIGNATURE = "requestSignature",
@@ -97,7 +96,9 @@ export type Events = {
     | EnrichedPOKTTransactionSignatureRequest
   [EventNames.REQUEST_SIGNATURE]: SignatureRequest
   [EventNames.SIGNATURE_REJECTED]: never
-  [EventNames.BROADCAST_SIGNED_TRANSACTION]: SignedEVMTransaction | SignedPOKTTransaction
+  [EventNames.BROADCAST_SIGNED_TRANSACTION]:
+    | SignedEVMTransaction
+    | SignedPOKTTransaction
 }
 
 export const emitter = new Emittery<Events>({

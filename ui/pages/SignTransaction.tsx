@@ -10,6 +10,11 @@ import {
   getAccountTotal,
   selectCurrentAccount,
 } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
+import { SigningMethod } from "@sendnodes/pokt-wallet-background/utils/signing"
+import { POKTTransactionRequest } from "@sendnodes/pokt-wallet-background/networks"
+import { Redirect, useHistory } from "react-router-dom"
+import { browser } from "@sendnodes/pokt-wallet-background"
+import { isEqual } from "lodash"
 import {
   useBackgroundDispatch,
   useBackgroundSelector,
@@ -18,13 +23,8 @@ import {
 import SignTransactionContainer from "../components/SignTransaction/SignTransactionContainer"
 import SignTransactionInfoProvider from "../components/SignTransaction/SignTransactionInfoProvider"
 import SignTransactionPanelSwitcher from "../components/SignTransaction/SignTransactionPanelSwitcher"
-import { SigningMethod } from "@sendnodes/pokt-wallet-background/utils/signing"
-import { POKTTransactionRequest } from "@sendnodes/pokt-wallet-background/networks"
 import SharedSplashScreen from "../components/Shared/SharedSplashScreen"
-import { Redirect, useHistory } from "react-router-dom"
 import SharedButton from "../components/Shared/SharedButton"
-import { browser } from "@sendnodes/pokt-wallet-background"
-import { isEqual } from "lodash"
 import useStakingPoktParams from "../hooks/staking-hooks/use-staking-pokt-params"
 
 export default function SignTransaction(): ReactElement {

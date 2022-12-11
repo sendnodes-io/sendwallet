@@ -1,10 +1,10 @@
 import React from "react"
 import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts"
+import { FungibleAsset } from "@sendnodes/pokt-wallet-background/assets"
+import { floor } from "lodash"
 import { useStakingUserData } from "../../../hooks/staking-hooks"
 import SharedLoadingSpinner from "../../Shared/SharedLoadingSpinner"
-import { FungibleAsset } from "@sendnodes/pokt-wallet-background/assets"
 import DisclaimerAPY from "../DisclaimerAPY"
-import { floor } from "lodash"
 
 export default function StatAPY({
   aon,

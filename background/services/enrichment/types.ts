@@ -1,6 +1,11 @@
 import { Network } from "@ethersproject/networks"
 import { AnyAssetAmount, SmartContractFungibleAsset } from "../../assets"
-import { AnyEVMTransaction, AnyPOKTTransaction, EIP1559TransactionRequest, POKTTransactionRequest } from "../../networks"
+import {
+  AnyEVMTransaction,
+  AnyPOKTTransaction,
+  EIP1559TransactionRequest,
+  POKTTransactionRequest,
+} from "../../networks"
 import { AssetDecimalAmount } from "../../redux-slices/utils/asset-utils"
 import { HexString, UNIXTime } from "../../types"
 import { SignTypedDataRequest } from "../../utils/signing"

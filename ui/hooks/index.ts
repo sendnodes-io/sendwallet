@@ -2,9 +2,9 @@ import { isAllowedQueryParamPage } from "@sendnodes/provider-bridge-shared"
 import * as browser from "webextension-polyfill"
 
 import { useState, useEffect, useRef } from "react"
-import { useBackgroundDispatch, useBackgroundSelector } from "./redux-hooks"
 import { selectPopoutWindowId } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
 import { setPopoutWindowId } from "@sendnodes/pokt-wallet-background/redux-slices/ui"
+import { useBackgroundDispatch, useBackgroundSelector } from "./redux-hooks"
 
 export * from "./redux-hooks"
 export * from "./signing-hooks"
@@ -55,17 +55,17 @@ export function useIsInTab(path?: string): boolean {
     }
 
     _openPopout().catch((e) => console.error(e))
-
   }, [popoutWindowId])
   return isPopout
 }
 
 async function openInBrowserTab(path?: string) {
-  const popoutURL = browser.runtime.getURL(
-    "tab.html"
-  )
+  const popoutURL = browser.runtime.getURL("tab.html")
 
-  const win = window.open(`${popoutURL}${path ? "#" + path : ""}`, "poktwallet_tab")
+  const win = window.open(
+    `${popoutURL}${path ? `#${path}` : ""}`,
+    "poktwallet_tab"
+  )
   win?.focus()
   return win
 }
@@ -75,31 +75,24 @@ async function openInBrowserTab(path?: string) {
  * the current window.
  */
 async function openInBrowserWindow(path?: string) {
-  const popoutURL = browser.runtime.getURL(
-    "popout.html"
-  )
+  const popoutURL = browser.runtime.getURL("popout.html")
   const height = 625
   const width = 384
-  const {
-    outerHeight,
-    outerWidth,
-    screenY,
-    screenX
-  } = window.top ?? {
+  const { outerHeight, outerWidth, screenY, screenX } = window.top ?? {
     outerHeight: screen.height,
     outerWidth: screen.width,
     screenY: screen.height,
-    screenX: screen.width
+    screenX: screen.width,
   }
-  const top = parseInt((outerHeight / 2 + screenY - (height / 2)).toString());
-  const left = parseInt((outerWidth / 2 + screenX - (width / 2)).toString());
-  return await browser.windows.create({
-    url: `${popoutURL}${path ? "#" + path : ""}`,
+  const top = parseInt((outerHeight / 2 + screenY - height / 2).toString())
+  const left = parseInt((outerWidth / 2 + screenX - width / 2).toString())
+  return browser.windows.create({
+    url: `${popoutURL}${path ? `#${path}` : ""}`,
     type: "popup",
     height,
     width,
     focused: true,
     left,
-    top
+    top,
   })
 }

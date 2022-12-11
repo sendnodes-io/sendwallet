@@ -1,7 +1,7 @@
-import { useBackgroundSelector } from "../hooks"
 import { selectCurrentAccount } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
 
 import React, { ReactElement } from "react"
+import { useBackgroundSelector } from "../hooks"
 
 import SendEVM from "../components/Send/SendEVM"
 import SendPOKT from "../components/Send/SendPOKT"
@@ -13,7 +13,8 @@ export default function Send(): ReactElement {
 
   if (currentAccount?.network?.family === "EVM") {
     return <SendEVM />
-  } else if (currentAccount?.network?.family === "POKT") {
+  }
+  if (currentAccount?.network?.family === "POKT") {
     return <SendPOKT />
   }
 

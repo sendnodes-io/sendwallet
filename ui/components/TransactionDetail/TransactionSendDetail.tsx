@@ -31,7 +31,7 @@ export default function TransactionSendDetail({
   const baseAssetPricePoint = useBackgroundSelector((state) =>
     selectAssetPricePoint(state.assets, network.baseAsset.symbol, USD.symbol)
   )
-  let amount: bigint = BigInt(0)
+  let amount = BigInt(0)
   let from = address
   let to: string | undefined
 
@@ -47,7 +47,7 @@ export default function TransactionSendDetail({
   const transactionAssetAmount = enrichAssetAmountWithDecimalValues(
     {
       asset: network.baseAsset,
-      amount: amount,
+      amount,
     },
     heuristicDesiredDecimalsForUnitPrice(
       network.baseAsset.decimals,
@@ -82,7 +82,7 @@ export default function TransactionSendDetail({
       <div className="dashed_border width_full amount_row">
         <SharedAssetIcon
           symbol={transactionAssetAmount.asset.symbol}
-          size={"large"}
+          size="large"
         />
         <span
           className="spend_amount"
@@ -96,7 +96,7 @@ export default function TransactionSendDetail({
           {localizedDollarValue}
         </span>
       </div>
-      <div className="spacing"></div>
+      <div className="spacing" />
       <div className="width_full addresses_row">
         <div>
           {typeof address === "undefined" ? (
@@ -152,7 +152,7 @@ export default function TransactionSendDetail({
         </div>
       </div>
 
-      <div className="spacing"></div>
+      <div className="spacing" />
 
       <style jsx>
         {`

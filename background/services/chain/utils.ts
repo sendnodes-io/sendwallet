@@ -7,12 +7,14 @@ import {
 import dayjs from "dayjs"
 import * as utc from "dayjs/plugin/utc"
 
-dayjs.extend(utc.default)
-
 import { Transaction as EthersTransaction } from "@ethersproject/transactions"
-import { Transaction as PoktTransaction, MsgProtoSend as PoktMsgSend, Block as PoktBlock } from "@pokt-network/pocket-js/dist/index"
+import {
+  Transaction as PoktTransaction,
+  MsgProtoSend as PoktMsgSend,
+  Block as PoktBlock,
+} from "@pokt-network/pocket-js/dist/index"
 import { Transaction as PoktHDKeyringTransactionRequest } from "@sendnodes/hd-keyring/dist/wallet"
-import { normalizeAddress } from '../../lib/utils'
+import { normalizeAddress } from "../../lib/utils"
 import {
   AnyEVMTransaction,
   AnyPOKTTransaction,
@@ -26,11 +28,13 @@ import {
   POKTBlock,
   POKTTransactionRPCRequest,
   POKTMsgType,
-  POKTSkinnyBlock
+  POKTSkinnyBlock,
 } from "../../networks"
 import { USE_MAINNET_FORK } from "../../features/features"
 import { FORK, POCKET } from "../../constants"
 import { BASE_POKT_FEE } from "../../constants/network-fees"
+
+dayjs.extend(utc.default)
 
 export type POKTWatchBlock = {
   height: number
@@ -105,37 +109,35 @@ export function blockFromPoktBlock(
     const parsed = (result as PoktBlock).toJSON()
     return {
       header: parsed.header,
-      network: network,
+      network,
       timestamp: dayjs.utc(parsed.header.time).unix(),
     }
-  } else {
-    result = result as POKTWatchBlock
-    return {
-      header: {
-        height: result.height,
-        proposer_address: result.proposer,
-        time: result.timestamp,
-        num_txs: result.txs,
-      },
-      network: network,
-      timestamp: dayjs.utc(result.timestamp).unix(),
-    }
+  }
+  result = result as POKTWatchBlock
+  return {
+    header: {
+      height: result.height,
+      proposer_address: result.proposer,
+      time: result.timestamp,
+      num_txs: result.txs,
+    },
+    network,
+    timestamp: dayjs.utc(result.timestamp).unix(),
   }
 }
 
 export function poktHDKeyringTransactionRequestFromPoktTransactionRequest(
   transaction: POKTTransactionRequest
 ): PoktHDKeyringTransactionRequest {
-
   const {
     txMsg: {
       // type,
-      value
+      value,
     },
     chainID,
     fee,
     feeDenom,
-    memo
+    memo,
   } = transaction
 
   // TODO: v1
@@ -146,22 +148,16 @@ export function poktHDKeyringTransactionRequestFromPoktTransactionRequest(
   return {
     txMsg: send,
     chainId: chainID,
-    fee: fee,
-    feeDenom: feeDenom ? feeDenom : undefined,
-    memo: memo ? memo : undefined
+    fee,
+    feeDenom: feeDenom || undefined,
+    memo: memo || undefined,
   }
 }
 
 export function poktTransactionRequestFromPoktTransactionRPCRequest(
   transaction: POKTTransactionRPCRequest
 ): POKTTransactionRequest {
-  const {
-    amount,
-    from,
-    to,
-    fee,
-    memo
-  } = transaction
+  const { amount, from, to, fee, memo } = transaction
 
   return {
     txMsg: {
@@ -169,15 +165,15 @@ export function poktTransactionRequestFromPoktTransactionRPCRequest(
       value: {
         amount,
         toAddress: to,
-        fromAddress: from
-      }
+        fromAddress: from,
+      },
     },
     chainID: "mainnet",
     fee: fee ?? BASE_POKT_FEE.toString(),
     network: POCKET,
     from,
     to,
-    memo
+    memo,
   }
 }
 
@@ -344,7 +340,6 @@ export function transactionFromPoktTransaction(
   network: POKTNetwork,
   targetHeight?: number
 ): AnyPOKTTransaction {
-
   if (tx.hash === undefined) {
     throw Error("Malformed transaction")
   }
@@ -362,12 +357,12 @@ export function transactionFromPoktTransaction(
     from: normalizeAddress(tx.txResult.signer, network),
     to: normalizeAddress(tx.txResult.recipient, network),
     txMsg: stdTx.msg,
-    stdTx: stdTx,
+    stdTx,
     txResult: tx.txResult.toJSON(),
     proof: tx.proof.toJSON(),
     network,
     asset: network.baseAsset,
-    memo: stdTx.memo
+    memo: stdTx.memo,
   } as const // narrow types for compatiblity with our internal ones
 
   return newTx

@@ -16,17 +16,9 @@ import {
   getAccountTotal,
   selectCurrentAccount,
 } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
-import {
-  useBackgroundDispatch,
-  useBackgroundSelector,
-  useIsSigningMethodLocked,
-} from "../../hooks"
 import { SigningMethod } from "@sendnodes/pokt-wallet-background/utils/signing"
 import { POKTTransactionRequest } from "@sendnodes/pokt-wallet-background/networks"
-import SharedSplashScreen from "../Shared/SharedSplashScreen"
 import { useHistory } from "react-router-dom"
-import { SnAction, useStakingUserData } from "../../hooks/staking-hooks"
-import SharedButton from "../Shared/SharedButton"
 import { capitalize, floor, isEqual } from "lodash"
 import { Dialog } from "@headlessui/react"
 import clsx from "clsx"
@@ -38,17 +30,25 @@ import * as utc from "dayjs/plugin/utc"
 import * as relativeTime from "dayjs/plugin/relativeTime"
 import * as localizedFormat from "dayjs/plugin/localizedFormat"
 
-dayjs.extend(utc.default)
-dayjs.extend(localizedFormat.default)
-dayjs.extend(relativeTime.default)
-
 import { InformationCircleIcon, XIcon } from "@heroicons/react/outline"
+import SharedButton from "../Shared/SharedButton"
+import { SnAction, useStakingUserData } from "../../hooks/staking-hooks"
+import SharedSplashScreen from "../Shared/SharedSplashScreen"
+import {
+  useBackgroundDispatch,
+  useBackgroundSelector,
+  useIsSigningMethodLocked,
+} from "../../hooks"
 import getSnActionFromMemo from "../../helpers/get-sn-action-from-memo"
 import { usePoktWatchLatestBlock } from "../../hooks/pokt-watch/use-latest-block"
 import usePocketNetworkFee from "../../hooks/pocket-network/use-network-fee"
 import formatTokenAmount from "../../utils/formatTokenAmount"
 import useStakingPoktParams from "../../hooks/staking-hooks/use-staking-pokt-params"
 import useAssetInMainCurrency from "../../hooks/assets/use-asset-in-main-currency"
+
+dayjs.extend(utc.default)
+dayjs.extend(localizedFormat.default)
+dayjs.extend(relativeTime.default)
 
 export default function StakeSignTransaction(): ReactElement {
   const history = useHistory()
@@ -161,7 +161,7 @@ export default function StakeSignTransaction(): ReactElement {
     >
       <img
         src="/images/sendnodes.png"
-        width={"558"}
+        width="558"
         height="84"
         className="w-full inline-block mr-2 max-w-[5rem]"
         alt="SendNodes"
@@ -340,13 +340,14 @@ export default function StakeSignTransaction(): ReactElement {
                               ? "https://sendnodes.gitbook.io/sendnodes/start-here/frequently-asked-questions#how-do-i-unstake"
                               : "https://docs.sendnodes.io/start-here/frequently-asked-questions#what-is-the-staking-schedule"
                           }
-                          target={"_blank"}
+                          target="_blank"
                           className="hover:text-white"
                           title={
                             action === SnAction.STAKE
                               ? "What is the staking schedule?"
                               : "How do I unstake?"
                           }
+                          rel="noreferrer"
                         >
                           {capitalize(action.toLowerCase())} ETA{" "}
                           <InformationCircleIcon className="inline h-4 w-4" />

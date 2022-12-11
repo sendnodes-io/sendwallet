@@ -1,4 +1,5 @@
 import { createSelector } from "@reduxjs/toolkit"
+import { KeyringType } from "@sendnodes/hd-keyring"
 import { selectHideDust } from "../ui"
 import { RootState } from ".."
 import { AccountData, CompleteAssetAmount } from "../accounts"
@@ -26,7 +27,6 @@ import {
   selectKeyringsByAddresses,
   selectSourcesByAddress,
 } from "./keyringsSelectors"
-import { KeyringType } from "@sendnodes/hd-keyring"
 import { BASE_ASSETS_BY_SYMBOL } from "../../constants"
 import { AddressOnMaybeNetwork } from "../../accounts"
 

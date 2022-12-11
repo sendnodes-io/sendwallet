@@ -1,4 +1,7 @@
-import { AccountTotal, selectCurrentAccount } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
+import {
+  AccountTotal,
+  selectCurrentAccount,
+} from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
 import { HexString } from "@sendnodes/pokt-wallet-background/types"
 import { updateName } from "@sendnodes/pokt-wallet-background/redux-slices/accounts"
 import React, { ReactElement, useEffect, useState } from "react"
@@ -18,12 +21,12 @@ export default function AccountItemEditName({
   address,
   close,
 }: AccountItemEditNameProps): ReactElement {
-  const currentAccount  = useSelector(selectCurrentAccount)
+  const currentAccount = useSelector(selectCurrentAccount)
   const [name, setName] = useState(account.name)
   const [error, setError] = useState("")
   const dispatch = useDispatch()
 
-  let accountPreview = {
+  const accountPreview = {
     ...account,
   }
   if (name) accountPreview.name = name
@@ -46,7 +49,7 @@ export default function AccountItemEditName({
               updateName({
                 address,
                 network: currentAccount.network,
-                name: name ? name : "",
+                name: name || "",
               })
             )
             close()

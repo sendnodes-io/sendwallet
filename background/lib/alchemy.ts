@@ -69,7 +69,6 @@ export async function getAssetTransfers(
   return rpcResponses
     .flatMap((jsonResponse: unknown) => {
       if (!isValidAlchemyAssetTransferResponse(jsonResponse)) {
-        
         logger.warn(
           "Alchemy asset transfer response didn't validate, did the API change?",
           jsonResponse,

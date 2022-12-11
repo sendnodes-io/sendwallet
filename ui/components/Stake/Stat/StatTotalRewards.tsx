@@ -1,8 +1,8 @@
 import React from "react"
 import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts"
 import { FungibleAsset } from "@sendnodes/pokt-wallet-background/assets"
-import { useStakingUserData } from "../../../hooks/staking-hooks"
 import { BigNumber, formatFixed } from "@ethersproject/bignumber"
+import { useStakingUserData } from "../../../hooks/staking-hooks"
 import formatTokenAmount from "../../../utils/formatTokenAmount"
 import useAssetInMainCurrency from "../../../hooks/assets/use-asset-in-main-currency"
 

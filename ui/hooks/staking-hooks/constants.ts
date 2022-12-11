@@ -34,12 +34,12 @@ export const fetcher = async (url: string, request: RequestInit) => {
   })
 
   if (!response.ok) {
-    throw new Error("Failed to fetch data: " + response.statusText)
+    throw new Error(`Failed to fetch data: ${response.statusText}`)
   } else {
     const data = await response.json()
     if (data.error) {
       throw new Error(
-        data?.error?.message ?? "Failed to fetch data: " + JSON.stringify(data)
+        data?.error?.message ?? `Failed to fetch data: ${JSON.stringify(data)}`
       )
     }
     return data

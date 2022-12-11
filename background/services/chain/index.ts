@@ -10,6 +10,7 @@ import {
 import { Transaction as PoktJSTransaction } from "@pokt-network/pocket-js/dist/index"
 import { utils } from "ethers"
 import { Logger } from "ethers/lib/utils"
+import _ from "lodash"
 import logger from "../../lib/logger"
 import getBlockPrices from "../../lib/gas"
 import { HexString, UNIXTime } from "../../types"
@@ -64,7 +65,6 @@ import { ETHEREUM, FORK, HOUR, POCKET } from "../../constants"
 import SerialFallbackProvider from "./serial-fallback-provider"
 import PocketProvider from "./pocket-provider"
 import AssetDataHelper from "./asset-data-helper"
-import _ from "lodash"
 
 // We can't use destructuring because webpack has to replace all instances of
 // `process.env` variables in the bundled output
@@ -158,6 +158,7 @@ type RemoteConfig = {
 
 export default class ChainService extends BaseService<Events> {
   providers?: NetworkProviders
+
   remoteConfig?: RemoteConfig
 
   subscribedAccounts: {
@@ -447,7 +448,7 @@ export default class ChainService extends BaseService<Events> {
     transactionRequest: EIP1559TransactionRequest | POKTTransactionRequest
   ): EVMNetwork | undefined | POKTNetwork {
     if ("network" in transactionRequest) {
-      return transactionRequest["network"]
+      return transactionRequest.network
     }
     if (transactionRequest.chainID === this.ethereumNetwork!.chainID) {
       return this.ethereumNetwork
@@ -520,12 +521,12 @@ export default class ChainService extends BaseService<Events> {
         : await this.poktProvider.getBalance(address)
 
     const accountBalance: AccountBalance = {
-      address: address,
+      address,
       assetAmount: {
         asset: network.baseAsset,
         amount: balance.toBigInt(),
       },
-      network: network,
+      network,
       dataSource: "local",
       retrievedAt: Date.now(),
     }
@@ -565,14 +566,15 @@ export default class ChainService extends BaseService<Events> {
         return (cachedBlock as AnyEVMBlock).blockHeight
       }
       return this.ethProvider.getBlockNumber()
-    } else if (network.family === "POKT") {
+    }
+    if (network.family === "POKT") {
       if (cachedBlock) {
         return (cachedBlock as POKTBlock).header.height
       }
       return this.poktProvider.getBlockNumber()
     }
 
-    throw new Error("Invalid network family: " + network.family)
+    throw new Error(`Invalid network family: ${network.family}`)
   }
 
   /**
@@ -701,7 +703,7 @@ export default class ChainService extends BaseService<Events> {
         txToRetrieve.height = BigInt(txData.height)
       await this.db.queueTransactionRetrieval(txToRetrieve)
     } catch (e) {
-      throw new Error("Unable to fetch network family: " + network.family)
+      throw new Error(`Unable to fetch network family: ${network.family}`)
     }
   }
 
@@ -1020,7 +1022,7 @@ export default class ChainService extends BaseService<Events> {
       })
 
       const txsToRecord: PoktJSTransaction[] = []
-      for (let tx of allTxs) {
+      for (const tx of allTxs) {
         if (txsToRecord.length >= MAX_HISTORIC_ASSET_TRANSFERS_POCKET) break
         if (startBlock && tx.height <= startBlock) break
         if (tx.txResult.messageType !== "send") continue
@@ -1408,7 +1410,6 @@ export default class ChainService extends BaseService<Events> {
         }
       }
       this.poktProvider.on(tx.hash, listener)
-      return
     }
   }
 
@@ -1430,7 +1431,6 @@ export default class ChainService extends BaseService<Events> {
         enrichTransactionWithReceipt(transaction, receipt),
         "alchemy"
       )
-      return
     }
   }
 

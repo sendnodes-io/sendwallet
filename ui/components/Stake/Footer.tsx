@@ -8,32 +8,36 @@ export default function Footer() {
         <div className="flex justify-center space-x-6 md:order-2">
           <a
             target="_blank"
-            href={`https://twitter.com/_SendNodes_`}
+            href="https://twitter.com/_SendNodes_"
             className="text-white hover:text-aqua"
+            rel="noreferrer"
           >
             <span className="sr-only">Twitter</span>
             <Icon icon="akar-icons:twitter-fill" className="w-6 h-6" />
           </a>
           <a
             target="_blank"
-            href={`https://github.com/sendnodes-io`}
+            href="https://github.com/sendnodes-io"
             className="text-white hover:text-aqua"
+            rel="noreferrer"
           >
             <span className="sr-only">Github</span>
             <Icon icon="akar-icons:github-fill" className="w-6 h-6" />
           </a>
           <a
             target="_blank"
-            href={`https://discord.gg/TmfYqaXzGb`}
+            href="https://discord.gg/TmfYqaXzGb"
             className="text-white hover:text-aqua"
+            rel="noreferrer"
           >
             <span className="sr-only">Discord</span>
             <Icon icon="simple-icons:discord" className="w-6 h-6" />
           </a>
           <a
             target="_blank"
-            href={`https://t.me/send_wallet`}
+            href="https://t.me/send_wallet"
             className="text-white hover:text-aqua"
+            rel="noreferrer"
           >
             <span className="sr-only">Telegram</span>
             <Icon icon="uit:telegram-alt" className="w-6 h-6" />
@@ -43,7 +47,7 @@ export default function Footer() {
           <p className="text-center text-base text-white">
             <img
               src="/images/sendnodes.png"
-              width={"558"}
+              width="558"
               height="84"
               className="block w-56 mb-4 mx-auto md:mx-0"
               alt="SendNodes"

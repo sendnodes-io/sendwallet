@@ -1,7 +1,7 @@
 import useSWR from "swr"
 import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts"
-import { fetcher, SENDNODES_ONCHAIN_API_URL } from "./constants"
 import { selectCurrentAccount } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
+import { fetcher, SENDNODES_ONCHAIN_API_URL } from "./constants"
 import { useBackgroundSelector } from "../redux-hooks"
 
 export interface IStakingPoktParams {
@@ -13,14 +13,14 @@ export interface IStakingPoktParams {
   stakingMinAge: string
   /** BigNumber representing the minimum stake amount in uPOKT */
   lastRewardHeight: string
-  /** BigNumber representing the current height of the POKT network*/
+  /** BigNumber representing the current height of the POKT network */
   currentHeight: string
-  /** BigNumber representing the amount of uPOKT left on a staked POKT node*/
+  /** BigNumber representing the amount of uPOKT left on a staked POKT node */
   nodeRewardsReserveAmount: string
   wallets: {
     /** POKT Address to send stake amounts to */
     siw: string
-    /** POKT Address to rewards are sent to*/
+    /** POKT Address to rewards are sent to */
     riw: string
   }
 }
@@ -28,14 +28,14 @@ export interface IStakingPoktParams {
 export function useStakingPoktParamsForAddress(
   addressOnNetwork: AddressOnNetwork
 ) {
-  var raw = JSON.stringify({
+  const raw = JSON.stringify({
     method: "pokt_getParams",
     id: 1,
     jsonrpc: "2.0",
     params: {},
   })
 
-  var request = {
+  const request = {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

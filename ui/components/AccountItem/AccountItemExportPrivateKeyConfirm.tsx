@@ -6,11 +6,11 @@ import {
 
 import React, { ReactElement, useCallback, useEffect, useState } from "react"
 import { setSnackbarMessage } from "@sendnodes/pokt-wallet-background/redux-slices/ui"
+import { browser } from "@sendnodes/pokt-wallet-background"
+import { exportPrivateKey } from "@sendnodes/pokt-wallet-background/redux-slices/keyrings"
 import SharedButton from "../Shared/SharedButton"
 import SharedAccountItemSummary from "../Shared/SharedAccountItemSummary"
 import { useBackgroundDispatch, useBackgroundSelector } from "../../hooks"
-import { browser } from "@sendnodes/pokt-wallet-background"
-import { exportPrivateKey } from "@sendnodes/pokt-wallet-background/redux-slices/keyrings"
 import SharedInput from "../Shared/SharedInput"
 
 interface AccountItemExportPrivateKeyConfirmProps {

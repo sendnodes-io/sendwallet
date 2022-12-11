@@ -3,7 +3,7 @@ import { RouteComponentProps } from "react-router-dom"
 import tabs from "./tabs"
 
 export interface AnimationConditions {
-  shouldDisplayDecoy: boolean,
+  shouldDisplayDecoy: boolean
   isDirectionRight: boolean
 }
 
@@ -28,7 +28,6 @@ export function useAnimationConditions(
     }
   }
 ): AnimationConditions {
-
   const { entries } = routeProps.history
   const locationName = routeProps.location.pathname.split("/")[1]
   const prevLocationName =
@@ -42,8 +41,9 @@ export function useAnimationConditions(
     let isDirectionRight = false
 
     const isDecoyNeeded =
-      pagePreferences[`/${prevLocationName === "wallet" ? "" : prevLocationName}`]
-        ?.hasTopBar &&
+      pagePreferences[
+        `/${prevLocationName === "wallet" ? "" : prevLocationName}`
+      ]?.hasTopBar &&
       pagePreferences[`/${locationName === "wallet" ? "" : locationName}`]
         ?.hasTopBar
     // setShouldDisplayDecoy(isDecoyNeeded)
@@ -78,10 +78,9 @@ export function useAnimationConditions(
     }
     return {
       shouldDisplayDecoy,
-      isDirectionRight
+      isDirectionRight,
     }
   }, [entries, locationName, prevLocationName])
-
 }
 
 export default function setAnimationConditions(
@@ -185,8 +184,9 @@ export function animationStyles(
       }
 
       .page-transition-enter .anti_animation {
-        transform: ${!isDirectionRight ? `translateX(-7px)` : `translateX(7px)`
-    };
+        transform: ${
+          !isDirectionRight ? `translateX(-7px)` : `translateX(7px)`
+        };
       }
       .page-transition-enter-active .anti_animation {
         transform: translateX(0px);
@@ -198,8 +198,9 @@ export function animationStyles(
       }
       .page-transition-exit-active .anti_animation {
         opacity: 1;
-        transform: ${!isDirectionRight ? `translateX(-7px)` : `translateX(7px)`
-    };
+        transform: ${
+          !isDirectionRight ? `translateX(-7px)` : `translateX(7px)`
+        };
         transition: transform cubic-bezier(0.25, 0.4, 0.55, 1.4) 250ms;
       }
       `
