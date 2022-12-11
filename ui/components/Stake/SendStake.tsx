@@ -356,7 +356,7 @@ export default function SendStake(): ReactElement {
               <small className="mb-2 inline-block">
                 Your stake is protected by{" "}
                 <a
-                  href="https://www.coincover.com/sendnodes"
+                  href="https://www.coincover.com/sendnodes?utm_source=sendnodes&utm_medium=referral&utm_campaign=node_partners"
                   className="underline text-aqua hover:text-white"
                   target={"_blank"}
                 >
@@ -366,7 +366,7 @@ export default function SendStake(): ReactElement {
             </div>
             <div className="w-full grow sm:hidden"></div>
             <a
-              href="https://www.coincover.com/sendnodes"
+              href="https://www.coincover.com/sendnodes?utm_source=sendnodes&utm_medium=referral&utm_campaign=node_partners"
               className="ml-0 sm:ml-auto sm:mr-0"
               target={"_blank"}
             >

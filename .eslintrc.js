@@ -70,7 +70,7 @@ module.exports = {
     ],
     // Console usage should use background/lib/logger.ts, which allows users to
     // share logs with devs if desired.
-    "no-console": "on",
+    "no-console": [2, { allow: ["warn", "error"] }],
     // Don't slap build files for importing devDependencies.
     "import/no-extraneous-dependencies": [
       "error",
