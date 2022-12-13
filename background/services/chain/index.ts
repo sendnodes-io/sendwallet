@@ -922,6 +922,8 @@ export default class ChainService extends BaseService<Events> {
         )
       }
     }
+
+    return Promise.resolve()
   }
 
   /**
