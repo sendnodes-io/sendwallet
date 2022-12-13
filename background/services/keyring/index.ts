@@ -3,20 +3,19 @@ import { Storage } from "webextension-polyfill"
 import { parse as parseRawTransaction } from "@ethersproject/transactions"
 
 import {
+  defaultPathPokt,
   FixedKeyring,
   HDKeyring,
-  v1KeyringDeserializer,
-  SerializedKeyring,
   Keyring,
   KeyringType,
   KeyType,
-  defaultPathEth,
-  defaultPathPokt,
-  SerializedHDKeyring,
   SeralizedFixedKeyring,
+  SerializedHDKeyring,
+  SerializedKeyring,
+  v1KeyringDeserializer,
 } from "@sendnodes/hd-keyring"
 import { ServiceCreatorFunction, ServiceLifecycleEvents } from "../types"
-import { getEncryptedVaults, writeLatestEncryptedVault } from "./storage"
+import { currentVault, writeLatestEncryptedVault } from "./storage"
 import {
   decryptVault,
   deriveSymmetricKeyFromPassword,
@@ -25,16 +24,16 @@ import {
   SaltedKey,
 } from "./encryption"
 import {
-  HexString,
-  KeyringTypes,
   EIP191Data,
   EIP712TypedData,
+  HexString,
+  KeyringTypes,
   UNIXTime,
 } from "../../types"
 import {
   EIP1559TransactionRequest,
-  SignedEVMTransaction,
   POKTTransactionRequest,
+  SignedEVMTransaction,
   SignedPOKTTransaction,
 } from "../../networks"
 import BaseService from "../base"
@@ -158,7 +157,7 @@ export default class KeyringService extends BaseService<Events> {
   async internalStartService(): Promise<void> {
     await super.internalStartService()
 
-    const currentEncryptedVault = await this.currentEncryptedVault()
+    const currentEncryptedVault = await currentVault()
 
     // nothing to unlock/lock if no vault
     if (!currentEncryptedVault) {
@@ -205,9 +204,9 @@ export default class KeyringService extends BaseService<Events> {
    *
    * @see https://developer.chrome.com/docs/extensions/reference/storage/#property-session
    */
-  async loadKeyringSession() {
+  async loadKeyringSession(): Promise<void> {
     if (chrome?.storage) {
-      const storage = chrome.storage as any
+      const storage = chrome.storage as unknown as Storage
       if ("session" in storage) {
         const sessionStorage = storage.session as Storage.StorageArea
         const { keyringSession } = await sessionStorage.get("keyringSession")
@@ -227,7 +226,9 @@ export default class KeyringService extends BaseService<Events> {
           }
           this.lastKeyringActivity = lastKeyringActivity
           this.lastOutsideActivity = lastOutsideActivity
-        } catch (e) {}
+        } catch (e) {
+          // ignored
+        }
       }
     }
   }
@@ -239,9 +240,9 @@ export default class KeyringService extends BaseService<Events> {
    *
    * @see https://developer.chrome.com/docs/extensions/reference/storage/#property-session
    */
-  async saveKeyringSession() {
+  async saveKeyringSession(): Promise<void> {
     if (chrome?.storage) {
-      const storage = chrome.storage as any
+      const storage = chrome.storage as unknown as Storage
       if ("session" in storage) {
         const sessionStorage = storage.session as Storage.StorageArea
         const keyringSession: KeyringSession = {
@@ -314,7 +315,7 @@ export default class KeyringService extends BaseService<Events> {
     }
 
     if (!ignoreExistingVaults) {
-      const currentEncryptedVault = await this.currentEncryptedVault()
+      const currentEncryptedVault = await currentVault()
       if (currentEncryptedVault) {
         // attempt to load the vault
         const saltedKey = await deriveSymmetricKeyFromPassword(
@@ -345,8 +346,8 @@ export default class KeyringService extends BaseService<Events> {
   /**
    * Attempts to decrypt the current encrypted vault with the password.
    */
-  async passwordChallenge(password: string) {
-    const currentEncryptedVault = await this.currentEncryptedVault()
+  static async passwordChallenge(password: string): Promise<boolean> {
+    const currentEncryptedVault = await currentVault()
     if (!currentEncryptedVault) {
       throw new Error("No keyring vault found")
     }
@@ -368,11 +369,6 @@ export default class KeyringService extends BaseService<Events> {
       // failed
       return false
     }
-  }
-
-  async currentEncryptedVault() {
-    const { vaults } = await getEncryptedVaults()
-    return vaults.slice(-1)[0]?.vault
   }
 
   private async decryptKeyringVault(
@@ -516,12 +512,14 @@ export default class KeyringService extends BaseService<Events> {
    *
    * @param type - the type of keyring to generate. Currently only supports 256-
    *        bit HD keys.
+   * @param keyType the type of key to generate.
    * @returns An object containing the string ID of the new keyring and the
    *          mnemonic for the new keyring. Note that the mnemonic can only be
    *          accessed at generation time through this return value.
    */
   async generateNewKeyring(
-    type: KeyringTypes
+    type: KeyringTypes,
+    keyType: KeyType = KeyType.ED25519
   ): Promise<{ id: string; mnemonic: string[] }> {
     this.requireUnlocked()
 
@@ -531,7 +529,7 @@ export default class KeyringService extends BaseService<Events> {
       )
     }
 
-    const newKeyring = new HDKeyring({ strength: 256 })
+    const newKeyring = new HDKeyring({ strength: 256, keyType })
 
     const { mnemonic } = newKeyring.serializeSync()
 
@@ -554,7 +552,7 @@ export default class KeyringService extends BaseService<Events> {
 
     // track this mnemonic uniquely by using current time plus some pseudo randomness
     const seedId =
-      new Date().getTime() + parseInt((Math.random() * 1000000).toString())
+      new Date().getTime() + parseInt((Math.random() * 1000000).toString(), 10)
     const keyringMetadata = {
       source,
       seedId,
@@ -589,14 +587,17 @@ export default class KeyringService extends BaseService<Events> {
   /**
    * Import private as a FixedKeyring and use that address for extension use
    */
-  async importPrivateKey(privateKey: string, keyType: KeyType) {
+  async importPrivateKey(
+    privateKey: string,
+    keyType: KeyType
+  ): Promise<string> {
     this.requireUnlocked()
     if (!Object.values(KeyType).includes(keyType)) {
       throw new Error(`Unsupported keyType: ${keyType}`)
     }
     // track this mnemonic uniquely by using current time plus some pseudo randomness
     const seedId =
-      new Date().getTime() + parseInt((Math.random() * 1000000).toString())
+      new Date().getTime() + parseInt((Math.random() * 1000000).toString(), 10)
     const keyringMetadata = {
       source: "import",
       seedId,
@@ -688,7 +689,7 @@ export default class KeyringService extends BaseService<Events> {
     this.emitKeyrings()
   }
 
-  async exportPrivateKey(address: HexString) {
+  async exportPrivateKey(address: HexString): Promise<string> {
     this.requireUnlocked()
     const keyring = await this.#findKeyring(address)
     return keyring.getPrivateKey(address)
@@ -697,7 +698,9 @@ export default class KeyringService extends BaseService<Events> {
   /**
    * Removes a keyring from memory and disk
    */
-  #removeKeyring(keyring: Keyring<SerializedKeyring>) {
+  #removeKeyring(
+    keyring: Keyring<SerializedKeyring>
+  ): Keyring<SerializedKeyring>[] {
     const filteredKeyrings = this.#keyrings.filter(
       (kr) => kr.fingerprint !== keyring.fingerprint
     )
@@ -724,7 +727,7 @@ export default class KeyringService extends BaseService<Events> {
    *
    * @param account - the account desired to search the keyring for.
    */
-  async #findKeyring(account: HexString) {
+  async #findKeyring(account: HexString): Promise<Keyring<SerializedKeyring>> {
     const keyring = this.#keyrings.find((kr) =>
       kr.getAddressesSync().includes(account)
     )
@@ -827,6 +830,7 @@ export default class KeyringService extends BaseService<Events> {
 
     return signedTx
   }
+
   /**
    * Sign typed data based on EIP-712 with the usage of eth_signTypedData_v4 method,
    * more information about the EIP can be found at https://eips.ethereum.org/EIPS/eip-712

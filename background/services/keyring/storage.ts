@@ -38,6 +38,12 @@ export async function getEncryptedVaults(): Promise<SerializedEncryptedVaults> {
   throw new Error("Encrypted vaults are using an unkown serialization format")
 }
 
+export async function currentVault(): Promise<EncryptedVault | null> {
+  const { vaults } = await getEncryptedVaults()
+  const currentVault = vaults[vaults.length - 1]
+  return currentVault ? currentVault.vault : null
+}
+
 function equalVaults(vault1: EncryptedVault, vault2: EncryptedVault): boolean {
   if (vault1.salt !== vault2.salt) {
     return false

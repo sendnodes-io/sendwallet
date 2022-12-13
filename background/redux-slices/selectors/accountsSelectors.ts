@@ -1,7 +1,7 @@
 import { createSelector } from "@reduxjs/toolkit"
 import { KeyringType } from "@sendnodes/hd-keyring"
 import { selectHideDust } from "../ui"
-import { RootState } from ".."
+import type { RootState } from ".."
 import { AccountData, CompleteAssetAmount } from "../accounts"
 import { AccountType } from "../AccountType"
 import { AssetsState, selectAssetPricePoint } from "../assets"

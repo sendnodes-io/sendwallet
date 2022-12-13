@@ -19,7 +19,7 @@ import {
   selectKeyringMetadataForAddress,
   selectSiblingKeyrings,
 } from "./selectors"
-import { RootState } from "."
+import type { RootState } from "."
 
 const availableDefaultAvatars = [
   "invisiblefriends/65.png",
@@ -38,6 +38,12 @@ const availableDefaultAvatars = [
   "invisiblefriends/3260.png",
   "invisiblefriends/4256.png",
   "invisiblefriends/4617.png",
+  "invisiblefriends/2153.png",
+  "invisiblefriends/3201.png",
+  "invisiblefriends/3204.png",
+  "invisiblefriends/3644.png",
+  "invisiblefriends/3652.png",
+  "invisiblefriends/3653.png",
 ]
 
 export type AccountData = AddressOnNetwork & {

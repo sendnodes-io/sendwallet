@@ -1,5 +1,5 @@
 import { createSelector, OutputSelector } from "@reduxjs/toolkit"
-import { RootState } from ".."
+import type { RootState } from ".."
 import {
   ExtensionKeyring as Keyring,
   KeyringMetadata,

@@ -66,10 +66,8 @@ import {
 } from "./redux-slices/keyrings"
 import { blockSeen } from "./redux-slices/networks"
 import {
-  initializationLoadingTimeHitLimit,
   emitter as uiSliceEmitter,
   setDefaultWallet,
-  setSelectedAccount,
   setNewSelectedAccount,
   setSnackbarMessage,
   EventNames as UIEventNames,
@@ -741,6 +739,7 @@ export default class Main extends BaseService<never> {
 
           const { transactionRequest: populatedRequest, gasEstimationError } =
             await this.chainService.populatePartialEVMTransactionRequest(
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               this.chainService.ethereumNetwork!,
               {
                 ...opts,
@@ -752,6 +751,7 @@ export default class Main extends BaseService<never> {
 
           const { annotation } =
             await this.enrichmentService.enrichTransactionSignature(
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               this.chainService.ethereumNetwork!,
               populatedRequest,
               2 /* TODO desiredDecimals should be configurable */
@@ -1107,7 +1107,7 @@ export default class Main extends BaseService<never> {
           },
         }
         if (resp.exportedPrivateKey) {
-          const success = await this.keyringService.passwordChallenge(password)
+          const success = await KeyringService.passwordChallenge(password)
           if (!success) {
             resp.exportedPrivateKey.error = "Invalid password"
             browser.runtime.sendMessage(resp)
@@ -1292,10 +1292,12 @@ export default class Main extends BaseService<never> {
         )
         this.store.dispatch(updateTransactionOptions(payload))
         const clear = () => {
+          // eslint-disable-next-line @typescript-eslint/no-use-before-define
           this.signingService.emitter.off("signingTxResponse", handleAndClear)
 
           transactionConstructionSliceEmitter.off(
             TransactionConstructionEventNames.SIGNATURE_REJECTED,
+            // eslint-disable-next-line @typescript-eslint/no-use-before-define
             rejectAndClear
           )
         }
@@ -1411,7 +1413,6 @@ export default class Main extends BaseService<never> {
 
   async resolveNameOnNetwork({
     name,
-    network,
   }: NameOnNetwork): Promise<string | undefined> {
     try {
       return await this.nameService.lookUpEthereumAddress(name /* , network */)

@@ -3,12 +3,8 @@ import "mockzilla-webextension"
 import { webcrypto } from "crypto"
 import { Browser } from "webextension-polyfill"
 import { MockzillaDeep } from "mockzilla"
-import {
-  Keyring,
-  KeyringType,
-  KeyType,
-  SerializedKeyring,
-} from "@sendnodes/hd-keyring"
+import { KeyringType, KeyType } from "@sendnodes/hd-keyring"
+import { CoinDenom as POKTCoinDenom } from "@pokt-network/pocket-js/dist/transactions/models/coin-denom"
 import KeyringService, {
   ExtensionKeyring,
   KeyringEvents,
@@ -16,7 +12,11 @@ import KeyringService, {
   MAX_OUTSIDE_IDLE_TIME,
 } from "../services/keyring"
 import { KeyringTypes } from "../types"
-import { EIP1559TransactionRequest } from "../networks"
+import {
+  EIP1559TransactionRequest,
+  POKTMsgType,
+  POKTTransactionRequest,
+} from "../networks"
 import { ETHEREUM, POCKET } from "../constants"
 import logger from "../lib/logger"
 
@@ -46,18 +46,41 @@ const validMnemonics = {
 }
 
 const validTransactionRequests: {
-  [key: string]: EIP1559TransactionRequest & { nonce: number }
+  [key: string]: {
+    ETHEREUM: EIP1559TransactionRequest & { nonce: number }
+    POCKET: POKTTransactionRequest
+  }
 } = {
   simple: {
-    from: "0x0",
-    nonce: 0,
-    type: 2,
-    input: "0x",
-    value: 0n,
-    maxFeePerGas: 0n,
-    maxPriorityFeePerGas: 0n,
-    gasLimit: 0n,
-    chainID: "0",
+    POCKET: {
+      // POKTMsgSend
+      txMsg: {
+        type: POKTMsgType.send,
+        value: {
+          fromAddress: "0x0",
+          toAddress: "0x1",
+          amount: "1000000000000000000",
+        },
+      },
+      chainID: "mainnet",
+      fee: "100000",
+      network: POCKET,
+      from: "0x0",
+      to: "0x1",
+      feeDenom: POKTCoinDenom.Upokt,
+      memo: "test",
+    },
+    ETHEREUM: {
+      from: "0x0",
+      nonce: 0,
+      type: 2,
+      input: "0x",
+      value: 0n,
+      maxFeePerGas: 0n,
+      maxPriorityFeePerGas: 0n,
+      gasLimit: 0n,
+      chainID: "0",
+    },
   },
 }
 
@@ -119,7 +142,7 @@ describe("KeyringService when uninitialized", () => {
       await expect(
         service.signTransaction(
           { address: "0x0", network: POCKET },
-          validTransactionRequests.simple
+          validTransactionRequests.simple.POCKET
         )
       ).rejects.toThrow("KeyringService must be unlocked.")
     })
@@ -197,11 +220,11 @@ describe("KeyringService when initialized", () => {
     await service.importKeyring(mnemonic.join(" "), "import")
   })
 
-  it("will return keyring IDs and addresses", async () => {
+  it("will return keyring fingerprint and addresses", async () => {
     const keyrings = service.getKeyrings()
     expect(keyrings).toHaveLength(1)
     expect(keyrings[0]).toMatchObject({
-      id: expect.anything(),
+      fingerprint: expect.anything(),
       addresses: expect.arrayContaining([
         expect.stringMatching(new RegExp(address, "i")),
       ]),
@@ -224,7 +247,7 @@ describe("KeyringService when initialized", () => {
     const keyrings = service.getKeyrings()
     expect(keyrings).toHaveLength(1)
     expect(keyrings[0]).toMatchObject({
-      id: expect.anything(),
+      fingerprint: expect.anything(),
       addresses: expect.arrayContaining([
         expect.stringMatching(new RegExp(originalAddress, "i")),
         expect.stringMatching(new RegExp(newAddress, "i")),
@@ -234,24 +257,25 @@ describe("KeyringService when initialized", () => {
 
   test("will sign a transaction", async () => {
     const transactionWithFrom = {
-      ...validTransactionRequests.simple,
+      ...validTransactionRequests.simple.POCKET,
       from: address,
     }
 
-    await expect(
-      service.signTransaction({ address, network: POCKET }, transactionWithFrom)
-    ).resolves.toMatchObject({
-      from: expect.stringMatching(new RegExp(address, "i")), // case insensitive match
-      r: expect.anything(),
-      s: expect.anything(),
-      v: expect.anything(),
+    const signedTransaction = await service.signTransaction(
+      { address, network: POCKET },
+      transactionWithFrom
+    )
+
+    await expect(signedTransaction).toMatchObject({
+      ...transactionWithFrom,
+      tx: expect.stringMatching(/^[0-9a-f]{2,}$/i),
     })
     // TODO assert correct recovered address
   })
 
   it("does not overwrite data if unlocked with the wrong password", async () => {
     const transactionWithFrom = {
-      ...validTransactionRequests.simple,
+      ...validTransactionRequests.simple.POCKET,
       from: address,
     }
 
@@ -459,7 +483,7 @@ describe("Keyring service when autolocking", () => {
       action: "signing a transaction",
       call: async () => {
         const transactionWithFrom = {
-          ...validTransactionRequests.simple,
+          ...validTransactionRequests.simple.POCKET,
           from: address,
         }
 
