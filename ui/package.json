@@ -29,6 +29,7 @@
   "dependencies": {
     "@ethersproject/abstract-provider": "^5.5.1",
     "@ethersproject/address": "^5.5.0",
+    "@ethersproject/bignumber": "^5.7.0",
     "@ethersproject/hdnode": "^5.5.0",
     "@ethersproject/units": "5.5.0",
     "@ethersproject/web": "^5.5.1",
@@ -38,6 +39,7 @@
     "@sendnodes/pokt-wallet-background": "0.0.1",
     "@sendnodes/provider-bridge-shared": "0.0.1",
     "@types/webextension-polyfill": "^0.9.0",
+    "@unstoppabledomains/resolution": "^8.3.3",
     "chart.js": "^3.9.1",
     "classnames": "^2.3.1",
     "dayjs": "^1.10.6",
@@ -59,6 +61,7 @@
     "webextension-polyfill": "^0.10.0"
   },
   "devDependencies": {
+    "@0xbigboss/webext-redux": "2.1.9",
     "@headlessui/react": "^1.6.6",
     "@heroicons/react": "^1.0.6",
     "@iconify/react": "^3.2.2",
@@ -66,7 +69,6 @@
     "@types/react-dom": "^17.0.9",
     "@types/react-transition-group": "^4.4.4",
     "clsx": "^1.2.1",
-    "react-devtools": "^4.24.4",
-    "@0xbigboss/webext-redux": "2.1.9"
+    "react-devtools": "^4.24.4"
   }
 }
