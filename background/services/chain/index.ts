@@ -128,10 +128,13 @@ type NetworkProviders = {
   [NetworkFamily.POKT]: PocketProvider
 }
 
-type RemoteConfig = {
+export type RemoteConfig = {
   [NetworkFamily.POKT]: {
     mainnet: {
       rpc: string
+    }
+    features?: {
+      [key: string]: boolean
     }
   }
 }

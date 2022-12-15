@@ -1,14 +1,7 @@
-import { abort } from "process"
+import type { RemoteConfig } from "@sendnodes/pokt-wallet-background/services/chain"
 import { useState, useEffect } from "react"
 
-export type RemoteConfig = {
-  easterEggs?: {
-    lucky?: boolean
-    zelda?: boolean
-  }
-}
-
-export function useRemoteConfig() {
+export default function useRemoteConfig(): RemoteConfig | null {
   const [remoteConfig, setRemoteConfig] = useState<RemoteConfig | null>(null)
   useEffect(() => {
     const check = async () => {

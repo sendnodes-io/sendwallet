@@ -3,11 +3,13 @@ import {
   isProbablyPOKTAddress,
   isValidPoktAddress,
 } from "@sendnodes/pokt-wallet-background/lib/utils"
-import { resolveNameOnNetwork } from "@sendnodes/pokt-wallet-background/redux-slices/accounts"
+// import { resolveNameOnNetwork } from "@sendnodes/pokt-wallet-background/redux-slices/accounts"
 import { selectCurrentAccount } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
 import { HexString } from "@sendnodes/pokt-wallet-background/types"
 import { useRef, useState } from "react"
-import { useBackgroundDispatch, useBackgroundSelector } from "./redux-hooks"
+import Resolution from "@unstoppabledomains/resolution"
+import { useBackgroundSelector } from "./redux-hooks"
+import useRemoteConfig from "./remote-config-hooks"
 
 /**
  * A handler that is called once a valid input is processed through a
@@ -141,13 +143,14 @@ export const useParsedValidation = <T>(
 export const useAddressOrNameValidation: AsyncValidationHook<
   HexString | undefined
 > = (onValidChange) => {
+  const remoteConfig = useRemoteConfig()
   const [errorMessage, setErrorMessage] = useState<string | undefined>()
   const [rawValue, setRawValue] = useState<string>("")
   // Flag and value tracked separately due to async handling.
   const [isValidating, setIsValidating] = useState(false)
   const validatingValue = useRef<string | undefined>(undefined)
-  const dispatch = useBackgroundDispatch()
   const currentAccount = useBackgroundSelector(selectCurrentAccount)
+
   const handleInputChange = async (newValue: string) => {
     setRawValue(newValue)
 
@@ -165,12 +168,10 @@ export const useAddressOrNameValidation: AsyncValidationHook<
         setIsValidating(true)
         validatingValue.current = trimmed
 
-        const resolved = (await dispatch(
-          resolveNameOnNetwork({
-            name: trimmed,
-            network: currentAccount.network,
-          })
-        )) as unknown as string
+        const resolution = new Resolution()
+        const resolved = (await resolution
+          .addr(trimmed, "ETH")
+          .catch(() => "")) as unknown as string
 
         // Asynchronicity means we could already have started validating another
         // value before this validation completed; ignore those cases.
@@ -187,9 +188,9 @@ export const useAddressOrNameValidation: AsyncValidationHook<
         }
       }
     }
+
     // POKT address validation
     if (currentAccount.network.family === "POKT") {
-      console.log("trimmed", trimmed)
       if (trimmed === "") {
         onValidChange(undefined)
       } else if (
@@ -197,6 +198,27 @@ export const useAddressOrNameValidation: AsyncValidationHook<
         isValidPoktAddress(trimmed)
       ) {
         onValidChange(trimmed)
+      } else if (remoteConfig?.POKT?.features?.unstoppableDomains) {
+        setIsValidating(true)
+        validatingValue.current = trimmed
+        const resolution = new Resolution()
+        const resolved = await resolution
+          .addr(trimmed, "POKT")
+          .catch(() => undefined)
+
+        // Asynchronicity means we could already have started validating another
+        // value before this validation completed; ignore those cases.
+        if (validatingValue.current === trimmed) {
+          if (resolved === undefined) {
+            onValidChange(undefined)
+            setErrorMessage("Address could not be found")
+          } else {
+            onValidChange(resolved)
+          }
+
+          setIsValidating(false)
+          validatingValue.current = undefined
+        }
       } else {
         onValidChange(undefined)
         setErrorMessage("Invalid Address")

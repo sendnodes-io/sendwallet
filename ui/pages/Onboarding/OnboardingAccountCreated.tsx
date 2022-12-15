@@ -4,18 +4,9 @@ import { OnboardingNewAccountIcon } from "../../components/Onboarding/Icons"
 import OnboardingAccountLayout from "../../components/Onboarding/OnboardingAccountLayout"
 import SharedButton from "../../components/Shared/SharedButton"
 import SharedSlideUpMenu from "../../components/Shared/SharedSlideUpMenu"
-import { useRemoteConfig } from "../../hooks/remote-config-hooks"
 
 export default function OnboardingAccountCreated() {
   const history = useHistory()
-  const [openEasterEgg, setEasterEggOpen] = useState(false)
-  const [easterEggAvailable, setEasterEggAvailable] = useState(false)
-  const remoteConfig = useRemoteConfig()
-
-  useEffect(() => {
-    const available = remoteConfig?.easterEggs?.lucky
-    setEasterEggAvailable(available !== undefined && available)
-  }, [remoteConfig])
 
   return (
     <div>
@@ -28,6 +19,7 @@ export default function OnboardingAccountCreated() {
               width="300"
               height="300"
               draggable="false"
+              alt="Account Created"
             />
           </>
         }
@@ -50,9 +42,6 @@ export default function OnboardingAccountCreated() {
                 height="128"
                 draggable="false"
                 className="inline-block"
-                onClick={() => {
-                  setEasterEggOpen(true)
-                }}
               />
               ).
             </h2>
@@ -68,19 +57,6 @@ export default function OnboardingAccountCreated() {
           </>
         }
       />
-      <SharedSlideUpMenu
-        title="☘️ Hello Lucky Friend ☘️"
-        size="auto"
-        isOpen={easterEggAvailable && openEasterEgg}
-        close={(e) => {
-          e?.stopPropagation()
-          setEasterEggOpen(false)
-        }}
-      >
-        <div style={{ textAlign: "center" }}>
-          Heroes get remembered, Legends never die
-        </div>
-      </SharedSlideUpMenu>
       <style jsx>
         {`
           div :global(.top) {

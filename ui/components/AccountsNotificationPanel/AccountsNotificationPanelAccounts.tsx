@@ -27,7 +27,6 @@ import {
 } from "../../hooks"
 import SharedAccountItemSummary from "../Shared/SharedAccountItemSummary"
 import AccountItemOptionsMenu from "../AccountItem/AccountItemOptionsMenu"
-import { useRemoteConfig } from "../../hooks/remote-config-hooks"
 
 type WalletTypeInfo = {
   title: string
@@ -172,16 +171,9 @@ export default function AccountsNotificationPanelAccounts({
     )
   }
 
-  const [easterEggAvailable, setEasterEggAvailable] = useState(false)
-  const remoteConfig = useRemoteConfig()
   const deriveAddressImporting = useBackgroundSelector(
     (state) => state.keyrings.deriving
   )
-
-  useEffect(() => {
-    const available = remoteConfig?.easterEggs?.zelda
-    setEasterEggAvailable(available !== undefined && available)
-  }, [remoteConfig])
 
   useEffect(() => {
     if (
@@ -300,6 +292,15 @@ export default function AccountsNotificationPanelAccounts({
                                 )
                                   updateCurrentAccount(normalizedAddress)
                               }}
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                  e.stopPropagation()
+                                  e.preventDefault()
+                                  updateCurrentAccount(normalizedAddress)
+                                }
+                              }}
+                              role="button"
+                              tabIndex={0}
                             >
                               <SharedAccountItemSummary
                                 key={normalizedAddress}
@@ -321,62 +322,6 @@ export default function AccountsNotificationPanelAccounts({
               }
             )
           })}
-        {showEasterEgg && easterEggAvailable && (
-          <section
-            style={{
-              height: "200rem",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "flex-end",
-            }}
-          >
-            <div
-              style={{
-                maxWidth: "18rem",
-                textAlign: "center",
-                margin: "auto auto 0",
-                paddingBottom: "4rem",
-              }}
-            >
-              <h4 style={{ fontSize: "1.25rem" }}>
-                It's dangerous to go alone!
-              </h4>
-              <p>Take some POKT with you!</p>
-
-              <pre
-                style={{
-                  fontSize: "1.5rem",
-                  display: "inline-block",
-                  width: "100%",
-                }}
-              >
-                {`🟫🟫🟫🟫🟫🟫🟫🟫🟫
-🟫➖➖➖➖➖➖➖🟫
-🟫➖➖➖➖➖➖➖🟫
-🟫➖🔥➖🧙‍♂️➖🔥➖🟫
-🟫➖➖➖`}
-                <img
-                  src="./icon-128-black.png"
-                  alt="SendWallet Extension Icon"
-                  width="128"
-                  height="128"
-                  draggable="false"
-                  className="pokt_pulse inline-block"
-                  style={{
-                    cursor: "pointer",
-                    height: "1.5rem",
-                    width: "1.5rem",
-                  }}
-                />
-                {`➖➖➖🟫
-🟫➖➖➖➖➖➖➖🟫
-🟫➖➖➖🧝➖➖➖🟫
-🟫🟫🟫🟫➖🟫🟫🟫🟫
-`}
-              </pre>
-            </div>
-          </section>
-        )}
       </div>
       <footer>
         <Link

@@ -38,10 +38,12 @@ import SharedInput from "../Shared/SharedInput"
 import SharedSplashScreen from "../Shared/SharedSplashScreen"
 import usePocketNetworkFee from "../../hooks/pocket-network/use-network-fee"
 import formatTokenAmount from "../../utils/formatTokenAmount"
+import SharedLoadingSpinner from "../Shared/SharedLoadingSpinner"
+import useRemoteConfig from "../../hooks/remote-config-hooks"
 
 // TODO: v0.2.0 handle multiple assets
 export default function Send(): ReactElement {
-  const poktNetworkFeeDecimalAmount = 0.01
+  const remoteConfig = useRemoteConfig()
   const maxMemoLength = 75
   const location = useLocation<FungibleAsset>()
   const [selectedAsset, setSelectedAsset] = useState<FungibleAsset>(
@@ -143,6 +145,7 @@ export default function Send(): ReactElement {
     gasLimit,
     history,
     areKeyringsUnlocked,
+    memo,
   ])
 
   const networkSettingsSaved = (networkSetting: NetworkFeeSettings) => {
@@ -190,7 +193,7 @@ export default function Send(): ReactElement {
         </div>
       </div>
       <div className="section">
-        <div className="form_input">
+        <div className="form_input mb-2">
           <SharedAssetInput
             autoFocus
             label="ENTER AMOUNT"
@@ -216,14 +219,22 @@ export default function Send(): ReactElement {
         </div>
       </div>
       <div className="section">
-        <div className="form_input address_form_input">
+        <div className="relative form_input address_form_input mb-10">
           <SharedInput
             label="ENTER ADDRESS"
             errorMessage={addressErrorMessage}
             onChange={(val) => handleAddressChange(val)}
           />
+          {remoteConfig?.POKT?.features?.unstoppableDomains && (
+            <div className="absolute -bottom-6">
+              {addressIsValidating && <SharedLoadingSpinner size="small" />}
+              {!addressIsValidating && destinationAddress && (
+                <span>{destinationAddress}</span>
+              )}
+            </div>
+          )}
         </div>
-        <div className="form_input">
+        <div className="form_input mb-4">
           <SharedInput
             label="TX MEMO"
             type="textarea"
@@ -347,7 +358,6 @@ export default function Send(): ReactElement {
 
           .form_input {
             width: 100%;
-            margin-bottom: 0.5rem;
             position: relative;
           }
 
