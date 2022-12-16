@@ -16,12 +16,14 @@ import HtmlWebpackPlugin from "html-webpack-plugin"
 import WebExtension from "webpack-target-webextension"
 import MiniCssExtractPlugin from "mini-css-extract-plugin"
 import { CleanWebpackPlugin } from "clean-webpack-plugin"
+import childProcess from "child_process"
+import StatoscopeWebpackPlugin from "@statoscope/webpack-plugin"
+import CssMinimizerPlugin from "css-minimizer-webpack-plugin"
 import WebExtensionArchivePlugin from "./build-utils/web-extension-archive-webpack-plugin"
 
-const StatoscopeWebpackPlugin = require("@statoscope/webpack-plugin").default
-const CssMinimizerPlugin = require("css-minimizer-webpack-plugin")
-
 const supportedBrowsers = ["brave", "chrome", "edge", "firefox", "opera"]
+
+const uiRoot = path.resolve(__dirname, "..", "..", "packages", "ui")
 
 // Replicated and adjusted for each target browser and the current build mode.
 const baseConfig: Configuration = {
@@ -55,7 +57,7 @@ const baseConfig: Configuration = {
       },
       {
         test: /\.(tsx|ts|jsx)?$/,
-        include: path.resolve(__dirname, "ui"),
+        include: uiRoot,
         exclude: /node_modules(?!\/@sendnodes)|webpack/,
 
         use: [
@@ -143,20 +145,24 @@ const baseConfig: Configuration = {
     new SizePlugin({}),
     new CopyPlugin({
       patterns: [
+        // {
+        //   from: path.resolve(uiRoot, "_locales"),
+        //   to: "_locales/",
+        //   globOptions: {
+        //     dot: true,
+        //     gitignore: true,
+        //   },
+        // },
         {
-          from: "./ui/_locales/",
-          to: "_locales/",
-          globOptions: {
-            dot: true,
-            gitignore: true,
+          from: path.resolve(uiRoot, "public"),
+          to() {
+            return "/[name][ext]"
           },
-        },
-        {
-          from: "./ui/public/",
           force: true,
           globOptions: {
             dot: true,
             gitignore: true,
+            ignore: [".DS_Store"],
           },
         },
       ],
@@ -166,7 +172,7 @@ const baseConfig: Configuration = {
       "process.env.APP_NAME": JSON.stringify(process.env.npm_package_name),
     }),
     new HtmlWebpackPlugin({
-      template: "ui/pages/base.html",
+      template: path.resolve(uiRoot, "pages", "base.html"),
       filename: "popup.html",
       chunks: ["ui"],
       inject: "body",
@@ -176,7 +182,7 @@ const baseConfig: Configuration = {
       htmlCssClass: "popup",
     }),
     new HtmlWebpackPlugin({
-      template: "ui/pages/base.html",
+      template: path.resolve(uiRoot, "pages", "base.html"),
       filename: "popout.html",
       chunks: ["ui"],
       inject: "body",
@@ -186,7 +192,7 @@ const baseConfig: Configuration = {
       htmlCssClass: "popup",
     }),
     new HtmlWebpackPlugin({
-      template: "ui/pages/base.html",
+      template: path.resolve(uiRoot, "pages", "base.html"),
       filename: "tab.html",
       chunks: ["tab-ui"],
       inject: "body",
@@ -196,7 +202,7 @@ const baseConfig: Configuration = {
       htmlCssClass: "tab",
     }),
     new HtmlWebpackPlugin({
-      template: "ui/pages/base.html",
+      template: path.resolve(uiRoot, "pages", "base.html"),
       filename: "stake.html",
       chunks: ["stake-ui"],
       inject: "body",
@@ -257,11 +263,11 @@ const modeConfigs: {
     },
   }),
   production: (browser) => {
-    const revision = require("child_process")
+    const revision = childProcess
       .execSync("git rev-parse --short HEAD")
       .toString()
       .trim()
-    const branch = require("child_process")
+    const branch = childProcess
       .execSync("git rev-parse --abbrev-ref HEAD")
       .toString()
       .trim()
@@ -354,7 +360,7 @@ export default (
           background: {
             entry: "background",
             // !! Add this to support manifest v3
-            manifest: browser == "chrome" ? 3 : 2,
+            manifest: browser === "chrome" ? 3 : 2,
             classicLoader: true,
           },
           weakRuntimeCheck: true,

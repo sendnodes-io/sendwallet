@@ -6,7 +6,7 @@ module.exports = {
       "@babel/env",
       {
         targets: {
-          browsers: ["chrome >= 90", "firefox >= 89"],
+          browsers: ["chrome >= 100", "firefox >= 100", "safari >= 16"],
         },
       },
     ],
@@ -14,5 +14,10 @@ module.exports = {
     // TS.
     "@babel/typescript",
   ],
-  babelrcRoots: [".", "ui/*", "background/*", "provider-bridge/*"],
+  babelrcRoots: [
+    ".",
+    "../../packages/ui/*",
+    "../../packages/background/*",
+    "../../packages/provider-bridge/*",
+  ],
 }

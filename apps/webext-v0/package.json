@@ -37,10 +37,6 @@
     "test": "jest",
     "postinstall": "patch-package"
   },
-  "workspaces": [
-    "apps/**",
-    "packages/**"
-  ],
   "dependencies": {
     "@ethersproject/providers": "5.5.3",
     "@fortawesome/fontawesome-free": "^5.15.2",
