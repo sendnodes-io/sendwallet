@@ -9,7 +9,9 @@ if (process.env.NODE_ENV === "development") {
   document.body.appendChild(liveReloadScript)
 }
 
-;(globalThis as any).PROCESS_ID = `ui-${Math.random()}.${new Date().getTime()}`
+;(
+  globalThis as unknown as Window & { PROCESS_ID: string }
+).PROCESS_ID = `ui-${Math.random()}.${new Date().getTime()}`
 
 /**
  * Load main UI script after browser renders everything

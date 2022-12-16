@@ -112,14 +112,6 @@ function backgroundMonitor(component: ComponentType<{ store: Store }>) {
     checking = false
   }, 15000)
 }
-
-export async function attachUiToRootElement(
-  component: ComponentType<{ store: Store }>
-): Promise<void> {
-  await checkServiceWorker(component)
-  await renderApp(component)
-}
-
 async function renderApp(
   component: ComponentType<{ store: Store }>,
   attempts = 0
@@ -161,4 +153,11 @@ async function renderApp(
       browser.runtime.reload()
     }
   }
+}
+
+export async function attachUiToRootElement(
+  component: ComponentType<{ store: Store }>
+): Promise<void> {
+  await checkServiceWorker(component)
+  await renderApp(component)
 }

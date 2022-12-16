@@ -1,3 +1,4 @@
+import logger from "@sendnodes/pokt-wallet-background/lib/logger"
 import type { RemoteConfig } from "@sendnodes/pokt-wallet-background/services/chain"
 import { useState, useEffect } from "react"
 
@@ -22,7 +23,7 @@ export default function useRemoteConfig(): RemoteConfig | null {
       }
     }
 
-    check().catch((e) => console.error("failed to load remote config", e))
+    check().catch((e) => logger.error("failed to load remote config", e))
   }, [])
 
   return remoteConfig

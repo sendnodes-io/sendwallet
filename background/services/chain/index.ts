@@ -242,7 +242,10 @@ export default class ChainService extends BaseService<Events> {
         handler: async () => {
           const response = await fetch(
             `${process.env.SENDWALLET_IO}api/remote-config`
-          )
+          ).catch((e) => {
+            logger.warn("Failed to fetch remote config", e)
+            return {} as Response
+          })
           if (response.status === 200) {
             const body: RemoteConfig = await response.json()
             if (body) {
