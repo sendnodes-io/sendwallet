@@ -23,6 +23,7 @@ import WebExtensionArchivePlugin from "./build-utils/web-extension-archive-webpa
 
 const supportedBrowsers = ["brave", "chrome", "edge", "firefox", "opera"]
 
+const outputDir = path.resolve(process.env.WEBPACK_OUTPUT_DIR || __dirname)
 const uiRoot = path.resolve(__dirname, "..", "..", "packages", "ui")
 
 // Replicated and adjusted for each target browser and the current build mode.
@@ -45,8 +46,9 @@ const baseConfig: Configuration = {
     rules: [
       {
         test: /\.(tsx|ts|jsx)?$/,
-        exclude: /node_modules(?!\/@sendnodes)|webpack/,
+        exclude: /node_modules(?!\/@sendnodes)|webpack|packages\/ui/,
         use: [
+          "thread-loader",
           {
             loader: "babel-loader",
             options: {
@@ -61,6 +63,7 @@ const baseConfig: Configuration = {
         exclude: /node_modules(?!\/@sendnodes)|webpack/,
 
         use: [
+          // "thread-loader", // does not support astroturf
           {
             loader: "babel-loader",
             options: {
@@ -77,8 +80,8 @@ const baseConfig: Configuration = {
       {
         test: /\.css$/i,
         exclude: /node_modules/,
-
         use: [
+          // "thread-loader",
           MiniCssExtractPlugin.loader,
           {
             loader: "css-loader",
@@ -88,6 +91,11 @@ const baseConfig: Configuration = {
           },
           {
             loader: "postcss-loader",
+            options: {
+              postcssOptions: {
+                config: path.resolve(__dirname, "postcss.config.js"),
+              },
+            },
           },
         ],
       },
@@ -145,19 +153,18 @@ const baseConfig: Configuration = {
     new SizePlugin({}),
     new CopyPlugin({
       patterns: [
-        // {
-        //   from: path.resolve(uiRoot, "_locales"),
-        //   to: "_locales/",
-        //   globOptions: {
-        //     dot: true,
-        //     gitignore: true,
-        //   },
-        // },
         {
-          from: path.resolve(uiRoot, "public"),
-          to() {
-            return "/[name][ext]"
+          context: uiRoot,
+          from: "_locales",
+          to: "_locales/",
+          globOptions: {
+            dot: true,
+            gitignore: true,
           },
+        },
+        {
+          context: uiRoot,
+          from: "./public",
           force: true,
           globOptions: {
             dot: true,
@@ -276,7 +283,7 @@ const modeConfigs: {
       devtool: false,
       plugins: [
         new WebExtensionArchivePlugin({
-          filename: `SendWallet-${branch.replaceAll(/[.\/]/gi, "-")}-${
+          filename: `SendWallet-${branch.replaceAll(/[./]/gi, "-")}-${
             date.toISOString().split("T")[0]
           }-${revision}-${browser}`,
         }),
@@ -301,8 +308,7 @@ export default (
   { mode }: WebpackOptionsNormalized
 ): webpack.Configuration[] =>
   supportedBrowsers.map((browser) => {
-    const distPath = path.join(__dirname, "dist", browser)
-
+    const distPath = path.join(outputDir, "dist", browser)
     // Try to find a build mode config adjustment and call it with the browser.
     const modeSpecificAdjuster =
       typeof mode !== "undefined" ? modeConfigs[mode] : undefined
