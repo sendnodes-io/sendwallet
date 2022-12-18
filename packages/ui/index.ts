@@ -18,9 +18,9 @@ function invokeServiceWorkerUpdateFlow(
   component: ComponentType<{ store: Store }>
 ) {
   logger.debug("SendWallet needs to be restarted to continue")
-  if (confirm("SendWallet needs to be restarted to continue. Restart now?")) {
-    browser.runtime.reload()
-  }
+  // if (confirm("SendWallet needs to be restarted to continue. Restart now?")) {
+  //   browser.runtime.reload()
+  // }
 }
 
 async function checkServiceWorker(component: ComponentType<{ store: Store }>) {

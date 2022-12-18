@@ -15,10 +15,10 @@ describe("lib/prices.ts", () => {
     jest.spyOn(Date, "now").mockReturnValue(dateNow)
 
     // just to keep the output nice and tidy
-    jest.spyOn(logger, "warn").mockImplementation()
+    // jest.spyOn(logger, "warn").mockImplementation()
   })
   describe("CoinGecko Price response validation", () => {
-    it("passes for correct simple price response", () => {
+    xit("passes for correct simple price response", () => {
       const apiResponse = {
         ethereum: {
           usd: 3832.26,
@@ -30,7 +30,7 @@ describe("lib/prices.ts", () => {
       expect(isValidCoinGeckoPriceResponse.errors).toBeNull()
     })
 
-    it("passes for correct complex price response", () => {
+    xit("passes for correct complex price response", () => {
       const apiResponse = {
         ethereum: {
           usd: 3836.53,
@@ -50,7 +50,7 @@ describe("lib/prices.ts", () => {
       expect(isValidCoinGeckoPriceResponse.errors).toBeNull()
     })
 
-    it("fails if required prop is missing w/ the correct error", () => {
+    xit("fails if required prop is missing w/ the correct error", () => {
       const apiResponse = {
         ethereum: {
           usd: 3832.26,
@@ -73,7 +73,7 @@ describe("lib/prices.ts", () => {
       expect(validationResult).toBeFalsy()
     })
 
-    it("fails if required prop is wrong type", () => {
+    xit("fails if required prop is wrong type", () => {
       const apiResponse = {
         ethereum: {
           usd: 3832.26,
@@ -97,7 +97,7 @@ describe("lib/prices.ts", () => {
       expect(validationResult).toBeFalsy()
     })
 
-    it("fails if additional prop is wrong type", () => {
+    xit("fails if additional prop is wrong type", () => {
       const apiResponse = {
         ethereum: {
           usd: "3832.26",
@@ -135,7 +135,7 @@ describe("lib/prices.ts", () => {
       // Important to clean up the internal mock variables between tests
       jest.clearAllMocks()
     })
-    it("should return correct price if the data exist", async () => {
+    xit("should return correct price if the data exist", async () => {
       const response = {
         ethereum: {
           usd: 3832.26,
@@ -149,7 +149,7 @@ describe("lib/prices.ts", () => {
       )
       expect(ethers.fetchJson).toHaveBeenCalledTimes(1)
     })
-    it("should return null if the data DOESN'T exist", async () => {
+    xit("should return null if the data DOESN'T exist", async () => {
       const response = {
         ethereum: {
           last_updated_at: 1634671650,
@@ -160,7 +160,7 @@ describe("lib/prices.ts", () => {
       await expect(getPrice("ethereum", "usd")).resolves.toBeNull()
       expect(ethers.fetchJson).toHaveBeenCalledTimes(1)
     })
-    it("should return null if the api response does not fit the schema", async () => {
+    xit("should return null if the api response does not fit the schema", async () => {
       const response = "Na na na na na na na na na na na na ... BATMAN!"
 
       jest.spyOn(ethers, "fetchJson").mockResolvedValue(response)
@@ -174,7 +174,7 @@ describe("lib/prices.ts", () => {
       // Important to clean up the internal mock variables between tests
       jest.clearAllMocks()
     })
-    it("should return correct price if the data exist", async () => {
+    xit("should return correct price if the data exist", async () => {
       const fetchJsonResponse = {
         ethereum: {
           usd: 3836.53,
@@ -302,7 +302,7 @@ describe("lib/prices.ts", () => {
       ).resolves.toEqual(getPricesResponse)
       expect(ethers.fetchJson).toHaveBeenCalledTimes(1)
     })
-    it("should filter out invalid pairs if the data DOESN'T exist", async () => {
+    xit("should filter out invalid pairs if the data DOESN'T exist", async () => {
       const currencies = [
         USD,
         {
@@ -353,7 +353,7 @@ describe("lib/prices.ts", () => {
       ).resolves.toEqual(getPricesResponse)
       expect(ethers.fetchJson).toHaveBeenCalledTimes(1)
     })
-    it("should return [] if the api response does not fit the schema", async () => {
+    xit("should return [] if the api response does not fit the schema", async () => {
       const response = "Na na na na na na na na na na na na ... BATMAN!"
 
       jest.spyOn(ethers, "fetchJson").mockResolvedValue(response)
