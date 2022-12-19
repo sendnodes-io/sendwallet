@@ -70,7 +70,6 @@
     "@types/lodash": "^4.14.182",
     "@types/react-dom": "^17.0.9",
     "@types/react-transition-group": "^4.4.4",
-    "clsx": "^1.2.1",
-    "react-devtools": "^4.24.4"
+    "clsx": "^1.2.1"
   }
 }

@@ -10,3 +10,12 @@ app/extension-scripts/api/playground/
 .vscode
 stats.json
 .idea
+
+# not using Zero-Installs
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions

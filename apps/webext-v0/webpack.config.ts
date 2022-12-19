@@ -53,6 +53,7 @@ const baseConfig: Configuration = {
             loader: "babel-loader",
             options: {
               cacheDirectory: true,
+              rootMode: "upward",
             },
           },
         ],
@@ -68,6 +69,7 @@ const baseConfig: Configuration = {
             loader: "babel-loader",
             options: {
               cacheDirectory: true,
+              rootMode: "upward",
             },
           },
           {

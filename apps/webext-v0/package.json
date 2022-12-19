@@ -1,10 +1,10 @@
 {
-  "name": "@sendnodes/pokt-wallet",
+  "name": "@sendnodes/sendwallet-webext",
   "private": true,
   "version": "0.4.2",
   "description": "Secure your POKT with a modern and simple crypto wallet. It's your POKT, store it safely.",
   "main": "index.js",
-  "repository": "git@github.com:sendnodes/pokt-wallet.git",
+  "repository": "git@github.com:sendnodes/sendwallet.git",
   "authors": [
     "Dire <dire@sendnodes.io>",
     "BigBoss <bigboss@sendnodes.io>"
@@ -106,6 +106,9 @@
     "postcss-preset-env": "^7.7.0",
     "prettier": "^2.5.1",
     "process": "^0.11.10",
+    "react-devtools": "^4.24.4",
+    "remotedev": "^0.2.9",
+    "remotedev-server": "^0.3.1",
     "size-plugin": "^2.0.2",
     "stream-browserify": "^3.0.0",
     "stream-http": "^3.2.0",
