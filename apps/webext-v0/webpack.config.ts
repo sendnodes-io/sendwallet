@@ -15,13 +15,19 @@ import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin"
 import HtmlWebpackPlugin from "html-webpack-plugin"
 import WebExtension from "webpack-target-webextension"
 import MiniCssExtractPlugin from "mini-css-extract-plugin"
-import { CleanWebpackPlugin } from "clean-webpack-plugin"
+// import { CleanWebpackPlugin } from "clean-webpack-plugin"
 import childProcess from "child_process"
 import StatoscopeWebpackPlugin from "@statoscope/webpack-plugin"
 import CssMinimizerPlugin from "css-minimizer-webpack-plugin"
 import WebExtensionArchivePlugin from "./build-utils/web-extension-archive-webpack-plugin"
 
-const supportedBrowsers = ["brave", "chrome", "edge", "firefox", "opera"]
+const supportedBrowsers = [
+  // "brave",
+  "chrome",
+  // "edge",
+  "firefox",
+  // "opera"
+]
 
 const outputDir = path.resolve(process.env.WEBPACK_OUTPUT_DIR || __dirname)
 const uiRoot = path.resolve(__dirname, "..", "..", "packages", "ui")
@@ -45,7 +51,7 @@ const baseConfig: Configuration = {
   module: {
     rules: [
       {
-        test: /\.(tsx|ts|jsx)?$/,
+        test: /\.(ts)?$/,
         exclude: /node_modules(?!\/@sendnodes)|webpack|packages\/ui/,
         use: [
           "thread-loader",
@@ -122,15 +128,20 @@ const baseConfig: Configuration = {
     },
   },
   plugins: [
-    new CleanWebpackPlugin(),
+    // new CleanWebpackPlugin({
+    //   dry: true,
+    //   dangerouslyAllowCleanPatternsOutsideProject: true,
+    //   cleanOnceBeforeBuildPatterns: [path.join(outputDir, "dist")],
+    // }),
     new MiniCssExtractPlugin({
       filename: "[name].css",
       chunkFilename: "[id].css",
     }),
     new Dotenv({
-      defaults: true,
+      path: "../../.env",
+      defaults: "../../.env.defaults",
       systemvars: true,
-      safe: true,
+      safe: "../../.env.example",
     }) as unknown as WebpackPluginInstance,
     // background runs in a service worker and needs a global window object
     new webpack.BannerPlugin({
@@ -140,6 +151,7 @@ const baseConfig: Configuration = {
     }),
     new ForkTsCheckerWebpackPlugin({
       typescript: {
+        configFile: path.resolve(__dirname, "..", "..", "tsconfig.json"),
         diagnosticOptions: {
           semantic: true,
           syntactic: true,
@@ -358,6 +370,7 @@ export default (
                     .filter((assetData) => assetData.trim().length > 0)
                     .map((assetData) => JSON.parse(assetData))
                 )
+                // Add the browser-specific extension ID to the manifest.
                 return JSON.stringify(combinedManifest, null, 2)
               },
             } as unknown as ObjectPattern, // ObjectPattern doesn't include transformAll in current types
@@ -376,5 +389,15 @@ export default (
         }),
       ],
     })
+    // console.log(
+    //   "Building for browser: ",
+    //   browser,
+    //   " in mode: ",
+    //   mode,
+    //   " to: ",
+    //   distPath,
+    //   " with config: ",
+    //   mergedConfig
+    // )
     return mergedConfig
   })

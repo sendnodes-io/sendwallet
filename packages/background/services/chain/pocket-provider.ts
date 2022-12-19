@@ -552,8 +552,9 @@ export default class PocketProvider extends BaseService<ServiceLifecycleEvents> 
           page,
           perPage,
           60000,
-          true,
-          "asc"
+          true
+          // FIXME: this is a bug in the RPC, it should be "desc" but it's "asc"
+          // "asc"
         )) as any
         if (result instanceof RpcError) {
           // if (this._emitted[`t:${transactionHash}`] == null) {
