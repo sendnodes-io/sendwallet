@@ -1,25 +1,16 @@
-import "@sendnodes/pokt-wallet-ui/public/variables.css"
-import "@sendnodes/pokt-wallet-ui/public/index.css"
-import "@sendnodes/pokt-wallet-ui/public/popup.css"
+import "../global.css"
 
-// inject extension reload if dev
-if (process.env.NODE_ENV === "development") {
-  const liveReloadScript = document.createElement("script")
-  liveReloadScript.src = "./dev-utils/extension-reload.js"
-  document.body.appendChild(liveReloadScript)
+import { Provider } from "app/provider"
+import { HomeScreen } from "app/features/home/screen"
+import React, { ReactElement } from "react"
+import ReactDOM from "react-dom"
+
+const rootElement = document.getElementById("pokt-wallet-root")
+
+if (!rootElement) {
+  throw new Error(
+    "Failed to find #pokt-wallet-root element; page structure changed?"
+  )
 }
 
-;(
-  globalThis as unknown as Window & { PROCESS_ID: string }
-).PROCESS_ID = `ui-${Math.random()}.${new Date().getTime()}`
-
-/**
- * Load main UI script after browser renders everything
- */
-;(async () => {
-  const { attachUiToRootElement, Popup } = await import(
-    "@sendnodes/pokt-wallet-ui"
-  )
-  // attach UI to root element
-  await attachUiToRootElement(Popup)
-})()
+ReactDOM.render(React.createElement(HomeScreen), rootElement)

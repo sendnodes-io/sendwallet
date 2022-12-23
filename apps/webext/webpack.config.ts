@@ -9,7 +9,6 @@ import { merge as webpackMerge } from "webpack-merge"
 import Dotenv from "dotenv-webpack"
 import SizePlugin from "size-plugin"
 import TerserPlugin from "terser-webpack-plugin"
-import LiveReloadPlugin from "webpack-livereload-plugin"
 import CopyPlugin, { ObjectPattern } from "copy-webpack-plugin"
 import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin"
 import HtmlWebpackPlugin from "html-webpack-plugin"
@@ -54,8 +53,8 @@ const baseConfig: Configuration = {
   module: {
     rules: [
       {
-        test: /\.(ts)?$/,
-        exclude: /node_modules(?!\/@sendnodes)|webpack|packages\/ui/,
+        test: /\.(tsx|ts|jsx)?$/,
+        exclude: /node_modules(?!\/@sendnodes)|webpack/,
         use: [
           "thread-loader",
           {
@@ -67,27 +66,6 @@ const baseConfig: Configuration = {
           },
         ],
       },
-      {
-        test: /\.(tsx|ts|jsx)?$/,
-        include: uiRoot,
-        exclude: /node_modules(?!\/@sendnodes)|webpack/,
-
-        use: [
-          // "thread-loader", // does not support astroturf
-          {
-            loader: "babel-loader",
-            options: {
-              cacheDirectory: true,
-              rootMode: "upward",
-            },
-          },
-          {
-            loader: "astroturf/loader",
-            options: { extension: ".module.css" },
-          },
-        ],
-      },
-
       {
         test: /\.css$/i,
         exclude: /node_modules/,
@@ -119,7 +97,16 @@ const baseConfig: Configuration = {
     environment: { dynamicImport: true },
   },
   resolve: {
-    extensions: [".tsx", ".ts", ".js", ".jsx"],
+    extensions: [
+      ".web.ts",
+      ".web.tsx",
+      ".tsx",
+      ".ts",
+      ".js",
+      ".jsx",
+      ".web.js",
+      ".web.jsx",
+    ],
     fallback: {
       stream: require.resolve("stream-browserify"),
       process: require.resolve("process/browser"),
@@ -128,6 +115,9 @@ const baseConfig: Configuration = {
       path: require.resolve("path-browserify"),
       https: require.resolve("https-browserify"),
       http: require.resolve("stream-http"),
+    },
+    alias: {
+      "react-native$": "react-native-web",
     },
   },
   plugins: [
