@@ -1,3 +1,7 @@
+/// <reference types="styled-jsx" />
+
+declare module "styled-jsx/style"
+
 interface Window {
   pocketNetwork?: {
     isPoktWallet: boolean

@@ -19,7 +19,7 @@ import MiniCssExtractPlugin from "mini-css-extract-plugin"
 import childProcess from "child_process"
 import StatoscopeWebpackPlugin from "@statoscope/webpack-plugin"
 import CssMinimizerPlugin from "css-minimizer-webpack-plugin"
-import WebExtensionArchivePlugin from "./build-utils/web-extension-archive-webpack-plugin"
+import WebExtensionArchivePlugin from "build-utils/web-extension-archive-webpack-plugin"
 
 const supportedBrowsers = [
   // "brave",
@@ -36,7 +36,10 @@ const uiRoot = path.resolve(__dirname, "..", "..", "packages", "ui")
 const baseConfig: Configuration = {
   devtool: "source-map",
   watchOptions: {
-    ignored: "**/node_modules",
+    // for some systems, watching many files can result in a lot of CPU or memory usage
+    // https://webpack.js.org/configuration/watch/#watchoptionsignored
+    // don't use this pattern, if you have a monorepo with linked packages
+    ignored: /node_modules/,
   },
   stats: "errors-only",
   entry: {
@@ -151,7 +154,7 @@ const baseConfig: Configuration = {
     }),
     new ForkTsCheckerWebpackPlugin({
       typescript: {
-        configFile: path.resolve(__dirname, "..", "..", "tsconfig.json"),
+        configFile: path.resolve(__dirname, "tsconfig.json"),
         diagnosticOptions: {
           semantic: true,
           syntactic: true,
@@ -256,17 +259,7 @@ const modeConfigs: {
             "stake-ui": ["react-devtools", "./src/stake-ui.ts"],
           }
         : undefined,
-    plugins: [
-      new LiveReloadPlugin({
-        useSourceHash: true,
-        delay: 400,
-      }),
-      new CopyPlugin({
-        patterns: ["dev-utils/*.js"],
-        // Forced cast below due to an incompatibility between the webpack version refed in @types/copy-webpack-plugin and our local webpack version.
-      }) as unknown as WebpackPluginInstance,
-      new StatoscopeWebpackPlugin(),
-    ],
+    plugins: [new StatoscopeWebpackPlugin()],
     optimization: {
       minimizer: [
         new TerserPlugin({
@@ -300,7 +293,7 @@ const modeConfigs: {
           filename: `SendWallet-${branch.replaceAll(/[./]/gi, "-")}-${
             date.toISOString().split("T")[0]
           }-${revision}-${browser}`,
-        }),
+        }) as unknown as WebpackPluginInstance,
       ],
       optimization: {
         minimizer: [

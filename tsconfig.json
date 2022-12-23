@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "esnext",
-    "lib": ["esnext", "DOM", "WebWorker"],
+    "lib": ["esnext"],
     "declaration": false,
     "module": "esnext",
     "moduleResolution": "node",
@@ -15,6 +15,5 @@
     "compilerOptions": {
       "module": "CommonJS"
     }
-  },
-  "exclude": ["packages/dev-utils"]
+  }
 }

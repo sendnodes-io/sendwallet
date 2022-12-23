@@ -1,5 +1,5 @@
 {
-  "name": "@sendnodes/sendwallet-webext",
+  "name": "@sendnodes/sendwallet-webext-legacy",
   "private": true,
   "version": "0.4.2",
   "description": "Secure your POKT with a modern and simple crypto wallet. It's your POKT, store it safely.",

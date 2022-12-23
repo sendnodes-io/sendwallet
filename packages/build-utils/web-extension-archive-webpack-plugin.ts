@@ -1,7 +1,7 @@
 import fs from "fs"
 import path from "path"
 import archiver from "archiver"
-import { Compiler, Stats } from "webpack"
+import type { Compiler, Stats, WebpackPluginInstance } from "webpack"
 
 const PLUGIN_NAME = "WebextArchive"
 
@@ -54,7 +54,7 @@ function webextArchiveCreator(
   }
 }
 
-export default class WebextArchive {
+export default class WebextArchive implements WebpackPluginInstance {
   constructor(private options: ArchiveOptions) {}
 
   apply(compiler: Compiler): void {

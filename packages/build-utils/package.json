@@ -1,0 +1,9 @@
+{
+  "name": "build-utils",
+  "devDependencies": {
+    "@types/archiver": "^5.1.0",
+    "archiver": "^5.3.0",
+    "webpack": "^5.72.1"
+  },
+  "packageManager": "yarn@3.3.0"
+}
