@@ -1,3 +1,4 @@
+import "react-devtools"
 window.global ||= window
 globalThis.global ||= globalThis
 
@@ -5,7 +6,7 @@ import { Platform } from "react-native"
 
 import React from "react"
 // import { NavigationContainer } from "@react-navigation/native"
-// import { NativeNavigation } from "app/navigation/native"
+import { NativeNavigation } from "app/navigation/native"
 import { HomeScreen } from "app/features/home/screen"
 import { Provider } from "app/provider"
 // import { useFonts } from "expo-font"
@@ -31,11 +32,7 @@ export default function App() {
 
   return (
     <Provider>
-      <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen name="Home" component={HomeScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <NativeNavigation />
     </Provider>
   )
 }

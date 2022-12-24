@@ -8,8 +8,7 @@ export function Provider({
 }: Omit<TamaguiProviderProps, "config">) {
   return (
     <TamaguiProvider config={config} defaultTheme="light" {...rest}>
-      {/* <NavigationProvider>{children}</NavigationProvider> */}
-      {children}
+      <NavigationProvider>{children}</NavigationProvider>
     </TamaguiProvider>
   )
 }

@@ -19,5 +19,8 @@
     "{{firefox}}.scripts": [
       "src/background.ts"
     ]
+  },
+  "{{chrome}}.content_security_policy": {
+    "extension_pages": "object-src 'self'; script-src 'self' http://localhost:8097 'wasm-unsafe-eval';"
   }
 }
