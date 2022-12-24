@@ -43,10 +43,7 @@ const baseConfig: Configuration = {
   stats: "errors-only",
   entry: {
     ui: "./src/ui.ts",
-    "tab-ui": "./src/tab-ui.ts",
-    "stake-ui": "./src/stake-ui.ts",
     background: "./src/background.ts",
-    "background-ui": "./src/background-ui.ts",
     "window-provider": "./src/window-provider.ts",
     "provider-bridge": "./src/provider-bridge.ts",
   },
@@ -54,14 +51,34 @@ const baseConfig: Configuration = {
     rules: [
       {
         test: /\.(tsx|ts|jsx)?$/,
-        exclude: /node_modules(?!\/@sendnodes)|webpack/,
+        exclude: /webpack/,
         use: [
           "thread-loader",
           {
             loader: "babel-loader",
             options: {
               cacheDirectory: true,
-              rootMode: "upward",
+              presets: [
+                [
+                  "@babel/env",
+                  {
+                    targets: {
+                      browsers: [
+                        "chrome >= 100",
+                        "firefox >= 100",
+                        "safari >= 16",
+                      ],
+                    },
+                  },
+                ],
+                // Because babel is used by Webpack to load the Webpack config, which is
+                // TS.
+                "@babel/typescript",
+              ],
+              plugins: [
+                ["react-native-web", { commonjs: true }],
+                ["nativewind/babel", { allowModuleTransform: ["moti"] }],
+              ],
             },
           },
         ],
