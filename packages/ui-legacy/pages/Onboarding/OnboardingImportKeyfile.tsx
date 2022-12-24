@@ -31,7 +31,7 @@ import {
 } from "../../hooks"
 import { OnboardingImportRecoveryPhraseIcon } from "../../components/Onboarding/Icons"
 import SharedInput from "../../components/Shared/SharedInput"
-import { KeyringTypes } from "../../../background/types"
+import { KeyringTypes } from "@sendnodes/pokt-wallet-background/types"
 
 export default function OnboardingImportKeyfile() {
   const rootRef = useRef<HTMLDivElement>(null)

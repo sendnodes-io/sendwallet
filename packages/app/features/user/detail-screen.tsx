@@ -1,17 +1,14 @@
-import { createParam } from 'solito'
-import { TextLink } from 'solito/link'
-import { Text } from 'app/design/typography'
-import { View } from 'app/design/view'
+import { Button, Paragraph, YStack } from '@my/ui'
+import { ChevronLeft } from '@tamagui/lucide-icons'
+import React from 'react'
 
-const { useParam } = createParam<{ id: string }>()
-
-export function UserDetailScreen() {
-  const [id] = useParam('id')
-
+export function UserDetailScreen({ route, navigation }) {
   return (
-    <View className="flex-1 items-center justify-center">
-      <Text className="mb-4 text-center font-bold">{`User ID: ${id}`}</Text>
-      <TextLink href="/">👈 Go Home</TextLink>
-    </View>
+    <YStack f={1} jc="center" ai="center" space>
+      <Paragraph ta="center" fow="800">{`User ID: ${route.id}`}</Paragraph>
+      <Button onPress={() => navigation.navigate('home')} icon={ChevronLeft}>
+        Go Home
+      </Button>
+    </YStack>
   )
 }

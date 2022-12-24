@@ -1,10 +1,15 @@
-import { NavigationProvider } from './navigation'
-import { SafeArea } from './safe-area'
+import config from "../tamagui.config"
+import { NavigationProvider } from "./navigation"
+import { TamaguiProvider, TamaguiProviderProps } from "@my/ui"
 
-export function Provider({ children }: { children: React.ReactNode }) {
+export function Provider({
+  children,
+  ...rest
+}: Omit<TamaguiProviderProps, "config">) {
   return (
-    <SafeArea>
-      <NavigationProvider>{children}</NavigationProvider>
-    </SafeArea>
+    <TamaguiProvider config={config} defaultTheme="light" {...rest}>
+      {/* <NavigationProvider>{children}</NavigationProvider> */}
+      {children}
+    </TamaguiProvider>
   )
 }

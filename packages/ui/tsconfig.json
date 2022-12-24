@@ -1,8 +1,10 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../tsconfig",
+  "include": ["src"],
   "compilerOptions": {
-    "target": "esnext",
-    "lib": ["esnext", "dom", "WebWorker"]
+    "composite": true,
+    "esModuleInterop": true,
+    "jsx": "preserve"
   },
-  "include": ["./**/*.ts"]
+  "references": []
 }
