@@ -5180,7 +5180,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jridgewell/gen-mapping@npm:^0.3.2":
+"@jridgewell/gen-mapping@npm:^0.3.0, @jridgewell/gen-mapping@npm:^0.3.2":
   version: 0.3.2
   resolution: "@jridgewell/gen-mapping@npm:0.3.2"
   dependencies:
@@ -5191,7 +5191,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jridgewell/resolve-uri@npm:^3.0.3":
+"@jridgewell/resolve-uri@npm:3.1.0, @jridgewell/resolve-uri@npm:^3.0.3":
   version: 3.1.0
   resolution: "@jridgewell/resolve-uri@npm:3.1.0"
   checksum: b5ceaaf9a110fcb2780d1d8f8d4a0bfd216702f31c988d8042e5f8fbe353c55d9b0f55a1733afdc64806f8e79c485d2464680ac48a0d9fcadb9548ee6b81d267
@@ -5205,7 +5205,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jridgewell/sourcemap-codec@npm:^1.4.10":
+"@jridgewell/source-map@npm:^0.3.2":
+  version: 0.3.2
+  resolution: "@jridgewell/source-map@npm:0.3.2"
+  dependencies:
+    "@jridgewell/gen-mapping": ^0.3.0
+    "@jridgewell/trace-mapping": ^0.3.9
+  checksum: 1b83f0eb944e77b70559a394d5d3b3f98a81fcc186946aceb3ef42d036762b52ef71493c6c0a3b7c1d2f08785f53ba2df1277fe629a06e6109588ff4cdcf7482
+  languageName: node
+  linkType: hard
+
+"@jridgewell/sourcemap-codec@npm:1.4.14, @jridgewell/sourcemap-codec@npm:^1.4.10":
   version: 1.4.14
   resolution: "@jridgewell/sourcemap-codec@npm:1.4.14"
   checksum: 61100637b6d173d3ba786a5dff019e1a74b1f394f323c1fee337ff390239f053b87266c7a948777f4b1ee68c01a8ad0ab61e5ff4abb5a012a0b091bec391ab97
@@ -5219,6 +5229,16 @@ __metadata:
     "@jridgewell/resolve-uri": ^3.0.3
     "@jridgewell/sourcemap-codec": ^1.4.10
   checksum: d89597752fd88d3f3480845691a05a44bd21faac18e2185b6f436c3b0fd0c5a859fbbd9aaa92050c4052caf325ad3e10e2e1d1b64327517471b7d51babc0ddef
+  languageName: node
+  linkType: hard
+
+"@jridgewell/trace-mapping@npm:^0.3.14":
+  version: 0.3.17
+  resolution: "@jridgewell/trace-mapping@npm:0.3.17"
+  dependencies:
+    "@jridgewell/resolve-uri": 3.1.0
+    "@jridgewell/sourcemap-codec": 1.4.14
+  checksum: 9d703b859cff5cd83b7308fd457a431387db5db96bd781a63bf48e183418dd9d3d44e76b9e4ae13237f6abeeb25d739ec9215c1d5bfdd08f66f750a50074a339
   languageName: node
   linkType: hard
 
@@ -6970,17 +6990,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tamagui/next-theme@npm:^1.0.1-rc.9":
-  version: 1.0.1-rc.9
-  resolution: "@tamagui/next-theme@npm:1.0.1-rc.9"
-  dependencies:
-    "@tamagui/use-event": ^1.0.1-rc.9
-  peerDependencies:
-    react: ^18.2.0
-  checksum: 17b279901deb566aa97c23b5514ff78ff3c34392fc022294d460918944585a05150a878171587851be810a73de163268ec118685d87ed3287580b8f0dbf76f61
-  languageName: node
-  linkType: hard
-
 "@tamagui/polyfill-dev@npm:^1.0.1-rc.6":
   version: 1.0.1-rc.6
   resolution: "@tamagui/polyfill-dev@npm:1.0.1-rc.6"
@@ -7082,6 +7091,13 @@ __metadata:
   peerDependencies:
     react-native: "*"
   checksum: e55756de6a5d5aa5e3a7d1cb6259cc10dfe5c4e0c60979d61454ce91d754bbbb5e5a61b69fe5b9849399fc8857d2413636ae8fa8464974a0a8f2ce144718ca70
+  languageName: node
+  linkType: hard
+
+"@tamagui/react-native-svg@npm:^1.0.1-rc.9":
+  version: 1.0.1-rc.9
+  resolution: "@tamagui/react-native-svg@npm:1.0.1-rc.9"
+  checksum: cb1560ee628d0e091b7cb2c907f60ddc796214e094f4d85e07dd36fa79b07c9ac7f1371daaabb47846960e1b8d133b8eaddc744ff9bde2c5f5360757a735404b
   languageName: node
   linkType: hard
 
@@ -7454,15 +7470,6 @@ __metadata:
   peerDependencies:
     react: ^18.2.0
   checksum: 57cb8b0dea9c4581173f7bc9c1a1114c835aefca05eba8763528b37bb80d59a1430f9c37ccad13adb57a39db0734bc1abcbdc8a2d94e4ffd4cfa45a4b185abec
-  languageName: node
-  linkType: hard
-
-"@tamagui/use-event@npm:^1.0.1-rc.9":
-  version: 1.0.1-rc.9
-  resolution: "@tamagui/use-event@npm:1.0.1-rc.9"
-  peerDependencies:
-    react: ^18.2.0
-  checksum: 3895b0452170c9933cfeb3f854f5f10f46f7170e41c93bc79b7ebeb2e106bcfc161b9206d14d4f474387f17480679fb528313c34f58e221eafb1a7da9a381441
   languageName: node
   linkType: hard
 
@@ -8313,6 +8320,15 @@ __metadata:
   version: 0.9.0
   resolution: "@types/webextension-polyfill@npm:0.9.0"
   checksum: 7e266d0bb08ccdb6d7f49e1312600ae7471cfce053dc5843a0309e1f58f98f4234ffead76473261fa34e03069f4da74c6ffa312ddbcf915c0229a869188dcc1c
+  languageName: node
+  linkType: hard
+
+"@types/webpack-dev-server@npm:^4.7.2":
+  version: 4.7.2
+  resolution: "@types/webpack-dev-server@npm:4.7.2"
+  dependencies:
+    webpack-dev-server: "*"
+  checksum: 81b0d368b85f33759a3859c23d09c8a2af47997621c6350120ff80e20e9124568e4a30e15abead36e7992abe4e18ce2137785aa677d2041adfcd7e8fff9b2312
   languageName: node
   linkType: hard
 
@@ -12563,19 +12579,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"css-select@npm:^5.1.0":
-  version: 5.1.0
-  resolution: "css-select@npm:5.1.0"
-  dependencies:
-    boolbase: ^1.0.0
-    css-what: ^6.1.0
-    domhandler: ^5.0.2
-    domutils: ^3.0.1
-    nth-check: ^2.0.1
-  checksum: 2772c049b188d3b8a8159907192e926e11824aea525b8282981f72ba3f349cf9ecd523fdf7734875ee2cb772246c22117fc062da105b6d59afe8dcd5c99c9bda
-  languageName: node
-  linkType: hard
-
 "css-tree@npm:^1.1.2, css-tree@npm:^1.1.3":
   version: 1.1.3
   resolution: "css-tree@npm:1.1.3"
@@ -12586,7 +12589,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"css-what@npm:^6.0.1, css-what@npm:^6.1.0":
+"css-what@npm:^6.0.1":
   version: 6.1.0
   resolution: "css-what@npm:6.1.0"
   checksum: b975e547e1e90b79625918f84e67db5d33d896e6de846c9b584094e529f0c63e2ab85ee33b9daffd05bff3a146a1916bec664e18bb76dd5f66cbff9fc13b2bbe
@@ -13313,17 +13316,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dom-serializer@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "dom-serializer@npm:2.0.0"
-  dependencies:
-    domelementtype: ^2.3.0
-    domhandler: ^5.0.2
-    entities: ^4.2.0
-  checksum: cd1810544fd8cdfbd51fa2c0c1128ec3a13ba92f14e61b7650b5de421b88205fd2e3f0cc6ace82f13334114addb90ed1c2f23074a51770a8e9c1273acbc7f3e6
-  languageName: node
-  linkType: hard
-
 "domain-browser@npm:^1.2.0":
   version: 1.2.0
   resolution: "domain-browser@npm:1.2.0"
@@ -13331,7 +13323,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"domelementtype@npm:^2.0.1, domelementtype@npm:^2.2.0, domelementtype@npm:^2.3.0":
+"domelementtype@npm:^2.0.1, domelementtype@npm:^2.2.0":
   version: 2.3.0
   resolution: "domelementtype@npm:2.3.0"
   checksum: ee837a318ff702622f383409d1f5b25dd1024b692ef64d3096ff702e26339f8e345820f29a68bcdcea8cfee3531776b3382651232fbeae95612d6f0a75efb4f6
@@ -13356,15 +13348,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"domhandler@npm:^5.0.1, domhandler@npm:^5.0.2":
-  version: 5.0.3
-  resolution: "domhandler@npm:5.0.3"
-  dependencies:
-    domelementtype: ^2.3.0
-  checksum: 0f58f4a6af63e6f3a4320aa446d28b5790a009018707bce2859dcb1d21144c7876482b5188395a188dfa974238c019e0a1e610d2fc269a12b2c192ea2b0b131c
-  languageName: node
-  linkType: hard
-
 "domutils@npm:^2.5.2, domutils@npm:^2.8.0":
   version: 2.8.0
   resolution: "domutils@npm:2.8.0"
@@ -13373,17 +13356,6 @@ __metadata:
     domelementtype: ^2.2.0
     domhandler: ^4.2.0
   checksum: abf7434315283e9aadc2a24bac0e00eab07ae4313b40cc239f89d84d7315ebdfd2fb1b5bf750a96bc1b4403d7237c7b2ebf60459be394d625ead4ca89b934391
-  languageName: node
-  linkType: hard
-
-"domutils@npm:^3.0.1":
-  version: 3.0.1
-  resolution: "domutils@npm:3.0.1"
-  dependencies:
-    dom-serializer: ^2.0.0
-    domelementtype: ^2.3.0
-    domhandler: ^5.0.1
-  checksum: 23aa7a840572d395220e173cb6263b0d028596e3950100520870a125af33ff819e6f609e1606d6f7d73bd9e7feb03bb404286e57a39063b5384c62b724d987b3
   languageName: node
   linkType: hard
 
@@ -13694,13 +13666,6 @@ __metadata:
   version: 2.2.0
   resolution: "entities@npm:2.2.0"
   checksum: 19010dacaf0912c895ea262b4f6128574f9ccf8d4b3b65c7e8334ad0079b3706376360e28d8843ff50a78aabcb8f08f0a32dbfacdc77e47ed77ca08b713669b3
-  languageName: node
-  linkType: hard
-
-"entities@npm:^4.2.0":
-  version: 4.4.0
-  resolution: "entities@npm:4.4.0"
-  checksum: 84d250329f4b56b40fa93ed067b194db21e8815e4eb9b59f43a086f0ecd342814f6bc483de8a77da5d64e0f626033192b1b4f1792232a7ea6b970ebe0f3187c2
   languageName: node
   linkType: hard
 
@@ -23771,19 +23736,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-svg@npm:^13.6.0":
-  version: 13.6.0
-  resolution: "react-native-svg@npm:13.6.0"
-  dependencies:
-    css-select: ^5.1.0
-    css-tree: ^1.1.3
-  peerDependencies:
-    react: "*"
-    react-native: "*"
-  checksum: 6d9b43d12c885982e69fe81d0bccc9b417d977782d4f66ef6964eb33d87ebc79c0a7b7b2dcae60be2857a9ce9178efe35e28de1bc9da92a69bc736177d507770
-  languageName: node
-  linkType: hard
-
 "react-native-web-internals@npm:^1.0.1-rc.8":
   version: 1.0.1-rc.8
   resolution: "react-native-web-internals@npm:1.0.1-rc.8"
@@ -25554,24 +25506,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"size-plugin@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "size-plugin@npm:3.0.0"
-  dependencies:
-    axios: ^0.21.1
-    chalk: ^2.4.2
-    ci-env: ^1.9.0
-    escape-string-regexp: ^1.0.5
-    glob: ^7.1.4
-    minimatch: ^3.0.4
-    pretty-bytes: ^5.3.0
-    util.promisify: ^1.0.0
-  peerDependencies:
-    webpack: "*"
-  checksum: 4f323eba64d2a490fde91450cdc401776726e7fd431a71db9828149d439da3a5f1e7403990cc9664f5bddcdbdcccc2770d7c8b57bc777c50f89d8048c7340603
-  languageName: node
-  linkType: hard
-
 "slash@npm:^2.0.0":
   version: 2.0.0
   resolution: "slash@npm:2.0.0"
@@ -26919,6 +26853,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"terser-webpack-plugin@npm:^5.3.6":
+  version: 5.3.6
+  resolution: "terser-webpack-plugin@npm:5.3.6"
+  dependencies:
+    "@jridgewell/trace-mapping": ^0.3.14
+    jest-worker: ^27.4.5
+    schema-utils: ^3.1.1
+    serialize-javascript: ^6.0.0
+    terser: ^5.14.1
+  peerDependencies:
+    webpack: ^5.1.0
+  peerDependenciesMeta:
+    "@swc/core":
+      optional: true
+    esbuild:
+      optional: true
+    uglify-js:
+      optional: true
+  checksum: 8f3448d7fdb0434ce6a0c09d95c462bfd2f4a5a430233d854163337f734a7f5c07c74513d16081e06d4ca33d366d5b1a36f5444219bc41a7403afd6162107bad
+  languageName: node
+  linkType: hard
+
 "terser@npm:^5.10.0":
   version: 5.13.1
   resolution: "terser@npm:5.13.1"
@@ -26930,6 +26886,20 @@ __metadata:
   bin:
     terser: bin/terser
   checksum: 0b1f5043cf5c3973005fe2ae4ff3be82511c336a6430599dacd4e2acf77c974d4474b0f1eec4823977c1f33823147e736ff712ca8e098bee3db25946480fa29d
+  languageName: node
+  linkType: hard
+
+"terser@npm:^5.14.1":
+  version: 5.16.1
+  resolution: "terser@npm:5.16.1"
+  dependencies:
+    "@jridgewell/source-map": ^0.3.2
+    acorn: ^8.5.0
+    commander: ^2.20.0
+    source-map-support: ~0.5.20
+  bin:
+    terser: bin/terser
+  checksum: cb524123504a2f0d9140c1e1a8628c83bba9cacc404c6aca79e2493a38dfdf21275617ba75b91006b3f1ff586e401ab31121160cd253699f334c6340ea2756f5
   languageName: node
   linkType: hard
 
@@ -28418,8 +28388,9 @@ __metadata:
   resolution: "webext@workspace:apps/webext"
   dependencies:
     "@sendnodes/provider-bridge": "*"
-    "@tamagui/next-theme": ^1.0.1-rc.9
+    "@tamagui/react-native-svg": ^1.0.1-rc.9
     "@types/webextension-polyfill": ^0.9.0
+    "@types/webpack-dev-server": ^4.7.2
     app: "*"
     babel-loader: ^9.1.0
     babel-plugin-react-native-web: ^0.18.10
@@ -28436,11 +28407,10 @@ __metadata:
     react-dom: ^18.2.0
     react-native-reanimated: ^2.13.0
     react-native-safe-area-context: ^4.4.1
-    react-native-svg: ^13.6.0
     react-native-web: ^0.18.10
     react-refresh: ^0.14.0
-    size-plugin: ^3.0.0
     tamagui-loader: ^1.0.1-rc.8
+    terser-webpack-plugin: ^5.3.6
     ts-node: ^10.9.1
     typescript: ^4.9.3
     url-loader: ^4.1.1
@@ -28595,7 +28565,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack-dev-server@npm:^4.11.1":
+"webpack-dev-server@npm:*, webpack-dev-server@npm:^4.11.1":
   version: 4.11.1
   resolution: "webpack-dev-server@npm:4.11.1"
   dependencies:

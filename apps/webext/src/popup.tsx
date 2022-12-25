@@ -1,5 +1,5 @@
 import React from "react"
-import { Platform } from "react-native"
+import { Platform, useColorScheme } from "react-native"
 import { NativeNavigation } from "app/navigation/native"
 import { Provider } from "app/provider"
 // import { useFonts } from "expo-font"
@@ -10,6 +10,7 @@ export default function App() {
   // print the platform
   console.log("Platform", Platform.OS)
 
+  const scheme = useColorScheme()
   // const [loaded] = useFonts({
   //   Inter: require('@tamagui/font-inter/otf/Inter-Medium.otf'),
   //   InterBold: require('@tamagui/font-inter/otf/Inter-Bold.otf'),
@@ -20,7 +21,7 @@ export default function App() {
   // }
 
   return (
-    <Provider>
+    <Provider defaultTheme={scheme}>
       <NativeNavigation />
     </Provider>
   )

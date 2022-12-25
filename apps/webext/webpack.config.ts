@@ -6,10 +6,11 @@
 import path from "path"
 import webpack, { DefinePlugin } from "webpack"
 import type {
+  Configuration as WebpackConfiguration,
   WebpackOptionsNormalized,
-  Configuration,
   WebpackPluginInstance,
 } from "webpack"
+import type { Configuration as WebpackDevServerConfiguration } from "webpack-dev-server"
 import HtmlWebpackPlugin from "html-webpack-plugin"
 import { shouldExclude, TamaguiPlugin } from "tamagui-loader"
 import MiniCSSExtractPlugin from "mini-css-extract-plugin"
@@ -19,8 +20,12 @@ import CopyPlugin, { ObjectPattern } from "copy-webpack-plugin"
 import WebExtension from "webpack-target-webextension"
 import childProcess from "child_process"
 import CssMinimizerPlugin from "css-minimizer-webpack-plugin"
+import TerserPlugin from "terser-webpack-plugin"
 import WebExtensionArchivePlugin from "./build-utils/web-extension-archive-webpack-plugin"
-import SizePlugin from "size-plugin"
+
+interface Configuration extends WebpackConfiguration {
+  devServer?: WebpackDevServerConfiguration
+}
 
 const supportedBrowsers = [
   // "brave",
@@ -47,6 +52,13 @@ const tamaguiOptions = {
 const baseConfig: Configuration = {
   context: __dirname,
   devtool: "source-map",
+  devServer: {
+    static: {
+      directory: path.join(__dirname, "dist"),
+    },
+    compress: true,
+    port: 9000,
+  },
   stats: "errors-only",
   entry: {
     popup: "./src/popup.tsx",
@@ -61,7 +73,6 @@ const baseConfig: Configuration = {
     rules: [
       {
         oneOf: [
-          // fix reanimated :/
           {
             test: /.*\.[tj]sx?$/,
             use: [
@@ -85,15 +96,13 @@ const baseConfig: Configuration = {
 
           {
             test: /\.(gif|jpe?g|png|svg|woff|woff2)$/i,
-            use: [
-              {
-                loader: "url-loader",
-                options: {
-                  limit: 8192,
-                },
+            use: {
+              loader: "url-loader",
+              options: {
+                name: "[name].[ext]",
+                esModule: false,
               },
-            ],
-            type: "javascript/auto",
+            },
           },
         ],
       },
@@ -106,7 +115,16 @@ const baseConfig: Configuration = {
     environment: { dynamicImport: true },
   },
   resolve: {
-    extensions: [".tsx", ".ts", ".js", ".jsx"],
+    extensions: [
+      ".web.tsx",
+      ".web.ts",
+      ".web.jsx",
+      ".web.js",
+      ".tsx",
+      ".ts",
+      ".js",
+      ".jsx",
+    ],
     fallback: {
       stream: require.resolve("stream-browserify"),
       process: require.resolve("process/browser"),
@@ -115,6 +133,10 @@ const baseConfig: Configuration = {
       path: require.resolve("path-browserify"),
       https: require.resolve("https-browserify"),
       http: require.resolve("stream-http"),
+    },
+    alias: {
+      "react-native$": require.resolve("react-native-web"),
+      "react-native-svg": require.resolve("@tamagui/react-native-svg"),
     },
   },
   plugins: [
@@ -134,7 +156,6 @@ const baseConfig: Configuration = {
       Buffer: ["buffer", "Buffer"],
       process: ["process"],
     }),
-    new SizePlugin({}),
     new CopyPlugin({
       patterns: [
         {
@@ -159,16 +180,11 @@ const baseConfig: Configuration = {
       ],
     }),
     new DefinePlugin({
-      process: {
-        env: {
-          APP_NAME: JSON.stringify(process.env.npm_package_name),
-          __DEV__: NODE_ENV === "development" ? "true" : "false",
-          IS_STATIC: '""',
-          NODE_ENV: JSON.stringify(NODE_ENV),
-          TAMAGUI_TARGET: JSON.stringify(target),
-          DEBUG: JSON.stringify(process.env.DEBUG || "0"),
-        },
-      },
+      "process.env.APP_NAME": JSON.stringify(process.env.npm_package_name),
+      "process.env.__DEV__": NODE_ENV === "development" ? "true" : "false",
+      "process.env.NODE_ENV": JSON.stringify(NODE_ENV),
+      "process.env.TAMAGUI_TARGET": JSON.stringify(target),
+      "process.env.DEBUG": JSON.stringify(process.env.DEBUG || "0"),
     }),
     new HtmlWebpackPlugin({
       template: `./src/popup.html`,
@@ -205,17 +221,17 @@ const modeConfigs: {
     plugins: [],
     optimization: {
       minimizer: [
-        // new TerserPlugin({
-        //   terserOptions: {
-        //     mangle: false,
-        //     compress: false,
-        //     output: {
-        //       beautify: true,
-        //       indent_level: 2, // eslint-disable-line camelcase
-        //     },
-        //   },
-        // }),
-        // new CssMinimizerPlugin(),
+        new TerserPlugin({
+          terserOptions: {
+            mangle: false,
+            compress: false,
+            output: {
+              beautify: true,
+              indent_level: 2, // eslint-disable-line camelcase
+            },
+          },
+        }),
+        new CssMinimizerPlugin(),
       ],
     },
   }),
@@ -240,12 +256,12 @@ const modeConfigs: {
       ],
       optimization: {
         minimizer: [
-          // new TerserPlugin({
-          //   terserOptions: {
-          //     mangle: true,
-          //     compress: true,
-          //   },
-          // }),
+          new TerserPlugin({
+            terserOptions: {
+              mangle: true,
+              compress: true,
+            },
+          }),
         ],
       },
     }
