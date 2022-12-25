@@ -1,6 +1,10 @@
+// this webpack config more or less works! but it's not optimized for production and it's not optimized for tamagui
+// it's just a starting point for you to build your own webpack config
+// continue from here https://necolas.github.io/react-native-web/docs/multi-platform/
+// then figure out tamagui stuff: https://tamagui.dev/docs/intro/compiler-install#webpack
+
 const path = require("path")
 const webpack = require("webpack")
-const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin")
 const HtmlWebpackPlugin = require("html-webpack-plugin")
 const { shouldExclude, TamaguiPlugin } = require("tamagui-loader")
 const BundleAnalyzerPlugin =
@@ -49,7 +53,6 @@ module.exports = /** @type { import('webpack').Configuration } */ {
     mainFields: ["module:jsx", "browser", "module", "main"],
     alias: {
       "react-native$": "react-native-web",
-      // 'react-native/Libraries/Renderer/shims/ReactFabric': '@tamagui/proxy-worm',
       "react-native-reanimated": require.resolve("react-native-reanimated"),
       "react-native-reanimated$": require.resolve("react-native-reanimated"),
     },

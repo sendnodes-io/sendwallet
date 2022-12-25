@@ -11,14 +11,18 @@ import {
 } from "@my/ui"
 import { ChevronDown, ChevronUp } from "@tamagui/lucide-icons"
 import React, { useState } from "react"
-import { Link, useLinkProps } from "@react-navigation/native"
+import { Link, NavigationProp, useLinkProps } from "@react-navigation/native"
 
-export function HomeScreen({ navigation }) {
+export function HomeScreen({
+  navigation,
+}: {
+  navigation: NavigationProp<any>
+}) {
   return (
     <YStack f={1} jc="center" ai="center" p="$4" space>
       <YStack space="$4" maw={600}>
         <H1 ta="center">Welcome to Tamagui.</H1>
-        <Paragraph ta="center">
+        <Paragraph space="$4" ta="center">
           Here's a basic starter to show navigating from one screen to another.
           This screen uses the same code on Next.js and React Native.
         </Paragraph>
@@ -48,7 +52,9 @@ export function HomeScreen({ navigation }) {
       </YStack>
 
       <XStack>
-        <Button onPress={() => navigation.navigate("user-detail")}>
+        <Button
+          onPress={() => navigation.navigate("user-detail", { id: "123" })}
+        >
           Link to user
         </Button>
       </XStack>
