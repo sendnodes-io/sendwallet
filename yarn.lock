@@ -6970,6 +6970,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tamagui/next-theme@npm:^1.0.1-rc.9":
+  version: 1.0.1-rc.9
+  resolution: "@tamagui/next-theme@npm:1.0.1-rc.9"
+  dependencies:
+    "@tamagui/use-event": ^1.0.1-rc.9
+  peerDependencies:
+    react: ^18.2.0
+  checksum: 17b279901deb566aa97c23b5514ff78ff3c34392fc022294d460918944585a05150a878171587851be810a73de163268ec118685d87ed3287580b8f0dbf76f61
+  languageName: node
+  linkType: hard
+
 "@tamagui/polyfill-dev@npm:^1.0.1-rc.6":
   version: 1.0.1-rc.6
   resolution: "@tamagui/polyfill-dev@npm:1.0.1-rc.6"
@@ -7443,6 +7454,15 @@ __metadata:
   peerDependencies:
     react: ^18.2.0
   checksum: 57cb8b0dea9c4581173f7bc9c1a1114c835aefca05eba8763528b37bb80d59a1430f9c37ccad13adb57a39db0734bc1abcbdc8a2d94e4ffd4cfa45a4b185abec
+  languageName: node
+  linkType: hard
+
+"@tamagui/use-event@npm:^1.0.1-rc.9":
+  version: 1.0.1-rc.9
+  resolution: "@tamagui/use-event@npm:1.0.1-rc.9"
+  peerDependencies:
+    react: ^18.2.0
+  checksum: 3895b0452170c9933cfeb3f854f5f10f46f7170e41c93bc79b7ebeb2e106bcfc161b9206d14d4f474387f17480679fb528313c34f58e221eafb1a7da9a381441
   languageName: node
   linkType: hard
 
@@ -28398,6 +28418,7 @@ __metadata:
   resolution: "webext@workspace:apps/webext"
   dependencies:
     "@sendnodes/provider-bridge": "*"
+    "@tamagui/next-theme": ^1.0.1-rc.9
     "@types/webextension-polyfill": ^0.9.0
     app: "*"
     babel-loader: ^9.1.0
