@@ -28,8 +28,8 @@
     "lint:config:fix": "prettier -w '**/*.@(json|yaml|toml)'",
     "lint:docs": "prettier -c '**/*.md'",
     "lint:docs:fix": "prettier -w '**/*.md'",
-    "lint:js": "eslint .",
-    "lint:js:fix": "eslint . --fix",
+    "lint:js": "yarn run rome ci .",
+    "lint:js:fix": "yarn run rome format . --write && yarn run rome check . --apply",
     "test": "jest",
     "postinstall": "patch-package"
   },

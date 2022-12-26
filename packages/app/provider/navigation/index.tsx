@@ -2,11 +2,11 @@ import {
   NavigationContainer,
   DefaultTheme,
   DarkTheme,
-} from "@react-navigation/native"
-import * as Linking from "expo-linking"
-import { useMemo } from "react"
-import { useTheme } from "../../../ui/src"
-import { useColorScheme } from "react-native"
+} from "@react-navigation/native";
+import * as Linking from "expo-linking";
+import { useMemo } from "react";
+import { useTheme } from "../../../ui/src";
+import { useColorScheme } from "react-native";
 
 const MyTheme = {
   ...DefaultTheme,
@@ -14,13 +14,13 @@ const MyTheme = {
     ...DefaultTheme.colors,
     primary: "rgb(255, 45, 85)",
   },
-}
+};
 export function NavigationProvider({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-  const scheme = useColorScheme()
+  const scheme = useColorScheme();
 
   return (
     <NavigationContainer
@@ -36,10 +36,10 @@ export function NavigationProvider({
             },
           },
         }),
-        []
+        [],
       )}
     >
       {children}
     </NavigationContainer>
-  )
+  );
 }

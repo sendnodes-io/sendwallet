@@ -8,15 +8,15 @@ import {
   Sheet,
   XStack,
   YStack,
-} from "@my/ui"
-import { ChevronDown, ChevronUp } from "@tamagui/lucide-icons"
-import React, { useState } from "react"
-import { Link, NavigationProp, useLinkProps } from "@react-navigation/native"
+} from "@my/ui";
+import { ChevronDown, ChevronUp } from "@tamagui/lucide-icons";
+import React, { useState } from "react";
+import { Link, NavigationProp, useLinkProps } from "@react-navigation/native";
 
 export function HomeScreen({
   navigation,
 }: {
-  navigation: NavigationProp<any>
+  navigation: NavigationProp<any>;
 }) {
   return (
     <YStack f={1} jc="center" ai="center" p="$4" space>
@@ -61,12 +61,12 @@ export function HomeScreen({
 
       <SheetDemo />
     </YStack>
-  )
+  );
 }
 
 function SheetDemo() {
-  const [open, setOpen] = useState(false)
-  const [position, setPosition] = useState(0)
+  const [open, setOpen] = useState(false);
+  const [position, setPosition] = useState(0);
   return (
     <>
       <Button
@@ -92,11 +92,11 @@ function SheetDemo() {
             circular
             icon={ChevronDown}
             onPress={() => {
-              setOpen(false)
+              setOpen(false);
             }}
           />
         </Sheet.Frame>
       </Sheet>
     </>
-  )
+  );
 }

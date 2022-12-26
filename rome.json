@@ -6,10 +6,18 @@
       "recommended": true
     }
   },
+  "formatter": {
+    "enabled": true,
+    "formatWithErrors": false,
+    "indentStyle": "space",
+    "indentSize": 2
+  },
   "files": {
     "ignore": [
-      "node_modules/**/*",
-      "dist/**/*"
+      "dist",
+      ".tamagui",
+      "json-validators.js",
+      "jtd-validators.js"
     ]
   }
 }

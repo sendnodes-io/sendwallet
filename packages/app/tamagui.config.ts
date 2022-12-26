@@ -1,3 +1,3 @@
-import { config } from '@my/ui'
+import { config } from "@my/ui";
 
-export default config
+export default config;

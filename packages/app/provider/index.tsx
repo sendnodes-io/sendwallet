@@ -1,6 +1,6 @@
-import config from "../tamagui.config"
-import { NavigationProvider } from "./navigation"
-import { TamaguiProvider, TamaguiProviderProps } from "@my/ui"
+import config from "../tamagui.config";
+import { NavigationProvider } from "./navigation";
+import { TamaguiProvider, TamaguiProviderProps } from "@my/ui";
 
 export function Provider({
   children,
@@ -10,5 +10,5 @@ export function Provider({
     <TamaguiProvider config={config} defaultTheme="light" {...rest}>
       <NavigationProvider>{children}</NavigationProvider>
     </TamaguiProvider>
-  )
+  );
 }

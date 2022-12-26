@@ -1,16 +1,16 @@
-import React from "react"
-import { Platform, useColorScheme } from "react-native"
-import { NativeNavigation } from "app/navigation/native"
-import { Provider } from "app/provider"
+import React from "react";
+import { Platform, useColorScheme } from "react-native";
+import { NativeNavigation } from "app/navigation/native";
+import { Provider } from "app/provider";
 // import { useFonts } from "expo-font"
-import { createRoot } from "react-dom/client"
-import Tamagui from "../tamagui.config"
+import { createRoot } from "react-dom/client";
+import Tamagui from "../tamagui.config";
 
 export default function App() {
   // print the platform
-  console.log("Platform", Platform.OS)
+  console.log("Platform", Platform.OS);
 
-  const scheme = useColorScheme()
+  const scheme = useColorScheme();
   // const [loaded] = useFonts({
   //   Inter: require('@tamagui/font-inter/otf/Inter-Medium.otf'),
   //   InterBold: require('@tamagui/font-inter/otf/Inter-Bold.otf'),
@@ -24,10 +24,10 @@ export default function App() {
     <Provider defaultTheme={scheme ?? "dark"}>
       <NativeNavigation />
     </Provider>
-  )
+  );
 }
 
 // AppRegistry.registerComponent('Main', () => Sandbox)
 // console.log('config', config)
 
-createRoot(document.querySelector("#root")!).render(<App />)
+createRoot(document.querySelector("#root")!).render(<App />);
