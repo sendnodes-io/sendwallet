@@ -12,7 +12,7 @@ const INJECTED_WINDOW_PROVIDER_SOURCE = "@@@WINDOW_PROVIDER@@@";
 export async function connectProviderBridge(): Promise<void> {
   let port: browser.Runtime.Port | null = null;
 
-  function windowListener(event: MessageEvent<any>) {
+  function windowListener(event: MessageEvent<Record<string, unknown>>) {
     if (
       port &&
       event.origin === windowOriginAtLoadTime && // we want to recieve msgs only from the in-page script
@@ -30,7 +30,7 @@ export async function connectProviderBridge(): Promise<void> {
     }
   }
 
-  function portListener(data: any) {
+  function portListener(data: Record<string, unknown>) {
     // TODO: replace with better logging before v1. Now it's invaluable in debugging.
     // eslint-disable-next-line no-console
     console.log(
@@ -91,7 +91,13 @@ export function injectPoktWalletWindowProvider(): void {
     scriptTag.src = runtime.getURL("window-provider.js");
     scriptTag.async = false;
 
-    container.insertBefore(scriptTag, container.children[0]);
+    if (container.children.length === 0) {
+      throw new Error(
+        "PoktWallet: no children in the container to insert the script tag",
+      );
+    }
+
+    container.insertBefore(scriptTag, container.children[0]!);
   } catch (e) {
     throw new Error(
       `PoktWallet: oh nos the content-script failed to initilaize the PoktWallet window provider.

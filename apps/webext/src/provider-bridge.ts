@@ -1,5 +1,8 @@
+// ts(1208)
+export {};
+
 (
-  globalThis as any
+  globalThis as Window & typeof globalThis & {}
 ).PROCESS_ID = `provider-bridge-${Math.random()}.${new Date().getTime()}`;
 
 /**

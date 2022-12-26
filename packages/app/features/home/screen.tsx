@@ -16,7 +16,7 @@ import { Link, NavigationProp, useLinkProps } from "@react-navigation/native";
 export function HomeScreen({
   navigation,
 }: {
-  navigation: NavigationProp<any>;
+  navigation: NavigationProp<Record<string, unknown>>;
 }) {
   return (
     <YStack f={1} jc="center" ai="center" p="$4" space>
