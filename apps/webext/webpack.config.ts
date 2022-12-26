@@ -12,7 +12,6 @@ import type {
 } from "webpack";
 import type { Configuration as WebpackDevServerConfiguration } from "webpack-dev-server";
 import HtmlWebpackPlugin from "html-webpack-plugin";
-import { shouldExclude } from "tamagui-loader";
 import type { TamaguiOptions } from "@tamagui/helpers-node";
 import MiniCSSExtractPlugin from "mini-css-extract-plugin";
 import { merge as webpackMerge } from "webpack-merge";
@@ -20,10 +19,9 @@ import Dotenv from "dotenv-webpack";
 import CopyPlugin, { ObjectPattern } from "copy-webpack-plugin";
 import WebExtension from "webpack-target-webextension";
 import childProcess from "child_process";
-import CssMinimizerPlugin from "css-minimizer-webpack-plugin";
-import TerserPlugin from "terser-webpack-plugin";
 import WebExtensionArchivePlugin from "build-utils/web-extension-archive-webpack-plugin";
 import type { Manifest } from "webextension-polyfill";
+const { ESBuildMinifyPlugin } = require("esbuild-loader");
 
 interface Configuration extends WebpackConfiguration {
 	devServer?: WebpackDevServerConfiguration;
@@ -41,8 +39,6 @@ const NODE_ENV = process.env.NODE_ENV || "development";
 const target = "web";
 const isProduction = NODE_ENV === "production";
 
-console.log("NODE_ENV", NODE_ENV);
-
 const uiRoot = path.resolve(__dirname, "..", "..", "packages", "ui-legacy");
 const outputDir = path.resolve(process.env.WEBPACK_OUTPUT_DIR || __dirname);
 
@@ -50,7 +46,7 @@ const tamaguiOptions: TamaguiOptions = {
 	config: "./tamagui.config.ts",
 	components: ["tamagui", "app", "@my/ui"],
 	importsWhitelist: [],
-	logTimings: true,
+	logTimings: false,
 	disableExtraction: !isProduction,
 };
 
@@ -80,39 +76,30 @@ const baseConfig: Configuration = {
 			{
 				oneOf: [
 					{
+						test: /.*\.[tj]s$/,
+						use: [
+							"thread-loader",
+							{
+								loader: "esbuild-loader",
+								options: {
+									loader: "tsx",
+								},
+							},
+						],
+					},
+					{
 						test: /.*\.[tj]sx$/,
 						use: [
 							"thread-loader",
 							{
-								loader: "babel-loader",
+								loader: "esbuild-loader",
 								options: {
-									cacheDirectory: true,
-									// The 'metro-react-native-babel-preset' preset is recommended to match React Native's packager
-									presets: ["module:metro-react-native-babel-preset"],
-									// Re-write paths to import only the modules needed by the app
-									plugins: ["react-native-web"],
+									loader: "tsx",
 								},
 							},
 							{
 								loader: "tamagui-loader",
 								options: tamaguiOptions,
-							},
-						],
-					},
-
-					{
-						test: /.*\.[tj]s$/,
-						use: [
-							"thread-loader",
-							{
-								loader: "babel-loader",
-								options: {
-									cacheDirectory: true,
-									// The 'metro-react-native-babel-preset' preset is recommended to match React Native's packager
-									presets: ["module:metro-react-native-babel-preset"],
-									// Re-write paths to import only the modules needed by the app
-									plugins: ["react-native-web"],
-								},
 							},
 						],
 					},
@@ -248,17 +235,9 @@ const modeConfigs: {
 		plugins: [],
 		optimization: {
 			minimizer: [
-				new TerserPlugin({
-					terserOptions: {
-						mangle: false,
-						compress: false,
-						output: {
-							beautify: true,
-							indent_level: 2, // eslint-disable-line camelcase
-						},
-					},
+				new ESBuildMinifyPlugin({
+					css: true,
 				}),
-				new CssMinimizerPlugin(),
 			],
 		},
 	}),
@@ -283,11 +262,8 @@ const modeConfigs: {
 			],
 			optimization: {
 				minimizer: [
-					new TerserPlugin({
-						terserOptions: {
-							mangle: true,
-							compress: true,
-						},
+					new ESBuildMinifyPlugin({
+						css: true,
 					}),
 				],
 			},
