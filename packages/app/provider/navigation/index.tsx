@@ -9,7 +9,6 @@ import { useTheme } from "../../../ui/src"
 import { useColorScheme } from "react-native"
 
 const MyTheme = {
-  dark: true,
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,

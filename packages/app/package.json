@@ -17,5 +17,8 @@
     "@tamagui/shorthands": "^1.0.1-rc.6",
     "@tamagui/theme-base": "^1.0.1-rc.6",
     "expo-linking": "^3.2.3"
+  },
+  "devDependencies": {
+    "@types/react-native": "^0.70.8"
   }
 }

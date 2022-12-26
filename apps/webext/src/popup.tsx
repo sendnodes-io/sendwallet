@@ -21,7 +21,7 @@ export default function App() {
   // }
 
   return (
-    <Provider defaultTheme={scheme}>
+    <Provider defaultTheme={scheme ?? "dark"}>
       <NativeNavigation />
     </Provider>
   )
