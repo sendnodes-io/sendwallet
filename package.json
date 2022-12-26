@@ -20,8 +20,8 @@
     "dapp"
   ],
   "scripts": {
-    "start": "WEBPACK_OUTPUT_DIR=../.. yarn workspace @sendnodes/sendwallet-webext start",
-    "build": "WEBPACK_OUTPUT_DIR=../.. yarn workspace @sendnodes/sendwallet-webext build",
+    "start": "WEBPACK_OUTPUT_DIR=../.. yarn workspace webext start",
+    "build": "WEBPACK_OUTPUT_DIR=../.. yarn workspace webext build",
     "lint": "run-p lint:*",
     "lint-fix": "run-p lint:*:fix",
     "lint:config": "prettier -c '**/*.@(json|yaml|toml)'",
