@@ -21,7 +21,7 @@ import WebExtension from "webpack-target-webextension"
 import childProcess from "child_process"
 import CssMinimizerPlugin from "css-minimizer-webpack-plugin"
 import TerserPlugin from "terser-webpack-plugin"
-import WebExtensionArchivePlugin from "./build-utils/web-extension-archive-webpack-plugin"
+import WebExtensionArchivePlugin from "build-utils/web-extension-archive-webpack-plugin"
 
 interface Configuration extends WebpackConfiguration {
   devServer?: WebpackDevServerConfiguration

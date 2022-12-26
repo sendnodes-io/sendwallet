@@ -1,5 +1,8 @@
 {
   "name": "build-utils",
+  "version": "1.0.0",
+  "description": "Build utilities for the project",
+  "main": "index.ts",
   "devDependencies": {
     "@types/archiver": "^5.1.0",
     "archiver": "^5.3.0",

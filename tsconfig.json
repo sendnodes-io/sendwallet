@@ -1,16 +1,14 @@
 {
   "compilerOptions": {
-    "target": "esnext",
-    "lib": ["esnext"],
-    "declaration": false,
-    "module": "esnext",
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "jsx": "react-jsx",
-    "strict": true,
-    "noEmit": true
+    "strictNullChecks": true,
+    "noUncheckedIndexedAccess": true,
+    "paths": {
+      "app/*": ["./packages/app/*"],
+      "@my/ui/*": ["./packages/ui/*"],
+      "build-utils/*": ["./packages/build-utils/*"]
+    }
   },
+  "extends": "./tsconfig.base",
   "ts-node": {
     "compilerOptions": {
       "module": "CommonJS"
