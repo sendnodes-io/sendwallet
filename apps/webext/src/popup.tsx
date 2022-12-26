@@ -7,24 +7,24 @@ import { createRoot } from "react-dom/client";
 import Tamagui from "../tamagui.config";
 
 export default function App() {
-  // print the platform
-  console.log("Platform", Platform.OS);
+	// print the platform
+	console.log("Platform", Platform.OS);
 
-  const scheme = useColorScheme();
-  // const [loaded] = useFonts({
-  //   Inter: require('@tamagui/font-inter/otf/Inter-Medium.otf'),
-  //   InterBold: require('@tamagui/font-inter/otf/Inter-Bold.otf'),
-  // })
+	const scheme = useColorScheme();
+	// const [loaded] = useFonts({
+	//   Inter: require('@tamagui/font-inter/otf/Inter-Medium.otf'),
+	//   InterBold: require('@tamagui/font-inter/otf/Inter-Bold.otf'),
+	// })
 
-  // if (!loaded) {
-  //   return null
-  // }
+	// if (!loaded) {
+	//   return null
+	// }
 
-  return (
-    <Provider defaultTheme={scheme ?? "dark"}>
-      <NativeNavigation />
-    </Provider>
-  );
+	return (
+		<Provider defaultTheme={scheme ?? "dark"}>
+			<NativeNavigation />
+		</Provider>
+	);
 }
 
 // AppRegistry.registerComponent('Main', () => Sandbox)

@@ -17,8 +17,8 @@ jobs:
           git config --global url."https://".insteadOf git://
           yarn install
       - name: lint
-        run: npm run lint
+        run: yarn run lint
       - name: test
-        run: npm run test
+        run: yarn run test
       - name: build
-        run: npm run build --config-name chrome
+        run: yarn run build --config-name chrome

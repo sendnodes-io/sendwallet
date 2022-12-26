@@ -25,7 +25,7 @@
     "skipLibCheck": true,
     "sourceMap": false,
     "strictNullChecks": true,
-    "target": "es2019",
+    "target": "es2020",
     "types": ["node"],
     "lib": ["es2021", "dom", "esnext"]
   },

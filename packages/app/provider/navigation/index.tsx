@@ -1,7 +1,7 @@
 import {
-  NavigationContainer,
-  DefaultTheme,
-  DarkTheme,
+	NavigationContainer,
+	DefaultTheme,
+	DarkTheme,
 } from "@react-navigation/native";
 import * as Linking from "expo-linking";
 import { useMemo } from "react";
@@ -9,37 +9,37 @@ import { useTheme } from "../../../ui/src";
 import { useColorScheme } from "react-native";
 
 const MyTheme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    primary: "rgb(255, 45, 85)",
-  },
+	...DefaultTheme,
+	colors: {
+		...DefaultTheme.colors,
+		primary: "rgb(255, 45, 85)",
+	},
 };
 export function NavigationProvider({
-  children,
+	children,
 }: {
-  children: React.ReactNode;
+	children: React.ReactNode;
 }) {
-  const scheme = useColorScheme();
+	const scheme = useColorScheme();
 
-  return (
-    <NavigationContainer
-      theme={scheme === "dark" ? DarkTheme : DefaultTheme}
-      linking={useMemo(
-        () => ({
-          prefixes: [Linking.createURL("/")],
-          config: {
-            initialRouteName: "home",
-            screens: {
-              home: "",
-              "user-detail": "user/:id",
-            },
-          },
-        }),
-        [],
-      )}
-    >
-      {children}
-    </NavigationContainer>
-  );
+	return (
+		<NavigationContainer
+			theme={scheme === "dark" ? DarkTheme : DefaultTheme}
+			linking={useMemo(
+				() => ({
+					prefixes: [Linking.createURL("/")],
+					config: {
+						initialRouteName: "home",
+						screens: {
+							home: "",
+							"user-detail": "user/:id",
+						},
+					},
+				}),
+				[],
+			)}
+		>
+			{children}
+		</NavigationContainer>
+	);
 }
