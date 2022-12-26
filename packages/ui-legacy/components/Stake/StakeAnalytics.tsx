@@ -1,114 +1,114 @@
-import React, { ReactElement } from "react"
-import { formatFixed } from "@ethersproject/bignumber"
-import { InformationCircleIcon } from "@heroicons/react/outline"
-import { selectCurrentAccount } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
-import { BigNumber } from "ethers"
-import { floor, isEqual } from "lodash"
-import { Link } from "react-router-dom"
-import { useBackgroundSelector } from "../../hooks"
-import useAssetInMainCurrency from "../../hooks/assets/use-asset-in-main-currency"
-import { useStakingUserData } from "../../hooks/staking-hooks"
-import useStakingPoktParams from "../../hooks/staking-hooks/use-staking-pokt-params"
-import formatTokenAmount from "../../utils/formatTokenAmount"
-import SharedSplashScreen from "../Shared/SharedSplashScreen"
+import React, { ReactElement } from "react";
+import { formatFixed } from "@ethersproject/bignumber";
+import { InformationCircleIcon } from "@heroicons/react/outline";
+import { selectCurrentAccount } from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
+import { BigNumber } from "ethers";
+import { floor, isEqual } from "lodash";
+import { Link } from "react-router-dom";
+import { useBackgroundSelector } from "../../hooks";
+import useAssetInMainCurrency from "../../hooks/assets/use-asset-in-main-currency";
+import { useStakingUserData } from "../../hooks/staking-hooks";
+import useStakingPoktParams from "../../hooks/staking-hooks/use-staking-pokt-params";
+import formatTokenAmount from "../../utils/formatTokenAmount";
+import SharedSplashScreen from "../Shared/SharedSplashScreen";
 
 export default function StakeAnalytics(): ReactElement {
-  const currentAccount = useBackgroundSelector(selectCurrentAccount, isEqual)
+  const currentAccount = useBackgroundSelector(selectCurrentAccount, isEqual);
   const {
     data: stakingPoktParams,
     isLoading: isStakingParamsLoading,
     isError: isStakingParamsError,
-  } = useStakingPoktParams()
+  } = useStakingPoktParams();
 
   const {
     data: stakingUserData,
     isLoading: isStakingUserDataLoading,
     isError: isStakingUserDataError,
-  } = useStakingUserData(currentAccount)
+  } = useStakingUserData(currentAccount);
 
-  if (isStakingParamsError) throw isStakingParamsError
-  if (isStakingUserDataError) throw isStakingUserDataError
+  if (isStakingParamsError) throw isStakingParamsError;
+  if (isStakingUserDataError) throw isStakingUserDataError;
 
   const poolTotalStaked = BigNumber.from(
-    stakingUserData?.rewardsData.totalStaked ?? 0
-  ).add(BigNumber.from(stakingUserData?.rewardsData.totalPendingStaked ?? 0))
+    stakingUserData?.rewardsData.totalStaked ?? 0,
+  ).add(BigNumber.from(stakingUserData?.rewardsData.totalPendingStaked ?? 0));
   const poolTotalStakedMainCurrency = useAssetInMainCurrency({
     assetAmount: {
       amount: poolTotalStaked.toBigInt(),
       asset: currentAccount.network.baseAsset,
     },
-  })
+  });
   const poolTotalStakedFixedAmount = formatFixed(
     poolTotalStaked,
-    currentAccount.network.baseAsset.decimals
-  )
+    currentAccount.network.baseAsset.decimals,
+  );
   const poolTotalUpcomingStakes = BigNumber.from(
-    stakingUserData?.rewardsData.totalPendingStaked ?? 0
-  )
+    stakingUserData?.rewardsData.totalPendingStaked ?? 0,
+  );
   const poolTotalUpcomingStakesMainCurrency = useAssetInMainCurrency({
     assetAmount: {
       amount: poolTotalUpcomingStakes.toBigInt(),
       asset: currentAccount.network.baseAsset,
     },
-  })
+  });
   const poolTotalUpcomingStakesFixedAmount = formatFixed(
     poolTotalUpcomingStakes,
-    currentAccount.network.baseAsset.decimals
-  )
+    currentAccount.network.baseAsset.decimals,
+  );
   const stakingMinAmount = Number(
     formatFixed(
       stakingPoktParams?.stakingMinAmount ?? 0,
-      currentAccount.network.baseAsset.decimals
-    )
-  )
+      currentAccount.network.baseAsset.decimals,
+    ),
+  );
   const netRewardsPer1000PerDay = BigNumber.from(
-    stakingUserData?.rewardsData.netRewardsPerPoktStakedPerDay ?? 0
-  ).mul(stakingMinAmount)
+    stakingUserData?.rewardsData.netRewardsPerPoktStakedPerDay ?? 0,
+  ).mul(stakingMinAmount);
   const netRewardsPer1000PerDayMainCurrency = useAssetInMainCurrency({
     assetAmount: {
       amount: netRewardsPer1000PerDay.toBigInt(),
       asset: currentAccount.network.baseAsset,
     },
-  })
+  });
   const netRewardsPer1000PerDayFixedAmount = formatFixed(
     netRewardsPer1000PerDay,
-    currentAccount.network.baseAsset.decimals
-  )
-  const staking15xMinAmount = stakingMinAmount * 15
+    currentAccount.network.baseAsset.decimals,
+  );
+  const staking15xMinAmount = stakingMinAmount * 15;
   const netRewardsPer15000PerDay = BigNumber.from(
-    stakingUserData?.rewardsData.netRewardsPerPoktStakedPerDay ?? 0
-  ).mul(staking15xMinAmount)
+    stakingUserData?.rewardsData.netRewardsPerPoktStakedPerDay ?? 0,
+  ).mul(staking15xMinAmount);
   const netRewardsPer15000PerDayMainCurrency = useAssetInMainCurrency({
     assetAmount: {
       amount: netRewardsPer15000PerDay.toBigInt(),
       asset: currentAccount.network.baseAsset,
     },
-  })
+  });
   const netRewardsPer15000PerDayFixedAmount = formatFixed(
     netRewardsPer15000PerDay,
-    currentAccount.network.baseAsset.decimals
-  )
-  const staking60xMinAmount = stakingMinAmount * 60
+    currentAccount.network.baseAsset.decimals,
+  );
+  const staking60xMinAmount = stakingMinAmount * 60;
   const netRewardsPer60000PerDay = BigNumber.from(
-    stakingUserData?.rewardsData.netRewardsPerPoktStakedPerDay ?? 0
-  ).mul(staking60xMinAmount)
+    stakingUserData?.rewardsData.netRewardsPerPoktStakedPerDay ?? 0,
+  ).mul(staking60xMinAmount);
   const netRewardsPer60000PerDayMainCurrency = useAssetInMainCurrency({
     assetAmount: {
       amount: netRewardsPer60000PerDay.toBigInt(),
       asset: currentAccount.network.baseAsset,
     },
-  })
+  });
   const netRewardsPer60000PerDayFixedAmount = formatFixed(
     netRewardsPer60000PerDay,
-    currentAccount.network.baseAsset.decimals
-  )
+    currentAccount.network.baseAsset.decimals,
+  );
 
   if (isStakingParamsLoading || isStakingUserDataLoading) {
     return (
       <div className="grow w-full relative flex flex-col justify-center items-center">
         <SharedSplashScreen />
       </div>
-    )
+    );
   }
 
   return (
@@ -205,7 +205,7 @@ export default function StakeAnalytics(): ReactElement {
                           {formatTokenAmount(
                             poolTotalUpcomingStakesFixedAmount,
                             3,
-                            1
+                            1,
                           )}
                         </div>
                         {poolTotalUpcomingStakesMainCurrency && (
@@ -248,7 +248,7 @@ export default function StakeAnalytics(): ReactElement {
                           {formatTokenAmount(
                             netRewardsPer1000PerDayFixedAmount,
                             3,
-                            1
+                            1,
                           )}
                         </div>
                         {netRewardsPer1000PerDayMainCurrency && (
@@ -282,7 +282,7 @@ export default function StakeAnalytics(): ReactElement {
                           {formatTokenAmount(
                             netRewardsPer15000PerDayFixedAmount,
                             3,
-                            1
+                            1,
                           )}
                         </div>
                         {netRewardsPer15000PerDayMainCurrency && (
@@ -317,7 +317,7 @@ export default function StakeAnalytics(): ReactElement {
                           {formatTokenAmount(
                             netRewardsPer60000PerDayFixedAmount,
                             3,
-                            1
+                            1,
                           )}
                         </div>
                         {netRewardsPer60000PerDayMainCurrency && (
@@ -353,7 +353,9 @@ export default function StakeAnalytics(): ReactElement {
                       <span className="hidden sm:inline">Rewards</span>
                     </div>
                     <div className="text-center grow  text-xs sm:text-base col-span-5">
-                      <span className="hidden sm:inline">No Compounding</span>{" "}
+                      <span className="hidden sm:inline">
+                        No Compounding
+                      </span>{" "}
                     </div>
                   </div>
 
@@ -368,7 +370,7 @@ export default function StakeAnalytics(): ReactElement {
                             {stakingUserData!.rewardsData?.apy1d
                               ? `${floor(
                                   stakingUserData!.rewardsData?.apy1d,
-                                  1
+                                  1,
                                 ).toLocaleString(undefined, {
                                   maximumFractionDigits: 1,
                                 })}%`
@@ -385,7 +387,7 @@ export default function StakeAnalytics(): ReactElement {
                               ? `${floor(
                                   stakingUserData!.rewardsData
                                     ?.apyNoCompounding1d,
-                                  1
+                                  1,
                                 ).toLocaleString(undefined, {
                                   maximumFractionDigits: 1,
                                 })}%`
@@ -406,7 +408,7 @@ export default function StakeAnalytics(): ReactElement {
                             {stakingUserData!.rewardsData?.apy7d
                               ? `${floor(
                                   stakingUserData!.rewardsData?.apy7d,
-                                  1
+                                  1,
                                 ).toLocaleString(undefined, {
                                   maximumFractionDigits: 1,
                                 })}%`
@@ -423,7 +425,7 @@ export default function StakeAnalytics(): ReactElement {
                               ? `${floor(
                                   stakingUserData!.rewardsData
                                     ?.apyNoCompounding7d,
-                                  1
+                                  1,
                                 ).toLocaleString(undefined, {
                                   maximumFractionDigits: 1,
                                 })}%`
@@ -451,5 +453,5 @@ export default function StakeAnalytics(): ReactElement {
         </div>
       </div>
     </div>
-  )
+  );
 }

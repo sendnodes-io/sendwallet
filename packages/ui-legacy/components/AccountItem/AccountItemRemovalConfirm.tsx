@@ -1,27 +1,27 @@
 import {
   clearRemovingAccount,
   removeAccount,
-} from "@sendnodes/pokt-wallet-background/redux-slices/accounts"
+} from "@sendnodes/pokt-wallet-background/redux-slices/accounts";
 import {
   AccountTotal,
   selectKeyringByAddress,
-} from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
-import { HexString } from "@sendnodes/pokt-wallet-background/types"
-import React, { ReactElement, useEffect, useState } from "react"
-import { useDispatch } from "react-redux"
+} from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
+import { HexString } from "@sendnodes/pokt-wallet-background/types";
+import React, { ReactElement, useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import {
   setSelectedAccount,
   setSnackbarMessage,
-} from "@sendnodes/pokt-wallet-background/redux-slices/ui"
-import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts"
-import SharedButton from "../Shared/SharedButton"
-import SharedAccountItemSummary from "../Shared/SharedAccountItemSummary"
-import { useBackgroundSelector } from "../../hooks"
+} from "@sendnodes/pokt-wallet-background/redux-slices/ui";
+import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts";
+import SharedButton from "../Shared/SharedButton";
+import SharedAccountItemSummary from "../Shared/SharedAccountItemSummary";
+import { useBackgroundSelector } from "../../hooks";
 
 interface AccountItemRemovalConfirmProps {
-  account: AccountTotal
-  address: HexString
-  close: () => void
+  account: AccountTotal;
+  address: HexString;
+  close: () => void;
 }
 
 const RegularWarning = (
@@ -30,7 +30,7 @@ const RegularWarning = (
     private keys. Instead it just hides it from the extension and you won&apos;t
     be able to use it until you add it again.
   </span>
-)
+);
 
 const LoudWarning = (
   <span>
@@ -38,42 +38,42 @@ const LoudWarning = (
     You will only be able to recover this address by re-importing it. Are you
     sure you want to proceed?
   </span>
-)
+);
 
 export default function AccountItemRemovalConfirm({
   account,
   address,
   close,
 }: AccountItemRemovalConfirmProps): ReactElement {
-  const dispatch = useDispatch()
-  const keyring = useBackgroundSelector(selectKeyringByAddress(address))
+  const dispatch = useDispatch();
+  const keyring = useBackgroundSelector(selectKeyringByAddress(address));
   const isRemovingAccount = useBackgroundSelector(
-    (state) => state.account.removingAccount
-  )
-  const onlyOneAddressVisible = keyring?.addresses.length === 1
+    (state) => state.account.removingAccount,
+  );
+  const onlyOneAddressVisible = keyring?.addresses.length === 1;
   const addressOnNetwork = {
     address: account.address,
     network: account.network,
-  } as AddressOnNetwork
-  const [isMounted, setIsMounted] = useState(false)
+  } as AddressOnNetwork;
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    if (!isMounted) return
+    if (!isMounted) return;
 
     if (isRemovingAccount === "fulfilled") {
-      dispatch(clearRemovingAccount()) // clear the state
-      close()
+      dispatch(clearRemovingAccount()); // clear the state
+      close();
     } else if (isRemovingAccount === "rejected") {
-      dispatch(setSnackbarMessage("Something went wrong. Please try again."))
+      dispatch(setSnackbarMessage("Something went wrong. Please try again."));
     }
-  }, [isRemovingAccount, close, dispatch]) // purposefully not tracking isMounted
+  }, [isRemovingAccount, close, dispatch]); // purposefully not tracking isMounted
 
   // needs to run last
   useEffect(() => {
     // start fresh
-    dispatch(clearRemovingAccount())
-    setIsMounted(true)
-  }, [dispatch, isRemovingAccount])
+    dispatch(clearRemovingAccount());
+    setIsMounted(true);
+  }, [dispatch, isRemovingAccount]);
 
   return (
     <div className="remove_address_option">
@@ -92,8 +92,8 @@ export default function AccountItemRemovalConfirm({
           isDisabled={!!isRemovingAccount}
           isLoading={!!isRemovingAccount}
           onClick={(e) => {
-            e.stopPropagation()
-            dispatch(removeAccount(addressOnNetwork))
+            e.stopPropagation();
+            dispatch(removeAccount(addressOnNetwork));
           }}
         >
           Remove
@@ -127,5 +127,5 @@ export default function AccountItemRemovalConfirm({
         }
       `}</style>
     </div>
-  )
+  );
 }

@@ -1,9 +1,9 @@
-import React, { ReactElement } from "react"
+import React, { ReactElement } from "react";
 
 export default function BrowserTabContainer({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }): ReactElement {
   return (
     <>
@@ -19,5 +19,5 @@ export default function BrowserTabContainer({
         }
       `}</style>
     </>
-  )
+  );
 }

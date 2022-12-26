@@ -1,12 +1,12 @@
-import classNames from "clsx"
-import React, { ReactElement, ReactNode } from "react"
+import classNames from "clsx";
+import React, { ReactElement, ReactNode } from "react";
 
 export default function TransactionDetailContainer({
   children,
   footer,
 }: {
-  children: ReactNode
-  footer?: ReactNode
+  children: ReactNode;
+  footer?: ReactNode;
 }): ReactElement {
   return (
     <div className={classNames("container", { has_footer: footer })}>
@@ -32,5 +32,5 @@ export default function TransactionDetailContainer({
         }
       `}</style>
     </div>
-  )
+  );
 }

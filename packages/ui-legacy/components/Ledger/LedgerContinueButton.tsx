@@ -1,13 +1,13 @@
-import React from "react"
+import React from "react";
 
 export default function LedgerContinueButton({
   children,
   isDisabled = false,
   onClick,
 }: {
-  children: React.ReactNode
-  isDisabled?: boolean
-  onClick: () => void
+  children: React.ReactNode;
+  isDisabled?: boolean;
+  onClick: () => void;
 }): React.ReactElement {
   return (
     <>
@@ -44,5 +44,5 @@ export default function LedgerContinueButton({
         }
       `}</style>
     </>
-  )
+  );
 }

@@ -990,6 +990,6 @@ const VAULT_ABI = [
     stateMutability: "nonpayable",
     type: "function",
   },
-]
+];
 
-export default VAULT_ABI
+export default VAULT_ABI;

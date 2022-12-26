@@ -34,7 +34,7 @@ export const swapPriceJTD = {
   },
   // Don't fail if new properties are introduced.
   additionalProperties: true,
-} as const
+} as const;
 
 // Swap quotes are a superset of swap prices that include data
 // for generating a swap transaction. They are served by the
@@ -52,4 +52,4 @@ export const swapQuoteJTD = {
   },
   // Don't fail if new properties are introduced.
   additionalProperties: true,
-} as const
+} as const;

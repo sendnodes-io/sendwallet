@@ -1,10 +1,10 @@
-import React, { ReactElement, useState } from "react"
-import AccountsNotificationPanelAccounts from "./AccountsNotificationPanelAccounts"
+import React, { ReactElement, useState } from "react";
+import AccountsNotificationPanelAccounts from "./AccountsNotificationPanelAccounts";
 
 type Props = {
-  onCurrentAddressChange: (address: string) => void
-  showEasterEgg?: boolean
-}
+  onCurrentAddressChange: (address: string) => void;
+  showEasterEgg?: boolean;
+};
 
 export default function AccountsNotificationPanel({
   showEasterEgg = true,
@@ -15,5 +15,5 @@ export default function AccountsNotificationPanel({
       showEasterEgg={showEasterEgg}
       onCurrentAddressChange={onCurrentAddressChange}
     />
-  )
+  );
 }

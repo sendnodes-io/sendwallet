@@ -1,20 +1,20 @@
-import React, { CSSProperties, ReactElement } from "react"
-import { Provider } from "react-redux"
-import { HashRouter, Redirect, Route, Switch } from "react-router-dom"
-import { Store } from "@0xbigboss/webext-redux"
-import { ErrorBoundary } from "react-error-boundary"
-import TabNotFound from "./TabNotFound"
-import ErrorFallback from "./ErrorFallback"
+import React, { CSSProperties, ReactElement } from "react";
+import { Provider } from "react-redux";
+import { HashRouter, Redirect, Route, Switch } from "react-router-dom";
+import { Store } from "@0xbigboss/webext-redux";
+import { ErrorBoundary } from "react-error-boundary";
+import TabNotFound from "./TabNotFound";
+import ErrorFallback from "./ErrorFallback";
 
-import OnboardingAddWallet from "./Onboarding/OnboardingAddWallet"
-import SendStake from "../components/Stake/SendStake"
-import SendUnstake from "../components/Stake/SendUnstake"
-import CoreStakePage from "../components/Core/CoreStakePage"
-import KeyringUnlock from "../components/Keyring/KeyringUnlock"
-import SignTransaction from "./SignTransaction"
-import StakeRequestsTransactions from "../components/Stake/StakeRequestsTransactions"
-import StakeRewards from "../components/Stake/StakeRewards"
-import StakeAnalytics from "../components/Stake/StakeAnalytics"
+import OnboardingAddWallet from "./Onboarding/OnboardingAddWallet";
+import SendStake from "../components/Stake/SendStake";
+import SendUnstake from "../components/Stake/SendUnstake";
+import CoreStakePage from "../components/Core/CoreStakePage";
+import KeyringUnlock from "../components/Keyring/KeyringUnlock";
+import SignTransaction from "./SignTransaction";
+import StakeRequestsTransactions from "../components/Stake/StakeRequestsTransactions";
+import StakeRewards from "../components/Stake/StakeRewards";
+import StakeAnalytics from "../components/Stake/StakeAnalytics";
 
 /**
  * Entry point for Stake UI
@@ -128,5 +128,5 @@ export default function Stake({ store }: { store: Store }): ReactElement {
         </Switch>
       </HashRouter>
     </Provider>
-  )
+  );
 }

@@ -1,55 +1,55 @@
-import { createPassword } from "@sendnodes/pokt-wallet-background/redux-slices/keyrings"
-import React, { ReactElement, useEffect, useState } from "react"
-import { useHistory } from "react-router-dom"
-import { useBackgroundDispatch, useAreKeyringsUnlocked } from "../../hooks"
-import SharedButton from "../Shared/SharedButton"
-import SharedInput from "../Shared/SharedInput"
-import OnboardingAccountLayout from "../Onboarding/OnboardingAccountLayout"
-import { OnboardingNewAccountIcon } from "../Onboarding/Icons"
+import { createPassword } from "@sendnodes/pokt-wallet-background/redux-slices/keyrings";
+import React, { ReactElement, useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
+import { useBackgroundDispatch, useAreKeyringsUnlocked } from "../../hooks";
+import SharedButton from "../Shared/SharedButton";
+import SharedInput from "../Shared/SharedInput";
+import OnboardingAccountLayout from "../Onboarding/OnboardingAccountLayout";
+import { OnboardingNewAccountIcon } from "../Onboarding/Icons";
 
 export default function KeyringSetPassword(): ReactElement {
-  const [password, setPassword] = useState("")
-  const [passwordErrorMessage, setPasswordErrorMessage] = useState("")
-  const [passwordConfirmation, setPasswordConfirmation] = useState("")
-  const history = useHistory()
+  const [password, setPassword] = useState("");
+  const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
+  const [passwordConfirmation, setPasswordConfirmation] = useState("");
+  const history = useHistory();
 
-  const areKeyringsUnlocked = useAreKeyringsUnlocked(false)
+  const areKeyringsUnlocked = useAreKeyringsUnlocked(false);
 
-  const dispatch = useBackgroundDispatch()
+  const dispatch = useBackgroundDispatch();
 
   useEffect(() => {
     if (areKeyringsUnlocked) {
-      history.push("/onboarding/add-wallet")
+      history.push("/onboarding/add-wallet");
     }
-  }, [history, areKeyringsUnlocked])
+  }, [history, areKeyringsUnlocked]);
 
   const validatePassword = (): boolean => {
     if (password.length < 8) {
-      setPasswordErrorMessage("Must be at least 8 characters")
-      return false
+      setPasswordErrorMessage("Must be at least 8 characters");
+      return false;
     }
     if (password !== passwordConfirmation) {
-      setPasswordErrorMessage("Passwords don't match")
-      return false
+      setPasswordErrorMessage("Passwords don't match");
+      return false;
     }
-    return true
-  }
+    return true;
+  };
 
   const handleInputChange = (
-    f: (value: string) => void
+    f: (value: string) => void,
   ): ((value: string) => void) => {
     return (value: string) => {
       // If the input field changes, remove the error.
-      setPasswordErrorMessage("")
-      return f(value)
-    }
-  }
+      setPasswordErrorMessage("");
+      return f(value);
+    };
+  };
 
   const dispatchCreatePassword = (): void => {
     if (validatePassword()) {
-      dispatch(createPassword(password))
+      dispatch(createPassword(password));
     }
-  }
+  };
 
   return (
     <div>
@@ -77,8 +77,8 @@ export default function KeyringSetPassword(): ReactElement {
             </p>
             <form
               onSubmit={(event) => {
-                event.preventDefault()
-                dispatchCreatePassword()
+                event.preventDefault();
+                dispatchCreatePassword();
               }}
             >
               <div className="input_wrap">
@@ -151,5 +151,5 @@ export default function KeyringSetPassword(): ReactElement {
         `}
       </style>
     </div>
-  )
+  );
 }

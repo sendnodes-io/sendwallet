@@ -1,5 +1,5 @@
-import React, { ReactElement } from "react"
-import TopMenuProtocolListItem from "./TopMenuProtocolListItem"
+import React, { ReactElement } from "react";
+import TopMenuProtocolListItem from "./TopMenuProtocolListItem";
 
 const networks = [
   {
@@ -32,7 +32,7 @@ const networks = [
   //   width: 24,
   //   height: 24,
   // },
-]
+];
 
 export default function TopMenuProtocolList(): ReactElement {
   return (
@@ -82,5 +82,5 @@ export default function TopMenuProtocolList(): ReactElement {
         `}
       </style>
     </div>
-  )
+  );
 }

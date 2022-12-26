@@ -1,9 +1,9 @@
-import { createSelector } from "@reduxjs/toolkit"
-import { RootState } from ".."
-import { SigningMethod } from "../../utils/signing"
-import { selectKeyringSigningAddresses } from "./keyringsSelectors"
-import { selectLedgerSigningMethodEntries } from "./ledgerSelectors"
-import { selectCurrentAccount } from "./uiSelectors"
+import { createSelector } from "@reduxjs/toolkit";
+import { RootState } from "..";
+import { SigningMethod } from "../../utils/signing";
+import { selectKeyringSigningAddresses } from "./keyringsSelectors";
+import { selectLedgerSigningMethodEntries } from "./ledgerSelectors";
+import { selectCurrentAccount } from "./uiSelectors";
 
 export const selectAddressSigningMethods = createSelector(
   selectKeyringSigningAddresses,
@@ -17,12 +17,12 @@ export const selectAddressSigningMethods = createSelector(
         address,
         { type: "keyring" },
       ]),
-    ])
-)
+    ]),
+);
 
 export const selectCurrentAccountSigningMethod = createSelector(
   selectAddressSigningMethods,
   (state: RootState) => selectCurrentAccount(state),
   (signingAccounts, selectedAccount): SigningMethod | null =>
-    signingAccounts[selectedAccount.address] ?? null
-)
+    signingAccounts[selectedAccount.address] ?? null,
+);

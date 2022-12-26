@@ -2,28 +2,28 @@ import {
   isProbablyEVMAddress,
   isProbablyPOKTAddress,
   isValidPoktAddress,
-} from "@sendnodes/pokt-wallet-background/lib/utils"
+} from "@sendnodes/pokt-wallet-background/lib/utils";
 // import { resolveNameOnNetwork } from "@sendnodes/pokt-wallet-background/redux-slices/accounts"
-import { selectCurrentAccount } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
-import { HexString } from "@sendnodes/pokt-wallet-background/types"
-import { useRef, useState } from "react"
-import Resolution from "@unstoppabledomains/resolution"
-import { useBackgroundSelector } from "./redux-hooks"
-import useRemoteConfig from "./remote-config-hooks"
+import { selectCurrentAccount } from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
+import { HexString } from "@sendnodes/pokt-wallet-background/types";
+import { useRef, useState } from "react";
+import Resolution from "@unstoppabledomains/resolution";
+import { useBackgroundSelector } from "./redux-hooks";
+import useRemoteConfig from "./remote-config-hooks";
 
 /**
  * A handler that is called once a valid input is processed through a
  * validator. If an invalid value is entered by the user, the validator will be
  * called with `undefined` to facilitate form state maintenance.
  */
-export type ValidDataChangeHandler<T> = (validData: T | undefined) => void
+export type ValidDataChangeHandler<T> = (validData: T | undefined) => void;
 /**
  * A data validator that may return a validation error or, if the data is
  * valid, undefined.
  */
 export type AdditionalDataValidator<T> = (
-  data: T
-) => { error: string } | undefined
+  data: T,
+) => { error: string } | undefined;
 
 export type ValidationHookProperties = {
   /**
@@ -31,17 +31,17 @@ export type ValidationHookProperties = {
    * user's input just because they entered an invalid value, and can be used
    * as a direct input to a `value` prop.
    */
-  rawValue: string
+  rawValue: string;
   /**
    * The error message from parsing the current value, if any.
    */
-  errorMessage: string | undefined
+  errorMessage: string | undefined;
   /**
    * The handler that should receive new raw user inputs (e.g. for passing to
    * an input's `onChange`).
    */
-  handleInputChange: (newValue: string) => void
-}
+  handleInputChange: (newValue: string) => void;
+};
 
 export type AsyncValidationHookProperties = ValidationHookProperties & {
   /**
@@ -49,8 +49,8 @@ export type AsyncValidationHookProperties = ValidationHookProperties & {
    * passed input. The most straightforward use of this is to show a spinner
    * while the validator is running.
    */
-  isValidating: boolean
-}
+  isValidating: boolean;
+};
 
 /**
  * A hook that provides validation for a string input that should produce a
@@ -73,7 +73,7 @@ export type AsyncValidationHookProperties = ValidationHookProperties & {
 export type ValidationHook<T> = (
   onValidChange: ValidDataChangeHandler<T>,
   ...additionalValidators: AdditionalDataValidator<T>[]
-) => ValidationHookProperties
+) => ValidationHookProperties;
 
 /**
  * A hook that provides asynchronous validation for a string input that should
@@ -85,7 +85,7 @@ export type ValidationHook<T> = (
 export type AsyncValidationHook<T> = (
   onValidChange: ValidDataChangeHandler<T>,
   ...additionalValidators: AdditionalDataValidator<Promise<T>>[]
-) => AsyncValidationHookProperties
+) => AsyncValidationHookProperties;
 
 /**
  * A ValidationHook that parses string values using a parser and allows for
@@ -96,40 +96,42 @@ export type AsyncValidationHook<T> = (
 export const useParsedValidation = <T>(
   onValidChange: (validValue: T | undefined) => void,
   parser: (value: string) => { parsed: T } | { error: string },
-  additionalValidator?: AdditionalDataValidator<T>
+  additionalValidator?: AdditionalDataValidator<T>,
 ): ValidationHookProperties => {
-  const [errorMessage, setErrorMessage] = useState<string | undefined>()
-  const [rawValue, setRawValue] = useState<string>("")
+  const [errorMessage, setErrorMessage] = useState<string | undefined>();
+  const [rawValue, setRawValue] = useState<string>("");
 
   const handleInputChange = (newValue: string) => {
-    setRawValue(newValue)
+    setRawValue(newValue);
 
-    const trimmed = newValue.trim()
+    const trimmed = newValue.trim();
 
-    setErrorMessage(undefined)
+    setErrorMessage(undefined);
     if (trimmed === "") {
-      onValidChange(undefined)
+      onValidChange(undefined);
     } else {
       try {
-        const parseResult = parser(trimmed)
+        const parseResult = parser(trimmed);
         if ("error" in parseResult) {
-          setErrorMessage(parseResult.error)
+          setErrorMessage(parseResult.error);
         } else {
-          const additionalValidation = additionalValidator?.(parseResult.parsed)
+          const additionalValidation = additionalValidator?.(
+            parseResult.parsed,
+          );
           if (additionalValidation !== undefined) {
-            setErrorMessage(additionalValidation.error)
+            setErrorMessage(additionalValidation.error);
           } else {
-            onValidChange(parseResult.parsed)
+            onValidChange(parseResult.parsed);
           }
         }
       } catch (e) {
-        setErrorMessage("Must be a number")
+        setErrorMessage("Must be a number");
       }
     }
-  }
+  };
 
-  return { rawValue, errorMessage, handleInputChange }
-}
+  return { rawValue, errorMessage, handleInputChange };
+};
 
 /**
  * An AsyncValidationHook that attempts to resolve strings as either addresses
@@ -143,48 +145,48 @@ export const useParsedValidation = <T>(
 export const useAddressOrNameValidation: AsyncValidationHook<
   HexString | undefined
 > = (onValidChange) => {
-  const remoteConfig = useRemoteConfig()
-  const [errorMessage, setErrorMessage] = useState<string | undefined>()
-  const [rawValue, setRawValue] = useState<string>("")
+  const remoteConfig = useRemoteConfig();
+  const [errorMessage, setErrorMessage] = useState<string | undefined>();
+  const [rawValue, setRawValue] = useState<string>("");
   // Flag and value tracked separately due to async handling.
-  const [isValidating, setIsValidating] = useState(false)
-  const validatingValue = useRef<string | undefined>(undefined)
-  const currentAccount = useBackgroundSelector(selectCurrentAccount)
+  const [isValidating, setIsValidating] = useState(false);
+  const validatingValue = useRef<string | undefined>(undefined);
+  const currentAccount = useBackgroundSelector(selectCurrentAccount);
 
   const handleInputChange = async (newValue: string) => {
-    setRawValue(newValue)
+    setRawValue(newValue);
 
-    const trimmed = newValue.trim()
+    const trimmed = newValue.trim();
 
-    setErrorMessage(undefined)
+    setErrorMessage(undefined);
 
     // EVM address validation
     if (currentAccount.network.family === "EVM") {
       if (trimmed === "") {
-        onValidChange(undefined)
+        onValidChange(undefined);
       } else if (isProbablyEVMAddress(trimmed)) {
-        onValidChange(trimmed)
+        onValidChange(trimmed);
       } else {
-        setIsValidating(true)
-        validatingValue.current = trimmed
+        setIsValidating(true);
+        validatingValue.current = trimmed;
 
-        const resolution = new Resolution()
+        const resolution = new Resolution();
         const resolved = (await resolution
           .addr(trimmed, "ETH")
-          .catch(() => "")) as unknown as string
+          .catch(() => "")) as unknown as string;
 
         // Asynchronicity means we could already have started validating another
         // value before this validation completed; ignore those cases.
         if (validatingValue.current === trimmed) {
           if (resolved === undefined) {
-            onValidChange(undefined)
-            setErrorMessage("Address could not be found")
+            onValidChange(undefined);
+            setErrorMessage("Address could not be found");
           } else {
-            onValidChange(resolved)
+            onValidChange(resolved);
           }
 
-          setIsValidating(false)
-          validatingValue.current = undefined
+          setIsValidating(false);
+          validatingValue.current = undefined;
         }
       }
     }
@@ -192,15 +194,15 @@ export const useAddressOrNameValidation: AsyncValidationHook<
     // POKT address validation
     if (currentAccount.network.family === "POKT") {
       if (trimmed === "") {
-        onValidChange(undefined)
+        onValidChange(undefined);
       } else if (
         isProbablyPOKTAddress(trimmed) &&
         isValidPoktAddress(trimmed)
       ) {
-        onValidChange(trimmed)
+        onValidChange(trimmed);
       } else if (remoteConfig?.POKT?.features?.unstoppableDomains) {
-        setIsValidating(true)
-        validatingValue.current = trimmed
+        setIsValidating(true);
+        validatingValue.current = trimmed;
         const resolution = new Resolution({
           sourceConfig: {
             uns: {
@@ -216,36 +218,36 @@ export const useAddressOrNameValidation: AsyncValidationHook<
               },
             },
           },
-        })
+        });
 
         const resolved = await resolution
           .addr(trimmed, "POKT")
-          .catch(() => undefined)
+          .catch(() => undefined);
 
         // Asynchronicity means we could already have started validating another
         // value before this validation completed; ignore those cases.
         if (validatingValue.current === trimmed) {
           if (resolved === undefined) {
-            onValidChange(undefined)
-            setErrorMessage("Address could not be found")
+            onValidChange(undefined);
+            setErrorMessage("Address could not be found");
           } else {
-            onValidChange(resolved)
+            onValidChange(resolved);
           }
 
-          setIsValidating(false)
-          validatingValue.current = undefined
+          setIsValidating(false);
+          validatingValue.current = undefined;
         }
       } else {
-        onValidChange(undefined)
-        setErrorMessage("Invalid Address")
+        onValidChange(undefined);
+        setErrorMessage("Invalid Address");
       }
     }
-  }
+  };
 
   return {
     rawValue,
     errorMessage,
     isValidating,
     handleInputChange,
-  }
-}
+  };
+};

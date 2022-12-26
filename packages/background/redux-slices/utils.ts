@@ -5,12 +5,12 @@ import {
   AsyncThunkOptions,
   AsyncThunkPayloadCreator,
   createAsyncThunk,
-} from "@reduxjs/toolkit"
-import logger from "../lib/logger"
+} from "@reduxjs/toolkit";
+import logger from "../lib/logger";
 // FIXME: this utility file should not depend on actual services.
 // Creating a properly typed version of `createBackgroundAsyncThunk`
 // elsewhere has proven quite hard, so we are hardwiring typing here.
-import type Main from "../main"
+import type Main from "../main";
 
 // Below, we use `any` to deal with the fact that allAliases is a heterogeneous
 // collection of async thunk actions whose payload types have little in common
@@ -32,10 +32,10 @@ import type Main from "../main"
 export const allAliases: Record<
   string,
   (action: {
-    type: string
-    payload: any
+    type: string;
+    payload: any;
   }) => AsyncThunkAction<unknown, unknown, any>
-> = {}
+> = {};
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
 // All props of an AsyncThunk.
@@ -43,7 +43,7 @@ type AsyncThunkProps = keyof AsyncThunk<
   unknown,
   unknown,
   Record<string, unknown>
->
+>;
 
 // The type system will make sure we've listed all additional props that redux
 // toolkit adds to the AsyncThunk action creator below.
@@ -56,17 +56,17 @@ type ExhaustivePropList<PropListType, TargetType> =
     ? keyof TargetType extends T
       ? readonly T[]
       : never
-    : never
+    : never;
 const asyncThunkProperties = (() => {
-  const temp = ["typePrefix", "pending", "rejected", "fulfilled"] as const
+  const temp = ["typePrefix", "pending", "rejected", "fulfilled"] as const;
 
   const exhaustiveList: ExhaustivePropList<
     typeof temp,
     AsyncThunk<unknown, unknown, Record<string, unknown>>
-  > = temp
+  > = temp;
 
-  return exhaustiveList
-})()
+  return exhaustiveList;
+})();
 
 /**
  * Create an async thunk action that will always run in the background script,
@@ -108,17 +108,17 @@ export function createBackgroundAsyncThunk<
   TypePrefix extends string,
   Returned,
   ThunkArg = void,
-  ThunkApiConfig = { extra: { main: Main } }
+  ThunkApiConfig = { extra: { main: Main } },
 >(
   typePrefix: TypePrefix,
   payloadCreator: AsyncThunkPayloadCreator<Returned, ThunkArg, ThunkApiConfig>,
-  options?: AsyncThunkOptions<ThunkArg, ThunkApiConfig>
+  options?: AsyncThunkOptions<ThunkArg, ThunkApiConfig>,
 ): ((payload: ThunkArg) => Action<TypePrefix> & { payload: ThunkArg }) &
   Pick<AsyncThunk<Returned, ThunkArg, ThunkApiConfig>, AsyncThunkProps> {
   // Exit early if this type prefix is already aliased for handling in the
   // background script.
   if (allAliases[typePrefix]) {
-    throw new Error("Attempted to register an alias twice.")
+    throw new Error("Attempted to register an alias twice.");
   }
 
   // Use reduxtools' createAsyncThunk to build the infrastructure.
@@ -126,14 +126,14 @@ export function createBackgroundAsyncThunk<
     typePrefix,
     async (...args: Parameters<typeof payloadCreator>) => {
       try {
-        return await payloadCreator(...args)
+        return await payloadCreator(...args);
       } catch (error) {
-        logger.error("Async thunk failed", error)
-        throw error
+        logger.error("Async thunk failed", error);
+        throw error;
       }
     },
-    options
-  )
+    options,
+  );
 
   // Wrap the top-level action creator to make it compatible with webext-redux.
   const webextActionCreator = Object.assign(
@@ -143,17 +143,17 @@ export function createBackgroundAsyncThunk<
     }),
     // Copy the utility props on the redux-tools version to our version.
     Object.fromEntries(
-      asyncThunkProperties.map((prop) => [prop, baseThunkActionCreator[prop]])
-    ) as Pick<AsyncThunk<Returned, ThunkArg, ThunkApiConfig>, AsyncThunkProps>
-  )
+      asyncThunkProperties.map((prop) => [prop, baseThunkActionCreator[prop]]),
+    ) as Pick<AsyncThunk<Returned, ThunkArg, ThunkApiConfig>, AsyncThunkProps>,
+  );
 
   // Register the alias to ensure it will always get proxied back to the
   // background script, where we will run our proxy action creator to fire off
   // the thunk correctly.
   allAliases[typePrefix] = (action: { type: string; payload: ThunkArg }) =>
-    baseThunkActionCreator(action.payload)
+    baseThunkActionCreator(action.payload);
 
-  return webextActionCreator
+  return webextActionCreator;
 }
 
 /**
@@ -168,6 +168,6 @@ export type AsyncThunkFulfillmentType<T> = T extends Pick<
   "fulfilled"
 >
   ? Returned
-  : never
+  : never;
 
-export const noopAction = createBackgroundAsyncThunk("noop", () => {})
+export const noopAction = createBackgroundAsyncThunk("noop", () => {});

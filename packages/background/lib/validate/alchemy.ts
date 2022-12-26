@@ -20,7 +20,7 @@ const alchemyAssetTransferJTD = {
     },
   },
   additionalProperties: true,
-} as const
+} as const;
 
 export const alchemyGetAssetTransfersJTD = {
   properties: {
@@ -29,7 +29,7 @@ export const alchemyGetAssetTransfersJTD = {
     },
   },
   additionalProperties: true,
-} as const
+} as const;
 
 // JSON Type Definition for the Alchemy token balance API.
 // https://docs.alchemy.com/alchemy/documentation/enhanced-apis/token-api
@@ -47,7 +47,7 @@ export const alchemyTokenBalanceJTD = {
     },
   },
   additionalProperties: false,
-} as const
+} as const;
 
 // JSON Type Definition for the Alchemy token metadata API.
 // https://docs.alchemy.com/alchemy/documentation/enhanced-apis/token-api#alchemy_gettokenmetadata
@@ -59,4 +59,4 @@ export const alchemyTokenMetadataJTD = {
     logo: { type: "string", nullable: true },
   },
   additionalProperties: false,
-} as const
+} as const;

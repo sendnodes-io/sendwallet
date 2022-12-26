@@ -4,13 +4,13 @@
  */
 
 interface Navigator {
-  readonly usb: USB
+  readonly usb: USB;
 }
 
 declare class USB extends EventTarget {
-  requestDevice(options?: USBDeviceRequestOptions): Promise<unknown>
+  requestDevice(options?: USBDeviceRequestOptions): Promise<unknown>;
 }
 
 interface USBDeviceRequestOptions {
-  filters: unknown[]
+  filters: unknown[];
 }

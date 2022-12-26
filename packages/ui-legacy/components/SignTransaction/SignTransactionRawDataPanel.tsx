@@ -1,28 +1,28 @@
-import React, { ReactElement } from "react"
-import { useDispatch } from "react-redux"
-import { setSnackbarMessage } from "@sendnodes/pokt-wallet-background/redux-slices/ui"
-import { selectTransactionData } from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction"
-import SharedButton from "../Shared/SharedButton"
-import { useBackgroundSelector } from "../../hooks"
+import React, { ReactElement } from "react";
+import { useDispatch } from "react-redux";
+import { setSnackbarMessage } from "@sendnodes/pokt-wallet-background/redux-slices/ui";
+import { selectTransactionData } from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction";
+import SharedButton from "../Shared/SharedButton";
+import { useBackgroundSelector } from "../../hooks";
 
 export default function SignTransactionRawDataPanel(): ReactElement {
-  const dispatch = useDispatch()
-  const transactionDetails = useBackgroundSelector(selectTransactionData)
-  if (!transactionDetails) return <></>
+  const dispatch = useDispatch();
+  const transactionDetails = useBackgroundSelector(selectTransactionData);
+  if (!transactionDetails) return <></>;
 
   // TODO: v0.2.0 the TX should produce it's raw
-  let data: string | null = ""
+  let data: string | null = "";
   if ("input" in transactionDetails) {
-    data = transactionDetails.input
+    data = transactionDetails.input;
   }
   if ("txMsg" in transactionDetails) {
-    data = JSON.stringify(transactionDetails.txMsg, null, 2)
+    data = JSON.stringify(transactionDetails.txMsg, null, 2);
   }
 
   const copyData = () => {
-    navigator.clipboard.writeText(data ?? "")
-    dispatch(setSnackbarMessage("Raw data copied to clipboard"))
-  }
+    navigator.clipboard.writeText(data ?? "");
+    dispatch(setSnackbarMessage("Raw data copied to clipboard"));
+  };
 
   return (
     <div className="width_full">
@@ -68,5 +68,5 @@ export default function SignTransactionRawDataPanel(): ReactElement {
         }
       `}</style>
     </div>
-  )
+  );
 }

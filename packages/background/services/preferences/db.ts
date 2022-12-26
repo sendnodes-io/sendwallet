@@ -1,35 +1,35 @@
-import Dexie, { Transaction } from "dexie"
+import Dexie, { Transaction } from "dexie";
 
-import { FiatCurrency, FungibleAsset } from "../../assets"
-import { AddressOnNetwork } from "../../accounts"
+import { FiatCurrency, FungibleAsset } from "../../assets";
+import { AddressOnNetwork } from "../../accounts";
 
-import DEFAULT_PREFERENCES from "./defaults"
+import DEFAULT_PREFERENCES from "./defaults";
 
 // The idea is to use this interface to describe the data structure stored in indexedDb
 // In the future this might also have a runtime type check capability, but it's good enough for now.
 export interface Preferences {
-  id?: number
-  savedAt: number
-  tokenLists: { autoUpdate: boolean; urls: string[] }
-  currency: FiatCurrency
-  defaultWallet: boolean
-  currentAddress?: string
-  selectedAccount: AddressOnNetwork
-  customAssets: FungibleAsset[]
+  id?: number;
+  savedAt: number;
+  tokenLists: { autoUpdate: boolean; urls: string[] };
+  currency: FiatCurrency;
+  defaultWallet: boolean;
+  currentAddress?: string;
+  selectedAccount: AddressOnNetwork;
+  customAssets: FungibleAsset[];
 }
 
 export class PreferenceDatabase extends Dexie {
-  private preferences!: Dexie.Table<Preferences, number>
+  private preferences!: Dexie.Table<Preferences, number>;
 
   constructor() {
-    super("poktWallet/preferences")
+    super("poktWallet/preferences");
 
     // DELETE ME: No need to keep this, but because this service was using a different method
     // I thought it's easier to follow the history if it's here at least until we discuss this approach
     this.version(1).stores({
       preferences: "++id,savedAt",
       migrations: "++id,appliedAt",
-    })
+    });
 
     // DELETE ME: This is not necessary either, but because there was a different approach
     // implementing the migration I kept it here for now just to make sure
@@ -48,10 +48,10 @@ export class PreferenceDatabase extends Dexie {
               // https://dexie.org/docs/Collection/Collection.modify()
               // eslint-disable-next-line no-param-reassign
               storedPreferences.defaultWallet =
-                DEFAULT_PREFERENCES.defaultWallet
+                DEFAULT_PREFERENCES.defaultWallet;
             }
-          })
-      })
+          });
+      });
 
     // TBD @Antonio: Implemented database versioning and population according to the Dexie docs
     // https://dexie.org/docs/Tutorial/Design#database-versioning
@@ -59,7 +59,7 @@ export class PreferenceDatabase extends Dexie {
     this.version(3).stores({
       migrations: null, // If we use dexie built in migrations then we don't need to keep track of them manually
       preferences: "++id", // removed all the unused indexes
-    })
+    });
 
     //
     this.version(4)
@@ -76,14 +76,14 @@ export class PreferenceDatabase extends Dexie {
               storedPreferences.selectedAccount = {
                 network: DEFAULT_PREFERENCES.selectedAccount.network,
                 address: storedPreferences.currentAddress,
-              }
+              };
             } else {
               // eslint-disable-next-line no-param-reassign
               storedPreferences.selectedAccount =
-                DEFAULT_PREFERENCES.selectedAccount
+                DEFAULT_PREFERENCES.selectedAccount;
             }
-          })
-      })
+          });
+      });
 
     // Add the new default token list
     this.version(5)
@@ -102,9 +102,9 @@ export class PreferenceDatabase extends Dexie {
                 "https://ipfs.fleek.co/ipfs/bafybeicovpqvb533alo5scf7vg34z6fjspdytbzsa2es2lz35sw3ksh2la",
                 ...storedPreferences.tokenLists.urls,
               ],
-            }
-          })
-      })
+            };
+          });
+      });
 
     // This is the old version for populate
     // https://dexie.org/docs/Dexie/Dexie.on.populate-(old-version)
@@ -112,27 +112,27 @@ export class PreferenceDatabase extends Dexie {
     this.on("populate", (tx: Transaction) => {
       // This could be tx.preferences but the typing for populate
       // is not generic so it does not know about the preferences table
-      tx.table("preferences").add(DEFAULT_PREFERENCES)
-    })
+      tx.table("preferences").add(DEFAULT_PREFERENCES);
+    });
   }
 
   async getPreferences(): Promise<Preferences> {
     // TBD: This will surely return a value because `getOrCreateDB` is called first
     // when the service is created. It runs the migration which writes the `DEFAULT_PREFERENCES`
-    return this.preferences.reverse().first() as Promise<Preferences>
+    return this.preferences.reverse().first() as Promise<Preferences>;
   }
 
   async setDefaultWalletValue(defaultWallet: boolean): Promise<void> {
-    await this.preferences.toCollection().modify({ defaultWallet })
+    await this.preferences.toCollection().modify({ defaultWallet });
   }
 
   async setSelectedAccount(addressNetwork: AddressOnNetwork): Promise<void> {
     await this.preferences
       .toCollection()
-      .modify({ selectedAccount: addressNetwork })
+      .modify({ selectedAccount: addressNetwork });
   }
 }
 
 export async function getOrCreateDB(): Promise<PreferenceDatabase> {
-  return new PreferenceDatabase()
+  return new PreferenceDatabase();
 }

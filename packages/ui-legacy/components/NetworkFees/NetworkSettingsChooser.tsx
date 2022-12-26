@@ -3,15 +3,15 @@ import {
   NetworkFeeSettings,
   selectDefaultNetworkFeeSettings,
   setFeeType,
-} from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction"
-import React, { ReactElement, useState } from "react"
-import { useBackgroundDispatch, useBackgroundSelector } from "../../hooks"
-import SharedButton from "../Shared/SharedButton"
-import NetworkSettingsSelect from "./NetworkSettingsSelect"
+} from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction";
+import React, { ReactElement, useState } from "react";
+import { useBackgroundDispatch, useBackgroundSelector } from "../../hooks";
+import SharedButton from "../Shared/SharedButton";
+import NetworkSettingsSelect from "./NetworkSettingsSelect";
 
 interface NetworkSettingsChooserProps {
-  estimatedFeesPerGas: EstimatedFeesPerGas | undefined
-  onNetworkSettingsSave: (setting: NetworkFeeSettings) => void
+  estimatedFeesPerGas: EstimatedFeesPerGas | undefined;
+  onNetworkSettingsSave: (setting: NetworkFeeSettings) => void;
 }
 
 export default function NetworkSettingsChooser({
@@ -19,15 +19,15 @@ export default function NetworkSettingsChooser({
   onNetworkSettingsSave,
 }: NetworkSettingsChooserProps): ReactElement {
   const [networkSettings, setNetworkSettings] = useState(
-    useBackgroundSelector(selectDefaultNetworkFeeSettings)
-  )
-  const dispatch = useBackgroundDispatch()
+    useBackgroundSelector(selectDefaultNetworkFeeSettings),
+  );
+  const dispatch = useBackgroundDispatch();
 
   const saveNetworkSettings = () => {
-    dispatch(setFeeType(networkSettings.feeType))
+    dispatch(setFeeType(networkSettings.feeType));
 
-    onNetworkSettingsSave(networkSettings)
-  }
+    onNetworkSettingsSave(networkSettings);
+  };
 
   return (
     <>
@@ -113,5 +113,5 @@ export default function NetworkSettingsChooser({
         `}
       </style>
     </>
-  )
+  );
 }

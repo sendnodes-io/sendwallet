@@ -1,16 +1,16 @@
-import { createSelector, current, EntityId } from "@reduxjs/toolkit"
-import dayjs from "dayjs"
-import * as relativeTime from "dayjs/plugin/relativeTime"
-import * as updateLocale from "dayjs/plugin/updateLocale"
-import * as utc from "dayjs/plugin/utc"
-import { ActivityItem } from "../activities"
-import { selectCurrentAccount } from "./uiSelectors"
-import { sameNetwork } from "../../networks"
-import { RootState } from ".."
+import { createSelector, current, EntityId } from "@reduxjs/toolkit";
+import dayjs from "dayjs";
+import * as relativeTime from "dayjs/plugin/relativeTime";
+import * as updateLocale from "dayjs/plugin/updateLocale";
+import * as utc from "dayjs/plugin/utc";
+import { ActivityItem } from "../activities";
+import { selectCurrentAccount } from "./uiSelectors";
+import { sameNetwork } from "../../networks";
+import { RootState } from "..";
 
-dayjs.extend(updateLocale.default)
-dayjs.extend(relativeTime.default)
-dayjs.extend(utc.default)
+dayjs.extend(updateLocale.default);
+dayjs.extend(relativeTime.default);
+dayjs.extend(utc.default);
 
 dayjs.updateLocale("en", {
   relativeTime: {
@@ -28,12 +28,12 @@ dayjs.updateLocale("en", {
     y: "a yr",
     yy: "%d yrs",
   },
-})
+});
 
 export const selectCurrentAccountActivitiesWithTimestamps = createSelector(
   (state: RootState) => {
-    const currentAccount = selectCurrentAccount(state)
-    const { address, network } = currentAccount
+    const currentAccount = selectCurrentAccount(state);
+    const { address, network } = currentAccount;
     return {
       currentAccount,
       currentAccountActivities:
@@ -42,22 +42,22 @@ export const selectCurrentAccountActivitiesWithTimestamps = createSelector(
         state.networks[network.family === "EVM" ? "evm" : "pokt"][
           network.chainID
         ]?.blocks ?? {},
-    }
+    };
   },
   ({ currentAccount, currentAccountActivities, blocks }) => {
     return currentAccountActivities?.ids
       .map((id: EntityId): ActivityItem | null => {
         // Guaranteed by the fact that we got the id from the ids collection.
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const activityItem = currentAccountActivities.entities[id]!
+        const activityItem = currentAccountActivities.entities[id]!;
         if (!sameNetwork(activityItem.network, currentAccount.network)) {
-          return null
+          return null;
         }
 
         const timestamp =
           activityItem.blockHeight === null
             ? undefined
-            : blocks[activityItem.blockHeight]?.timestamp
+            : blocks[activityItem.blockHeight]?.timestamp;
         return {
           ...activityItem,
           timestamp,
@@ -67,11 +67,11 @@ export const selectCurrentAccountActivitiesWithTimestamps = createSelector(
           relativeTimestamp: timestamp
             ? dayjs.unix(timestamp).fromNow()
             : undefined,
-        }
+        };
       })
-      .filter((a) => a !== null) as ActivityItem[]
-  }
-)
+      .filter((a) => a !== null) as ActivityItem[];
+  },
+);
 
 export const selectCurrentAccountActivityForTxHash = createSelector(
   [
@@ -79,8 +79,8 @@ export const selectCurrentAccountActivityForTxHash = createSelector(
     (_: RootState, txHash: string) => txHash,
   ],
   (activities, txHash) => {
-    return activities?.find((a) => a.hash == txHash)
-  }
-)
+    return activities?.find((a) => a.hash === txHash);
+  },
+);
 
-export default selectCurrentAccountActivitiesWithTimestamps
+export default selectCurrentAccountActivitiesWithTimestamps;

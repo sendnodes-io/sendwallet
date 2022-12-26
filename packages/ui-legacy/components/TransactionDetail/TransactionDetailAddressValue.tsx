@@ -1,11 +1,11 @@
-import { truncateAddress } from "@sendnodes/pokt-wallet-background/lib/utils"
-import React, { ReactElement } from "react"
-import SharedButton from "../Shared/SharedButton"
+import { truncateAddress } from "@sendnodes/pokt-wallet-background/lib/utils";
+import React, { ReactElement } from "react";
+import SharedButton from "../Shared/SharedButton";
 
 export default function TransactionDetailAddressValue({
   address,
 }: {
-  address: string
+  address: string;
 }): ReactElement {
   return (
     <div className="container">
@@ -18,7 +18,7 @@ export default function TransactionDetailAddressValue({
         onClick={() => {
           window
             .open(`https://etherscan.io/address/${address}`, "_blank")
-            ?.focus()
+            ?.focus();
         }}
       >
         {truncateAddress(address)}
@@ -29,5 +29,5 @@ export default function TransactionDetailAddressValue({
         }
       `}</style>
     </div>
-  )
+  );
 }

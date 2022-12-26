@@ -1,6 +1,6 @@
-import React, { ReactElement } from "react"
-import AccountsNotificationPanelNotificationItem from "./AccountsNotificationPanelNotificationItem"
-import SharedButton from "../Shared/SharedButton"
+import React, { ReactElement } from "react";
+import AccountsNotificationPanelNotificationItem from "./AccountsNotificationPanelNotificationItem";
+import SharedButton from "../Shared/SharedButton";
 
 export default function AccountsNotificationPanelNotifications(): ReactElement {
   return (
@@ -71,5 +71,5 @@ export default function AccountsNotificationPanelNotifications(): ReactElement {
         }
       `}</style>
     </>
-  )
+  );
 }

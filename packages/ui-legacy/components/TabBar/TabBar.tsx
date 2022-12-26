@@ -1,12 +1,12 @@
-import React, { ReactElement } from "react"
+import React, { ReactElement } from "react";
 
-import { useLocation } from "react-router-dom"
-import TabBarIcon from "./TabBarIcon"
-import tabs from "../../utils/tabs"
+import { useLocation } from "react-router-dom";
+import TabBarIcon from "./TabBarIcon";
+import tabs from "../../utils/tabs";
 
 export default function TabBar(): ReactElement {
-  const location = useLocation()
-  const activeTabName = location?.pathname?.split("/")[1] || "wallet"
+  const location = useLocation();
+  const activeTabName = location?.pathname?.split("/")[1] || "wallet";
 
   return (
     <nav>
@@ -17,7 +17,7 @@ export default function TabBar(): ReactElement {
             name={tabName}
             isActive={activeTabName === tabName}
           />
-        )
+        );
       })}
       <style jsx>
         {`
@@ -37,5 +37,5 @@ export default function TabBar(): ReactElement {
         `}
       </style>
     </nav>
-  )
+  );
 }

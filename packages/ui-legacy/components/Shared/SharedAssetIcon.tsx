@@ -1,24 +1,24 @@
-import classNames from "clsx"
-import React, { CSSProperties, ReactElement } from "react"
+import classNames from "clsx";
+import React, { CSSProperties, ReactElement } from "react";
 
 interface Props {
-  size: "small" | "medium" | "large"
-  logoURL: string
-  symbol: string
+  size: "small" | "medium" | "large";
+  logoURL: string;
+  symbol: string;
 }
 
 export default function SharedAssetIcon(props: Props): ReactElement {
-  let { size, logoURL, symbol } = props
-  symbol = symbol.toLowerCase()
-  const hardcodedIcons = ["eth", "pokt", "matic"]
-  const hasHardcodedIcon = hardcodedIcons.includes(symbol)
+  let { size, logoURL, symbol } = props;
+  symbol = symbol.toLowerCase();
+  const hardcodedIcons = ["eth", "pokt", "matic"];
+  const hasHardcodedIcon = hardcodedIcons.includes(symbol);
 
   // Checks to see if it's an http(s) address because I've seen
   // strings get here like ipfs://QmYNz8J1h5yefkaAw6tZwUYoJyBTWmBXgAY28ZWZ5rPsLR
   // which won't load. Of if we have a hardcoded backup image
   const hasValidImage =
-    (logoURL && logoURL.includes("http")) || hasHardcodedIcon
-  const tokenIconUrl = hasHardcodedIcon ? `./images/${symbol}@2x.png` : logoURL
+    (logoURL?.includes("http")) || hasHardcodedIcon;
+  const tokenIconUrl = hasHardcodedIcon ? `./images/${symbol}@2x.png` : logoURL;
 
   return (
     <div className={`token_icon_wrap ${size}`}>
@@ -91,11 +91,11 @@ export default function SharedAssetIcon(props: Props): ReactElement {
         `}
       </style>
     </div>
-  )
+  );
 }
 
 SharedAssetIcon.defaultProps = {
   size: "medium",
   logoURL: null,
   symbol: "POKT",
-}
+};

@@ -1,28 +1,28 @@
-import { browser } from "@sendnodes/pokt-wallet-background"
-import { selectPopoutWindowId } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
-import React, { useEffect, useState } from "react"
-import { useBackgroundSelector } from "../../hooks"
-import SharedButton from "./SharedButton"
+import { browser } from "@sendnodes/pokt-wallet-background";
+import { selectPopoutWindowId } from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
+import React, { useEffect, useState } from "react";
+import { useBackgroundSelector } from "../../hooks";
+import SharedButton from "./SharedButton";
 
 export default function SharedPopoutOpen() {
-  const popoutWindowId = useBackgroundSelector(selectPopoutWindowId)
+  const popoutWindowId = useBackgroundSelector(selectPopoutWindowId);
   const [popout, setPopoutWindow] = useState<browser.Windows.Window | null>(
-    null
-  )
+    null,
+  );
 
   useEffect(() => {
     if (!popoutWindowId) {
-      return
+      return;
     }
     const fetchPopout = async () => {
       try {
-        setPopoutWindow(await browser.windows.get(popoutWindowId))
+        setPopoutWindow(await browser.windows.get(popoutWindowId));
       } catch (e) {}
-    }
+    };
     fetchPopout().catch((e) =>
-      console.error("Failed to fetch popout window", e)
-    )
-  }, [popoutWindowId])
+      console.error("Failed to fetch popout window", e),
+    );
+  }, [popoutWindowId]);
 
   return (
     <>
@@ -35,7 +35,7 @@ export default function SharedPopoutOpen() {
               type="primary"
               size="large"
               onClick={(e) => {
-                browser.windows.update(popoutWindowId, { focused: true })
+                browser.windows.update(popoutWindowId, { focused: true });
               }}
             >
               BRING POPOUT TO FRONT
@@ -64,5 +64,5 @@ export default function SharedPopoutOpen() {
         `}
       </style>
     </>
-  )
+  );
 }

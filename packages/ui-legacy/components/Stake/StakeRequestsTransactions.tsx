@@ -1,34 +1,34 @@
-import React, { ReactElement } from "react"
-import { InformationCircleIcon } from "@heroicons/react/outline"
-import { isEmpty } from "lodash"
-import clsx from "clsx"
-import { Link } from "react-router-dom"
-import { formatFixed } from "@ethersproject/bignumber"
-import { formatUnits } from "@ethersproject/units"
-import { useAreKeyringsUnlocked } from "../../hooks"
-import SharedSplashScreen from "../Shared/SharedSplashScreen"
-import formatTokenAmount from "../../utils/formatTokenAmount"
-import useStakingAllTransactions from "../../hooks/staking-hooks/use-staking-all-transactions"
+import React, { ReactElement } from "react";
+import { InformationCircleIcon } from "@heroicons/react/outline";
+import { isEmpty } from "lodash";
+import clsx from "clsx";
+import { Link } from "react-router-dom";
+import { formatFixed } from "@ethersproject/bignumber";
+import { formatUnits } from "@ethersproject/units";
+import { useAreKeyringsUnlocked } from "../../hooks";
+import SharedSplashScreen from "../Shared/SharedSplashScreen";
+import formatTokenAmount from "../../utils/formatTokenAmount";
+import useStakingAllTransactions from "../../hooks/staking-hooks/use-staking-all-transactions";
 import StakeTransactionInfo, {
   getStakeTransactionInfo,
-} from "./StakeTransactionInfo"
-import { SnTransaction } from "../../hooks/staking-hooks"
+} from "./StakeTransactionInfo";
+import { SnTransaction } from "../../hooks/staking-hooks";
 
 export default function StakeRequestsTransactions(): ReactElement {
-  const areKeyringsUnlocked = useAreKeyringsUnlocked(true)
+  const areKeyringsUnlocked = useAreKeyringsUnlocked(true);
   const {
     data: allTransactions,
     isLoading,
     isError,
-  } = useStakingAllTransactions()
+  } = useStakingAllTransactions();
 
-  if (isError) throw isError
+  if (isError) throw isError;
   if (!areKeyringsUnlocked || isLoading) {
     return (
       <div className="grow w-full relative flex flex-col justify-center items-center">
         <SharedSplashScreen />
       </div>
-    )
+    );
   }
 
   return (
@@ -39,7 +39,7 @@ export default function StakeRequestsTransactions(): ReactElement {
             <h1 className="text-xl font-semibold">
               <div
                 className={clsx(
-                  "icon-mask h-10 w-10 bg-white inline-block align-middle"
+                  "icon-mask h-10 w-10 bg-white inline-block align-middle",
                 )}
                 css={`
                   mask-image: url("../../public/images/transactions@2x.png");
@@ -78,7 +78,7 @@ export default function StakeRequestsTransactions(): ReactElement {
                   ...allTransactions
                     .filter((tx) => !!tx.timestamp)
                     .map((transaction) => {
-                      const txInfo = getStakeTransactionInfo({ transaction })
+                      const txInfo = getStakeTransactionInfo({ transaction });
                       return [
                         transaction.hash,
                         transaction.height,
@@ -86,14 +86,14 @@ export default function StakeRequestsTransactions(): ReactElement {
                         "POKT", // wishful thinking
                         formatUnits(txInfo.amount, 6),
                         txInfo.timestamp.toISOString(),
-                      ]
+                      ];
                     }),
-                ]
+                ];
 
                 const csvContent = `data:text/csv;charset=utf-8,${rows
                   .map((e) => e.join(","))
-                  .join("\n")}`
-                window.open(encodeURI(csvContent))
+                  .join("\n")}`;
+                window.open(encodeURI(csvContent));
               }}
             >
               Export CSV
@@ -139,12 +139,12 @@ export default function StakeRequestsTransactions(): ReactElement {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 type StakeTransactionItemProps = {
-  tx: SnTransaction
-}
+  tx: SnTransaction;
+};
 function StakeTransactionItem({ tx }: StakeTransactionItemProps) {
   return (
     <StakeTransactionInfo transaction={tx}>
@@ -177,7 +177,7 @@ function StakeTransactionItem({ tx }: StakeTransactionItemProps) {
               <div className="flex items-center flex-shrink-0">
                 <div
                   className={clsx(
-                    "h-16 w-16 rounded-full flex items-center justify-center"
+                    "h-16 w-16 rounded-full flex items-center justify-center",
                   )}
                 >
                   <Icon
@@ -195,7 +195,7 @@ function StakeTransactionItem({ tx }: StakeTransactionItemProps) {
                     {!isCompoundUpdate &&
                       isStake &&
                       `${tx.reward ? "Reward" : ""} ${humanReadableAction}`}
-                    {!isCompoundUpdate && !isStake && humanReadableAction}
+                    {!(isCompoundUpdate || isStake ) && humanReadableAction}
                     {isCompoundUpdate && humanReadableAction}
                   </p>
                   <div className="ml-2 flex-shrink-0 flex">
@@ -203,10 +203,10 @@ function StakeTransactionItem({ tx }: StakeTransactionItemProps) {
                       <div
                         title={formatFixed(
                           amount,
-                          currentAccount.network.baseAsset.decimals
+                          currentAccount.network.baseAsset.decimals,
                         )}
                         className={clsx(
-                          "px-2 inline-flex items-center gap-2 text-sm sm:text-lg leading-5 font-semibold rounded-full"
+                          "px-2 inline-flex items-center gap-2 text-sm sm:text-lg leading-5 font-semibold rounded-full",
                         )}
                       >
                         <div className="inline">
@@ -219,10 +219,10 @@ function StakeTransactionItem({ tx }: StakeTransactionItemProps) {
                         {formatTokenAmount(
                           formatFixed(
                             amount,
-                            currentAccount.network.baseAsset.decimals
+                            currentAccount.network.baseAsset.decimals,
                           ),
                           7,
-                          2
+                          2,
                         )}
                       </div>
                     )}
@@ -248,7 +248,7 @@ function StakeTransactionItem({ tx }: StakeTransactionItemProps) {
                         <div
                           className={clsx(
                             "icon-mask",
-                            "h-4 w-4 inline bg-white mr-2"
+                            "h-4 w-4 inline bg-white mr-2",
                           )}
                           css={`
                             mask-image: url("../../public/images/rewards@2x.png");
@@ -265,7 +265,7 @@ function StakeTransactionItem({ tx }: StakeTransactionItemProps) {
                             Original tx: {unstakeReceiptHash.substring(0, 4)}...
                             {unstakeReceiptHash.substring(
                               unstakeReceiptHash.length - 4,
-                              unstakeReceiptHash.length
+                              unstakeReceiptHash.length,
                             )}{" "}
                           </span>
                         </div>
@@ -285,7 +285,7 @@ function StakeTransactionItem({ tx }: StakeTransactionItemProps) {
                           ` ${tx.unstakeStatus} since `}
                         <time
                           dateTime={timestamp.format(
-                            "YYYY-MM-DD HH:mm:ss [UTC]"
+                            "YYYY-MM-DD HH:mm:ss [UTC]",
                           )}
                           title={timestamp.format("YYYY-MM-DD HH:mm:ss [UTC]")}
                         >
@@ -295,7 +295,7 @@ function StakeTransactionItem({ tx }: StakeTransactionItemProps) {
                       <span className="hidden group-hover:inline">
                         <time
                           dateTime={timestamp.format(
-                            "YYYY-MM-DD HH:mm:ss [UTC]"
+                            "YYYY-MM-DD HH:mm:ss [UTC]",
                           )}
                           title={timestamp.format("YYYY-MM-DD HH:mm:ss [UTC]")}
                         >
@@ -311,5 +311,5 @@ function StakeTransactionItem({ tx }: StakeTransactionItemProps) {
         </li>
       )}
     </StakeTransactionInfo>
-  )
+  );
 }

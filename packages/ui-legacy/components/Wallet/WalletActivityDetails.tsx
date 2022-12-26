@@ -1,17 +1,17 @@
-import React, { useCallback, ReactElement } from "react"
-import { ActivityItem } from "@sendnodes/pokt-wallet-background/redux-slices/activities"
-import { getRecipient } from "@sendnodes/pokt-wallet-background/redux-slices/utils/activity-utils"
-import SharedButton from "../Shared/SharedButton"
-import SharedAddress from "../Shared/SharedAddress"
+import React, { useCallback, ReactElement } from "react";
+import { ActivityItem } from "@sendnodes/pokt-wallet-background/redux-slices/activities";
+import { getRecipient } from "@sendnodes/pokt-wallet-background/redux-slices/utils/activity-utils";
+import SharedButton from "../Shared/SharedButton";
+import SharedAddress from "../Shared/SharedAddress";
 
 interface DetailRowItemProps {
-  label: string
-  value: unknown
-  valueDetail: string
+  label: string;
+  value: unknown;
+  valueDetail: string;
 }
 
 function DetailRowItem(props: DetailRowItemProps): ReactElement {
-  const { label, value, valueDetail } = props
+  const { label, value, valueDetail } = props;
 
   return (
     <li>
@@ -47,17 +47,17 @@ function DetailRowItem(props: DetailRowItemProps): ReactElement {
         `}
       </style>
     </li>
-  )
+  );
 }
 
 interface DestinationCardProps {
-  label: string
-  address: string
-  name?: string | undefined
+  label: string;
+  address: string;
+  name?: string | undefined;
 }
 
 function DestinationCard(props: DestinationCardProps): ReactElement {
-  const { label, address, name } = props
+  const { label, address, name } = props;
 
   return (
     <div className="card_wrap">
@@ -94,38 +94,39 @@ function DestinationCard(props: DestinationCardProps): ReactElement {
         `}
       </style>
     </div>
-  )
+  );
 }
 
 interface WalletActivityDetailsProps {
-  activityItem: ActivityItem
+  activityItem: ActivityItem;
 }
 // Include this "or" type to handle existing placeholder data
 // on the single asset page. TODO: Remove once single asset page
 // has real data
 
 export default function WalletActivityDetails(
-  props: WalletActivityDetailsProps
+  props: WalletActivityDetailsProps,
 ): ReactElement {
-  const { activityItem } = props
+  const { activityItem } = props;
 
   // TODO: v0.2.0 decide if we still need this component
   const openExplorer = useCallback(() => {
     const baseUrl =
-      activityItem.network.family == "POKT"
+      activityItem.network.family === "POKT"
         ? "https://explorer.pokt.network/tx/"
-        : "https://etherscan.io/tx/"
-    window.open(`${baseUrl}${activityItem.hash}`, "_blank")?.focus()
-  }, [activityItem?.hash])
+        : "https://etherscan.io/tx/";
+    window.open(`${baseUrl}${activityItem.hash}`, "_blank")?.focus();
+  }, [activityItem?.hash]);
 
-  if (!activityItem) return <></>
+  if (!activityItem) return <></>;
 
-  let from = ""
-  if ("from" in activityItem) from = activityItem.from
-  if ("txResult" in activityItem) from = activityItem.txResult?.signer as string
+  let from = "";
+  if ("from" in activityItem) from = activityItem.from;
+  if ("txResult" in activityItem)
+    from = activityItem.txResult?.signer as string;
 
-  const recipient = getRecipient(activityItem)
-  const { address: recipientAddress, name: recipientName } = recipient ?? {}
+  const recipient = getRecipient(activityItem);
+  const { address: recipientAddress, name: recipientName } = recipient ?? {};
 
   return (
     <div className="wrap standard_width center_horizontal">
@@ -138,7 +139,7 @@ export default function WalletActivityDetails(
             iconSize="large"
             onClick={openExplorer}
           >
-            {activityItem.network.family == "POKT"
+            {activityItem.network.family === "POKT"
               ? "POKT Explorer"
               : "Etherscan"}
           </SharedButton>
@@ -163,8 +164,8 @@ export default function WalletActivityDetails(
                 value={value}
                 valueDetail=""
               />
-            )
-          }
+            );
+          },
         )}
         <DetailRowItem
           label="Timestamp"
@@ -277,5 +278,5 @@ export default function WalletActivityDetails(
         `}
       </style>
     </div>
-  )
+  );
 }

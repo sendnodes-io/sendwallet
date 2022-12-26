@@ -1,34 +1,34 @@
 /* This example requires Tailwind CSS v2.0+ */
-import React, { Fragment, ReactElement, useEffect, useState } from "react"
-import { Dialog, Transition } from "@headlessui/react"
-import classNames, { clsx } from "clsx"
-import { getCurrentAccountState } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
-import { useHistory, Link, useLocation } from "react-router-dom"
-import { MenuIcon, XIcon } from "@heroicons/react/outline"
-import { isEqual } from "lodash"
-import { css, stylesheet } from "astroturf"
-import { selectTransactionData } from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction"
-import { useAreKeyringsUnlocked, useBackgroundSelector } from "../../hooks"
-import { SharedIcon } from "../Shared/SharedIcon"
-import Snackbar from "../Snackbar/Snackbar"
+import React, { Fragment, ReactElement, useEffect, useState } from "react";
+import { Dialog, Transition } from "@headlessui/react";
+import classNames, { clsx } from "clsx";
+import { getCurrentAccountState } from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
+import { useHistory, Link, useLocation } from "react-router-dom";
+import { MenuIcon, XIcon } from "@heroicons/react/outline";
+import { isEqual } from "lodash";
+import { css, stylesheet } from "astroturf";
+import { selectTransactionData } from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction";
+import { useAreKeyringsUnlocked, useBackgroundSelector } from "../../hooks";
+import { SharedIcon } from "../Shared/SharedIcon";
+import Snackbar from "../Snackbar/Snackbar";
 
-import SharedSplashScreen from "../Shared/SharedSplashScreen"
-import SharedAddress from "../Shared/SharedAddress"
-import AccountsNotificationPanel from "../AccountsNotificationPanel/AccountsNotificationPanel"
-import SharedModal from "../Shared/SharedModal"
-import StakeSignTransaction from "../Stake/StakeSignTransaction"
+import SharedSplashScreen from "../Shared/SharedSplashScreen";
+import SharedAddress from "../Shared/SharedAddress";
+import AccountsNotificationPanel from "../AccountsNotificationPanel/AccountsNotificationPanel";
+import SharedModal from "../Shared/SharedModal";
+import StakeSignTransaction from "../Stake/StakeSignTransaction";
 
-import Footer from "../Stake/Footer"
-import useStakingPoktParams from "../../hooks/staking-hooks/use-staking-pokt-params"
-import ErrorFallback from "../../pages/ErrorFallback"
-import { usePoktNetworkBlockHeight } from "../../hooks/pocket-network/use-latest-block"
+import Footer from "../Stake/Footer";
+import useStakingPoktParams from "../../hooks/staking-hooks/use-staking-pokt-params";
+import ErrorFallback from "../../pages/ErrorFallback";
+import { usePoktNetworkBlockHeight } from "../../hooks/pocket-network/use-latest-block";
 
 const sidebarIconCss = css`
   mask-size: cover;
   mask-repeat: no-repeat;
   mask-position: center;
   display: inline-block;
-`
+`;
 
 const navigation = [
   {
@@ -92,27 +92,27 @@ const navigation = [
       />
     ),
   },
-]
+];
 
 interface SidebarProps {
-  isOpen: boolean
-  onClose: () => void
+  isOpen: boolean;
+  onClose: () => void;
 }
 
 const revealSidebarHover = stylesheet`
   .sidebar:hover .linkText {
     @apply opacity-100 relative delay-100;
   }
-`
+`;
 function Sidebar({ isOpen, onClose }: SidebarProps): ReactElement {
-  const history = useHistory()
-  const location = useLocation()
+  const history = useHistory();
+  const location = useLocation();
 
   useEffect(() => {
     if (isOpen) {
-      onClose()
+      onClose();
     }
-  }, [location])
+  }, [location]);
 
   return (
     <>
@@ -182,7 +182,7 @@ function Sidebar({ isOpen, onClose }: SidebarProps): ReactElement {
                           history.location.pathname === item.href
                             ? "bg-gray-900 text-white"
                             : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                          "group flex items-center px-2 py-2 text-base font-medium rounded-md"
+                          "group flex items-center px-2 py-2 text-base font-medium rounded-md",
                         )}
                       >
                         <item.icon
@@ -190,7 +190,7 @@ function Sidebar({ isOpen, onClose }: SidebarProps): ReactElement {
                             history.location.pathname === item.href
                               ? "bg-aqua"
                               : "bg-white group-hover:bg-aqua",
-                            "mr-4 flex-shrink-0 h-6 w-6"
+                            "mr-4 flex-shrink-0 h-6 w-6",
                           )}
                           aria-hidden="true"
                         />
@@ -212,7 +212,7 @@ function Sidebar({ isOpen, onClose }: SidebarProps): ReactElement {
       <div
         className={clsx(
           "hidden lg:flex lg:w-20 lg:hover:w-32 xl:w-20 xl:hover:w-36 transition-width duration-300 lg:flex-col lg:absolute lg:inset-y-0 bg-gradient-to-b from-eerie-black to-rich-black md:rounded-tl-3xl md:rounded-bl-3xl border-l-2 border-aqua",
-          revealSidebarHover.sidebar
+          revealSidebarHover.sidebar,
         )}
       >
         {/* Sidebar component, swap this element with another sidebar if you like */}
@@ -227,7 +227,7 @@ function Sidebar({ isOpen, onClose }: SidebarProps): ReactElement {
                     history.location.pathname === item.href
                       ? "text-aqua"
                       : "text-white hover:text-aqua",
-                    "group flex flex-col justify-center items-center px-2 py-2 text-sm xl:text-lg font-light rounded-md"
+                    "group flex flex-col justify-center items-center px-2 py-2 text-sm xl:text-lg font-light rounded-md",
                   )}
                 >
                   <item.icon
@@ -235,14 +235,14 @@ function Sidebar({ isOpen, onClose }: SidebarProps): ReactElement {
                       history.location.pathname === item.href
                         ? "bg-aqua"
                         : "bg-white group-hover:bg-aqua",
-                      "flex-shrink-0 lg:h-8 lg:w-8 xl:h-12 xl:w-12"
+                      "flex-shrink-0 lg:h-8 lg:w-8 xl:h-12 xl:w-12",
                     )}
                     aria-hidden="true"
                   />
                   <span
                     className={clsx(
                       "opacity-0 transition-opacity duration-300",
-                      revealSidebarHover.linkText
+                      revealSidebarHover.linkText,
                     )}
                   >
                     {item.name}
@@ -254,11 +254,11 @@ function Sidebar({ isOpen, onClose }: SidebarProps): ReactElement {
         </div>
       </div>
     </>
-  )
+  );
 }
 
 interface Props {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 const styles = stylesheet`
@@ -271,33 +271,37 @@ const styles = stylesheet`
   .mainPanel {
     background: radial-gradient(98.15% 107.73% at 15.3% 0%, rgba(255, 255, 255, 0.12) 0%, rgba(0, 0, 0, 0) 100%) /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */, #151515;
   }
-`
+`;
 
 export default function CoreStakePage(props: Props): ReactElement {
-  const { children } = props
-  const [isAccountsPanelOpen, setIsAccountsPanelOpen] = useState(false)
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const { children } = props;
+  const [isAccountsPanelOpen, setIsAccountsPanelOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const keyringsUnlocked = useAreKeyringsUnlocked(true)
+  const keyringsUnlocked = useAreKeyringsUnlocked(true);
   const transactionDetails = useBackgroundSelector(
     selectTransactionData,
-    isEqual
-  )
+    isEqual,
+  );
   const currentAccountData = useBackgroundSelector(
     getCurrentAccountState,
-    isEqual
-  )
+    isEqual,
+  );
 
-  const isInitializing = currentAccountData === "loading" || !keyringsUnlocked
+  const isInitializing = currentAccountData === "loading" || !keyringsUnlocked;
 
-  const { data: stakingPoktParams, isLoading, isError } = useStakingPoktParams()
+  const {
+    data: stakingPoktParams,
+    isLoading,
+    isError,
+  } = useStakingPoktParams();
 
   // ensure block height from rpc matches block height from onchain API
-  const { data: pocketBlockHeight } = usePoktNetworkBlockHeight()
+  const { data: pocketBlockHeight } = usePoktNetworkBlockHeight();
 
   const isOnchainApiCatchingUp =
     BigInt((pocketBlockHeight?.height ?? 1n).toString()) !==
-    BigInt(stakingPoktParams?.currentHeight ?? 0)
+    BigInt(stakingPoktParams?.currentHeight ?? 0);
 
   if (isLoading || isInitializing || isOnchainApiCatchingUp) {
     return (
@@ -309,13 +313,13 @@ export default function CoreStakePage(props: Props): ReactElement {
         {!isInitializing && isLoading && (
           <p className="mt-4">Loading the latest SendNodes data.</p>
         )}
-        {!isInitializing && !isLoading && isOnchainApiCatchingUp && (
+        {!(isInitializing || isLoading ) && isOnchainApiCatchingUp && (
           <p className="mt-4">
             Awaiting latest Pocket Network block information.
           </p>
         )}
       </div>
-    )
+    );
   }
 
   return (
@@ -370,7 +374,7 @@ export default function CoreStakePage(props: Props): ReactElement {
         <div
           className={clsx(
             "xl:max-w-7xl lg:max-w-5xl mx-auto relative rounded-lg lg:rounded-3xl bg-eerie-black w-full h-full ",
-            styles.mainPanel
+            styles.mainPanel,
           )}
         >
           <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
@@ -432,5 +436,5 @@ export default function CoreStakePage(props: Props): ReactElement {
 
       <Footer />
     </div>
-  )
+  );
 }

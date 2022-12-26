@@ -1,65 +1,69 @@
-import React, { ReactElement, useCallback, useEffect, useState } from "react"
+import React, { ReactElement, useCallback, useEffect, useState } from "react";
 import {
   EventNames,
   GenerateKeyringResponse,
   generateNewKeyring,
   KeyringMnemonic,
-} from "@sendnodes/pokt-wallet-background/redux-slices/keyrings"
-import { useHistory } from "react-router-dom"
-import { setSnackbarMessage } from "@sendnodes/pokt-wallet-background/redux-slices/ui"
-import { browser } from "@sendnodes/pokt-wallet-background"
-import { useBackgroundDispatch, useAreKeyringsUnlocked } from "../../hooks"
-import SharedButton from "../../components/Shared/SharedButton"
-import OnboardingRecoveryPhrase from "../../components/Onboarding/OnboardingRecoveryPhrase"
-import OnboardingAccountLayout from "../../components/Onboarding/OnboardingAccountLayout"
-import OnboardingVerifySeed from "../../components/Onboarding/OnboardingVerifySeed"
-import { OnboardingNewAccountIcon } from "../../components/Onboarding/Icons"
-import SharedLoadingSpinner from "../../components/Shared/SharedLoadingSpinner"
-import SharedSplashScreen from "../../components/Shared/SharedSplashScreen"
+} from "@sendnodes/pokt-wallet-background/redux-slices/keyrings";
+import { useHistory } from "react-router-dom";
+import { setSnackbarMessage } from "@sendnodes/pokt-wallet-background/redux-slices/ui";
+import { browser } from "@sendnodes/pokt-wallet-background";
+import { useBackgroundDispatch, useAreKeyringsUnlocked } from "../../hooks";
+import SharedButton from "../../components/Shared/SharedButton";
+import OnboardingRecoveryPhrase from "../../components/Onboarding/OnboardingRecoveryPhrase";
+import OnboardingAccountLayout from "../../components/Onboarding/OnboardingAccountLayout";
+import OnboardingVerifySeed from "../../components/Onboarding/OnboardingVerifySeed";
+import { OnboardingNewAccountIcon } from "../../components/Onboarding/Icons";
+import SharedLoadingSpinner from "../../components/Shared/SharedLoadingSpinner";
+import SharedSplashScreen from "../../components/Shared/SharedSplashScreen";
 
 export default function OnboardingSaveSeed() {
-  const dispatch = useBackgroundDispatch()
+  const dispatch = useBackgroundDispatch();
 
-  const areKeyringsUnlocked = useAreKeyringsUnlocked(true)
+  const areKeyringsUnlocked = useAreKeyringsUnlocked(true);
 
-  const [savedMnemonic, setSavedMnemonic] = useState(false)
-  const [freshKeyring, setFreshKeyring] = useState<KeyringMnemonic | null>(null)
+  const [savedMnemonic, setSavedMnemonic] = useState(false);
+  const [freshKeyring, setFreshKeyring] = useState<KeyringMnemonic | null>(
+    null,
+  );
 
   const generateFreshMnemonicMessageHandler = (message: any) => {
     const { [EventNames.GENERATE_NEW_KEYRING]: freshKeyring } =
-      message as GenerateKeyringResponse
+      message as GenerateKeyringResponse;
     if (!freshKeyring) {
-      return
+      return;
     }
 
     // stop listening
     browser.runtime.onMessage.removeListener(
-      generateFreshMnemonicMessageHandler
-    )
+      generateFreshMnemonicMessageHandler,
+    );
 
     // set the new keyring
-    setFreshKeyring(freshKeyring)
-  }
+    setFreshKeyring(freshKeyring);
+  };
 
   useEffect(() => {
     if (!freshKeyring) {
       // ready to receive
-      browser.runtime.onMessage.addListener(generateFreshMnemonicMessageHandler)
+      browser.runtime.onMessage.addListener(
+        generateFreshMnemonicMessageHandler,
+      );
 
       // request new keyring
-      dispatch(generateNewKeyring())
+      dispatch(generateNewKeyring());
 
       // ensure no listeners left behind
       return () => {
         browser.runtime.onMessage.removeListener(
-          generateFreshMnemonicMessageHandler
-        )
-      }
+          generateFreshMnemonicMessageHandler,
+        );
+      };
     }
-  }, [])
+  }, []);
 
   if (!areKeyringsUnlocked) {
-    return <SharedSplashScreen />
+    return <SharedSplashScreen />;
   }
 
   return !savedMnemonic || freshKeyring === null ? (
@@ -110,9 +114,9 @@ export default function OnboardingSaveSeed() {
                   navigator.clipboard.writeText(
                     freshKeyring.mnemonic
                       ?.map((w, i) => `${i + 1}.\t${w}\n`)
-                      .join("") ?? ""
-                  )
-                  dispatch(setSnackbarMessage("Copied!"))
+                      .join("") ?? "",
+                  );
+                  dispatch(setSnackbarMessage("Copied!"));
                 }
               }}
             >
@@ -146,5 +150,5 @@ export default function OnboardingSaveSeed() {
     </div>
   ) : (
     <OnboardingVerifySeed freshKeyring={freshKeyring} />
-  )
+  );
 }

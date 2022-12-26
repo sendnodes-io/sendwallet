@@ -7,6 +7,6 @@ export const metadataJTD = {
     external_url: { type: "string" }, // not found in 721, but seen in the wild
   },
   additionalProperties: true,
-} as const
+} as const;
 
-export default metadataJTD
+export default metadataJTD;

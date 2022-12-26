@@ -1,24 +1,24 @@
-import Dexie from "dexie"
-import { TokenList } from "@uniswap/token-lists"
+import Dexie from "dexie";
+import { TokenList } from "@uniswap/token-lists";
 
-import { AccountBalance } from "../../accounts"
-import { Network } from "../../networks"
+import { AccountBalance } from "../../accounts";
+import { Network } from "../../networks";
 import {
   AnyAsset,
   FungibleAsset,
   PricePoint,
   SmartContractFungibleAsset,
   TokenListCitation,
-} from "../../assets"
+} from "../../assets";
 
 /*
  * IndexedPricePoint extends PricePoint to expose each asset's ID directly for
  * database index purposes.
  */
 export type IndexedPricePoint = PricePoint & {
-  asset1ID: string
-  asset2ID: string
-}
+  asset1ID: string;
+  asset2ID: string;
+};
 
 /*
  * PriceMeasurement is a IndexedPricePoint extension with additional bookkeeping
@@ -29,19 +29,19 @@ export type PriceMeasurement = IndexedPricePoint & {
    * When the price was retrieved, independent from the time which the
    * PricePoint purportis to represent.
    */
-  retrievedAt: number
+  retrievedAt: number;
 
   /*
    * An attempt to keep loose track of price data sources. It's unclear whether
    * we'll need more than a simple string down the road.
    */
-  dataSource: "coingecko"
+  dataSource: "coingecko";
 
   /*
    * An optional exchange identifier.
    */
-  exchange?: string
-}
+  exchange?: string;
+};
 
 /*
  * CachedTokenList combines the specificty of TokenListCitation as a way to
@@ -51,13 +51,13 @@ export type PriceMeasurement = IndexedPricePoint & {
  * issues with backdating or improperly incremented version numbers.
  */
 export type CachedTokenList = TokenListCitation & {
-  retrievedAt: number
-  list: TokenList
-}
+  retrievedAt: number;
+  list: TokenList;
+};
 
 export interface Migration {
-  id: number
-  appliedAt: number
+  id: number;
+  appliedAt: number;
 }
 
 /*
@@ -65,12 +65,12 @@ export interface Migration {
  * either centrally managed IDs, or going full semantic / ontology.
  */
 function assetID(asset: AnyAsset): string {
-  const id = `${asset.symbol}`
+  const id = `${asset.symbol}`;
   if (!("contractAddress" in asset)) {
-    return id
+    return id;
   }
-  const network = asset.homeNetwork
-  return `${id}/${asset.contractAddress}/${network.family}/${network.name}`
+  const network = asset.homeNetwork;
+  return `${id}/${asset.contractAddress}/${network.family}/${network.name}`;
 }
 
 /*
@@ -78,8 +78,8 @@ function assetID(asset: AnyAsset): string {
  */
 function normalizePricePoint(pricePoint: PricePoint): IndexedPricePoint {
   // symbol/contractAddress/home-network-family/home-network-name
-  const asset1ID = assetID(pricePoint.pair[0])
-  const asset2ID = assetID(pricePoint.pair[1])
+  const asset1ID = assetID(pricePoint.pair[0]);
+  const asset2ID = assetID(pricePoint.pair[1]);
   return asset1ID.localeCompare(asset2ID) > 0
     ? {
         ...pricePoint,
@@ -92,49 +92,49 @@ function normalizePricePoint(pricePoint: PricePoint): IndexedPricePoint {
         amounts: [pricePoint.amounts[1], pricePoint.amounts[0]],
         asset1ID: asset2ID,
         asset2ID: asset1ID,
-      }
+      };
 }
 
 function numberArrayCompare(arr1: number[], arr2: number[]) {
   for (let i = 0; i < arr1.length; i += 1) {
     if (arr1[i] > arr2[i]) {
-      return 1
+      return 1;
     }
     if (arr1[i] < arr2[i]) {
-      return -1
+      return -1;
     }
   }
-  return 0
+  return 0;
 }
 
 export class IndexingDatabase extends Dexie {
-  private prices!: Dexie.Table<PriceMeasurement, number>
+  private prices!: Dexie.Table<PriceMeasurement, number>;
 
   /*
    * Historic account balances.
    */
-  private balances!: Dexie.Table<AccountBalance, number>
+  private balances!: Dexie.Table<AccountBalance, number>;
 
   /*
    * Cached token lists maintaining fungible asset metadata.
    */
-  private tokenLists!: Dexie.Table<CachedTokenList, number>
+  private tokenLists!: Dexie.Table<CachedTokenList, number>;
 
   /*
    * User- and contract-supplied fungible asset metadata.
    */
-  private customAssets!: Dexie.Table<SmartContractFungibleAsset, number>
+  private customAssets!: Dexie.Table<SmartContractFungibleAsset, number>;
 
   /*
    * Tokens whose balances should be checked periodically. It might make sense
    * for this to be tracked against particular accounts in the future.
    */
-  private assetsToTrack!: Dexie.Table<SmartContractFungibleAsset, number>
+  private assetsToTrack!: Dexie.Table<SmartContractFungibleAsset, number>;
 
-  private migrations!: Dexie.Table<Migration, number>
+  private migrations!: Dexie.Table<Migration, number>;
 
   constructor() {
-    super("poktWallet/indexing")
+    super("poktWallet/indexing");
     this.version(1).stores({
       migrations: "++id,appliedAt",
       prices: "++id,time,[asset1ID+asset2ID]",
@@ -145,28 +145,28 @@ export class IndexingDatabase extends Dexie {
         "&[contractAddress+homeNetwork.name],contractAddress,symbol,homeNetwork.chainId,homeNetwork.name",
       assetsToTrack:
         "&[contractAddress+homeNetwork.name],symbol,contractAddress,homeNetwork.family,homeNetwork.chainId,homeNetwork.name",
-    })
+    });
   }
 
   async savePriceMeasurement(
     pricePoint: PricePoint,
     retrievedAt: number,
     dataSource: PriceMeasurement["dataSource"],
-    exchange?: string
+    exchange?: string,
   ): Promise<void> {
     const measurement = {
       ...normalizePricePoint(pricePoint),
       retrievedAt,
       dataSource,
       exchange,
-    }
-    await this.prices.add(measurement)
+    };
+    await this.prices.add(measurement);
   }
 
   async getLatestAccountBalance(
     address: string,
     network: Network,
-    asset: FungibleAsset
+    asset: FungibleAsset,
   ): Promise<AccountBalance | null> {
     // TODO this needs to be tightened up, both for performance and specificity
     const balanceCandidates = await this.balances
@@ -176,48 +176,48 @@ export class IndexingDatabase extends Dexie {
         (balance) =>
           balance.address === address &&
           balance.assetAmount.asset.symbol === asset.symbol &&
-          balance.network.name === network.name
+          balance.network.name === network.name,
       )
       .reverse()
-      .sortBy("retrievedAt")
-    return balanceCandidates.length > 0 ? balanceCandidates[0] : null
+      .sortBy("retrievedAt");
+    return balanceCandidates.length > 0 ? balanceCandidates[0] : null;
   }
 
   async addAssetToTrack(asset: SmartContractFungibleAsset): Promise<void> {
-    this.assetsToTrack.put(asset)
+    this.assetsToTrack.put(asset);
   }
 
   async getAssetsToTrack(): Promise<SmartContractFungibleAsset[]> {
     // TODO: move "assets to track" to expire over time and require a refresh
     // to keep from balance checking tons of irrelevant tokens
-    return this.assetsToTrack.toArray()
+    return this.assetsToTrack.toArray();
   }
 
   async getCustomAssetsByNetwork(
-    network: Network
+    network: Network,
   ): Promise<SmartContractFungibleAsset[]> {
     return this.customAssets
       .where("homeNetwork.name")
       .equals(network.name)
-      .toArray()
+      .toArray();
   }
 
   async getCustomAssetByAddressAndNetwork(
     network: Network,
-    contractAddress: string
+    contractAddress: string,
   ): Promise<SmartContractFungibleAsset | undefined> {
     return this.customAssets
       .where("[contractAddress+homeNetwork.name]")
       .equals([network.name, contractAddress])
-      .first()
+      .first();
   }
 
   async addCustomAsset(asset: SmartContractFungibleAsset): Promise<void> {
-    this.customAssets.put(asset)
+    this.customAssets.put(asset);
   }
 
   async addBalances(accountBalances: AccountBalance[]): Promise<void> {
-    await this.balances.bulkAdd(accountBalances)
+    await this.balances.bulkAdd(accountBalances);
   }
 
   async getLatestTokenList(url: string): Promise<CachedTokenList | null> {
@@ -225,11 +225,11 @@ export class IndexingDatabase extends Dexie {
       .where("url")
       .equals(url)
       .reverse()
-      .sortBy("retrievedAt")
+      .sortBy("retrievedAt");
     if (candidateLists.length > 0) {
-      return candidateLists[0]
+      return candidateLists[0];
     }
-    return null
+    return null;
   }
 
   async saveTokenList(url: string, list: TokenList): Promise<void> {
@@ -239,63 +239,63 @@ export class IndexingDatabase extends Dexie {
       url,
       retrievedAt: Date.now(),
       list,
-    }
-    await this.tokenLists.add(cachedList)
+    };
+    await this.tokenLists.add(cachedList);
   }
 
   async getLatestTokenLists(
-    urls: string[]
+    urls: string[],
   ): Promise<{ url: string; tokenList: TokenList }[]> {
     const candidateLists = (await this.tokenLists
       .where("url")
       .anyOf(urls)
-      .toArray()) as CachedTokenList[]
+      .toArray()) as CachedTokenList[];
     return Object.entries(
       candidateLists.reduce((acc, cachedList) => {
         if (!(cachedList.url in acc)) {
-          acc[cachedList.url] = cachedList.list
+          acc[cachedList.url] = cachedList.list;
         } else {
-          const orig = acc[cachedList.url]
+          const orig = acc[cachedList.url];
           const origV = [
             orig.version.major,
             orig.version.minor,
             orig.version.patch,
-          ]
+          ];
           const cachedV = [
             cachedList.list.version.major,
             cachedList.list.version.minor,
             cachedList.list.version.patch,
-          ]
+          ];
           if (numberArrayCompare(origV, cachedV) < 0) {
-            acc[cachedList.url] = cachedList.list
+            acc[cachedList.url] = cachedList.list;
           }
         }
-        return { ...acc }
-      }, {} as { [url: string]: TokenList })
+        return { ...acc };
+      }, {} as { [url: string]: TokenList }),
     ).map(([k, v]) => ({
       url: k,
       tokenList: v as TokenList,
-    }))
+    }));
   }
 
   private async migrate() {
-    const numMigrations = await this.migrations.count()
+    const numMigrations = await this.migrations.count();
     if (numMigrations === 0) {
       await this.transaction("rw", this.migrations, async () => {
-        this.migrations.add({ id: 0, appliedAt: Date.now() })
+        this.migrations.add({ id: 0, appliedAt: Date.now() });
         // TODO decide migrations before the initial release
-      })
+      });
     }
   }
 }
 
 export async function getOrCreateDB(): Promise<IndexingDatabase> {
-  const db = new IndexingDatabase()
+  const db = new IndexingDatabase();
 
   // Call known-private migrate function, effectively treating it as
   // file-private.
   // eslint-disable-next-line @typescript-eslint/dot-notation
-  await db["migrate"]()
+  await db["migrate"]();
 
-  return db
+  return db;
 }

@@ -1,16 +1,16 @@
-import useSWR from "swr"
-import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts"
-import { isEqual, lowerCase } from "lodash"
-import { selectCurrentAccount } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
+import useSWR from "swr";
+import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts";
+import { isEqual, lowerCase } from "lodash";
+import { selectCurrentAccount } from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
 import {
   fetcher,
   ISnTransactionFormatted,
   SENDNODES_ONCHAIN_API_URL,
-} from "./constants"
-import { useBackgroundSelector } from "../redux-hooks"
+} from "./constants";
+import { useBackgroundSelector } from "../redux-hooks";
 
 export function useStakingRewardsTransactionsForAddress(
-  addressOnNetwork: AddressOnNetwork
+  addressOnNetwork: AddressOnNetwork,
 ) {
   const raw = JSON.stringify({
     method: "pokt_getStakingRewardsTransactions",
@@ -19,7 +19,7 @@ export function useStakingRewardsTransactionsForAddress(
     params: {
       userWalletAddress: addressOnNetwork.address,
     },
-  })
+  });
   const request = {
     method: "POST",
     headers: {
@@ -27,7 +27,7 @@ export function useStakingRewardsTransactionsForAddress(
     },
     body: raw,
     redirect: "follow",
-  }
+  };
 
   const { data, error } = useSWR<ISnTransactionFormatted[], unknown>(
     // TODO: support more than one network name
@@ -38,30 +38,30 @@ export function useStakingRewardsTransactionsForAddress(
     fetcher,
     {
       refreshInterval: 60 * 1000,
-    }
-  )
+    },
+  );
 
   return {
     data:
       (data?.filter(
         (user: any) =>
           lowerCase(user.userWalletAddress) ===
-          lowerCase(addressOnNetwork.address)
+          lowerCase(addressOnNetwork.address),
       ) as ISnTransactionFormatted[]) ?? [],
-    isLoading: !error && !data,
+    isLoading: !(error || data),
     isError: error,
-  }
+  };
 }
 
 export default function useStakingRewardsTransactions() {
-  const currentAccount = useBackgroundSelector(selectCurrentAccount, isEqual)
+  const currentAccount = useBackgroundSelector(selectCurrentAccount, isEqual);
 
   const { data, isLoading, isError } =
-    useStakingRewardsTransactionsForAddress(currentAccount)
+    useStakingRewardsTransactionsForAddress(currentAccount);
 
   return {
     data,
     isLoading,
     isError,
-  }
+  };
 }

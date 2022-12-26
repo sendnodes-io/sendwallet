@@ -1,39 +1,39 @@
-import { truncateDecimalAmount } from "@sendnodes/pokt-wallet-background/lib/utils"
-import { selectAssetPricePoint } from "@sendnodes/pokt-wallet-background/redux-slices/assets"
+import { truncateDecimalAmount } from "@sendnodes/pokt-wallet-background/lib/utils";
+import { selectAssetPricePoint } from "@sendnodes/pokt-wallet-background/redux-slices/assets";
 import {
   getAssetsState,
   selectMainCurrencySymbol,
-} from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
-import { enrichAssetAmountWithMainCurrencyValues } from "@sendnodes/pokt-wallet-background/redux-slices/utils/asset-utils"
-import { TransactionAnnotation } from "@sendnodes/pokt-wallet-background/services/enrichment"
-import React, { ReactElement } from "react"
-import { useBackgroundSelector } from "../../hooks"
-import FeeSettingsText from "../NetworkFees/FeeSettingsText"
-import SharedAddress from "../Shared/SharedAddress"
-import TransactionDetailAddressValue from "../TransactionDetail/TransactionDetailAddressValue"
-import TransactionDetailContainer from "../TransactionDetail/TransactionDetailContainer"
-import TransactionDetailItem from "../TransactionDetail/TransactionDetailItem"
+} from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
+import { enrichAssetAmountWithMainCurrencyValues } from "@sendnodes/pokt-wallet-background/redux-slices/utils/asset-utils";
+import { TransactionAnnotation } from "@sendnodes/pokt-wallet-background/services/enrichment";
+import React, { ReactElement } from "react";
+import { useBackgroundSelector } from "../../hooks";
+import FeeSettingsText from "../NetworkFees/FeeSettingsText";
+import SharedAddress from "../Shared/SharedAddress";
+import TransactionDetailAddressValue from "../TransactionDetail/TransactionDetailAddressValue";
+import TransactionDetailContainer from "../TransactionDetail/TransactionDetailContainer";
+import TransactionDetailItem from "../TransactionDetail/TransactionDetailItem";
 import SignTransactionBaseInfoProvider, {
   SignTransactionInfoProviderProps,
-} from "./SignTransactionBaseInfoProvider"
+} from "./SignTransactionBaseInfoProvider";
 
 export default function SignTransactionTransferInfoProvider({
   transactionDetails,
   annotation: { assetAmount, recipientAddress, recipientName },
   inner,
 }: SignTransactionInfoProviderProps & {
-  annotation: TransactionAnnotation & { type: "asset-transfer" }
+  annotation: TransactionAnnotation & { type: "asset-transfer" };
 }): ReactElement {
-  const assets = useBackgroundSelector(getAssetsState)
-  const mainCurrencySymbol = useBackgroundSelector(selectMainCurrencySymbol)
+  const assets = useBackgroundSelector(getAssetsState);
+  const mainCurrencySymbol = useBackgroundSelector(selectMainCurrencySymbol);
   const assetPricePoint = selectAssetPricePoint(
     assets,
     assetAmount.asset.symbol,
-    mainCurrencySymbol
-  )
+    mainCurrencySymbol,
+  );
   const localizedMainCurrencyAmount =
     enrichAssetAmountWithMainCurrencyValues(assetAmount, assetPricePoint, 2)
-      .localizedMainCurrencyAmount ?? "-"
+      .localizedMainCurrencyAmount ?? "-";
 
   return (
     <SignTransactionBaseInfoProvider
@@ -130,5 +130,5 @@ export default function SignTransactionTransferInfoProvider({
       }
       inner={inner}
     />
-  )
+  );
 }

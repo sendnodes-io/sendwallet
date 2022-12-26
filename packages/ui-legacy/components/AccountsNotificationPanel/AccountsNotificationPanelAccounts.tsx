@@ -1,37 +1,37 @@
-import React, { ReactElement, useEffect, useState } from "react"
-import { setNewSelectedAccount } from "@sendnodes/pokt-wallet-background/redux-slices/ui"
-import { deriveAddress } from "@sendnodes/pokt-wallet-background/redux-slices/keyrings"
+import React, { ReactElement, useEffect, useState } from "react";
+import { setNewSelectedAccount } from "@sendnodes/pokt-wallet-background/redux-slices/ui";
+import { deriveAddress } from "@sendnodes/pokt-wallet-background/redux-slices/keyrings";
 import {
   AccountTotal,
   selectAccountTotalsByCategory,
   selectCurrentAccount,
-} from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
-import { Link, useHistory } from "react-router-dom"
+} from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
+import { Link, useHistory } from "react-router-dom";
 import {
   ETHEREUM,
   POCKET,
-} from "@sendnodes/pokt-wallet-background/constants/networks"
-import { AccountType } from "@sendnodes/pokt-wallet-background/redux-slices/AccountType"
+} from "@sendnodes/pokt-wallet-background/constants/networks";
+import { AccountType } from "@sendnodes/pokt-wallet-background/redux-slices/AccountType";
 import {
   normalizeAddress,
   sameEVMAddress,
-} from "@sendnodes/pokt-wallet-background/lib/utils"
-import { Network } from "@sendnodes/pokt-wallet-background/networks"
-import classNames from "classnames"
-import { HiOutlinePlusSm } from "react-icons/hi"
-import SharedButton from "../Shared/SharedButton"
+} from "@sendnodes/pokt-wallet-background/lib/utils";
+import { Network } from "@sendnodes/pokt-wallet-background/networks";
+import classNames from "classnames";
+import { HiOutlinePlusSm } from "react-icons/hi";
+import SharedButton from "../Shared/SharedButton";
 import {
   useBackgroundDispatch,
   useBackgroundSelector,
   useAreKeyringsUnlocked,
-} from "../../hooks"
-import SharedAccountItemSummary from "../Shared/SharedAccountItemSummary"
-import AccountItemOptionsMenu from "../AccountItem/AccountItemOptionsMenu"
+} from "../../hooks";
+import SharedAccountItemSummary from "../Shared/SharedAccountItemSummary";
+import AccountItemOptionsMenu from "../AccountItem/AccountItemOptionsMenu";
 
 type WalletTypeInfo = {
-  title: string
-  icon: string
-}
+  title: string;
+  icon: string;
+};
 
 const walletTypeDetails: { [key in AccountType]: WalletTypeInfo } = {
   [AccountType.ReadOnly]: {
@@ -50,23 +50,23 @@ const walletTypeDetails: { [key in AccountType]: WalletTypeInfo } = {
     title: "Full access via Ledger", // FIXME: check copy against UI specs
     icon: "./images/ledger_icon@2x.png", // FIXME: use proper icon
   },
-}
+};
 
 function WalletTypeHeader({
   accountType,
   onClickAddAddress,
   walletNumber,
 }: {
-  accountType: AccountType
-  onClickAddAddress?: () => void
-  walletNumber?: number
+  accountType: AccountType;
+  onClickAddAddress?: () => void;
+  walletNumber?: number;
 }) {
-  const { title, icon } = walletTypeDetails[accountType]
-  const history = useHistory()
-  const areKeyringsUnlocked = useAreKeyringsUnlocked(false)
+  const { title, icon } = walletTypeDetails[accountType];
+  const history = useHistory();
+  const areKeyringsUnlocked = useAreKeyringsUnlocked(false);
   const deriveAddressImporting = useBackgroundSelector(
-    (state) => state.keyrings.deriving
-  )
+    (state) => state.keyrings.deriving,
+  );
 
   return (
     <>
@@ -85,7 +85,7 @@ function WalletTypeHeader({
               isLoading={deriveAddressImporting === "pending"}
               onClick={() => {
                 if (areKeyringsUnlocked) {
-                  onClickAddAddress()
+                  onClickAddAddress();
                 }
               }}
             >
@@ -139,58 +139,58 @@ function WalletTypeHeader({
         }
       `}</style>
     </>
-  )
+  );
 }
 
 type Props = {
-  showEasterEgg?: boolean
-  onCurrentAddressChange: (newAddress: string) => void
-}
+  showEasterEgg?: boolean;
+  onCurrentAddressChange: (newAddress: string) => void;
+};
 
 export default function AccountsNotificationPanelAccounts({
   showEasterEgg = true,
   onCurrentAddressChange,
 }: Props): ReactElement {
-  const dispatch = useBackgroundDispatch()
+  const dispatch = useBackgroundDispatch();
 
-  const accountTotals = useBackgroundSelector(selectAccountTotalsByCategory)
+  const accountTotals = useBackgroundSelector(selectAccountTotalsByCategory);
 
-  const [pendingSelectedAddress, setPendingSelectedAddress] = useState("")
+  const [pendingSelectedAddress, setPendingSelectedAddress] = useState("");
 
-  const selectedAccount = useBackgroundSelector(selectCurrentAccount)
+  const selectedAccount = useBackgroundSelector(selectCurrentAccount);
   const { address: selectedAccountAddress, network: selectedNetwork } =
-    selectedAccount
+    selectedAccount;
 
   const updateCurrentAccount = (address: string) => {
-    setPendingSelectedAddress(address)
+    setPendingSelectedAddress(address);
     dispatch(
       setNewSelectedAccount({
         address,
         network: selectedNetwork,
-      })
-    )
-  }
+      }),
+    );
+  };
 
   const deriveAddressImporting = useBackgroundSelector(
-    (state) => state.keyrings.deriving
-  )
+    (state) => state.keyrings.deriving,
+  );
 
   useEffect(() => {
     if (
       pendingSelectedAddress !== "" &&
       pendingSelectedAddress === selectedAccountAddress
     ) {
-      onCurrentAddressChange(pendingSelectedAddress)
-      setPendingSelectedAddress("")
+      onCurrentAddressChange(pendingSelectedAddress);
+      setPendingSelectedAddress("");
     }
-  }, [onCurrentAddressChange, pendingSelectedAddress, selectedAccountAddress])
+  }, [onCurrentAddressChange, pendingSelectedAddress, selectedAccountAddress]);
 
   const accountTypes = [
     AccountType.Internal,
     AccountType.Imported,
     AccountType.ReadOnly,
     AccountType.Ledger,
-  ]
+  ];
 
   return (
     <div className="switcher_wrap">
@@ -203,18 +203,18 @@ export default function AccountsNotificationPanelAccounts({
             const accountTotalsByType = accountTotals[accountType]!.reduce(
               (acc, accountTypeTotal) => {
                 if (accountTypeTotal.keyringId) {
-                  acc[accountTypeTotal.keyringId] ??= []
+                  acc[accountTypeTotal.keyringId] ??= [];
                   // Known-non-null due to above ??=
                   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                  acc[accountTypeTotal.keyringId].push(accountTypeTotal)
+                  acc[accountTypeTotal.keyringId].push(accountTypeTotal);
                 } else {
-                  acc.readOnly ??= []
-                  acc.readOnly.push(accountTypeTotal)
+                  acc.readOnly ??= [];
+                  acc.readOnly.push(accountTypeTotal);
                 }
-                return acc
+                return acc;
               },
-              {} as { [keyringId: string]: AccountTotal[] }
-            )
+              {} as { [keyringId: string]: AccountTotal[] },
+            );
 
             return Object.values(accountTotalsByType).map(
               (accountTotalsByKeyringId, idx) => {
@@ -236,9 +236,9 @@ export default function AccountsNotificationPanelAccounts({
                               ) {
                                 dispatch(
                                   deriveAddress(
-                                    accountTotalsByKeyringId[0].keyringId
-                                  )
-                                )
+                                    accountTotalsByKeyringId[0].keyringId,
+                                  ),
+                                );
                               }
                             }
                           : undefined
@@ -248,13 +248,13 @@ export default function AccountsNotificationPanelAccounts({
                       {accountTotalsByKeyringId.map((accountTotal) => {
                         const normalizedAddress = normalizeAddress(
                           accountTotal.address,
-                          selectedNetwork
-                        )
+                          selectedNetwork,
+                        );
 
                         const isSelected = sameEVMAddress(
                           normalizedAddress,
-                          selectedAccountAddress
-                        )
+                          selectedAccountAddress,
+                        );
 
                         return (
                           <li
@@ -264,17 +264,17 @@ export default function AccountsNotificationPanelAccounts({
                             // from affecting the hover state of this li.
                             onMouseOver={(e) => {
                               e.currentTarget.style.backgroundColor =
-                                "var(--eerie-black-100)"
+                                "var(--eerie-black-100)";
                             }}
                             onFocus={(e) => {
                               e.currentTarget.style.backgroundColor =
-                                "var(--eerie-black-100)"
+                                "var(--eerie-black-100)";
                             }}
                             onMouseOut={(e) => {
-                              e.currentTarget.style.backgroundColor = ""
+                              e.currentTarget.style.backgroundColor = "";
                             }}
                             onBlur={(e) => {
-                              e.currentTarget.style.backgroundColor = ""
+                              e.currentTarget.style.backgroundColor = "";
                             }}
                           >
                             <div className="account_status" />
@@ -282,21 +282,21 @@ export default function AccountsNotificationPanelAccounts({
                               className="connect_account_link"
                               title={`Connect to account ${normalizedAddress}`}
                               onClick={(e) => {
-                                e.stopPropagation()
-                                e.preventDefault()
-                                const target = e.target as Element
+                                e.stopPropagation();
+                                e.preventDefault();
+                                const target = e.target as Element;
                                 if (
                                   !e.currentTarget.contains(
-                                    target.closest(".slide_up_menu")
+                                    target.closest(".slide_up_menu"),
                                   )
                                 )
-                                  updateCurrentAccount(normalizedAddress)
+                                  updateCurrentAccount(normalizedAddress);
                               }}
                               onKeyDown={(e) => {
                                 if (e.key === "Enter") {
-                                  e.stopPropagation()
-                                  e.preventDefault()
-                                  updateCurrentAccount(normalizedAddress)
+                                  e.stopPropagation();
+                                  e.preventDefault();
+                                  updateCurrentAccount(normalizedAddress);
                                 }
                               }}
                               role="button"
@@ -314,13 +314,13 @@ export default function AccountsNotificationPanelAccounts({
                               </SharedAccountItemSummary>
                             </div>
                           </li>
-                        )
+                        );
                       })}
                     </ul>
                   </section>
-                )
-              }
-            )
+                );
+              },
+            );
           })}
       </div>
       <footer>
@@ -456,5 +456,5 @@ export default function AccountsNotificationPanelAccounts({
         `}
       </style>
     </div>
-  )
+  );
 }

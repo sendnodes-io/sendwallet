@@ -1,4 +1,4 @@
-import { ActivityItem } from "@sendnodes/pokt-wallet-background/redux-slices/activities"
+import { ActivityItem } from "@sendnodes/pokt-wallet-background/redux-slices/activities";
 
 export enum TransactionStatus {
   Failed = "failed",
@@ -7,12 +7,12 @@ export enum TransactionStatus {
 }
 
 interface TransactionResult {
-  status: TransactionStatus
-  description?: string
+  status: TransactionStatus;
+  description?: string;
 }
 
 export default function getTransactionResult(
-  activity: ActivityItem
+  activity: ActivityItem,
 ): TransactionResult {
   if (activity.network.family === "EVM") {
     if ("status" in activity && activity.blockHash !== null) {
@@ -20,7 +20,7 @@ export default function getTransactionResult(
         return {
           status: TransactionStatus.Failed,
           description: "Dropped",
-        }
+        };
       }
     }
     if (
@@ -30,7 +30,7 @@ export default function getTransactionResult(
     ) {
       return {
         status: TransactionStatus.Pending,
-      }
+      };
     }
   }
 
@@ -43,17 +43,17 @@ export default function getTransactionResult(
       ) {
         return {
           status: TransactionStatus.Failed,
-        }
+        };
       }
       if (activity.height === 0) {
         return {
           status: TransactionStatus.Pending,
-        }
+        };
       }
     }
   }
 
   return {
     status: TransactionStatus.Success,
-  }
+  };
 }

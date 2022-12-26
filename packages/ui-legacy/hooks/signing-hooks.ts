@@ -1,8 +1,8 @@
-import { selectKeyringStatus } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
-import { SigningMethod } from "@sendnodes/pokt-wallet-background/utils/signing"
-import { useEffect } from "react"
-import { useHistory } from "react-router-dom"
-import { useBackgroundSelector } from "./redux-hooks"
+import { selectKeyringStatus } from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
+import { SigningMethod } from "@sendnodes/pokt-wallet-background/utils/signing";
+import { useEffect } from "react";
+import { useHistory } from "react-router-dom";
+import { useBackgroundSelector } from "./redux-hooks";
 
 /**
  * Checks and returns whether the keyrings are currently unlocked, redirecting
@@ -16,14 +16,14 @@ import { useBackgroundSelector } from "./redux-hooks"
  * status is returned and no further action is taken.
  */
 export const useAreKeyringsUnlocked = (redirectIfNot: boolean): boolean => {
-  const keyringStatus = useBackgroundSelector(selectKeyringStatus)
-  const history = useHistory()
+  const keyringStatus = useBackgroundSelector(selectKeyringStatus);
+  const history = useHistory();
 
-  let redirectTarget: string | undefined
+  let redirectTarget: string | undefined;
   if (keyringStatus === "uninitialized") {
-    redirectTarget = "/keyring/set-password"
+    redirectTarget = "/keyring/set-password";
   } else if (keyringStatus === "locked") {
-    redirectTarget = "/keyring/unlock"
+    redirectTarget = "/keyring/unlock";
   }
 
   useEffect(() => {
@@ -32,17 +32,17 @@ export const useAreKeyringsUnlocked = (redirectIfNot: boolean): boolean => {
       typeof redirectTarget !== "undefined" &&
       history.location.pathname !== redirectTarget
     ) {
-      history.push(redirectTarget)
+      history.push(redirectTarget);
     }
-  })
+  });
 
-  return keyringStatus === "unlocked"
-}
+  return keyringStatus === "unlocked";
+};
 
 export function useIsSigningMethodLocked(
-  signingMethod: SigningMethod | null
+  signingMethod: SigningMethod | null,
 ): boolean {
-  const needsKeyrings = signingMethod?.type === "keyring"
-  const areKeyringsUnlocked = useAreKeyringsUnlocked(needsKeyrings)
-  return needsKeyrings && !areKeyringsUnlocked
+  const needsKeyrings = signingMethod?.type === "keyring";
+  const areKeyringsUnlocked = useAreKeyringsUnlocked(needsKeyrings);
+  return needsKeyrings && !areKeyringsUnlocked;
 }

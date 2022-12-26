@@ -3,109 +3,109 @@ import React, {
   ReactElement,
   useCallback,
   useState,
-} from "react"
+} from "react";
 import {
   selectCurrentAccount,
   selectMainCurrencySymbol,
-} from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
-import { FungibleAsset } from "@sendnodes/pokt-wallet-background/assets"
+} from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
+import { FungibleAsset } from "@sendnodes/pokt-wallet-background/assets";
 import {
   convertFixedPointNumber,
   parseToFixedPointNumber,
-} from "@sendnodes/pokt-wallet-background/lib/fixed-point"
+} from "@sendnodes/pokt-wallet-background/lib/fixed-point";
 import {
   selectAssetPricePoint,
   transferAsset,
-} from "@sendnodes/pokt-wallet-background/redux-slices/assets"
+} from "@sendnodes/pokt-wallet-background/redux-slices/assets";
 import {
   enrichAssetAmountWithDecimalValues,
   enrichAssetAmountWithMainCurrencyValues,
-} from "@sendnodes/pokt-wallet-background/redux-slices/utils/asset-utils"
-import { useHistory } from "react-router-dom"
-import { InformationCircleIcon } from "@heroicons/react/solid"
-import { BigNumber } from "ethers"
-import { isEqual } from "lodash"
-import { truncateAddress } from "@sendnodes/pokt-wallet-background/lib/utils"
-import { formatFixed, parseFixed } from "@ethersproject/bignumber"
-import SharedAssetInput from "../Shared/SharedAssetInput"
-import SharedButton from "../Shared/SharedButton"
+} from "@sendnodes/pokt-wallet-background/redux-slices/utils/asset-utils";
+import { useHistory } from "react-router-dom";
+import { InformationCircleIcon } from "@heroicons/react/solid";
+import { BigNumber } from "ethers";
+import { isEqual } from "lodash";
+import { truncateAddress } from "@sendnodes/pokt-wallet-background/lib/utils";
+import { formatFixed, parseFixed } from "@ethersproject/bignumber";
+import SharedAssetInput from "../Shared/SharedAssetInput";
+import SharedButton from "../Shared/SharedButton";
 import {
   useBackgroundDispatch,
   useBackgroundSelector,
   useAreKeyringsUnlocked,
-} from "../../hooks"
-import SharedSplashScreen from "../Shared/SharedSplashScreen"
-import formatTokenAmount from "../../utils/formatTokenAmount"
-import { SnAction, useStakingUserData } from "../../hooks/staking-hooks"
-import { AnyAssetWithOptionalAmount } from "../Shared/SharedAssetItem"
-import StatTotalStaked from "./Stat/StatTotalStaked"
-import usePocketNetworkFee from "../../hooks/pocket-network/use-network-fee"
-import StatAPY from "./Stat/StatAPY"
-import StatTotalUnstaked from "./Stat/StatTotalUnstaked"
-import useStakingPendingTransactions from "../../hooks/staking-hooks/use-staking-pending-transactions"
-import useStakingPoktParams from "../../hooks/staking-hooks/use-staking-pokt-params"
-import StatTotalUnstaking from "./Stat/StatTotalUnstaking"
+} from "../../hooks";
+import SharedSplashScreen from "../Shared/SharedSplashScreen";
+import formatTokenAmount from "../../utils/formatTokenAmount";
+import { SnAction, useStakingUserData } from "../../hooks/staking-hooks";
+import { AnyAssetWithOptionalAmount } from "../Shared/SharedAssetItem";
+import StatTotalStaked from "./Stat/StatTotalStaked";
+import usePocketNetworkFee from "../../hooks/pocket-network/use-network-fee";
+import StatAPY from "./Stat/StatAPY";
+import StatTotalUnstaked from "./Stat/StatTotalUnstaked";
+import useStakingPendingTransactions from "../../hooks/staking-hooks/use-staking-pending-transactions";
+import useStakingPoktParams from "../../hooks/staking-hooks/use-staking-pokt-params";
+import StatTotalUnstaking from "./Stat/StatTotalUnstaking";
 
 export default function SendUnstake(): ReactElement {
-  const history = useHistory()
+  const history = useHistory();
 
-  const dispatch = useBackgroundDispatch()
-  const currentAccount = useBackgroundSelector(selectCurrentAccount, isEqual)
+  const dispatch = useBackgroundDispatch();
+  const currentAccount = useBackgroundSelector(selectCurrentAccount, isEqual);
 
   const mainCurrencySymbol = useBackgroundSelector(
     selectMainCurrencySymbol,
-    isEqual
-  )
+    isEqual,
+  );
   const {
     data: stakingPoktParamsData,
     isLoading: isStakingPoktParamsLoading,
     isError: isStakingPoktParamsError,
-  } = useStakingPoktParams()
+  } = useStakingPoktParams();
 
   const {
     data: userStakingData,
     isLoading: isUserStakingDataLoading,
     isError: isUserStakingDataError,
-  } = useStakingUserData(currentAccount)
+  } = useStakingUserData(currentAccount);
 
   const pendingUnstakeTransactions = useStakingPendingTransactions().filter(
-    (activity) => activity !== null && activity.action === SnAction.UNSTAKE
-  )
+    (activity) => activity !== null && activity.action === SnAction.UNSTAKE,
+  );
 
-  const { networkFee } = usePocketNetworkFee()
+  const { networkFee } = usePocketNetworkFee();
 
   const [selectedAsset, setSelectedAsset] = useState<FungibleAsset>(
-    currentAccount.network.baseAsset
-  )
-  const [amount, setAmount] = useState("")
+    currentAccount.network.baseAsset,
+  );
+  const [amount, setAmount] = useState("");
   const [isSendingTransactionRequest, setIsSendingTransactionRequest] =
-    useState(false)
-  const [hasError, setHasError] = useState(false)
+    useState(false);
+  const [hasError, setHasError] = useState(false);
 
   const totalStakedBalance = BigNumber.from(
-    userStakingData?.userStakingData[0]?.staked ?? 0
+    userStakingData?.userStakingData[0]?.staked ?? 0,
   )
     .add(userStakingData?.userStakingData[0]?.pendingStaked ?? 0)
     .sub(userStakingData?.userStakingData[0]?.pendingUnstaked ?? 0)
     .sub(
       pendingUnstakeTransactions.reduce((pendingUnstaked, transaction) => {
         return pendingUnstaked.add(
-          BigNumber.from(transaction.memo.split(":")[1])
-        )
-      }, BigNumber.from(0))
-    )
+          BigNumber.from(transaction.memo.split(":")[1]),
+        );
+      }, BigNumber.from(0)),
+    );
 
   const totalStakedBalanceDecimals = Number(
-    formatFixed(totalStakedBalance, selectedAsset.decimals)
-  )
+    formatFixed(totalStakedBalance, selectedAsset.decimals),
+  );
 
   const assetPricePoint = useBackgroundSelector((state) =>
     selectAssetPricePoint(
       state.assets,
       selectedAsset.symbol,
-      mainCurrencySymbol
-    )
-  )
+      mainCurrencySymbol,
+    ),
+  );
 
   const fungibleAssetAmount: AnyAssetWithOptionalAmount<FungibleAsset> =
     enrichAssetAmountWithMainCurrencyValues(
@@ -114,22 +114,22 @@ export default function SendUnstake(): ReactElement {
           amount: totalStakedBalance.toBigInt(),
           asset: currentAccount.network.baseAsset,
         },
-        2
+        2,
       ),
       assetPricePoint,
-      2
-    )
+      2,
+    );
 
   const assetAmountFromForm = () => {
-    const fixedPointAmount = parseToFixedPointNumber(amount)
+    const fixedPointAmount = parseToFixedPointNumber(amount);
     if (typeof fixedPointAmount === "undefined") {
-      return undefined
+      return undefined;
     }
 
     const decimalMatched = convertFixedPointNumber(
       fixedPointAmount,
-      selectedAsset.decimals
-    )
+      selectedAsset.decimals,
+    );
 
     return enrichAssetAmountWithMainCurrencyValues(
       {
@@ -138,12 +138,12 @@ export default function SendUnstake(): ReactElement {
         decimalAmount: decimalMatched.decimals,
       },
       assetPricePoint,
-      2
-    )
-  }
+      2,
+    );
+  };
 
-  const assetAmount = assetAmountFromForm()
-  const areKeyringsUnlocked = useAreKeyringsUnlocked(true)
+  const assetAmount = assetAmountFromForm();
+  const areKeyringsUnlocked = useAreKeyringsUnlocked(true);
 
   const sendTransactionRequest = useCallback(async () => {
     if (
@@ -155,14 +155,14 @@ export default function SendUnstake(): ReactElement {
         assetAmount,
         areKeyringsUnlocked,
         stakingPoktParamsData,
-      })
-      return
+      });
+      return;
     }
     try {
-      setIsSendingTransactionRequest(true)
+      setIsSendingTransactionRequest(true);
 
       // memo spec is u:amount=[amount in uPOKT]
-      const memo = `u:${parseFixed(amount, selectedAsset.decimals)}`
+      const memo = `u:${parseFixed(amount, selectedAsset.decimals)}`;
 
       dispatch(
         transferAsset({
@@ -174,10 +174,10 @@ export default function SendUnstake(): ReactElement {
           assetAmount: { amount: 1n, asset: selectedAsset },
           memo,
           gasLimit: undefined,
-        })
-      )
+        }),
+      );
     } finally {
-      setIsSendingTransactionRequest(false)
+      setIsSendingTransactionRequest(false);
     }
   }, [
     assetAmount,
@@ -186,17 +186,17 @@ export default function SendUnstake(): ReactElement {
     dispatch,
     history,
     areKeyringsUnlocked,
-  ])
+  ]);
 
   if (!areKeyringsUnlocked) {
     return (
       <div className="flex-1 w-full relative flex justify-center items-center">
         <SharedSplashScreen />
       </div>
-    )
+    );
   }
 
-  const hasPendingUnstakeTransactions = pendingUnstakeTransactions.length > 0
+  const hasPendingUnstakeTransactions = pendingUnstakeTransactions.length > 0;
   const isDisabled =
     isSendingTransactionRequest ||
     isStakingPoktParamsLoading ||
@@ -204,7 +204,7 @@ export default function SendUnstake(): ReactElement {
     Number(amount) === 0 ||
     Number(amount) > totalStakedBalanceDecimals ||
     hasError ||
-    hasPendingUnstakeTransactions
+    hasPendingUnstakeTransactions;
 
   return (
     <div className="h-full grow pb-4">
@@ -253,45 +253,45 @@ export default function SendUnstake(): ReactElement {
             onAssetSelect={setSelectedAsset}
             assetsAndAmounts={[fungibleAssetAmount]}
             validateAmount={(amount) => {
-              const unstakeAmount = BigNumber.from(amount)
+              const unstakeAmount = BigNumber.from(amount);
               const stakingMinAmount = BigNumber.from(
-                stakingPoktParamsData!.stakingMinAmount ?? 0
-              )
+                stakingPoktParamsData!.stakingMinAmount ?? 0,
+              );
               const minAmountDecimals = formatFixed(
                 stakingPoktParamsData!.stakingMinAmount,
-                selectedAsset.decimals
-              )
+                selectedAsset.decimals,
+              );
               if (
                 !totalStakedBalance.sub(unstakeAmount).eq(0) &&
                 totalStakedBalance.sub(unstakeAmount).lte(stakingMinAmount)
               ) {
                 throw new Error(
-                  `Minimum stake amount is ${minAmountDecimals} ${selectedAsset.symbol} staked. Please unstake all or unstake less.`
-                )
+                  `Minimum stake amount is ${minAmountDecimals} ${selectedAsset.symbol} staked. Please unstake all or unstake less.`,
+                );
               }
             }}
             disableDropdown
             onAmountChange={(value, errorMessage) => {
               // truncate to selected asset decimals
               try {
-                parseFixed(value, selectedAsset.decimals)
+                parseFixed(value, selectedAsset.decimals);
               } catch (e) {
                 if (
                   (e as Error)
                     .toString()
                     .includes("fractional component exceeds decimals")
                 ) {
-                  value = value.substring(0, value.length - 1)
+                  value = value.substring(0, value.length - 1);
                 }
               }
-              setAmount(value)
+              setAmount(value);
 
               if (errorMessage) {
-                setHasError(true)
-                return
+                setHasError(true);
+                return;
               }
 
-              setHasError(false)
+              setHasError(false);
             }}
             selectedAsset={selectedAsset}
             amount={amount}
@@ -308,7 +308,7 @@ export default function SendUnstake(): ReactElement {
             <small>
               TX Fees -{" "}
               {formatTokenAmount(
-                formatFixed(networkFee, selectedAsset.decimals)
+                formatFixed(networkFee, selectedAsset.decimals),
               )}{" "}
               POKT
             </small>
@@ -366,5 +366,5 @@ export default function SendUnstake(): ReactElement {
         `}
       </style>
     </div>
-  )
+  );
 }

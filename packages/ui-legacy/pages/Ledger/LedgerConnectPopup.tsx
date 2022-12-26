@@ -1,5 +1,5 @@
-import React, { ReactElement } from "react"
-import LedgerPanelContainer from "../../components/Ledger/LedgerPanelContainer"
+import React, { ReactElement } from "react";
+import LedgerPanelContainer from "../../components/Ledger/LedgerPanelContainer";
 
 export default function LedgerConnectPopup(): ReactElement {
   return (
@@ -64,5 +64,5 @@ export default function LedgerConnectPopup(): ReactElement {
         }
       `}</style>
     </>
-  )
+  );
 }

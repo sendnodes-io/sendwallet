@@ -1,13 +1,13 @@
-import React, { ReactElement } from "react"
-import { selectAccountAndTimestampedActivities } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
-import { useBackgroundSelector } from "../hooks"
-import OverviewAssetsTable from "../components/Overview/OverviewAssetsTable"
-import SharedLoadingSpinner from "../components/Shared/SharedLoadingSpinner"
+import React, { ReactElement } from "react";
+import { selectAccountAndTimestampedActivities } from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
+import { useBackgroundSelector } from "../hooks";
+import OverviewAssetsTable from "../components/Overview/OverviewAssetsTable";
+import SharedLoadingSpinner from "../components/Shared/SharedLoadingSpinner";
 
 export default function Overview(): ReactElement {
   const { combinedData } = useBackgroundSelector(
-    selectAccountAndTimestampedActivities
-  )
+    selectAccountAndTimestampedActivities,
+  );
 
   const { initializationLoadingTimeExpired, numberOfAddresses } =
     useBackgroundSelector((background) => {
@@ -15,8 +15,8 @@ export default function Overview(): ReactElement {
         numberOfAddresses: Object.keys(background.account.accountsData).length,
         initializationLoadingTimeExpired:
           background.ui?.initializationLoadingTimeExpired,
-      }
-    })
+      };
+    });
 
   return (
     <>
@@ -131,5 +131,5 @@ export default function Overview(): ReactElement {
         `}
       </style>
     </>
-  )
+  );
 }

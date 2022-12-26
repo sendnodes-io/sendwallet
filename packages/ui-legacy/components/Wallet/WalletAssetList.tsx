@@ -1,17 +1,17 @@
 // @ts-check
 //
-import React, { ReactElement } from "react"
-import { CompleteAssetAmount } from "@sendnodes/pokt-wallet-background/redux-slices/accounts"
-import WalletAssetListItem from "./WalletAssetListItem"
+import React, { ReactElement } from "react";
+import { CompleteAssetAmount } from "@sendnodes/pokt-wallet-background/redux-slices/accounts";
+import WalletAssetListItem from "./WalletAssetListItem";
 
 interface Props {
-  assetAmounts: CompleteAssetAmount[]
-  initializationLoadingTimeExpired: boolean
+  assetAmounts: CompleteAssetAmount[];
+  initializationLoadingTimeExpired: boolean;
 }
 
 export default function WalletAssetList(props: Props): ReactElement {
-  const { assetAmounts, initializationLoadingTimeExpired } = props
-  if (!assetAmounts) return <></>
+  const { assetAmounts, initializationLoadingTimeExpired } = props;
+  if (!assetAmounts) return <></>;
   return (
     <ul>
       {assetAmounts.map((assetAmount) => (
@@ -35,5 +35,5 @@ export default function WalletAssetList(props: Props): ReactElement {
         }
       `}</style>
     </ul>
-  )
+  );
 }

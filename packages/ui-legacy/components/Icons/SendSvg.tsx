@@ -7,5 +7,5 @@ export default function SendSvg() {
         fill="currentColor"
       />
     </svg>
-  )
+  );
 }

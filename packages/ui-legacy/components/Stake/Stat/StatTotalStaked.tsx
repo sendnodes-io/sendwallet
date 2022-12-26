@@ -1,31 +1,31 @@
-import React from "react"
-import { BigNumber, formatFixed } from "@ethersproject/bignumber"
-import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts"
-import { FungibleAsset } from "@sendnodes/pokt-wallet-background/assets"
-import { useStakingUserData } from "../../../hooks/staking-hooks"
-import formatTokenAmount from "../../../utils/formatTokenAmount"
-import SharedLoadingSpinner from "../../Shared/SharedLoadingSpinner"
-import useAssetInMainCurrency from "../../../hooks/assets/use-asset-in-main-currency"
+import React from "react";
+import { BigNumber, formatFixed } from "@ethersproject/bignumber";
+import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts";
+import { FungibleAsset } from "@sendnodes/pokt-wallet-background/assets";
+import { useStakingUserData } from "../../../hooks/staking-hooks";
+import formatTokenAmount from "../../../utils/formatTokenAmount";
+import SharedLoadingSpinner from "../../Shared/SharedLoadingSpinner";
+import useAssetInMainCurrency from "../../../hooks/assets/use-asset-in-main-currency";
 
 export default function StatTotalStaked({
   aon,
   asset,
 }: {
-  aon: AddressOnNetwork
-  asset: FungibleAsset
+  aon: AddressOnNetwork;
+  asset: FungibleAsset;
 }) {
-  const { data, isLoading } = useStakingUserData(aon)
+  const { data, isLoading } = useStakingUserData(aon);
   const amount = BigNumber.from(data?.userStakingData[0]?.staked ?? 0).add(
-    data?.userStakingData[0]?.pendingStaked ?? 0
-  )
-  const fixedAmount = formatFixed(amount, asset.decimals)
+    data?.userStakingData[0]?.pendingStaked ?? 0,
+  );
+  const fixedAmount = formatFixed(amount, asset.decimals);
 
   const amountInMainCurrency = useAssetInMainCurrency({
     assetAmount: {
       amount: amount.toBigInt(),
       asset,
     },
-  })
+  });
 
   return (
     <div
@@ -53,5 +53,5 @@ export default function StatTotalStaked({
         </div>
       </div>
     </div>
-  )
+  );
 }

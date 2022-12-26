@@ -1,35 +1,35 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react";
 import {
   selectBlockExplorerForTxHash,
   selectCurrentAccount,
-} from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
+} from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
 
-import { camelCase, isEqual, startCase } from "lodash"
-import clsx from "clsx"
-import { DownloadIcon, UploadIcon } from "@heroicons/react/solid"
-import { BigNumber } from "@ethersproject/bignumber"
+import { camelCase, isEqual, startCase } from "lodash";
+import clsx from "clsx";
+import { DownloadIcon, UploadIcon } from "@heroicons/react/solid";
+import { BigNumber } from "@ethersproject/bignumber";
 
-import dayjs from "dayjs"
-import * as relativeTime from "dayjs/plugin/relativeTime"
-import * as updateLocale from "dayjs/plugin/updateLocale"
-import * as localizedFormat from "dayjs/plugin/localizedFormat"
-import * as utc from "dayjs/plugin/utc"
-import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts"
-import { POKTWatchBlock } from "@sendnodes/pokt-wallet-background/services/chain/utils"
-import { selectAssetPricePoint } from "@sendnodes/pokt-wallet-background/redux-slices/assets"
-import { USD } from "@sendnodes/pokt-wallet-background/constants"
+import dayjs from "dayjs";
+import * as relativeTime from "dayjs/plugin/relativeTime";
+import * as updateLocale from "dayjs/plugin/updateLocale";
+import * as localizedFormat from "dayjs/plugin/localizedFormat";
+import * as utc from "dayjs/plugin/utc";
+import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts";
+import { POKTWatchBlock } from "@sendnodes/pokt-wallet-background/services/chain/utils";
+import { selectAssetPricePoint } from "@sendnodes/pokt-wallet-background/redux-slices/assets";
+import { USD } from "@sendnodes/pokt-wallet-background/constants";
 import {
   enrichAssetAmountWithDecimalValues,
   enrichAssetAmountWithMainCurrencyValues,
-} from "@sendnodes/pokt-wallet-background/redux-slices/utils/asset-utils"
-import { usePoktWatchLatestBlock } from "../../hooks/pokt-watch/use-latest-block"
-import { SnAction, SnTransaction } from "../../hooks/staking-hooks"
-import { useBackgroundSelector } from "../../hooks"
+} from "@sendnodes/pokt-wallet-background/redux-slices/utils/asset-utils";
+import { usePoktWatchLatestBlock } from "../../hooks/pokt-watch/use-latest-block";
+import { SnAction, SnTransaction } from "../../hooks/staking-hooks";
+import { useBackgroundSelector } from "../../hooks";
 
-dayjs.extend(updateLocale.default)
-dayjs.extend(localizedFormat.default)
-dayjs.extend(relativeTime.default)
-dayjs.extend(utc.default)
+dayjs.extend(updateLocale.default);
+dayjs.extend(localizedFormat.default);
+dayjs.extend(relativeTime.default);
+dayjs.extend(utc.default);
 
 const snActionBg = {
   [SnAction.COMPOUND]: "text-white",
@@ -37,12 +37,12 @@ const snActionBg = {
   [SnAction.UNSTAKE]: "bg-white bg-opacity-50",
   [SnAction.UNSTAKE_RECEIPT]: "bg-white",
   [SnAction.REWARD]: "bg-aqua",
-}
+};
 
 export type SnActionIconProps = {
-  className?: string
-  pending?: boolean
-}
+  className?: string;
+  pending?: boolean;
+};
 
 const snActionIcon: Record<SnAction, (props: any) => JSX.Element> = {
   [SnAction.COMPOUND]: ({ className, pending }: SnActionIconProps) => {
@@ -56,7 +56,7 @@ const snActionIcon: Record<SnAction, (props: any) => JSX.Element> = {
       <DownloadIcon
         className={clsx(className, "h-8 w-8", { "text-orange-500": pending })}
       />
-    )
+    );
   },
   [SnAction.STAKE]: ({ className, pending }: SnActionIconProps) => (
     <div
@@ -87,83 +87,83 @@ const snActionIcon: Record<SnAction, (props: any) => JSX.Element> = {
       `}
     />
   ),
-}
+};
 
 export type StakeTransactionItemState = {
-  latestBlock?: POKTWatchBlock
-  currentAccount: AddressOnNetwork
-  blockExplorerUrl: string
-  isPending: boolean
-  rewardTimestamp: dayjs.Dayjs
-  isEarningRewards: boolean
-  isCompound: boolean
-  isUncompound: boolean
-  isCompoundUpdate: boolean
-  isRewards: boolean
-  isStake: boolean
-  isUnstake: boolean
-  isUnstakeReceipt: boolean
-  unstakeReceiptHash: string | false
-  unstakeReceiptAt?: string | false
-  humanReadableAction: string
-  relativeTimestamp: string
-  timestamp: dayjs.Dayjs
-  amount: BigNumber
-  color: string
-  Icon: (props: any) => JSX.Element
-  signer: string
-  userWalletAddress: string
-  height: string
-  hash: string
-  tokenValue: number
-  dollarValue?: number
-  localizedTokenValue: string
-  localizedDollarValue?: string
-}
+  latestBlock?: POKTWatchBlock;
+  currentAccount: AddressOnNetwork;
+  blockExplorerUrl: string;
+  isPending: boolean;
+  rewardTimestamp: dayjs.Dayjs;
+  isEarningRewards: boolean;
+  isCompound: boolean;
+  isUncompound: boolean;
+  isCompoundUpdate: boolean;
+  isRewards: boolean;
+  isStake: boolean;
+  isUnstake: boolean;
+  isUnstakeReceipt: boolean;
+  unstakeReceiptHash: string | false;
+  unstakeReceiptAt?: string | false;
+  humanReadableAction: string;
+  relativeTimestamp: string;
+  timestamp: dayjs.Dayjs;
+  amount: BigNumber;
+  color: string;
+  Icon: (props: any) => JSX.Element;
+  signer: string;
+  userWalletAddress: string;
+  height: string;
+  hash: string;
+  tokenValue: number;
+  dollarValue?: number;
+  localizedTokenValue: string;
+  localizedDollarValue?: string;
+};
 
 type StakeTransactionInfoProps = {
-  transaction: SnTransaction
-  children: (props: StakeTransactionItemState) => JSX.Element
-}
+  transaction: SnTransaction;
+  children: (props: StakeTransactionItemState) => JSX.Element;
+};
 
 export function getStakeTransactionInfo({
   transaction: tx,
 }: {
-  transaction: SnTransaction
+  transaction: SnTransaction;
 }) {
-  const isPending = !tx.timestamp
+  const isPending = !tx.timestamp;
 
-  let timestamp = dayjs.utc(tx.timestamp)
-  const rewardTimestamp = timestamp.clone().add(24, "hour")
-  const isEarningRewards = dayjs.utc().isAfter(rewardTimestamp)
+  let timestamp = dayjs.utc(tx.timestamp);
+  const rewardTimestamp = timestamp.clone().add(24, "hour");
+  const isEarningRewards = dayjs.utc().isAfter(rewardTimestamp);
   const isCompound =
-    tx.action === SnAction.COMPOUND && tx.memo?.split(":")[1] === "true"
+    tx.action === SnAction.COMPOUND && tx.memo?.split(":")[1] === "true";
   const isUncompound =
-    tx.action === SnAction.COMPOUND && tx.memo?.split(":")[1] === "false"
-  const isCompoundUpdate = isUncompound || isCompound
-  const isRewards = tx.action === SnAction.REWARD
-  const isStake = tx.action === SnAction.STAKE
-  const isUnstake = tx.action === SnAction.UNSTAKE
-  const isUnstakeReceipt = tx.action === SnAction.UNSTAKE_RECEIPT
-  const unstakeReceiptHash = isUnstakeReceipt && tx.memo?.split(":")[1]
-  const unstakeReceiptAt = isUnstake && tx.unstakeReceiptAt
-  if (unstakeReceiptAt) timestamp = dayjs.utc(unstakeReceiptAt) // use the timestamp of the unstake receipt
-  let humanReadableAction = startCase(camelCase(tx.action))
+    tx.action === SnAction.COMPOUND && tx.memo?.split(":")[1] === "false";
+  const isCompoundUpdate = isUncompound || isCompound;
+  const isRewards = tx.action === SnAction.REWARD;
+  const isStake = tx.action === SnAction.STAKE;
+  const isUnstake = tx.action === SnAction.UNSTAKE;
+  const isUnstakeReceipt = tx.action === SnAction.UNSTAKE_RECEIPT;
+  const unstakeReceiptHash = isUnstakeReceipt && tx.memo?.split(":")[1];
+  const unstakeReceiptAt = isUnstake && tx.unstakeReceiptAt;
+  if (unstakeReceiptAt) timestamp = dayjs.utc(unstakeReceiptAt); // use the timestamp of the unstake receipt
+  let humanReadableAction = startCase(camelCase(tx.action));
   if (isCompoundUpdate && isCompound) {
-    humanReadableAction = "Enable Compound"
+    humanReadableAction = "Enable Compound";
   }
   if (isCompoundUpdate && isUncompound) {
-    humanReadableAction = "Disable Compound"
+    humanReadableAction = "Disable Compound";
   }
 
   if (!isPending && isStake) {
-    timestamp = rewardTimestamp
+    timestamp = rewardTimestamp;
   }
-  const relativeTimestamp = timestamp.fromNow()
+  const relativeTimestamp = timestamp.fromNow();
   const amount = BigNumber.from(
     (isPending && isUnstake ? tx.memo.split(":")[1] : tx.amount) ??
-      BigNumber.from(0)
-  )
+      BigNumber.from(0),
+  );
   return {
     isPending,
     rewardTimestamp,
@@ -185,7 +185,7 @@ export function getStakeTransactionInfo({
     userWalletAddress: tx.userWalletAddress,
     height: tx.height,
     hash: tx.hash,
-  }
+  };
 }
 
 export default function StakeTransactionInfo({
@@ -213,41 +213,43 @@ export default function StakeTransactionInfo({
     userWalletAddress,
     height,
     hash,
-  } = getStakeTransactionInfo({ transaction: tx })
+  } = getStakeTransactionInfo({ transaction: tx });
 
-  const { latestBlock } = usePoktWatchLatestBlock()
-  const currentAccount = useBackgroundSelector(selectCurrentAccount, isEqual)
+  const { latestBlock } = usePoktWatchLatestBlock();
+  const currentAccount = useBackgroundSelector(selectCurrentAccount, isEqual);
   const blockExplorerUrl = useBackgroundSelector(
     (_) =>
       selectBlockExplorerForTxHash({
         network: currentAccount.network,
         txHash: tx.hash,
       }),
-    isEqual
-  )
+    isEqual,
+  );
   const [timestamp, setTimestamp] = useState(
     !isPending
       ? txTimestamp
       : // the next block is committed 30 minutes after the start of the previous one
-        dayjs.utc(latestBlock?.timestamp).add(30, "minute")
-  )
+        dayjs
+          .utc(latestBlock?.timestamp)
+          .add(30, "minute"),
+  );
 
   const baseAssetPricePoint = useBackgroundSelector((state) =>
     selectAssetPricePoint(
       state.assets,
       currentAccount.network.baseAsset.symbol,
-      USD.symbol
-    )
-  )
+      USD.symbol,
+    ),
+  );
 
-  const decimalPlaces = 2
+  const decimalPlaces = 2;
   const transactionAssetAmount = enrichAssetAmountWithDecimalValues(
     {
       asset: currentAccount.network.baseAsset,
       amount: amount.toBigInt(),
     },
-    decimalPlaces
-  )
+    decimalPlaces,
+  );
 
   const {
     decimalAmount: tokenValue,
@@ -257,18 +259,18 @@ export default function StakeTransactionInfo({
   } = enrichAssetAmountWithMainCurrencyValues(
     transactionAssetAmount,
     baseAssetPricePoint,
-    decimalPlaces
-  )
+    decimalPlaces,
+  );
 
   useEffect(() => {
     if (isPending) {
-      setTimestamp(dayjs.utc(latestBlock?.timestamp).add(30, "minute"))
+      setTimestamp(dayjs.utc(latestBlock?.timestamp).add(30, "minute"));
       const interval = setInterval(() => {
-        setTimestamp(dayjs.utc(latestBlock?.timestamp).add(30, "minute"))
-      }, 60 * 1e3)
-      return () => clearInterval(interval)
+        setTimestamp(dayjs.utc(latestBlock?.timestamp).add(30, "minute"));
+      }, 60 * 1e3);
+      return () => clearInterval(interval);
     }
-  }, [tx, latestBlock])
+  }, [tx, latestBlock]);
 
   return children({
     latestBlock,
@@ -300,5 +302,5 @@ export default function StakeTransactionInfo({
     dollarValue,
     localizedTokenValue,
     localizedDollarValue,
-  })
+  });
 }

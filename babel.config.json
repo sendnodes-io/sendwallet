@@ -1,5 +1,24 @@
 {
   "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "targets": {
+          "node": "current",
+          "browsers": [
+            "last 2 Chrome versions",
+            "last 2 Firefox versions",
+            "last 2 Edge versions",
+            "last 2 Safari versions",
+            "last 2 iOS versions",
+            "last 2 ChromeAndroid versions",
+            "last 2 FirefoxAndroid versions",
+            "last 2 Samsung versions"
+          ]
+        }
+      }
+    ],
+
     // Because babel is used by Webpack to load the Webpack config, which is
     // TS.
     "@babel/typescript"

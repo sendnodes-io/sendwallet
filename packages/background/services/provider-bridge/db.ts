@@ -1,30 +1,30 @@
-import { PermissionRequest } from "@sendnodes/provider-bridge-shared"
-import Dexie from "dexie"
+import { PermissionRequest } from "@sendnodes/provider-bridge-shared";
+import Dexie from "dexie";
 
 function keyBy(
   permissionsArray: Array<PermissionRequest>,
   keyOrKeysArray: keyof PermissionRequest | Array<keyof PermissionRequest>,
-  separator = "_"
+  separator = "_",
 ): Record<string, PermissionRequest> {
   return permissionsArray.reduce((acc, current) => {
     const key = Array.isArray(keyOrKeysArray)
       ? keyOrKeysArray.map((k) => current[k]).join(separator)
-      : current[keyOrKeysArray]
-    acc[key] = current
-    return acc
-  }, {} as Record<string, PermissionRequest>)
+      : current[keyOrKeysArray];
+    acc[key] = current;
+    return acc;
+  }, {} as Record<string, PermissionRequest>);
 }
 
 export class ProviderBridgeServiceDatabase extends Dexie {
-  private dAppPermissions!: Dexie.Table<PermissionRequest, string>
+  private dAppPermissions!: Dexie.Table<PermissionRequest, string>;
 
   constructor() {
-    super("poktWallet/provider-bridge-service")
+    super("poktWallet/provider-bridge-service");
 
     this.version(1).stores({
       migrations: "++id,appliedAt",
       dAppPermissions: "&origin,faviconUrl,title,state,accountAddress",
-    })
+    });
 
     // This is my penance for designing a database schema in a release crunch
     // without fully understanding the constraints of indexedDb
@@ -33,8 +33,8 @@ export class ProviderBridgeServiceDatabase extends Dexie {
     //  -v3: delete main table
     //  -v4: recreate main table with the correct primary key and copy the data
     //  -v5: delete temp table
-    const tempTable = "dAppPermissionsTemp"
-    const mainTable = "dAppPermissions"
+    const tempTable = "dAppPermissionsTemp";
+    const mainTable = "dAppPermissions";
 
     this.version(2)
       .stores({
@@ -45,12 +45,12 @@ export class ProviderBridgeServiceDatabase extends Dexie {
         return tx
           .table(mainTable)
           .toArray()
-          .then((permissions) => tx.table(tempTable).bulkAdd(permissions))
-      })
+          .then((permissions) => tx.table(tempTable).bulkAdd(permissions));
+      });
 
     this.version(3).stores({
       [mainTable]: null,
-    })
+    });
 
     this.version(4)
       .stores({
@@ -60,43 +60,43 @@ export class ProviderBridgeServiceDatabase extends Dexie {
         return tx
           .table(tempTable)
           .toArray()
-          .then((permissions) => tx.table(mainTable).bulkAdd(permissions))
-      })
+          .then((permissions) => tx.table(mainTable).bulkAdd(permissions));
+      });
 
     this.version(5).stores({
       [tempTable]: null,
-    })
+    });
   }
 
   async getAllPermission(): Promise<Record<string, PermissionRequest>> {
     return this.dAppPermissions
       .toArray()
       .then((permissionsArray) =>
-        keyBy(permissionsArray, ["origin", "accountAddress"])
-      )
+        keyBy(permissionsArray, ["origin", "accountAddress"]),
+      );
   }
 
   async setPermission(
-    permission: PermissionRequest
+    permission: PermissionRequest,
   ): Promise<string | undefined> {
-    return this.dAppPermissions.put(permission)
+    return this.dAppPermissions.put(permission);
   }
 
   async deletePermission(
     origin: string,
-    accountAddress: string
+    accountAddress: string,
   ): Promise<number> {
-    return this.dAppPermissions.where({ origin, accountAddress }).delete()
+    return this.dAppPermissions.where({ origin, accountAddress }).delete();
   }
 
   async checkPermission(
     origin: string,
-    accountAddress: string
+    accountAddress: string,
   ): Promise<PermissionRequest | undefined> {
-    return this.dAppPermissions.get({ origin, accountAddress })
+    return this.dAppPermissions.get({ origin, accountAddress });
   }
 }
 
 export async function getOrCreateDB(): Promise<ProviderBridgeServiceDatabase> {
-  return new ProviderBridgeServiceDatabase()
+  return new ProviderBridgeServiceDatabase();
 }

@@ -1,52 +1,52 @@
-import React, { ReactElement, useEffect, useState } from "react"
-import { useHistory } from "react-router-dom"
-import { unlockKeyrings } from "@sendnodes/pokt-wallet-background/redux-slices/keyrings"
-import { rejectTransactionSignature } from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction"
+import React, { ReactElement, useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
+import { unlockKeyrings } from "@sendnodes/pokt-wallet-background/redux-slices/keyrings";
+import { rejectTransactionSignature } from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction";
 import {
   useBackgroundDispatch,
   useBackgroundSelector,
   useAreKeyringsUnlocked,
   useIsDappPopup,
-} from "../../hooks"
-import SharedButton from "../Shared/SharedButton"
-import SharedInput from "../Shared/SharedInput"
+} from "../../hooks";
+import SharedButton from "../Shared/SharedButton";
+import SharedInput from "../Shared/SharedInput";
 
 export default function KeyringUnlock(): ReactElement {
-  const [password, setPassword] = useState("")
-  const [errorMessage, setErrorMessage] = useState("")
+  const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   // const isDappPopup = useIsDappPopup()
-  const history = useHistory()
+  const history = useHistory();
 
-  const areKeyringsUnlocked = useAreKeyringsUnlocked(false)
+  const areKeyringsUnlocked = useAreKeyringsUnlocked(false);
   const keyringUnlocking = useBackgroundSelector(
-    (state) => state.keyrings.unlocking
-  )
+    (state) => state.keyrings.unlocking,
+  );
 
-  const dispatch = useBackgroundDispatch()
+  const dispatch = useBackgroundDispatch();
 
   useEffect(() => {
     // keyrings unlocked, just go back
     if (areKeyringsUnlocked) {
       if (history.action !== "POP") {
-        history.goBack()
+        history.goBack();
       } else {
-        history.push("/")
+        history.push("/");
       }
-      return
+      return;
     }
 
     if (keyringUnlocking === "failed") {
       // If keyring was unable to unlock, display error message
-      setErrorMessage("Incorrect password")
+      setErrorMessage("Incorrect password");
     }
-  }, [history, areKeyringsUnlocked, keyringUnlocking])
+  }, [history, areKeyringsUnlocked, keyringUnlocking]);
 
   const dispatchUnlockWallet = async (
-    event: React.FormEvent<HTMLFormElement>
+    event: React.FormEvent<HTMLFormElement>,
   ): Promise<void> => {
-    event.preventDefault()
-    await dispatch(unlockKeyrings(password))
-  }
+    event.preventDefault();
+    await dispatch(unlockKeyrings(password));
+  };
 
   // const handleReject = async () => {
   //   await dispatch(rejectTransactionSignature())
@@ -78,9 +78,9 @@ export default function KeyringUnlock(): ReactElement {
             label="ENTER PASSWORD"
             autoFocus
             onChange={(value) => {
-              setPassword(value)
+              setPassword(value);
               // Clear error message on input change
-              setErrorMessage("")
+              setErrorMessage("");
             }}
             errorMessage={errorMessage}
           />
@@ -136,5 +136,5 @@ export default function KeyringUnlock(): ReactElement {
         `}
       </style>
     </section>
-  )
+  );
 }

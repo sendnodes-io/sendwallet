@@ -1,15 +1,15 @@
-import React, { ReactElement } from "react"
-import { useHistory } from "react-router-dom"
-import styles from "./styles"
+import React, { ReactElement } from "react";
+import { useHistory } from "react-router-dom";
+import styles from "./styles";
 
 export default function OnboardingAccountLayout(props: {
-  title: ReactElement
-  body: ReactElement
-  buttons: ReactElement
-  icon: ReactElement
-  showCloseButton?: boolean
+  title: ReactElement;
+  body: ReactElement;
+  buttons: ReactElement;
+  icon: ReactElement;
+  showCloseButton?: boolean;
 }): ReactElement {
-  const history = useHistory()
+  const history = useHistory();
 
   return (
     <section>
@@ -22,8 +22,8 @@ export default function OnboardingAccountLayout(props: {
             aria-label="close"
             className="icon_close"
             onClick={() => {
-              if (history.action !== "POP") history.goBack()
-              else history.push("/")
+              if (history.action !== "POP") history.goBack();
+              else history.push("/");
             }}
           />
         ) : null}
@@ -62,5 +62,5 @@ export default function OnboardingAccountLayout(props: {
         `}
       </style>
     </section>
-  )
+  );
 }

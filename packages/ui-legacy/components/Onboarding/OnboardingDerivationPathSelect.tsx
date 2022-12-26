@@ -4,11 +4,11 @@ import React, {
   useEffect,
   useRef,
   useState,
-} from "react"
-import SharedButton from "../Shared/SharedButton"
-import SharedInput from "../Shared/SharedInput"
-import SharedModalPopup from "../Shared/SharedModalPopup"
-import SharedSelect, { Option } from "../Shared/SharedSelect"
+} from "react";
+import SharedButton from "../Shared/SharedButton";
+import SharedInput from "../Shared/SharedInput";
+import SharedModalPopup from "../Shared/SharedModalPopup";
+import SharedSelect, { Option } from "../Shared/SharedSelect";
 
 // TODO make this network specific
 const initialDerivationPaths: Option[] = [
@@ -41,71 +41,73 @@ const initialDerivationPaths: Option[] = [
     value: "m/44'/37310'/0'/0",
     label: "RSK Testnet",
   },
-]
+];
 
 const initialCustomPath = {
   coinType: "0",
   account: "0",
   change: "0",
   isReset: true,
-}
+};
 
 export default function OnboardingDerivationPathSelect({
   onChange,
 }: {
-  onChange: (path: string) => void
+  onChange: (path: string) => void;
 }): ReactElement {
-  const [derivationPaths, setDerivationPaths] = useState(initialDerivationPaths)
+  const [derivationPaths, setDerivationPaths] = useState(
+    initialDerivationPaths,
+  );
 
-  const [modalStep, setModalStep] = useState(0)
-  const [customPath, setCustomPath] = useState(initialCustomPath)
-  const [customPathLabel, setCustomPathLabel] = useState("")
-  const [defaultIndex, setDefaultIndex] = useState<number>()
+  const [modalStep, setModalStep] = useState(0);
+  const [customPath, setCustomPath] = useState(initialCustomPath);
+  const [customPathLabel, setCustomPathLabel] = useState("");
+  const [defaultIndex, setDefaultIndex] = useState<number>();
 
   // Reset value to display placeholder after adding a custom path
   const customPathValue = customPath.isReset
     ? ""
-    : `m/44'/${customPath.coinType}'/${customPath.account}'/${customPath.change}`
+    : `m/44'/${customPath.coinType}'/${customPath.account}'/${customPath.change}`;
 
-  const coinTypeRef = useRef<HTMLInputElement | null>(null)
+  const coinTypeRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     if (modalStep === 2 && coinTypeRef.current) {
-      coinTypeRef.current.focus()
-      coinTypeRef.current.select()
+      coinTypeRef.current.focus();
+      coinTypeRef.current.select();
     }
-  }, [modalStep])
+  }, [modalStep]);
 
   const handleAddCustomPath = () => {
-    setModalStep(0)
-    onChange(customPathValue)
+    setModalStep(0);
+    onChange(customPathValue);
     // Change active index of the Select with custom option
-    setDefaultIndex(derivationPaths.length)
+    setDefaultIndex(derivationPaths.length);
 
     // TODO It might be considered to save the custom path to the local db
     setDerivationPaths([
       ...derivationPaths,
       { label: customPathLabel, value: customPathValue as string },
-    ])
+    ]);
 
     // Reset custom path fields
-    setCustomPath(initialCustomPath)
-    setCustomPathLabel("")
-  }
+    setCustomPath(initialCustomPath);
+    setCustomPathLabel("");
+  };
 
   const handleChangeCustomPath = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCustomPath({
       ...customPath,
       [e.target.name]: e.target.value,
       isReset: false,
-    })
-  }
+    });
+  };
 
   const handleKeypressCustomInput: KeyboardEventHandler<HTMLInputElement> = (
-    e
+    e,
   ) => {
-    if (e.key === "Enter") setModalStep(1)
-  }
+    if (e.key === "Enter") setModalStep(1);
+  };
 
   return (
     <>
@@ -212,5 +214,5 @@ export default function OnboardingDerivationPathSelect({
         }
       `}</style>
     </>
-  )
+  );
 }

@@ -1,45 +1,45 @@
-import { unitPricePointForPricePoint } from "@sendnodes/pokt-wallet-background/assets"
-import { USD } from "@sendnodes/pokt-wallet-background/constants"
-import { selectAssetPricePoint } from "@sendnodes/pokt-wallet-background/redux-slices/assets"
+import { unitPricePointForPricePoint } from "@sendnodes/pokt-wallet-background/assets";
+import { USD } from "@sendnodes/pokt-wallet-background/constants";
+import { selectAssetPricePoint } from "@sendnodes/pokt-wallet-background/redux-slices/assets";
 import {
   getAccountData,
   selectCurrentAccountActivityForTxHash,
   selectCurrentAddressNetwork,
-} from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
+} from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
 import {
   enrichAssetAmountWithDecimalValues,
   enrichAssetAmountWithMainCurrencyValues,
   heuristicDesiredDecimalsForUnitPrice,
-} from "@sendnodes/pokt-wallet-background/redux-slices/utils/asset-utils"
-import React, { ReactElement } from "react"
-import { useBackgroundSelector } from "../../hooks"
-import useStakingPoktParams from "../../hooks/staking-hooks/use-staking-pokt-params"
-import formatTokenAmount from "../../utils/formatTokenAmount"
-import SharedAddress from "../Shared/SharedAddress"
-import SharedAssetIcon from "../Shared/SharedAssetIcon"
-import { StakeTransactionItemState } from "../Stake/StakeTransactionInfo"
+} from "@sendnodes/pokt-wallet-background/redux-slices/utils/asset-utils";
+import React, { ReactElement } from "react";
+import { useBackgroundSelector } from "../../hooks";
+import useStakingPoktParams from "../../hooks/staking-hooks/use-staking-pokt-params";
+import formatTokenAmount from "../../utils/formatTokenAmount";
+import SharedAddress from "../Shared/SharedAddress";
+import SharedAssetIcon from "../Shared/SharedAssetIcon";
+import { StakeTransactionItemState } from "../Stake/StakeTransactionInfo";
 
 export type WalletStakeTransactionSendDetailProps = {
-  transaction: StakeTransactionItemState
-}
+  transaction: StakeTransactionItemState;
+};
 
 export default function WalletStakeTransactionSendDetail({
   transaction,
 }: WalletStakeTransactionSendDetailProps): ReactElement {
   const activity = useBackgroundSelector((state) =>
-    selectCurrentAccountActivityForTxHash(state, transaction.hash)
-  )
-  const { data: stakingPoktParams } = useStakingPoktParams()
-  const sendnodesWallets = Object.values(stakingPoktParams?.wallets ?? {})
+    selectCurrentAccountActivityForTxHash(state, transaction.hash),
+  );
+  const { data: stakingPoktParams } = useStakingPoktParams();
+  const sendnodesWallets = Object.values(stakingPoktParams?.wallets ?? {});
   const { address, network } = useBackgroundSelector(
-    selectCurrentAddressNetwork
-  )
+    selectCurrentAddressNetwork,
+  );
   const baseAssetPricePoint = useBackgroundSelector((state) =>
-    selectAssetPricePoint(state.assets, network.baseAsset.symbol, USD.symbol)
-  )
-  const { amount } = transaction
-  const from = transaction.signer
-  const to = activity?.to ?? transaction.userWalletAddress
+    selectAssetPricePoint(state.assets, network.baseAsset.symbol, USD.symbol),
+  );
+  const { amount } = transaction;
+  const from = transaction.signer;
+  const to = activity?.to ?? transaction.userWalletAddress;
 
   const transactionAssetAmount = enrichAssetAmountWithDecimalValues(
     {
@@ -50,11 +50,11 @@ export default function WalletStakeTransactionSendDetail({
       network.baseAsset.decimals,
       typeof baseAssetPricePoint !== "undefined"
         ? unitPricePointForPricePoint(baseAssetPricePoint)
-        : undefined
-    )
-  )
+        : undefined,
+    ),
+  );
 
-  const decimalPlaces = transactionAssetAmount.decimalAmount < 1 ? 6 : 2
+  const decimalPlaces = transactionAssetAmount.decimalAmount < 1 ? 6 : 2;
   const {
     decimalAmount: tokenValue,
     mainCurrencyAmount: dollarValue,
@@ -63,16 +63,16 @@ export default function WalletStakeTransactionSendDetail({
   } = enrichAssetAmountWithMainCurrencyValues(
     transactionAssetAmount,
     baseAssetPricePoint,
-    decimalPlaces
-  )
+    decimalPlaces,
+  );
 
   const fromAccountData = useBackgroundSelector((state) =>
-    getAccountData(state, from)
-  )
+    getAccountData(state, from),
+  );
 
   const toAccountData = useBackgroundSelector((state) =>
-    getAccountData(state, to ?? "")
-  )
+    getAccountData(state, to ?? ""),
+  );
 
   return (
     <div className="sign_block">
@@ -239,5 +239,5 @@ export default function WalletStakeTransactionSendDetail({
         `}
       </style>
     </div>
-  )
+  );
 }

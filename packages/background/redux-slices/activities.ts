@@ -1,4 +1,8 @@
-import { createEntityAdapter, createSlice, EntityState } from "@reduxjs/toolkit"
+import {
+  createEntityAdapter,
+  createSlice,
+  EntityState,
+} from "@reduxjs/toolkit";
 import {
   keysMap,
   keysMapPokt,
@@ -6,18 +10,18 @@ import {
   ActivityItem,
   POKTActivityItem,
   EVMActivityItem,
-} from "./utils/activity-utils"
-import { truncateAddress } from "../lib/utils"
+} from "./utils/activity-utils";
+import { truncateAddress } from "../lib/utils";
 
-import { assetAmountToDesiredDecimals } from "../assets"
+import { assetAmountToDesiredDecimals } from "../assets";
 import {
   EnrichedEVMTransaction,
   EnrichedPOKTTransaction,
-} from "../services/enrichment"
+} from "../services/enrichment";
 
-export { ActivityItem, POKTActivityItem, EVMActivityItem }
+export { ActivityItem, POKTActivityItem, EVMActivityItem };
 
-const desiredDecimals = 2 /* TODO Make desired decimals configurable? */
+const desiredDecimals = 2; /* TODO Make desired decimals configurable? */
 
 const activitiesAdapter = createEntityAdapter<ActivityItem>({
   selectId: (activityItem) => activityItem.hash,
@@ -35,28 +39,28 @@ const activitiesAdapter = createEntityAdapter<ActivityItem>({
       return (
         (b as EnrichedEVMTransaction).nonce -
         (a as EnrichedEVMTransaction).nonce
-      )
+      );
     }
     // null means pending or dropped, these are always sorted above everything
     // if networks don't match.
     if (a.blockHeight === null && b.blockHeight === null) {
-      return 0
+      return 0;
     }
     if (a.blockHeight === null) {
-      return -1
+      return -1;
     }
     if (b.blockHeight === null) {
-      return 1
+      return 1;
     }
-    return b.blockHeight - a.blockHeight
+    return b.blockHeight - a.blockHeight;
   },
-})
+});
 
 export type ActivitiesState = {
-  [address: string]: EntityState<ActivityItem>
-}
+  [address: string]: EntityState<ActivityItem>;
+};
 
-export const initialState: ActivitiesState = {}
+export const initialState: ActivitiesState = {};
 
 const activitiesSlice = createSlice({
   name: "activities",
@@ -68,16 +72,16 @@ const activitiesSlice = createSlice({
         payload: { transaction, forAccounts },
       }: {
         payload: {
-          transaction: EnrichedEVMTransaction | EnrichedPOKTTransaction
-          forAccounts: string[]
-        }
-      }
+          transaction: EnrichedEVMTransaction | EnrichedPOKTTransaction;
+          forAccounts: string[];
+        };
+      },
     ) => {
       if (transaction.network.family === "EVM") {
-        const infoRows = adaptForUI(keysMap, transaction)
-        const tx = transaction as EnrichedEVMTransaction
+        const infoRows = adaptForUI(keysMap, transaction);
+        const tx = transaction as EnrichedEVMTransaction;
         forAccounts.forEach((account) => {
-          const address = account.toLowerCase()
+          const address = account.toLowerCase();
 
           const activityItem = {
             ...tx,
@@ -87,31 +91,31 @@ const activitiesSlice = createSlice({
                 asset: tx.asset,
                 amount: tx.value,
               },
-              desiredDecimals
+              desiredDecimals,
             ).toLocaleString(undefined, {
               maximumFractionDigits: desiredDecimals,
             }),
             fromTruncated: truncateAddress(tx.from),
             toTruncated: truncateAddress(tx.to ?? ""),
-          }
+          };
 
           if (typeof immerState[address] === "undefined") {
             immerState[address] = activitiesAdapter.setOne(
               activitiesAdapter.getInitialState(),
-              activityItem
-            )
+              activityItem,
+            );
           } else {
-            activitiesAdapter.upsertOne(immerState[address], activityItem)
+            activitiesAdapter.upsertOne(immerState[address], activityItem);
           }
-        })
+        });
       }
       // TODO Activity Item for POKT
       if (transaction.network.family === "POKT") {
-        const infoRows = adaptForUI(keysMapPokt, transaction)
-        const tx = transaction as EnrichedPOKTTransaction
+        const infoRows = adaptForUI(keysMapPokt, transaction);
+        const tx = transaction as EnrichedPOKTTransaction;
 
         forAccounts.forEach((account) => {
-          const address = account.toLowerCase()
+          const address = account.toLowerCase();
           const activityItem = {
             ...tx,
             infoRows,
@@ -120,27 +124,27 @@ const activitiesSlice = createSlice({
                 asset: tx.asset,
                 amount: BigInt(tx.txMsg.value.amount),
               },
-              desiredDecimals
+              desiredDecimals,
             ).toLocaleString(undefined, {
               maximumFractionDigits: desiredDecimals,
             }),
             fromTruncated: truncateAddress(tx.from),
             toTruncated: truncateAddress(tx.to ?? ""),
             blockHeight: tx.height || tx.targetHeight,
-          }
+          };
           if (typeof immerState[address] === "undefined") {
             immerState[address] = activitiesAdapter.setOne(
               activitiesAdapter.getInitialState(),
-              activityItem
-            )
+              activityItem,
+            );
           } else {
-            activitiesAdapter.upsertOne(immerState[address], activityItem)
+            activitiesAdapter.upsertOne(immerState[address], activityItem);
           }
-        })
+        });
       }
     },
   },
-})
+});
 
-export const { activityEncountered } = activitiesSlice.actions
-export default activitiesSlice.reducer
+export const { activityEncountered } = activitiesSlice.actions;
+export default activitiesSlice.reducer;

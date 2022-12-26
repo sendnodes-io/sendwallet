@@ -1,16 +1,16 @@
 import {
   EIP4361Data,
   SignDataMessageType,
-} from "@sendnodes/pokt-wallet-background/utils/signing"
-import { selectSigningData } from "@sendnodes/pokt-wallet-background/redux-slices/signing"
-import React from "react"
-import { EIP191Info, EIP4361Info } from "../components/SignData"
-import { useBackgroundSelector } from "../hooks"
+} from "@sendnodes/pokt-wallet-background/utils/signing";
+import { selectSigningData } from "@sendnodes/pokt-wallet-background/redux-slices/signing";
+import React from "react";
+import { EIP191Info, EIP4361Info } from "../components/SignData";
+import { useBackgroundSelector } from "../hooks";
 
 export default function PersonalSignDetailPanel(): JSX.Element {
-  const signingDataRequest = useBackgroundSelector(selectSigningData)
+  const signingDataRequest = useBackgroundSelector(selectSigningData);
 
-  if (signingDataRequest === undefined) return <></>
+  if (signingDataRequest === undefined) return <></>;
 
   return (
     <div className="primary_info_card standard_width">
@@ -23,7 +23,7 @@ export default function PersonalSignDetailPanel(): JSX.Element {
                   <EIP4361Info
                     signingData={signingDataRequest.signingData as EIP4361Data}
                   />
-                )
+                );
               case SignDataMessageType.EIP191:
               default:
                 return (
@@ -32,7 +32,7 @@ export default function PersonalSignDetailPanel(): JSX.Element {
                     internal={false}
                     signingData={signingDataRequest.signingData}
                   />
-                )
+                );
             }
           })()}
         </div>
@@ -64,5 +64,5 @@ export default function PersonalSignDetailPanel(): JSX.Element {
         }
       `}</style>
     </div>
-  )
+  );
 }

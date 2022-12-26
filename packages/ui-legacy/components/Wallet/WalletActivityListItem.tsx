@@ -1,75 +1,75 @@
-import React, { ReactElement } from "react"
-import classNames, { clsx } from "clsx"
-import { ActivityItem } from "@sendnodes/pokt-wallet-background/redux-slices/activities"
+import React, { ReactElement } from "react";
+import classNames, { clsx } from "clsx";
+import { ActivityItem } from "@sendnodes/pokt-wallet-background/redux-slices/activities";
 import {
   isMaxUint256,
   sameEVMAddress,
-} from "@sendnodes/pokt-wallet-background/lib/utils"
-import { HexString } from "@sendnodes/pokt-wallet-background/types"
-import { getRecipient } from "@sendnodes/pokt-wallet-background/redux-slices/utils/activity-utils"
-import { formatFixed } from "@ethersproject/bignumber"
-import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts"
-import { isEmpty, lowerCase } from "lodash"
-import SharedAssetIcon from "../Shared/SharedAssetIcon"
-import formatTokenAmount from "../../utils/formatTokenAmount"
+} from "@sendnodes/pokt-wallet-background/lib/utils";
+import { HexString } from "@sendnodes/pokt-wallet-background/types";
+import { getRecipient } from "@sendnodes/pokt-wallet-background/redux-slices/utils/activity-utils";
+import { formatFixed } from "@ethersproject/bignumber";
+import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts";
+import { isEmpty, lowerCase } from "lodash";
+import SharedAssetIcon from "../Shared/SharedAssetIcon";
+import formatTokenAmount from "../../utils/formatTokenAmount";
 import getTransactionResult, {
   TransactionStatus,
-} from "../../helpers/get-transaction-result"
-import useStakingAllTransactions from "../../hooks/staking-hooks/use-staking-all-transactions"
-import StakeTransactionInfo from "../Stake/StakeTransactionInfo"
-import TransactionDetailSlideUpMenuBody from "../TransactionDetail/TransactionDetailSlideUpMenuBody"
-import SharedSlideUpMenu from "../Shared/SharedSlideUpMenu"
+} from "../../helpers/get-transaction-result";
+import useStakingAllTransactions from "../../hooks/staking-hooks/use-staking-all-transactions";
+import StakeTransactionInfo from "../Stake/StakeTransactionInfo";
+import TransactionDetailSlideUpMenuBody from "../TransactionDetail/TransactionDetailSlideUpMenuBody";
+import SharedSlideUpMenu from "../Shared/SharedSlideUpMenu";
 
 interface Props {
-  activity: ActivityItem
-  asAccount: string
+  activity: ActivityItem;
+  asAccount: string;
 }
 
 function isReceiveActivity(activity: ActivityItem, account: string): boolean {
   return (
     activity.annotation?.type === "asset-transfer" &&
     sameEVMAddress(activity.annotation?.recipientAddress, account)
-  )
+  );
 }
 
 function isSendActivity(activity: ActivityItem, account: string): boolean {
   return activity.annotation?.type === "asset-transfer"
     ? sameEVMAddress(activity.annotation?.senderAddress, account)
-    : true
+    : true;
 }
 
 type WalletActivityListRenderDetails = {
-  icon: (props: any) => JSX.Element
-  label: string
+  icon: (props: any) => JSX.Element;
+  label: string;
   recipient:
     | {
-        address: HexString | undefined
-        name?: string | undefined
+        address: HexString | undefined;
+        name?: string | undefined;
       }
-    | undefined
-  assetLogoURL: string | undefined
-  assetSymbol: string
-  assetValue: string
-}
+    | undefined;
+  assetLogoURL: string | undefined;
+  assetSymbol: string;
+  assetValue: string;
+};
 
 function WalletActivityListIcon({
   label,
   iconClass,
 }: {
-  label?: string
-  iconClass?: string
+  label?: string;
+  iconClass?: string;
 }) {
   return (
     <div title={label} className={classNames("activity_icon", iconClass)} />
-  )
+  );
 }
 
 export function renderDetailsForActivity(
   activity: ActivityItem,
-  asAddressOnNetwork: AddressOnNetwork
+  asAddressOnNetwork: AddressOnNetwork,
 ) {
-  const txResult = getTransactionResult(activity)
-  const { address: asAccount, network } = asAddressOnNetwork
+  const txResult = getTransactionResult(activity);
+  const { address: asAccount, network } = asAddressOnNetwork;
 
   const label =
     activity.to === asAccount
@@ -78,7 +78,7 @@ export function renderDetailsForActivity(
         : "Receive"
       : txResult.status === "pending"
       ? "Sending"
-      : "Send"
+      : "Send";
   let renderDetails: WalletActivityListRenderDetails = {
     icon: () => (
       <WalletActivityListIcon
@@ -91,7 +91,7 @@ export function renderDetailsForActivity(
     assetLogoURL: undefined,
     assetSymbol: activity.asset.symbol,
     assetValue: activity.localizedDecimalValue,
-  }
+  };
 
   if (network.family === "EVM") {
     switch (activity.annotation?.type) {
@@ -114,8 +114,8 @@ export function renderDetailsForActivity(
           assetLogoURL: activity.annotation.transactionLogoURL,
           assetSymbol: activity.annotation.assetAmount.asset.symbol,
           assetValue: activity.annotation.assetAmount.localizedDecimalAmount,
-        }
-        break
+        };
+        break;
       case "asset-approval":
         renderDetails = {
           label: "Token approval",
@@ -134,8 +134,8 @@ export function renderDetailsForActivity(
           assetValue: isMaxUint256(activity.annotation.assetAmount.amount)
             ? "Infinite"
             : activity.annotation.assetAmount.localizedDecimalAmount,
-        }
-        break
+        };
+        break;
       case "asset-swap":
         renderDetails = {
           icon: () => (
@@ -146,8 +146,8 @@ export function renderDetailsForActivity(
           assetLogoURL: activity.annotation.transactionLogoURL,
           assetSymbol: activity.asset.symbol,
           assetValue: activity.localizedDecimalValue,
-        }
-        break
+        };
+        break;
       case "contract-deployment":
       case "contract-interaction":
       default:
@@ -164,31 +164,31 @@ export function renderDetailsForActivity(
           assetLogoURL: activity.annotation?.transactionLogoURL,
           assetSymbol: activity.asset.symbol,
           assetValue: activity.localizedDecimalValue,
-        }
+        };
     }
   }
-  return renderDetails
+  return renderDetails;
 }
 
 export default function WalletActivityListItem(props: Props): ReactElement {
-  const [isOpen, setIsOpen] = React.useState(false)
-  const { data: allStakingTransactions } = useStakingAllTransactions()
-  const { activity, asAccount } = props
-  const { network } = activity
+  const [isOpen, setIsOpen] = React.useState(false);
+  const { data: allStakingTransactions } = useStakingAllTransactions();
+  const { activity, asAccount } = props;
+  const { network } = activity;
 
-  let from
-  if ("from" in activity) from = activity.from
-  if ("txResult" in activity) from = activity.txResult?.signer
-  const txResult = getTransactionResult(activity)
+  let from;
+  if ("from" in activity) from = activity.from;
+  if ("txResult" in activity) from = activity.txResult?.signer;
+  const txResult = getTransactionResult(activity);
 
   const stakingTransaction = allStakingTransactions.find(
-    (tx) => tx.hash === activity.hash
-  )
+    (tx) => tx.hash === activity.hash,
+  );
 
   const renderDetails = renderDetailsForActivity(activity, {
     address: asAccount,
     network,
-  })
+  });
 
   return stakingTransaction ? (
     <StakeTransactionInfo transaction={stakingTransaction}>
@@ -213,7 +213,7 @@ export default function WalletActivityListItem(props: Props): ReactElement {
               assetValue: formatTokenAmount(
                 stakingTransaction.tokenValue,
                 6,
-                2
+                2,
               ),
             }}
           />
@@ -248,15 +248,15 @@ export default function WalletActivityListItem(props: Props): ReactElement {
         <TransactionDetailSlideUpMenuBody activity={activity} />
       </SharedSlideUpMenu>
     </>
-  )
+  );
 }
 
 type WalletActivityListItemComponentProps = {
-  status: TransactionStatus
-  onClick: () => void
-  renderDetails: WalletActivityListRenderDetails
-  activity: ActivityItem
-}
+  status: TransactionStatus;
+  onClick: () => void;
+  renderDetails: WalletActivityListRenderDetails;
+  activity: ActivityItem;
+};
 
 function WalletActivityListItemComponent({
   status,
@@ -464,5 +464,5 @@ function WalletActivityListItemComponent({
         `}
       </style>
     </li>
-  )
+  );
 }

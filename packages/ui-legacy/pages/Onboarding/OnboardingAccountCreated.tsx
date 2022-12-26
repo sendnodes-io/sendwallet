@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react"
-import { useHistory } from "react-router-dom"
-import { OnboardingNewAccountIcon } from "../../components/Onboarding/Icons"
-import OnboardingAccountLayout from "../../components/Onboarding/OnboardingAccountLayout"
-import SharedButton from "../../components/Shared/SharedButton"
-import SharedSlideUpMenu from "../../components/Shared/SharedSlideUpMenu"
+import React, { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
+import { OnboardingNewAccountIcon } from "../../components/Onboarding/Icons";
+import OnboardingAccountLayout from "../../components/Onboarding/OnboardingAccountLayout";
+import SharedButton from "../../components/Shared/SharedButton";
+import SharedSlideUpMenu from "../../components/Shared/SharedSlideUpMenu";
 
 export default function OnboardingAccountCreated() {
-  const history = useHistory()
+  const history = useHistory();
 
   return (
     <div>
@@ -121,5 +121,5 @@ export default function OnboardingAccountCreated() {
         `}
       </style>
     </div>
-  )
+  );
 }

@@ -1,13 +1,13 @@
-import React, { ReactElement } from "react"
+import React, { ReactElement } from "react";
 
 interface Props {
-  setPanelNumber: (x: number) => void
-  panelNumber: number
-  panelNames: string[]
+  setPanelNumber: (x: number) => void;
+  panelNumber: number;
+  panelNames: string[];
 }
 
 export default function SharedPanelSwitcher(props: Props): ReactElement {
-  const { setPanelNumber, panelNumber, panelNames } = props
+  const { setPanelNumber, panelNumber, panelNames } = props;
 
   // TODO: make these styles work for more than two panels
   // .selected::after is the hardcoded culprit.
@@ -20,14 +20,14 @@ export default function SharedPanelSwitcher(props: Props): ReactElement {
               <button
                 type="button"
                 onClick={() => {
-                  setPanelNumber(index)
+                  setPanelNumber(index);
                 }}
                 className={`option${panelNumber === index ? " selected" : ""}`}
               >
                 {name}
               </button>
             </li>
-          )
+          );
         })}
       </ul>
       <style jsx>
@@ -90,5 +90,5 @@ export default function SharedPanelSwitcher(props: Props): ReactElement {
         `}
       </style>
     </nav>
-  )
+  );
 }

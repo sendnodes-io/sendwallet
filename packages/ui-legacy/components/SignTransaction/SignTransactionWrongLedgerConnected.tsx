@@ -1,12 +1,12 @@
-import { AccountTotal } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
-import React, { ReactElement } from "react"
-import SharedButton from "../Shared/SharedButton"
-import SignTransactionSlideUpContentLayout from "./SignTransactionSlideUpContentLayout"
+import { AccountTotal } from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
+import React, { ReactElement } from "react";
+import SharedButton from "../Shared/SharedButton";
+import SignTransactionSlideUpContentLayout from "./SignTransactionSlideUpContentLayout";
 
 export default function SignTransactionWrongLedgerConnected({
   signerAccountTotal,
 }: {
-  signerAccountTotal: AccountTotal
+  signerAccountTotal: AccountTotal;
 }): ReactElement {
   return (
     <SignTransactionSlideUpContentLayout
@@ -26,14 +26,14 @@ export default function SignTransactionWrongLedgerConnected({
                   window
                     .open(
                       `https://etherscan.io/address/${signerAccountTotal.address}`,
-                      "_blank"
+                      "_blank",
                     )
-                    ?.focus()
+                    ?.focus();
                 }}
               >
                 {`${signerAccountTotal.address.slice(
                   0,
-                  7
+                  7,
                 )}...${signerAccountTotal.address.slice(-6)}`}
               </SharedButton>
             </div>
@@ -54,5 +54,5 @@ export default function SignTransactionWrongLedgerConnected({
         <>Refresh the page</>,
       ]}
     />
-  )
+  );
 }

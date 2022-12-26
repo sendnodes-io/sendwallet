@@ -1,44 +1,44 @@
-import { AccountTotal } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
-import { HexString } from "@sendnodes/pokt-wallet-background/types"
-import React, { ReactElement, useEffect, useRef, useState } from "react"
-import { FiMoreHorizontal } from "react-icons/fi"
-import { useOnClickOutside } from "../../hooks"
-import SharedSlideUpMenu from "../Shared/SharedSlideUpMenu"
-import AccountItemRemovalConfirm from "./AccountItemRemovalConfirm"
-import AccountItemEditName from "./AccountItemEditName"
-import RemoveAddressLabel from "./AccountItemRemoveAddressLabel"
-import EditWalletNameLabel from "./AccountItemEditWalletNameLabel"
-import ExportPrivateKeyLabel from "./AccountItemExportPrivateKeyLabel"
-import AccountItemExportPrivateKeyConfirm from "./AccountItemExportPrivateKeyConfirm"
+import { AccountTotal } from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
+import { HexString } from "@sendnodes/pokt-wallet-background/types";
+import React, { ReactElement, useEffect, useRef, useState } from "react";
+import { FiMoreHorizontal } from "react-icons/fi";
+import { useOnClickOutside } from "../../hooks";
+import SharedSlideUpMenu from "../Shared/SharedSlideUpMenu";
+import AccountItemRemovalConfirm from "./AccountItemRemovalConfirm";
+import AccountItemEditName from "./AccountItemEditName";
+import RemoveAddressLabel from "./AccountItemRemoveAddressLabel";
+import EditWalletNameLabel from "./AccountItemEditWalletNameLabel";
+import ExportPrivateKeyLabel from "./AccountItemExportPrivateKeyLabel";
+import AccountItemExportPrivateKeyConfirm from "./AccountItemExportPrivateKeyConfirm";
 
 type AccountItemOptionsMenuProps = {
-  accountTotal: AccountTotal
-  address: HexString
-}
+  accountTotal: AccountTotal;
+  address: HexString;
+};
 
 export default function AccountItemOptionsMenu({
   accountTotal,
   address,
 }: AccountItemOptionsMenuProps): ReactElement {
-  const [showOptionsMenu, setShowOptionsMenu] = useState(false)
+  const [showOptionsMenu, setShowOptionsMenu] = useState(false);
   const [showAddressRemoveConfirm, setShowAddressRemoveConfirm] =
-    useState(false)
+    useState(false);
   const [showExportPrivateKeyConfirm, setShowExportPrivateKeyConfirm] =
-    useState(false)
-  const [showEditWalletName, setShowEditWalletName] = useState(false)
-  const optionsMenuRef = useRef<null | HTMLUListElement>(null)
+    useState(false);
+  const [showEditWalletName, setShowEditWalletName] = useState(false);
+  const optionsMenuRef = useRef<null | HTMLUListElement>(null);
   useOnClickOutside(optionsMenuRef, () => {
-    setShowOptionsMenu(false)
-  })
+    setShowOptionsMenu(false);
+  });
 
   useEffect(() => {
     if (showOptionsMenu && optionsMenuRef?.current) {
       optionsMenuRef.current.scrollIntoView({
         behavior: "smooth",
         block: "nearest",
-      })
+      });
     }
-  }, [showOptionsMenu])
+  }, [showOptionsMenu]);
 
   return (
     <div>
@@ -50,12 +50,12 @@ export default function AccountItemOptionsMenu({
           tabIndex={0}
           onKeyPress={(e) => {
             if (e.key === "enter") {
-              setShowOptionsMenu(true)
+              setShowOptionsMenu(true);
             }
           }}
           onClick={(e) => {
-            e.stopPropagation()
-            setShowOptionsMenu(true)
+            e.stopPropagation();
+            setShowOptionsMenu(true);
           }}
         >
           <FiMoreHorizontal />
@@ -76,9 +76,9 @@ export default function AccountItemOptionsMenu({
                 className="edit_wallet_name_button"
                 type="button"
                 onClick={(e) => {
-                  e.stopPropagation()
-                  setShowOptionsMenu(false)
-                  setShowEditWalletName(true)
+                  e.stopPropagation();
+                  setShowOptionsMenu(false);
+                  setShowEditWalletName(true);
                 }}
               >
                 <EditWalletNameLabel hoverable />
@@ -88,8 +88,8 @@ export default function AccountItemOptionsMenu({
                 className="close_button"
                 aria-label="Close"
                 onClick={(e) => {
-                  e.stopPropagation()
-                  setShowOptionsMenu(false)
+                  e.stopPropagation();
+                  setShowOptionsMenu(false);
                 }}
               >
                 <div className="icon_close" />
@@ -100,9 +100,9 @@ export default function AccountItemOptionsMenu({
                 className="remove_address_button"
                 type="button"
                 onClick={(e) => {
-                  e.stopPropagation()
-                  setShowOptionsMenu(false)
-                  setShowAddressRemoveConfirm(true)
+                  e.stopPropagation();
+                  setShowOptionsMenu(false);
+                  setShowAddressRemoveConfirm(true);
                 }}
               >
                 <RemoveAddressLabel hoverable />
@@ -113,9 +113,9 @@ export default function AccountItemOptionsMenu({
                 className="export_pk_button"
                 type="button"
                 onClick={(e) => {
-                  e.stopPropagation()
-                  setShowOptionsMenu(false)
-                  setShowExportPrivateKeyConfirm(true)
+                  e.stopPropagation();
+                  setShowOptionsMenu(false);
+                  setShowExportPrivateKeyConfirm(true);
                 }}
               >
                 <ExportPrivateKeyLabel hoverable />
@@ -130,8 +130,8 @@ export default function AccountItemOptionsMenu({
           size="auto"
           isOpen={showAddressRemoveConfirm}
           close={(e) => {
-            e?.stopPropagation()
-            setShowAddressRemoveConfirm(false)
+            e?.stopPropagation();
+            setShowAddressRemoveConfirm(false);
           }}
         >
           <div
@@ -153,8 +153,8 @@ export default function AccountItemOptionsMenu({
           size="small"
           isOpen={showEditWalletName}
           close={(e) => {
-            e?.stopPropagation()
-            setShowEditWalletName(false)
+            e?.stopPropagation();
+            setShowEditWalletName(false);
           }}
         >
           <div
@@ -176,8 +176,8 @@ export default function AccountItemOptionsMenu({
           size="auto"
           isOpen={showExportPrivateKeyConfirm}
           close={(e) => {
-            e?.stopPropagation()
-            setShowExportPrivateKeyConfirm(false)
+            e?.stopPropagation();
+            setShowExportPrivateKeyConfirm(false);
           }}
         >
           <div
@@ -247,5 +247,5 @@ export default function AccountItemOptionsMenu({
         `}
       </style>
     </div>
-  )
+  );
 }

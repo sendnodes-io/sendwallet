@@ -1,13 +1,13 @@
-import React, { ReactElement } from "react"
-import classNames from "clsx"
+import React, { ReactElement } from "react";
+import classNames from "clsx";
 
 interface Props {
-  isActive: boolean
-  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void
+  isActive: boolean;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 export default function SharedFeeSelectButton(props: Props): ReactElement {
-  const { isActive, onClick } = props
+  const { isActive, onClick } = props;
 
   return (
     <button
@@ -81,9 +81,9 @@ export default function SharedFeeSelectButton(props: Props): ReactElement {
         `}
       </style>
     </button>
-  )
+  );
 }
 
 SharedFeeSelectButton.defaultProps = {
   isActive: false,
-}
+};

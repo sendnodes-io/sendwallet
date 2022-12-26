@@ -1,14 +1,14 @@
-import React, { ReactElement, ChangeEventHandler } from "react"
+import React, { ReactElement, ChangeEventHandler } from "react";
 
 interface Props {
-  id: string
-  label: string
-  onChange: ChangeEventHandler<HTMLInputElement>
-  checked?: boolean
+  id: string;
+  label: string;
+  onChange: ChangeEventHandler<HTMLInputElement>;
+  checked?: boolean;
 }
 
 export default function SharedCheckbox(props: Props): ReactElement {
-  const { label, checked, onChange, id = "checkbox" } = props
+  const { label, checked, onChange, id = "checkbox" } = props;
 
   return (
     <div className="checkbox">
@@ -76,5 +76,5 @@ export default function SharedCheckbox(props: Props): ReactElement {
         }
       `}</style>
     </div>
-  )
+  );
 }

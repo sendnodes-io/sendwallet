@@ -1,8 +1,8 @@
-import React, { ReactElement } from "react"
-import FeeSettingsText from "./FeeSettingsText"
+import React, { ReactElement } from "react";
+import FeeSettingsText from "./FeeSettingsText";
 
 interface FeeSettingsButtonProps {
-  onClick: () => void
+  onClick: () => void;
 }
 
 export default function FeeSettingsButton({
@@ -41,5 +41,5 @@ export default function FeeSettingsButton({
         `}
       </style>
     </button>
-  )
+  );
 }

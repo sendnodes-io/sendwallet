@@ -1,14 +1,14 @@
-import React, { ReactElement, useState } from "react"
-import { Redirect } from "react-router-dom"
-import { useBackgroundSelector } from "../../hooks"
-import SharedButton from "../../components/Shared/SharedButton"
-import SharedProgressIndicator from "../../components/Shared/SharedProgressIndicator"
-import styles from "../../components/Onboarding/styles"
-import openPoktWalletTab from "../../helpers/open-pokt-wallet-tab"
+import React, { ReactElement, useState } from "react";
+import { Redirect } from "react-router-dom";
+import { useBackgroundSelector } from "../../hooks";
+import SharedButton from "../../components/Shared/SharedButton";
+import SharedProgressIndicator from "../../components/Shared/SharedProgressIndicator";
+import styles from "../../components/Onboarding/styles";
+import openPoktWalletTab from "../../helpers/open-pokt-wallet-tab";
 
 interface OnboardingIntroStep {
-  content: React.ReactElement
-  buttonCopy: string
+  content: React.ReactElement;
+  buttonCopy: string;
 }
 
 const OnboardingIntroStep1 = (
@@ -45,7 +45,7 @@ const OnboardingIntroStep1 = (
       `}
     </style>
   </>
-)
+);
 
 const OnboardingIntroStep2 = (
   <>
@@ -73,7 +73,7 @@ const OnboardingIntroStep2 = (
       `}
     </style>
   </>
-)
+);
 
 // const OnboardingIntroStep3 = (
 //   <>
@@ -119,18 +119,18 @@ const steps: OnboardingIntroStep[] = [
   //   content: OnboardingIntroStep3,
   //   buttonCopy: "GET STARTED",
   // },
-]
+];
 
 export default function OnboardingInfoIntro(): ReactElement {
-  const [activeStep, setActiveStep] = useState(1)
+  const [activeStep, setActiveStep] = useState(1);
 
   const hasAccounts = useBackgroundSelector(
-    (state) => Object.keys(state.account.accountsData).length > 0
-  )
+    (state) => Object.keys(state.account.accountsData).length > 0,
+  );
 
   // If there's an account, return to /
   if (hasAccounts) {
-    return <Redirect to="/" />
+    return <Redirect to="/" />;
   }
 
   return (
@@ -149,9 +149,9 @@ export default function OnboardingInfoIntro(): ReactElement {
           size="large"
           onClick={() => {
             if (activeStep < steps.length) {
-              setActiveStep(activeStep + 1)
+              setActiveStep(activeStep + 1);
             } else {
-              openPoktWalletTab("/onboarding/add-wallet")
+              openPoktWalletTab("/onboarding/add-wallet");
             }
           }}
         >
@@ -162,7 +162,7 @@ export default function OnboardingInfoIntro(): ReactElement {
           numberOfSteps={2}
           activeStep={activeStep}
           onProgressStepClicked={(step) => {
-            setActiveStep(step)
+            setActiveStep(step);
           }}
         />
       </div>
@@ -245,5 +245,5 @@ export default function OnboardingInfoIntro(): ReactElement {
         `}
       </style>
     </section>
-  )
+  );
 }

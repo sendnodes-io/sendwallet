@@ -1,43 +1,43 @@
-import { Switch } from "@headlessui/react"
-import { transferAsset } from "@sendnodes/pokt-wallet-background/redux-slices/assets"
-import { selectCurrentAccount } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
-import clsx from "clsx"
-import { isEqual } from "lodash"
-import React, { useCallback, useState } from "react"
+import { Switch } from "@headlessui/react";
+import { transferAsset } from "@sendnodes/pokt-wallet-background/redux-slices/assets";
+import { selectCurrentAccount } from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
+import clsx from "clsx";
+import { isEqual } from "lodash";
+import React, { useCallback, useState } from "react";
 import {
   useAreKeyringsUnlocked,
   useBackgroundDispatch,
   useBackgroundSelector,
-} from "../../hooks"
-import { useStakingUserData } from "../../hooks/staking-hooks"
-import useStakingPendingTransactions from "../../hooks/staking-hooks/use-staking-pending-transactions"
-import useStakingPoktParams from "../../hooks/staking-hooks/use-staking-pokt-params"
-import SharedSplashScreen from "../Shared/SharedSplashScreen"
+} from "../../hooks";
+import { useStakingUserData } from "../../hooks/staking-hooks";
+import useStakingPendingTransactions from "../../hooks/staking-hooks/use-staking-pending-transactions";
+import useStakingPoktParams from "../../hooks/staking-hooks/use-staking-pokt-params";
+import SharedSplashScreen from "../Shared/SharedSplashScreen";
 
 export default function StakeToggleCompounding() {
-  const areKeyringsUnlocked = useAreKeyringsUnlocked(true)
-  const dispatch = useBackgroundDispatch()
-  const currentAccount = useBackgroundSelector(selectCurrentAccount, isEqual)
+  const areKeyringsUnlocked = useAreKeyringsUnlocked(true);
+  const dispatch = useBackgroundDispatch();
+  const currentAccount = useBackgroundSelector(selectCurrentAccount, isEqual);
   const [isSendingTransactionRequest, setIsSendingTransactionRequest] =
-    useState(false)
+    useState(false);
   const {
     data: stakingPoktParamsData,
     isLoading: isStakingPoktParamsLoading,
     isError: isStakingPoktParamsError,
-  } = useStakingPoktParams()
+  } = useStakingPoktParams();
 
   const {
     data: userStakingData,
     isLoading: isUserStakingDataLoading,
     isError: isUserStakingDataError,
-  } = useStakingUserData(currentAccount)
+  } = useStakingUserData(currentAccount);
 
   const pendingCompoundTransactions = useStakingPendingTransactions().filter(
-    (activity) => activity !== null && activity.compound === true
-  )
+    (activity) => activity !== null && activity.compound === true,
+  );
 
-  if (isStakingPoktParamsError) throw isStakingPoktParamsError
-  if (isUserStakingDataError) throw isUserStakingDataError
+  if (isStakingPoktParamsError) throw isStakingPoktParamsError;
+  if (isUserStakingDataError) throw isUserStakingDataError;
 
   if (
     !areKeyringsUnlocked ||
@@ -48,26 +48,24 @@ export default function StakeToggleCompounding() {
       <div className="grow w-full relative flex flex-col justify-center items-center">
         <SharedSplashScreen />
       </div>
-    )
+    );
   }
 
   const sendTransactionRequest = useCallback(async () => {
     if (
-      !areKeyringsUnlocked ||
-      !stakingPoktParamsData?.wallets?.siw ||
-      !userStakingData
+      !((areKeyringsUnlocked &&stakingPoktParamsData?.wallets?.siw ) &&userStakingData)
     ) {
       console.warn("Somethings not right", {
         areKeyringsUnlocked,
         stakingPoktParamsData,
-      })
-      return
+      });
+      return;
     }
     try {
-      setIsSendingTransactionRequest(true)
+      setIsSendingTransactionRequest(true);
 
       // memo spec is c:compound=[true|false]
-      const memo = `c:${!userStakingData?.userStakingData[0]?.compound}`
+      const memo = `c:${!userStakingData?.userStakingData[0]?.compound}`;
 
       dispatch(
         transferAsset({
@@ -82,10 +80,10 @@ export default function StakeToggleCompounding() {
           },
           memo,
           gasLimit: undefined,
-        })
-      )
+        }),
+      );
     } finally {
-      setIsSendingTransactionRequest(false)
+      setIsSendingTransactionRequest(false);
     }
   }, [
     currentAccount,
@@ -93,10 +91,10 @@ export default function StakeToggleCompounding() {
     userStakingData,
     dispatch,
     areKeyringsUnlocked,
-  ])
+  ]);
 
   const isDisabled =
-    isSendingTransactionRequest || pendingCompoundTransactions.length > 0
+    isSendingTransactionRequest || pendingCompoundTransactions.length > 0;
 
   return (
     <Switch.Group
@@ -120,7 +118,7 @@ export default function StakeToggleCompounding() {
             userStakingData?.userStakingData[0]?.compound
               ? "bg-capri"
               : "bg-gray-200",
-            "relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none outline-transparent focus:ring-2 focus:ring-offset-2 focus:ring-aqua"
+            "relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none outline-transparent focus:ring-2 focus:ring-offset-2 focus:ring-aqua",
           )}
         >
           <span className="sr-only">Use setting</span>
@@ -129,7 +127,7 @@ export default function StakeToggleCompounding() {
               userStakingData?.userStakingData[0]?.compound
                 ? "translate-x-5"
                 : "translate-x-0",
-              "pointer-events-none relative inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200"
+              "pointer-events-none relative inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200",
             )}
           >
             <span
@@ -137,7 +135,7 @@ export default function StakeToggleCompounding() {
                 userStakingData?.userStakingData[0]?.compound
                   ? "opacity-0 ease-out duration-100"
                   : "opacity-100 ease-in duration-200",
-                "absolute inset-0 h-full w-full flex items-center justify-center transition-opacity"
+                "absolute inset-0 h-full w-full flex items-center justify-center transition-opacity",
               )}
               aria-hidden="true"
             >
@@ -160,7 +158,7 @@ export default function StakeToggleCompounding() {
                 userStakingData?.userStakingData[0]?.compound
                   ? "opacity-100 ease-in duration-200"
                   : "opacity-0 ease-out duration-100",
-                "absolute inset-0 h-full w-full flex items-center justify-center transition-opacity"
+                "absolute inset-0 h-full w-full flex items-center justify-center transition-opacity",
               )}
               aria-hidden="true"
             >
@@ -181,5 +179,5 @@ export default function StakeToggleCompounding() {
         </p>
       )}
     </Switch.Group>
-  )
+  );
 }

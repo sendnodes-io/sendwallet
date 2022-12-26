@@ -1,5 +1,5 @@
-import React, { ReactElement } from "react"
-import SignTransactionSlideUpContentLayout from "./SignTransactionSlideUpContentLayout"
+import React, { ReactElement } from "react";
+import SignTransactionSlideUpContentLayout from "./SignTransactionSlideUpContentLayout";
 
 export default function SignTransactionLedgerNotConnected(): ReactElement {
   return (
@@ -12,5 +12,5 @@ export default function SignTransactionLedgerNotConnected(): ReactElement {
         <>Open Ethereum app</>,
       ]}
     />
-  )
+  );
 }

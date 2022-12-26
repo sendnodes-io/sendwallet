@@ -1,4 +1,4 @@
-import css from "styled-jsx/css"
+import css from "styled-jsx/css";
 
 export default css`
   :global(main, .dashed_border) {
@@ -63,4 +63,4 @@ export default css`
     align-items: center;
     justify-content: flex-end;
   }
-`
+`;

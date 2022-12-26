@@ -4,23 +4,27 @@ import React, {
   ReactElement,
   useEffect,
   useMemo,
-} from "react"
-import classNames from "clsx"
+} from "react";
+import classNames from "clsx";
 
-import { useOnClickOutside } from "../../hooks"
+import { useOnClickOutside } from "../../hooks";
 
-export type Option = { value: string; label: string; hideActiveValue?: boolean }
+export type Option = {
+  value: string;
+  label: string;
+  hideActiveValue?: boolean;
+};
 
 type Props = {
-  options: Option[] | string[]
-  onChange: (value: string) => void
-  defaultIndex?: number
-  label?: string
-  placement?: "top" | "bottom"
-  triggerLabel?: string
-  onTrigger?: () => void
-  showValue?: boolean
-}
+  options: Option[] | string[];
+  onChange: (value: string) => void;
+  defaultIndex?: number;
+  label?: string;
+  placement?: "top" | "bottom";
+  triggerLabel?: string;
+  onTrigger?: () => void;
+  showValue?: boolean;
+};
 
 export default function SharedSelect(props: Props): ReactElement {
   const {
@@ -32,17 +36,17 @@ export default function SharedSelect(props: Props): ReactElement {
     triggerLabel,
     onTrigger,
     showValue,
-  } = props
+  } = props;
 
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-  const [activeIndex, setActiveIndex] = useState(defaultIndex)
-  const previousdefaultIndex = useRef(defaultIndex)
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(defaultIndex);
+  const previousdefaultIndex = useRef(defaultIndex);
 
-  const showDropdownHandler = () => setIsDropdownOpen(!isDropdownOpen)
-  const hideDropdownHandler = () => setIsDropdownOpen(false)
+  const showDropdownHandler = () => setIsDropdownOpen(!isDropdownOpen);
+  const hideDropdownHandler = () => setIsDropdownOpen(false);
 
-  const selectContainerRef = useRef<HTMLDivElement | null>(null)
-  useOnClickOutside(selectContainerRef, hideDropdownHandler)
+  const selectContainerRef = useRef<HTMLDivElement | null>(null);
+  useOnClickOutside(selectContainerRef, hideDropdownHandler);
 
   const options = useMemo(
     () =>
@@ -52,32 +56,32 @@ export default function SharedSelect(props: Props): ReactElement {
           : {
               value: option,
               label: option,
-            }
+            },
       ) as Option[],
-    [initialOptions]
-  )
+    [initialOptions],
+  );
 
   const currentOption =
     activeIndex !== null && activeIndex !== undefined
       ? options[activeIndex]
-      : null
-  const currentLabel = currentOption?.label ?? null
-  const currentValue = currentOption?.value ?? null
-  const currentHideActiveValue = currentOption?.hideActiveValue ?? false
+      : null;
+  const currentLabel = currentOption?.label ?? null;
+  const currentValue = currentOption?.value ?? null;
+  const currentHideActiveValue = currentOption?.hideActiveValue ?? false;
 
   useEffect(() => {
-    if (currentValue) onChange(currentValue)
-  }, [currentValue, onChange])
+    if (currentValue) onChange(currentValue);
+  }, [currentValue, onChange]);
 
   useEffect(() => {
     if (previousdefaultIndex.current !== defaultIndex)
-      setActiveIndex(defaultIndex)
-  }, [defaultIndex])
+      setActiveIndex(defaultIndex);
+  }, [defaultIndex]);
 
   const updateSelectedOption = (index: number) => {
-    setActiveIndex(index)
-    setIsDropdownOpen(false)
-  }
+    setActiveIndex(index);
+    setIsDropdownOpen(false);
+  };
 
   return (
     <>
@@ -122,7 +126,7 @@ export default function SharedSelect(props: Props): ReactElement {
                 onClick={() => updateSelectedOption(index)}
                 onKeyPress={(e) => {
                   if (e.key === "enter") {
-                    updateSelectedOption(index)
+                    updateSelectedOption(index);
                   }
                 }}
               >
@@ -131,7 +135,7 @@ export default function SharedSelect(props: Props): ReactElement {
                   <span>{option.value}</span>
                 </div>
               </li>
-            )
+            );
           })}
           {triggerLabel && (
             <li className="custom_option">
@@ -286,5 +290,5 @@ export default function SharedSelect(props: Props): ReactElement {
         `}
       </style>
     </>
-  )
+  );
 }

@@ -1,7 +1,7 @@
-import { connectLedger } from "@sendnodes/pokt-wallet-background/redux-slices/ledger"
-import React, { ReactElement, ReactNode } from "react"
-import { useBackgroundDispatch } from "../../hooks"
-import SharedButton from "../Shared/SharedButton"
+import { connectLedger } from "@sendnodes/pokt-wallet-background/redux-slices/ledger";
+import React, { ReactElement, ReactNode } from "react";
+import { useBackgroundDispatch } from "../../hooks";
+import SharedButton from "../Shared/SharedButton";
 
 export default function SignTransactionSlideUpContentLayout({
   title,
@@ -9,12 +9,12 @@ export default function SignTransactionSlideUpContentLayout({
   steps,
   onHelpClick,
 }: {
-  title: ReactNode
-  helpMessage: ReactNode
-  steps: ReactNode[]
-  onHelpClick?: () => void
+  title: ReactNode;
+  helpMessage: ReactNode;
+  steps: ReactNode[];
+  onHelpClick?: () => void;
 }): ReactElement {
-  const dispatch = useBackgroundDispatch()
+  const dispatch = useBackgroundDispatch();
   return (
     <div className="container">
       <div className="title">{title}</div>
@@ -102,5 +102,5 @@ export default function SignTransactionSlideUpContentLayout({
         }
       `}</style>
     </div>
-  )
+  );
 }

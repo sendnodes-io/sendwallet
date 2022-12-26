@@ -12,31 +12,31 @@ import {
   isPoktWalletInternalCommunication,
   PoktWalletAccountPayload,
   isPoktWalletAccountPayload,
-} from "@sendnodes/provider-bridge-shared"
-import { EventEmitter } from "events"
+} from "@sendnodes/provider-bridge-shared";
+import { EventEmitter } from "events";
 
 export default class PocketWindowProvider extends EventEmitter {
   // TODO: This should come from the background with onConnect when any interaction is initiated by the dApp.
   // onboard.js relies on this, or uses a deprecated api. It seemed to be a reasonable workaround for now.
-  chainId = "mainnet"
+  chainId = "mainnet";
 
-  selectedAddress: string | undefined
+  selectedAddress: string | undefined;
 
   isConnected(): boolean {
-    return this.#isConnected
+    return this.#isConnected;
   }
 
-  #isConnected = false
+  #isConnected = false;
 
-  isPoktWallet = true
+  isPoktWallet = true;
 
-  bridgeListeners = new Map()
+  bridgeListeners = new Map();
 
   constructor(public transport: ProviderTransport) {
-    super()
+    super();
 
     const internalListener = (event: unknown) => {
-      let result: PoktWalletConfigPayload | PoktWalletAccountPayload
+      let result: PoktWalletConfigPayload | PoktWalletAccountPayload;
       if (
         isWindowResponseEvent(event) &&
         isPoktWalletInternalCommunication(event.data)
@@ -46,55 +46,57 @@ export default class PocketWindowProvider extends EventEmitter {
           event.source !== window || // we want to recieve messages only from the provider-bridge script
           event.data.target !== WINDOW_PROVIDER_TARGET
         ) {
-          return
+          return;
         }
-
-        ;({ result } = event.data)
+        ({ result } = event.data);
       } else if (
         isPortResponseEvent(event) &&
         isPoktWalletInternalCommunication(event)
       ) {
-        ;({ result } = event)
+        ({ result } = event);
       } else {
-        return
+        return;
       }
 
       if (isPoktWalletAccountPayload(result)) {
-        this.handleAddressChange.bind(this)(result.address)
+        this.handleAddressChange.bind(this)(result.address);
       }
-    }
+    };
 
-    this.transport.addEventListener(internalListener)
+    this.transport.addEventListener(internalListener);
   }
 
   send(
     methodOrRequest: string | RequestArgument,
-    paramsOrCallback: Array<unknown> | EthersSendCallback
+    paramsOrCallback: Array<unknown> | EthersSendCallback,
   ): Promise<unknown> | void {
     if (
       typeof methodOrRequest === "string" &&
       typeof paramsOrCallback !== "function"
     ) {
-      return this.request({ method: methodOrRequest, params: paramsOrCallback })
+      return this.request({
+        method: methodOrRequest,
+        params: paramsOrCallback,
+      });
     }
 
     if (isObject(methodOrRequest) && typeof paramsOrCallback === "function") {
       return this.request(methodOrRequest).then(
         (response) => paramsOrCallback(null, response),
-        (error) => paramsOrCallback(error, null)
-      )
+        (error) => paramsOrCallback(error, null),
+      );
     }
 
-    return Promise.reject(new Error("Unsupported function parameters"))
+    return Promise.reject(new Error("Unsupported function parameters"));
   }
 
   // Provider-wide counter for requests.
-  private requestID = 0n
+  private requestID = 0n;
 
   request(arg: RequestArgument): Promise<unknown> {
-    const { method, params = [] } = arg
+    const { method, params = [] } = arg;
     if (typeof method !== "string") {
-      return Promise.reject(new Error(`unsupported method type: ${method}`))
+      return Promise.reject(new Error(`unsupported method type: ${method}`));
     }
     const sendData = {
       id: this.requestID.toString(),
@@ -104,17 +106,17 @@ export default class PocketWindowProvider extends EventEmitter {
         params,
       },
       network: "POKT",
-    }
+    };
 
-    this.requestID += 1n
+    this.requestID += 1n;
 
-    this.transport.postMessage(sendData)
+    this.transport.postMessage(sendData);
 
     return new Promise((resolve, reject) => {
       // TODO: refactor the listener function out of the Promise
       const listener = (event: unknown) => {
-        let id
-        let result: unknown
+        let id;
+        let result: unknown;
 
         if (isWindowResponseEvent(event)) {
           if (
@@ -122,33 +124,32 @@ export default class PocketWindowProvider extends EventEmitter {
             event.source !== window || // we want to recieve messages only from the provider-bridge script
             event.data.target !== WINDOW_PROVIDER_TARGET
           ) {
-            return
+            return;
           }
-
-          ;({ id, result } = event.data)
+          ({ id, result } = event.data);
         } else if (isPortResponseEvent(event)) {
-          ;({ id, result } = event)
+          ({ id, result } = event);
         } else {
-          return
+          return;
         }
 
-        if (sendData.id !== id) return
+        if (sendData.id !== id) return;
 
         this.transport.removeEventListener(
-          this.bridgeListeners.get(sendData.id)
-        )
-        this.bridgeListeners.delete(sendData.id)
+          this.bridgeListeners.get(sendData.id),
+        );
+        this.bridgeListeners.delete(sendData.id);
 
-        const { method: sentMethod } = sendData.request
+        const { method: sentMethod } = sendData.request;
 
         if (isEIP1193Error(result)) {
-          reject(result)
+          reject(result);
         }
 
         // let's emmit connected on the first successful response from background
         if (!this.#isConnected) {
-          this.#isConnected = true
-          this.emit("connect", { chainId: this.chainId })
+          this.#isConnected = true;
+          this.emit("connect", { chainId: this.chainId });
         }
 
         if (
@@ -157,22 +158,22 @@ export default class PocketWindowProvider extends EventEmitter {
           Array.isArray(result) &&
           result.length !== 0
         ) {
-          this.handleAddressChange.bind(this)(result)
+          this.handleAddressChange.bind(this)(result);
         }
 
-        resolve(result)
-      }
+        resolve(result);
+      };
 
-      this.bridgeListeners.set(sendData.id, listener)
-      this.transport.addEventListener(this.bridgeListeners.get(sendData.id))
-    })
+      this.bridgeListeners.set(sendData.id, listener);
+      this.transport.addEventListener(this.bridgeListeners.get(sendData.id));
+    });
   }
 
   handleAddressChange(address: Array<string>): void {
     if (this.selectedAddress !== address[0]) {
       // eslint-disable-next-line prefer-destructuring
-      this.selectedAddress = address[0]
-      this.emit("accountsChanged", address)
+      this.selectedAddress = address[0];
+      this.emit("accountsChanged", address);
     }
   }
 }

@@ -1,10 +1,10 @@
-import React, { ReactElement } from "react"
-import classNames from "clsx"
+import React, { ReactElement } from "react";
+import classNames from "clsx";
 
 export default function SharedLoadingSpinner(props: {
-  size: "small" | "medium" | "large"
+  size: "small" | "medium" | "large";
 }): ReactElement {
-  const { size } = props
+  const { size } = props;
 
   return (
     <div className={classNames("spinner", size)}>
@@ -36,9 +36,9 @@ export default function SharedLoadingSpinner(props: {
         `}
       </style>
     </div>
-  )
+  );
 }
 
 SharedLoadingSpinner.defaultProps = {
   size: "medium",
-}
+};

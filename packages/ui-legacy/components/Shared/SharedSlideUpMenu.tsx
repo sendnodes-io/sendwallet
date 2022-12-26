@@ -1,7 +1,7 @@
-import React, { ReactElement, CSSProperties, useRef } from "react"
-import classNames from "clsx"
-import { useDelayContentChange, useOnClickOutside } from "../../hooks"
-import { SharedIconButton } from "./SharedIcon"
+import React, { ReactElement, CSSProperties, useRef } from "react";
+import classNames from "clsx";
+import { useDelayContentChange, useOnClickOutside } from "../../hooks";
+import { SharedIconButton } from "./SharedIcon";
 
 export type SharedSlideUpMenuSize =
   | "auto"
@@ -9,22 +9,25 @@ export type SharedSlideUpMenuSize =
   | "medium"
   | "large"
   | "full"
-  | "custom"
+  | "custom";
 
-const SLIDE_TRANSITION_MS = 445
+const SLIDE_TRANSITION_MS = 445;
 
 interface Props {
-  isOpen: boolean
+  isOpen: boolean;
   close: (
-    e: MouseEvent | TouchEvent | React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => void
-  title?: string | ReactElement
-  children: React.ReactNode
-  customSize?: string
-  size: SharedSlideUpMenuSize
-  alwaysRenderChildren?: boolean
-  leftButton?: ReactElement
-  closeOnClickOutside?: boolean
+    e:
+      | MouseEvent
+      | TouchEvent
+      | React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => void;
+  title?: string | ReactElement;
+  children: React.ReactNode;
+  customSize?: string;
+  size: SharedSlideUpMenuSize;
+  alwaysRenderChildren?: boolean;
+  leftButton?: ReactElement;
+  closeOnClickOutside?: boolean;
 }
 
 const menuHeights: Record<SharedSlideUpMenuSize, string | null> = {
@@ -34,7 +37,7 @@ const menuHeights: Record<SharedSlideUpMenuSize, string | null> = {
   large: "37.5rem",
   full: "var(--popup-height)",
   custom: null,
-}
+};
 
 export default function SharedSlideUpMenu(props: Props): ReactElement {
   const {
@@ -47,23 +50,23 @@ export default function SharedSlideUpMenu(props: Props): ReactElement {
     alwaysRenderChildren,
     leftButton,
     closeOnClickOutside = true,
-  } = props
+  } = props;
 
-  const slideUpMenuRef = useRef(null)
+  const slideUpMenuRef = useRef(null);
 
   useOnClickOutside(slideUpMenuRef, (e) =>
-    closeOnClickOutside ? close(e) : e.preventDefault()
-  )
+    closeOnClickOutside ? close(e) : e.preventDefault(),
+  );
 
   // Continue showing children during the close transition.
-  const visibleChildren = isOpen || alwaysRenderChildren ? children : <></>
+  const visibleChildren = isOpen || alwaysRenderChildren ? children : <></>;
   const displayChildren = useDelayContentChange(
     visibleChildren,
     !isOpen,
-    SLIDE_TRANSITION_MS
-  )
+    SLIDE_TRANSITION_MS,
+  );
 
-  const menuHeight = menuHeights[size] ?? customSize ?? menuHeights.medium
+  const menuHeight = menuHeights[size] ?? customSize ?? menuHeights.medium;
 
   return (
     <div className="slide_up_menu_wrap ">
@@ -100,7 +103,7 @@ export default function SharedSlideUpMenu(props: Props): ReactElement {
             float: right;"
                 ariaLabel="Close menu"
                 onClick={(e) => {
-                  close(e)
+                  close(e);
                 }}
               />
             </div>
@@ -191,9 +194,9 @@ export default function SharedSlideUpMenu(props: Props): ReactElement {
         `}
       </style>
     </div>
-  )
+  );
 }
 
 SharedSlideUpMenu.defaultProps = {
   size: "medium",
-}
+};

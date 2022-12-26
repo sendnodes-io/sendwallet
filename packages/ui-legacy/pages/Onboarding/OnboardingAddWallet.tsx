@@ -1,33 +1,33 @@
-import React, { ReactElement } from "react"
-import { Link, useHistory } from "react-router-dom"
+import React, { ReactElement } from "react";
+import { Link, useHistory } from "react-router-dom";
 import {
   useAreKeyringsUnlocked,
   useBackgroundSelector,
   useIsInTab,
-} from "../../hooks"
+} from "../../hooks";
 import {
   OnboardingImportKeyfileIcon,
   OnboardingImportRecoveryPhraseIcon,
   OnboardingNewAccountIcon,
-} from "../../components/Onboarding/Icons"
-import styles from "../../components/Onboarding/styles"
-import SharedPopoutOpen from "../../components/Shared/SharedPopoutOpen"
-import SharedSplashScreen from "../../components/Shared/SharedSplashScreen"
+} from "../../components/Onboarding/Icons";
+import styles from "../../components/Onboarding/styles";
+import SharedPopoutOpen from "../../components/Shared/SharedPopoutOpen";
+import SharedSplashScreen from "../../components/Shared/SharedSplashScreen";
 
 export default function OnboardingAddAccount(): ReactElement {
-  const history = useHistory()
+  const history = useHistory();
 
   const hasAccounts = useBackgroundSelector(
-    (state) => Object.keys(state.account.accountsData).length > 0
-  )
+    (state) => Object.keys(state.account.accountsData).length > 0,
+  );
 
   if (!useIsInTab("/onboarding/add-wallet")) {
-    return <SharedPopoutOpen />
+    return <SharedPopoutOpen />;
   }
 
   // ensure wallet password is set before accepting any accounts
   if (!useAreKeyringsUnlocked(true)) {
-    return <SharedSplashScreen />
+    return <SharedSplashScreen />;
   }
 
   return (
@@ -43,8 +43,8 @@ export default function OnboardingAddAccount(): ReactElement {
             aria-label="close"
             className="icon_close"
             onClick={() => {
-              if (history.action !== "POP") history.goBack()
-              else history.push("/")
+              if (history.action !== "POP") history.goBack();
+              else history.push("/");
             }}
           />
         )}
@@ -196,5 +196,5 @@ export default function OnboardingAddAccount(): ReactElement {
         `}
       </style>
     </section>
-  )
+  );
 }

@@ -1,46 +1,46 @@
-import { createSelector, createSlice } from "@reduxjs/toolkit"
-import Emittery from "emittery"
+import { createSelector, createSlice } from "@reduxjs/toolkit";
+import Emittery from "emittery";
 import {
   ExpectedSigningData,
   SignDataMessageType,
   SignDataRequest,
   SigningMethod,
   SignTypedDataRequest,
-} from "../utils/signing"
-import { createBackgroundAsyncThunk } from "./utils"
-import { EnrichedSignTypedDataRequest } from "../services/enrichment"
-import { EIP712TypedData, HexString } from "../types"
+} from "../utils/signing";
+import { createBackgroundAsyncThunk } from "./utils";
+import { EnrichedSignTypedDataRequest } from "../services/enrichment";
+import { EIP712TypedData, HexString } from "../types";
 
 type SignOperation<T> = {
-  request: T
-  signingMethod: SigningMethod
-}
+  request: T;
+  signingMethod: SigningMethod;
+};
 
 type Events = {
   requestSignTypedData: {
-    typedData: EIP712TypedData
-    account: HexString
-    signingMethod: SigningMethod
-  }
+    typedData: EIP712TypedData;
+    account: HexString;
+    signingMethod: SigningMethod;
+  };
   requestSignData: {
-    signingData: ExpectedSigningData
-    messageType: SignDataMessageType
-    rawSigningData: string
-    account: HexString
-    signingMethod: SigningMethod
-  }
-  signatureRejected: never
-}
+    signingData: ExpectedSigningData;
+    messageType: SignDataMessageType;
+    rawSigningData: string;
+    account: HexString;
+    signingMethod: SigningMethod;
+  };
+  signatureRejected: never;
+};
 
-export const signingSliceEmitter = new Emittery<Events>()
+export const signingSliceEmitter = new Emittery<Events>();
 
 type SigningState = {
-  signedTypedData: string | undefined
-  typedDataRequest: EnrichedSignTypedDataRequest | undefined
+  signedTypedData: string | undefined;
+  typedDataRequest: EnrichedSignTypedDataRequest | undefined;
 
-  signedData: string | undefined
-  signDataRequest: SignDataRequest | undefined
-}
+  signedData: string | undefined;
+  signDataRequest: SignDataRequest | undefined;
+};
 
 export const initialState: SigningState = {
   typedDataRequest: undefined,
@@ -48,7 +48,7 @@ export const initialState: SigningState = {
 
   signedData: undefined,
   signDataRequest: undefined,
-}
+};
 
 export const signTypedData = createBackgroundAsyncThunk(
   "signing/signTypedData",
@@ -56,15 +56,15 @@ export const signTypedData = createBackgroundAsyncThunk(
     const {
       request: { account, typedData },
       signingMethod,
-    } = data
+    } = data;
 
     await signingSliceEmitter.emit("requestSignTypedData", {
       typedData,
       account,
       signingMethod,
-    })
-  }
-)
+    });
+  },
+);
 
 export const signData = createBackgroundAsyncThunk(
   "signing/signData",
@@ -72,16 +72,16 @@ export const signData = createBackgroundAsyncThunk(
     const {
       request: { account, signingData, rawSigningData, messageType },
       signingMethod,
-    } = data
+    } = data;
     await signingSliceEmitter.emit("requestSignData", {
       rawSigningData,
       signingData,
       account,
       messageType,
       signingMethod,
-    })
-  }
-)
+    });
+  },
+);
 
 const signingSlice = createSlice({
   name: "signing",
@@ -94,7 +94,7 @@ const signingSlice = createSlice({
     }),
     typedDataRequest: (
       state,
-      { payload }: { payload: EnrichedSignTypedDataRequest }
+      { payload }: { payload: EnrichedSignTypedDataRequest },
     ) => ({
       ...state,
       typedDataRequest: payload,
@@ -103,7 +103,7 @@ const signingSlice = createSlice({
       return {
         ...state,
         signDataRequest: payload,
-      }
+      };
     },
     signedData: (state, { payload }: { payload: string }) => ({
       ...state,
@@ -116,7 +116,7 @@ const signingSlice = createSlice({
       signDataRequest: undefined,
     }),
   },
-})
+});
 
 export const {
   signedTypedData,
@@ -124,25 +124,25 @@ export const {
   signedData,
   signDataRequest,
   clearSigningState,
-} = signingSlice.actions
+} = signingSlice.actions;
 
-export default signingSlice.reducer
+export default signingSlice.reducer;
 
 export const selectTypedData = createSelector(
   (state: { signing: SigningState }) => state.signing.typedDataRequest,
-  (signTypes) => signTypes
-)
+  (signTypes) => signTypes,
+);
 
 export const selectSigningData = createSelector(
   (state: { signing: SigningState }) => state.signing.signDataRequest,
-  (signTypes) => signTypes
-)
+  (signTypes) => signTypes,
+);
 
 export const rejectDataSignature = createBackgroundAsyncThunk(
   "signing/reject",
   async (_, { dispatch }) => {
-    await signingSliceEmitter.emit("signatureRejected")
+    await signingSliceEmitter.emit("signatureRejected");
     // Provide a clean slate for future transactions.
-    dispatch(signingSlice.actions.clearSigningState())
-  }
-)
+    dispatch(signingSlice.actions.clearSigningState());
+  },
+);

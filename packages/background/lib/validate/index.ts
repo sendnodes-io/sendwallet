@@ -1,2 +1,2 @@
-export * from "./jtd-validators"
-export * from "./json-validators"
+export * from "./jtd-validators";
+export * from "./json-validators";

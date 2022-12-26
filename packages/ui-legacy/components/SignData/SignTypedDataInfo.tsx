@@ -1,26 +1,26 @@
-import React, { ReactElement } from "react"
+import React, { ReactElement } from "react";
 import {
   isProbablyEVMAddress,
   truncateAddress,
-} from "@sendnodes/pokt-wallet-background/lib/utils"
-import { EnrichedSignTypedDataRequest } from "@sendnodes/pokt-wallet-background/services/enrichment"
-import capitalize from "../../utils/capitalize"
+} from "@sendnodes/pokt-wallet-background/lib/utils";
+import { EnrichedSignTypedDataRequest } from "@sendnodes/pokt-wallet-background/services/enrichment";
+import capitalize from "../../utils/capitalize";
 
 type SignTypedDataInfoProps = {
-  typedDataRequest: EnrichedSignTypedDataRequest
-}
+  typedDataRequest: EnrichedSignTypedDataRequest;
+};
 
 export default function SignTypedDataInfo({
   typedDataRequest,
 }: SignTypedDataInfoProps): ReactElement {
-  const { typedData, annotation } = typedDataRequest
+  const { typedData, annotation } = typedDataRequest;
 
   const fieldsToDisplay =
     annotation.type !== "unrecognized"
       ? annotation.displayFields
-      : typedData.message
+      : typedData.message;
 
-  const keys = Object.keys(fieldsToDisplay)
+  const keys = Object.keys(fieldsToDisplay);
   return (
     <div className="messages">
       <div className="message">
@@ -28,7 +28,7 @@ export default function SignTypedDataInfo({
         <div className="value">{typedData.primaryType}</div>
       </div>
       {keys.map((key) => {
-        const value = fieldsToDisplay[key]
+        const value = fieldsToDisplay[key];
         if (typeof value === "string" && isProbablyEVMAddress(value)) {
           return (
             <div key={key} className="message">
@@ -41,7 +41,7 @@ export default function SignTypedDataInfo({
                   onClick={() => {
                     window
                       .open(`https://etherscan.io/address/${value}`, "_blank")
-                      ?.focus()
+                      ?.focus();
                   }}
                   type="button"
                   aria-label="View Address on Etherscan"
@@ -49,14 +49,14 @@ export default function SignTypedDataInfo({
                 />
               </div>
             </div>
-          )
+          );
         }
         return (
           <div key={key} className="message">
             <div className="key">{capitalize(key)}</div>
             <div className="value">{`${fieldsToDisplay[key]}`}</div>
           </div>
-        )
+        );
       })}
       <style jsx>
         {`
@@ -97,5 +97,5 @@ export default function SignTypedDataInfo({
         `}
       </style>
     </div>
-  )
+  );
 }

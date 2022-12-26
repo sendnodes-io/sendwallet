@@ -1,43 +1,43 @@
-import { TypedDataField } from "@ethersproject/abstract-signer"
-import { SiweMessage } from "siwe"
+import { TypedDataField } from "@ethersproject/abstract-signer";
+import { SiweMessage } from "siwe";
 
-import { EIP191Data, EIP712TypedData, HexString } from "../types"
+import { EIP191Data, EIP712TypedData, HexString } from "../types";
 
 export type EIP712DomainType = {
-  name?: string
-  version?: string
-  chainId?: number
-  verifyingContract?: HexString
-}
+  name?: string;
+  version?: string;
+  chainId?: number;
+  verifyingContract?: HexString;
+};
 
 // spec found https://eips.ethereum.org/EIPS/eip-4361
 export interface EIP4361Data {
-  domain: string
-  address: string
-  version: string
-  chainId: number
-  nonce: string
-  expiration?: string
-  statement?: string
+  domain: string;
+  address: string;
+  version: string;
+  chainId: number;
+  nonce: string;
+  expiration?: string;
+  statement?: string;
 }
 
 export type SignTypedDataRequest = {
-  account: string
-  typedData: EIP712TypedData
-}
+  account: string;
+  typedData: EIP712TypedData;
+};
 
 export type SigningMethod =
   | { type: "keyring" }
-  | { type: "ledger"; deviceID: string; path: string }
+  | { type: "ledger"; deviceID: string; path: string };
 
-export type ExpectedSigningData = EIP191Data | EIP4361Data
+export type ExpectedSigningData = EIP191Data | EIP4361Data;
 
 export type SignDataRequest = {
-  account: string
-  rawSigningData: string
-  signingData: ExpectedSigningData
-  messageType: SignDataMessageType
-}
+  account: string;
+  rawSigningData: string;
+  signingData: ExpectedSigningData;
+  messageType: SignDataMessageType;
+};
 
 export enum SignDataMessageType {
   EIP191 = 0,
@@ -45,25 +45,25 @@ export enum SignDataMessageType {
 }
 
 type EIP2612Message = {
-  owner: HexString
-  spender: HexString
-  value: number
-  nonce: number
-  deadline: number
-}
+  owner: HexString;
+  spender: HexString;
+  value: number;
+  nonce: number;
+  deadline: number;
+};
 
 export type EIP2612TypedData = {
-  domain: EIP712DomainType
-  types: Record<string, TypedDataField[]>
-  message: EIP2612Message
-  primaryType: "Permit"
-}
+  domain: EIP712DomainType;
+  types: Record<string, TypedDataField[]>;
+  message: EIP2612Message;
+  primaryType: "Permit";
+};
 
 const checkEIP4361: (message: string) => EIP4361Data | undefined = (
-  message
+  message,
 ) => {
   try {
-    const siweMessage = new SiweMessage(message)
+    const siweMessage = new SiweMessage(message);
     return {
       domain: siweMessage.domain,
       address: siweMessage.address,
@@ -72,13 +72,13 @@ const checkEIP4361: (message: string) => EIP4361Data | undefined = (
       chainId: siweMessage.chainId,
       expiration: siweMessage.expirationTime,
       nonce: siweMessage.nonce,
-    }
+    };
   } catch (err) {
     // console.error(err)
   }
 
-  return undefined
-}
+  return undefined;
+};
 
 /**
  * Takes a string and parses the string into a ExpectedSigningData Type
@@ -86,15 +86,15 @@ const checkEIP4361: (message: string) => EIP4361Data | undefined = (
  * EIP4361 standard can be found https://eips.ethereum.org/EIPS/eip-4361
  */
 export const parseSigningData: (signingData: string) => {
-  data: ExpectedSigningData
-  type: SignDataMessageType
+  data: ExpectedSigningData;
+  type: SignDataMessageType;
 } = (signingData) => {
-  const data = checkEIP4361(signingData)
+  const data = checkEIP4361(signingData);
   if (data) {
     return {
       data,
       type: SignDataMessageType.EIP4361,
-    }
+    };
   }
 
   // data = checkOtherType(lines)
@@ -106,5 +106,5 @@ export const parseSigningData: (signingData: string) => {
   return {
     data: signingData,
     type: SignDataMessageType.EIP191,
-  }
-}
+  };
+};

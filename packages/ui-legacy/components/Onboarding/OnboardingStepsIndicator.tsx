@@ -1,13 +1,13 @@
-import React, { ReactElement } from "react"
-import classNames from "clsx"
+import React, { ReactElement } from "react";
+import classNames from "clsx";
 
 interface OnboardingStepProps {
-  label: string
-  isActive: boolean
+  label: string;
+  isActive: boolean;
 }
 
 function OnboardingStep(props: OnboardingStepProps): ReactElement {
-  const { label, isActive } = props
+  const { label, isActive } = props;
 
   return (
     <li className={classNames({ active: isActive })}>
@@ -44,21 +44,21 @@ function OnboardingStep(props: OnboardingStepProps): ReactElement {
         `}
       </style>
     </li>
-  )
+  );
 }
 
 OnboardingStep.defaultProps = {
   isActive: false,
-}
+};
 
 interface OnboardingStepsIndicatorProps {
-  activeStep: number
+  activeStep: number;
 }
 
 export default function OnboardingStepsIndicator(
-  props: OnboardingStepsIndicatorProps
+  props: OnboardingStepsIndicatorProps,
 ): ReactElement {
-  const { activeStep } = props
+  const { activeStep } = props;
 
   return (
     <ul>
@@ -73,5 +73,5 @@ export default function OnboardingStepsIndicator(
         `}
       </style>
     </ul>
-  )
+  );
 }

@@ -1,8 +1,8 @@
-import React, { ReactElement } from "react"
+import React, { ReactElement } from "react";
 
 type Props = {
-  onClick?: () => void
-}
+  onClick?: () => void;
+};
 
 export default function TopMenuProtocolSwitcher({
   onClick,
@@ -34,5 +34,5 @@ export default function TopMenuProtocolSwitcher({
         `}
       </style>
     </button>
-  )
+  );
 }

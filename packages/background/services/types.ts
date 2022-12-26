@@ -1,8 +1,8 @@
-import Emittery from "emittery"
+import Emittery from "emittery";
 
 export interface ServiceLifecycleEvents {
-  serviceStarted: void
-  serviceStopped: void
+  serviceStarted: void;
+  serviceStopped: void;
 }
 // We use this type to represent "an Emittery event emitter without the
 // any-event-related or debug methods". We do this because the onAny method,
@@ -17,7 +17,7 @@ export interface ServiceLifecycleEvents {
 type EmitteryWithoutAnyOrDebugSupport<T> = Omit<
   Emittery<T>,
   "anyEvent" | "onAny" | "offAny" | "debug"
->
+>;
 
 /**
  * A simple interface for service lifecycles and event emission. Services
@@ -47,7 +47,7 @@ export interface Service<T extends ServiceLifecycleEvents> {
    * finished its start process, and a `serviceStopped` event when the service
    * has finished its stop process.
    */
-  readonly emitter: EmitteryWithoutAnyOrDebugSupport<T>
+  readonly emitter: EmitteryWithoutAnyOrDebugSupport<T>;
 
   /**
    * Waits for any internal initialization to occur before fulfilling the
@@ -55,7 +55,7 @@ export interface Service<T extends ServiceLifecycleEvents> {
    * chained. Calling `started` does _not_ start the service! Instead, it acts
    * as a hook for calling things once a service has been started.
    */
-  started(): Promise<this>
+  started(): Promise<this>;
 
   /**
    * Starts any internal monitoring, scheduling, etc and then resolves the
@@ -75,7 +75,7 @@ export interface Service<T extends ServiceLifecycleEvents> {
    *          started, otherwise a promise that will resolve once the service
    *          has finished starting.
    */
-  startService(): Promise<void>
+  startService(): Promise<void>;
 
   /**
    * Stops any internal monitoring, scheduling, etc and then resolves the
@@ -92,7 +92,7 @@ export interface Service<T extends ServiceLifecycleEvents> {
    *          stopped, otherwise a promise that will resolve once the service
    *          has finished stopping.
    */
-  stopService(): Promise<void>
+  stopService(): Promise<void>;
 }
 
 /**
@@ -107,5 +107,5 @@ export interface Service<T extends ServiceLifecycleEvents> {
 export type ServiceCreatorFunction<
   EventsType extends ServiceLifecycleEvents,
   ServiceType extends Service<EventsType>,
-  Deps extends Promise<Service<ServiceLifecycleEvents>>[]
-> = (...serviceDependencies: Deps) => Promise<ServiceType>
+  Deps extends Promise<Service<ServiceLifecycleEvents>>[],
+> = (...serviceDependencies: Deps) => Promise<ServiceType>;

@@ -1,13 +1,13 @@
-import React, { ReactElement } from "react"
+import React, { ReactElement } from "react";
 
 export default function TopMenuConnectedDAppInfo(props: {
-  title: string
-  url: string
-  faviconUrl: string
-  close: () => void
-  disconnect: () => void
+  title: string;
+  url: string;
+  faviconUrl: string;
+  close: () => void;
+  disconnect: () => void;
 }): ReactElement {
-  const { title, url, close, faviconUrl, disconnect } = props
+  const { title, url, close, faviconUrl, disconnect } = props;
   return (
     <div className="bg">
       <div className="window">
@@ -84,9 +84,11 @@ export default function TopMenuConnectedDAppInfo(props: {
           text-align: center;
         }
         .favicon {
-          background: url("${faviconUrl === ""
-            ? "./images/dapp_favicon_default@2x.png"
-            : faviconUrl}");
+          background: url("${
+            faviconUrl === ""
+              ? "./images/dapp_favicon_default@2x.png"
+              : faviconUrl
+          }");
           background-size: cover;
           width: 48px;
           height: 48px;
@@ -113,5 +115,5 @@ export default function TopMenuConnectedDAppInfo(props: {
         }
       `}</style>
     </div>
-  )
+  );
 }

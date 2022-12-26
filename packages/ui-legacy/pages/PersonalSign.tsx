@@ -1,68 +1,70 @@
-import React, { ReactElement, useState } from "react"
+import React, { ReactElement, useState } from "react";
 import {
   getAccountTotal,
   selectCurrentAccountSigningMethod,
-} from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
+} from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
 import {
   rejectDataSignature,
   signData,
   selectSigningData,
-} from "@sendnodes/pokt-wallet-background/redux-slices/signing"
-import { SignDataMessageType } from "@sendnodes/pokt-wallet-background/utils/signing"
-import { useHistory } from "react-router-dom"
+} from "@sendnodes/pokt-wallet-background/redux-slices/signing";
+import { SignDataMessageType } from "@sendnodes/pokt-wallet-background/utils/signing";
+import { useHistory } from "react-router-dom";
 import {
   useBackgroundDispatch,
   useBackgroundSelector,
   useIsSigningMethodLocked,
-} from "../hooks"
-import PersonalSignDetailPanel from "./PersonalSignDetailPanel"
-import SignTransactionContainer from "../components/SignTransaction/SignTransactionContainer"
+} from "../hooks";
+import PersonalSignDetailPanel from "./PersonalSignDetailPanel";
+import SignTransactionContainer from "../components/SignTransaction/SignTransactionContainer";
 
 const TITLE: Record<SignDataMessageType, string> = {
   [SignDataMessageType.EIP4361]: "Sign in with Ethereum",
   [SignDataMessageType.EIP191]: "Sign Message",
-}
+};
 
 export default function PersonalSignData(): ReactElement {
-  const dispatch = useBackgroundDispatch()
+  const dispatch = useBackgroundDispatch();
 
-  const signingDataRequest = useBackgroundSelector(selectSigningData)
+  const signingDataRequest = useBackgroundSelector(selectSigningData);
 
-  const history = useHistory()
+  const history = useHistory();
 
   const signerAccountTotal = useBackgroundSelector((state) => {
     if (typeof signingDataRequest !== "undefined") {
-      return getAccountTotal(state, signingDataRequest.account)
+      return getAccountTotal(state, signingDataRequest.account);
     }
-    return undefined
-  })
+    return undefined;
+  });
 
-  const signingMethod = useBackgroundSelector(selectCurrentAccountSigningMethod)
+  const signingMethod = useBackgroundSelector(
+    selectCurrentAccountSigningMethod,
+  );
 
-  const [isTransactionSigning, setIsTransactionSigning] = useState(false)
+  const [isTransactionSigning, setIsTransactionSigning] = useState(false);
 
-  const isLocked = useIsSigningMethodLocked(signingMethod)
-  if (isLocked) return <></>
+  const isLocked = useIsSigningMethodLocked(signingMethod);
+  if (isLocked) return <></>;
 
   if (
     typeof signingDataRequest === "undefined" ||
     typeof signerAccountTotal === "undefined"
   ) {
-    return <></>
+    return <></>;
   }
 
   const handleConfirm = () => {
-    if (signingMethod === null) return
-    if (signingDataRequest === undefined) return
+    if (signingMethod === null) return;
+    if (signingDataRequest === undefined) return;
 
-    dispatch(signData({ request: signingDataRequest, signingMethod }))
-    setIsTransactionSigning(true)
-  }
+    dispatch(signData({ request: signingDataRequest, signingMethod }));
+    setIsTransactionSigning(true);
+  };
 
   const handleReject = async () => {
-    dispatch(rejectDataSignature())
-    history.goBack()
-  }
+    dispatch(rejectDataSignature());
+    history.goBack();
+  };
 
   return (
     <SignTransactionContainer
@@ -77,5 +79,5 @@ export default function PersonalSignData(): ReactElement {
       extraPanel={null}
       isArbitraryDataSigningRequired={!!signingDataRequest.signingData}
     />
-  )
+  );
 }

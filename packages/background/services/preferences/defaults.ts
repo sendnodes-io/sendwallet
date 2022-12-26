@@ -1,5 +1,5 @@
-import { POCKET, USD, POKT, ETH, MATIC } from "../../constants"
-import { Preferences } from "./types"
+import { POCKET, USD, POKT, ETH, MATIC } from "../../constants";
+import { Preferences } from "./types";
 
 const defaultPreferences: Preferences = {
   tokenLists: {
@@ -26,6 +26,6 @@ const defaultPreferences: Preferences = {
     // TODO: v0.4.0 wPOKT bridge: re-enable EVM support
     // , ETH, MATIC
   ],
-}
+};
 
-export default defaultPreferences
+export default defaultPreferences;

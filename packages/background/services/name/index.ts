@@ -1,57 +1,57 @@
-import { DomainName, HexString, UNIXTime } from "../../types"
-import { EVMNetwork } from "../../networks"
-import { normalizeEVMAddress, sameEVMAddress } from "../../lib/utils"
-import { ETHEREUM } from "../../constants/networks"
-import { getTokenMetadata } from "../../lib/erc721"
+import { DomainName, HexString, UNIXTime } from "../../types";
+import { EVMNetwork } from "../../networks";
+import { normalizeEVMAddress, sameEVMAddress } from "../../lib/utils";
+import { ETHEREUM } from "../../constants/networks";
+import { getTokenMetadata } from "../../lib/erc721";
 
-import { ServiceCreatorFunction, ServiceLifecycleEvents } from "../types"
-import BaseService from "../base"
-import ChainService from "../chain"
-import logger from "../../lib/logger"
-import { AddressOnNetwork } from "../../accounts"
-import { SECOND } from "../../constants"
+import { ServiceCreatorFunction, ServiceLifecycleEvents } from "../types";
+import BaseService from "../base";
+import ChainService from "../chain";
+import logger from "../../lib/logger";
+import { AddressOnNetwork } from "../../accounts";
+import { SECOND } from "../../constants";
 
-export type NameResolverSystem = "ENS" | "UNS" | "local"
+export type NameResolverSystem = "ENS" | "UNS" | "local";
 
 type ResolvedAddressRecord = {
   from: {
-    name: DomainName
-  }
+    name: DomainName;
+  };
   resolved: {
-    addressNetwork: AddressOnNetwork
-  }
-  system: NameResolverSystem
-}
+    addressNetwork: AddressOnNetwork;
+  };
+  system: NameResolverSystem;
+};
 
 type ResolvedNameRecord = {
   from: {
-    addressNetwork: AddressOnNetwork
-  }
+    addressNetwork: AddressOnNetwork;
+  };
   resolved: {
-    name: DomainName
-    expiresAt: UNIXTime
-  }
-  system: NameResolverSystem
-}
+    name: DomainName;
+    expiresAt: UNIXTime;
+  };
+  system: NameResolverSystem;
+};
 
 type ResolvedAvatarRecord = {
   from: {
-    addressNetwork: AddressOnNetwork
-  }
+    addressNetwork: AddressOnNetwork;
+  };
   resolved: {
-    avatar: URL
-  }
-  system: NameResolverSystem
-}
+    avatar: URL;
+  };
+  system: NameResolverSystem;
+};
 
 type Events = ServiceLifecycleEvents & {
-  resolvedAddress: ResolvedAddressRecord
-  resolvedName: ResolvedNameRecord
-  resolvedAvatar: ResolvedAvatarRecord
-}
+  resolvedAddress: ResolvedAddressRecord;
+  resolvedName: ResolvedNameRecord;
+  resolvedAvatar: ResolvedAvatarRecord;
+};
 
-const ipfsGateway = new URL("https://ipfs.io/ipfs/")
-const arweaveGateway = new URL("https://arweave.net/")
+const ipfsGateway = new URL("https://ipfs.io/ipfs/");
+const arweaveGateway = new URL("https://arweave.net/");
 
 /**
  * Given a url and a base URL, adjust the url to match the protocol and
@@ -70,23 +70,23 @@ const arweaveGateway = new URL("https://arweave.net/")
  * result: `https://ipfs.io/ipfs/CID/path/to/resource?parameters#hash`
  */
 function changeURLProtocolAndBase(url: URL, baseURL: URL) {
-  const newURL = new URL(url)
-  newURL.protocol = baseURL.protocol
-  newURL.hostname = baseURL.hostname
-  newURL.pathname = `${baseURL.pathname}/${url.hostname}/${url.pathname}`
+  const newURL = new URL(url);
+  newURL.protocol = baseURL.protocol;
+  newURL.hostname = baseURL.hostname;
+  newURL.pathname = `${baseURL.pathname}/${url.hostname}/${url.pathname}`;
 
-  return newURL
+  return newURL;
 }
 
 // TODO eventually we want proper IPFS and Arweave support
 function storageGatewayURL(url: URL): URL {
   switch (url.protocol) {
     case "ipfs":
-      return changeURLProtocolAndBase(url, ipfsGateway)
+      return changeURLProtocolAndBase(url, ipfsGateway);
     case "ar":
-      return changeURLProtocolAndBase(url, arweaveGateway)
+      return changeURLProtocolAndBase(url, arweaveGateway);
     default:
-      return url
+      return url;
   }
 }
 
@@ -98,9 +98,9 @@ function storageGatewayURL(url: URL): URL {
  * Initially, the service supports ENS on mainnet Ethereum.
  */
 export default class NameService extends BaseService<Events> {
-  private cachedEIP155AvatarURLs: Record<string, URL> = {}
+  private cachedEIP155AvatarURLs: Record<string, URL> = {};
 
-  private cachedResolvedNames: Record<string, ResolvedNameRecord> = {}
+  private cachedResolvedNames: Record<string, ResolvedNameRecord> = {};
 
   /**
    * Create a new NameService. The service isn't initialized until
@@ -114,108 +114,106 @@ export default class NameService extends BaseService<Events> {
     NameService,
     [Promise<ChainService>]
   > = async (chainService) => {
-    return new this(await chainService)
-  }
+    return new this(await chainService);
+  };
 
   private constructor(private chainService: ChainService) {
-    super({})
+    super({});
 
     chainService.emitter.on(
       "newAccountToTrack",
       async ({ address, network }) => {
         if (network.family === "EVM") {
           try {
-            await this.lookUpName(address, network as EVMNetwork)
+            await this.lookUpName(address, network as EVMNetwork);
           } catch (error) {
-            logger.error("Error fetching ENS name for address", address, error)
+            logger.error("Error fetching ENS name for address", address, error);
           }
         }
-      }
-    )
+      },
+    );
     this.emitter.on(
       "resolvedName",
-      async ({
-        from: {
-          addressNetwork: { address, network },
-        },
-      }) => {
+      async ({ from: { addressNetwork: { address, network } } }) => {
         try {
-          const avatar = await this.lookUpAvatar(address, network as EVMNetwork)
+          const avatar = await this.lookUpAvatar(
+            address,
+            network as EVMNetwork,
+          );
 
           if (avatar) {
             this.emitter.emit("resolvedAvatar", {
               from: { addressNetwork: { address, network } },
               resolved: { avatar },
               system: "ENS",
-            })
+            });
           }
         } catch (error) {
-          logger.error("Error fetching avatar for address", address, error)
+          logger.error("Error fetching avatar for address", address, error);
         }
-      }
-    )
+      },
+    );
   }
 
   async lookUpEthereumAddress(
-    name: DomainName
+    name: DomainName,
   ): Promise<HexString | undefined> {
     // if doesn't end in .eth, throw. TODO turn on other domain endings soon +
     // include support for UNS
     if (!name.match(/.*\.eth$/)) {
-      throw new Error("Only .eth names can be resolved today.")
+      throw new Error("Only .eth names can be resolved today.");
     }
     // TODO ENS lookups should work on Ethereum mainnet and a few testnets as well.
     // This is going to be strange, though, as we'll be looking up ENS names for
     // non-Ethereum networks (eg eventually Bitcoin).
-    const provider = this.chainService.ethProvider
+    const provider = this.chainService.ethProvider;
     // TODO cache name resolution and TTL
-    const address = await provider.resolveName(name)
-    if (!address || !address.match(/^0x[a-zA-Z0-9]*$/)) {
-      return undefined
+    const address = await provider.resolveName(name);
+    if (!(address?.match(/^0x[a-zA-Z0-9]*$/))) {
+      return undefined;
     }
-    const normalized = normalizeEVMAddress(address)
+    const normalized = normalizeEVMAddress(address);
     this.emitter.emit("resolvedAddress", {
       from: { name },
       resolved: { addressNetwork: { address: normalized, network: ETHEREUM } },
       system: "ENS",
-    })
-    return normalized
+    });
+    return normalized;
   }
 
   async lookUpName(
     address: HexString,
     network: EVMNetwork,
-    checkCache = true
+    checkCache = true,
   ): Promise<DomainName | undefined> {
     // Only Ethereum mainnet is supported.
     if (network.chainID !== "1") {
-      return undefined
+      return undefined;
     }
 
     if (checkCache && address in this.cachedResolvedNames) {
       const {
         resolved: { name, expiresAt },
-      } = this.cachedResolvedNames[address]
+      } = this.cachedResolvedNames[address];
 
       if (expiresAt >= Date.now()) {
-        return name
+        return name;
       }
     }
 
-    const provider = this.chainService.ethProvider
+    const provider = this.chainService.ethProvider;
     // TODO cache name resolution and TTL
-    const name = await provider.lookupAddress(address)
+    const name = await provider.lookupAddress(address);
     // TODO proper domain name validation ala RFC2181
     if (
-      !name ||
-      !(
+      !(name &&(
         name.length <= 253 &&
         name.match(
-          /^[a-zA-Z0-9][a-zA-Z0-9-]{1,62}\.([a-zA-Z0-9][a-zA-Z0-9-]{1,62}\.)*[a-zA-Z0-9][a-zA-Z0-9-]{1,62}/
+          /^[a-zA-Z0-9][a-zA-Z0-9-]{1,62}\.([a-zA-Z0-9][a-zA-Z0-9-]{1,62}\.)*[a-zA-Z0-9][a-zA-Z0-9-]{1,62}/,
         )
-      )
+      ))
     ) {
-      return undefined
+      return undefined;
     }
 
     const nameRecord = {
@@ -227,49 +225,49 @@ export default class NameService extends BaseService<Events> {
         expiresAt: Date.now() + 10 * SECOND,
       },
       system: "ENS",
-    } as const
+    } as const;
 
-    const existingName = this.cachedResolvedNames[address]?.resolved?.name
-    this.cachedResolvedNames[address] = nameRecord
+    const existingName = this.cachedResolvedNames[address]?.resolved?.name;
+    this.cachedResolvedNames[address] = nameRecord;
 
     // Only emit an event if the resolved name changed.
     if (existingName !== name) {
-      this.emitter.emit("resolvedName", nameRecord)
+      this.emitter.emit("resolvedName", nameRecord);
     }
-    return name
+    return name;
   }
 
   async lookUpAvatar(
     address: HexString,
-    network: EVMNetwork
+    network: EVMNetwork,
   ): Promise<URL | undefined> {
     // TODO ENS lookups should work on a few testnets as well
     if (network.chainID !== "1") {
-      throw new Error("Only Ethereum mainnet is supported.")
+      throw new Error("Only Ethereum mainnet is supported.");
     }
-    const name = await this.lookUpName(address, network)
+    const name = await this.lookUpName(address, network);
     if (!name) {
-      return undefined
+      return undefined;
     }
     // TODO handle if it doesn't exist
-    const provider = this.chainService.ethProvider
-    const resolver = await provider.getResolver(name)
+    const provider = this.chainService.ethProvider;
+    const resolver = await provider.getResolver(name);
     if (!sameEVMAddress(await resolver?.getAddress(), address)) {
-      return undefined
+      return undefined;
     }
 
-    const avatar = await resolver?.getText("avatar")
+    const avatar = await resolver?.getText("avatar");
 
     if (avatar) {
       if (avatar.match(/^eip155:1\/erc721:/)) {
         // check if we've cached the resolved URI, otherwise hit the chain
         if (avatar.toLowerCase() in this.cachedEIP155AvatarURLs) {
           // TODO properly cache this with any other non-ENS NFT stuff we do
-          return this.cachedEIP155AvatarURLs[avatar.toLowerCase()]
+          return this.cachedEIP155AvatarURLs[avatar.toLowerCase()];
         }
         // these URIs look like eip155:1/erc721:0xb7F7F6C52F2e2fdb1963Eab30438024864c313F6/2430
         // check the spec for more details https://gist.github.com/Arachnid/9db60bd75277969ee1689c8742b75182
-        const [, , , erc721Address, nftID] = avatar.split(/[:/]/)
+        const [, , , erc721Address, nftID] = avatar.split(/[:/]/);
         if (
           typeof erc721Address !== "undefined" &&
           typeof nftID !== "undefined"
@@ -277,21 +275,21 @@ export default class NameService extends BaseService<Events> {
           const metadata = await getTokenMetadata(
             provider,
             erc721Address,
-            BigInt(nftID)
-          )
+            BigInt(nftID),
+          );
 
-          if (metadata && metadata.image) {
-            const { image } = metadata
-            const resolvedGateway = storageGatewayURL(new URL(image))
-            this.cachedEIP155AvatarURLs[avatar] = resolvedGateway
-            return resolvedGateway
+          if (metadata?.image) {
+            const { image } = metadata;
+            const resolvedGateway = storageGatewayURL(new URL(image));
+            this.cachedEIP155AvatarURLs[avatar] = resolvedGateway;
+            return resolvedGateway;
           }
         }
       }
-      return storageGatewayURL(new URL(avatar))
+      return storageGatewayURL(new URL(avatar));
     }
 
-    return undefined
+    return undefined;
   }
 }
 // TODO resolve other network addresses (eg Bitcoin)

@@ -6,15 +6,15 @@ import {
   getNetwork as getEthNetwork,
   JsonRpcProvider,
   WebSocketProvider,
-} from "@ethersproject/providers"
-import { Transaction as PoktJSTransaction } from "@pokt-network/pocket-js/dist/index"
-import { utils } from "ethers"
-import { Logger } from "ethers/lib/utils"
-import _ from "lodash"
-import logger from "../../lib/logger"
-import getBlockPrices from "../../lib/gas"
-import { HexString, UNIXTime } from "../../types"
-import { AccountBalance, AddressOnNetwork } from "../../accounts"
+} from "@ethersproject/providers";
+import { Transaction as PoktJSTransaction } from "@pokt-network/pocket-js/dist/index";
+import { utils } from "ethers";
+import { Logger } from "ethers/lib/utils";
+import _ from "lodash";
+import logger from "../../lib/logger";
+import getBlockPrices from "../../lib/gas";
+import { HexString, UNIXTime } from "../../types";
+import { AccountBalance, AddressOnNetwork } from "../../accounts";
 import {
   AnyEVMBlock,
   AnyEVMTransaction,
@@ -33,14 +33,14 @@ import {
   AnyNetwork,
   NetworkFamily,
   POKTSkinnyBlock,
-} from "../../networks"
-import { AssetTransfer } from "../../assets"
+} from "../../networks";
+import { AssetTransfer } from "../../assets";
 import PreferenceService, {
   EventNames as PreferencesEventNames,
-} from "../preferences"
-import { ServiceCreatorFunction, ServiceLifecycleEvents } from "../types"
-import { getOrCreateDB, ChainDatabase, TransactionRetrieval } from "./db"
-import BaseService from "../base"
+} from "../preferences";
+import { ServiceCreatorFunction, ServiceLifecycleEvents } from "../types";
+import { getOrCreateDB, ChainDatabase, TransactionRetrieval } from "./db";
+import BaseService from "../base";
 import {
   blockFromEthersBlock,
   blockFromPoktBlock,
@@ -50,30 +50,30 @@ import {
   ethersTransactionFromSignedTransaction,
   transactionFromEthersTransaction,
   transactionFromPoktTransaction,
-} from "./utils"
+} from "./utils";
 import {
   getEthereumNetwork,
   normalizeEVMAddress,
   normalizeAddress,
   sameEVMAddress,
-} from "../../lib/utils"
+} from "../../lib/utils";
 import type {
   EnrichedEIP1559TransactionRequest,
   EnrichedEVMTransactionSignatureRequest,
-} from "../enrichment"
-import { ETHEREUM, FORK, HOUR, POCKET } from "../../constants"
-import SerialFallbackProvider from "./serial-fallback-provider"
-import PocketProvider from "./pocket-provider"
-import AssetDataHelper from "./asset-data-helper"
+} from "../enrichment";
+import { ETHEREUM, FORK, HOUR, POCKET } from "../../constants";
+import SerialFallbackProvider from "./serial-fallback-provider";
+import PocketProvider from "./pocket-provider";
+import AssetDataHelper from "./asset-data-helper";
 
 // We can't use destructuring because webpack has to replace all instances of
 // `process.env` variables in the bundled output
-const ALCHEMY_KEY = process.env.ALCHEMY_KEY // eslint-disable-line prefer-destructuring
+const ALCHEMY_KEY = process.env.ALCHEMY_KEY; // eslint-disable-line prefer-destructuring
 
 // How many queued transactions should be retrieved on every tx alarm, per
 // network. To get frequency, divide by the alarm period. 5 tx / 5 minutes →
 // max 1 tx/min.
-const MAX_CONCURRENT_TRANSACTION_REQUESTS = 20
+const MAX_CONCURRENT_TRANSACTION_REQUESTS = 20;
 
 // The number of blocks to query at a time for historic asset transfers.
 // Unfortunately there's no "right" answer here that works well across different
@@ -82,62 +82,62 @@ const MAX_CONCURRENT_TRANSACTION_REQUESTS = 20
 // resources... resulting in an exponential backoff. If it's too small,
 // transaction history will appear "slow" to show up for newly imported
 // accounts.
-const BLOCKS_FOR_EVM_TRANSACTION_HISTORY = 128000
+const BLOCKS_FOR_EVM_TRANSACTION_HISTORY = 128000;
 
 // The number of blocks before the current block height to start looking for
 // asset transfers. This is important to allow nodes like Erigon and
 // OpenEthereum with tracing to catch up to where we are.
-const BLOCKS_TO_SKIP_FOR_EVM_TRANSACTION_HISTORY = 20
+const BLOCKS_TO_SKIP_FOR_EVM_TRANSACTION_HISTORY = 20;
 
 // The number of asset transfer lookups that will be done per account to rebuild
 // historic activity.
-const HISTORIC_ASSET_TRANSFER_LOOKUPS_PER_ACCOUNT = 10
+const HISTORIC_ASSET_TRANSFER_LOOKUPS_PER_ACCOUNT = 10;
 
 // The number of milliseconds after a request to look up a transaction was
 // first seen to continue looking in case the transaction fails to be found
 // for either internal (request failure) or external (transaction dropped from
 // mempool) reasons.
-const TRANSACTION_CHECK_LIFETIME_MS = 10 * HOUR
+const TRANSACTION_CHECK_LIFETIME_MS = 10 * HOUR;
 
 // The number of max historical transactions to load for Pocket network accounts
-const MAX_HISTORIC_ASSET_TRANSFERS_POCKET = 100
+const MAX_HISTORIC_ASSET_TRANSFERS_POCKET = 100;
 
 export enum ChainEventNames {
   BLOCK_PRICES = "blockPrices",
 }
 
 interface Events extends ServiceLifecycleEvents {
-  newAccountToTrack: AddressOnNetwork
-  accountsWithBalances: AccountBalance[]
-  transactionSend: TransactionResponse | POKTTransaction
-  transactionSendFailure: unknown
+  newAccountToTrack: AddressOnNetwork;
+  accountsWithBalances: AccountBalance[];
+  transactionSend: TransactionResponse | POKTTransaction;
+  transactionSendFailure: unknown;
   assetTransfers: {
-    addressNetwork: AddressOnNetwork
-    assetTransfers: AssetTransfer[]
-  }
-  block: AnyEVMBlock | POKTBlock | POKTSkinnyBlock
+    addressNetwork: AddressOnNetwork;
+    assetTransfers: AssetTransfer[];
+  };
+  block: AnyEVMBlock | POKTBlock | POKTSkinnyBlock;
   transaction: {
-    forAccounts: string[]
-    transaction: AnyEVMTransaction | AnyPOKTTransaction
-  }
-  [ChainEventNames.BLOCK_PRICES]: BlockPrices
+    forAccounts: string[];
+    transaction: AnyEVMTransaction | AnyPOKTTransaction;
+  };
+  [ChainEventNames.BLOCK_PRICES]: BlockPrices;
 }
 
 type NetworkProviders = {
-  [NetworkFamily.EVM]: SerialFallbackProvider
-  [NetworkFamily.POKT]: PocketProvider
-}
+  [NetworkFamily.EVM]: SerialFallbackProvider;
+  [NetworkFamily.POKT]: PocketProvider;
+};
 
 export type RemoteConfig = {
   [NetworkFamily.POKT]: {
     mainnet: {
-      rpc: string
-    }
+      rpc: string;
+    };
     features?: {
-      [key: string]: boolean
-    }
-  }
-}
+      [key: string]: boolean;
+    };
+  };
+};
 
 /**
  * ChainService is responsible for basic network monitoring and interaction.
@@ -160,19 +160,19 @@ export type RemoteConfig = {
  */
 
 export default class ChainService extends BaseService<Events> {
-  providers?: NetworkProviders
+  providers?: NetworkProviders;
 
-  remoteConfig?: RemoteConfig
+  remoteConfig?: RemoteConfig;
 
   subscribedAccounts: {
-    account: string
-    provider: SerialFallbackProvider
-  }[]
+    account: string;
+    provider: SerialFallbackProvider;
+  }[];
 
   subscribedNetworks: {
-    network: EVMNetwork | POKTNetwork
-    provider: SerialFallbackProvider
-  }[]
+    network: EVMNetwork | POKTNetwork;
+    provider: SerialFallbackProvider;
+  }[];
 
   /**
    * For each chain id, track an address's last seen nonce. The tracked nonce
@@ -181,8 +181,8 @@ export default class ChainService extends BaseService<Events> {
    * unconfirmed transaction sharing the same nonce.
    */
   private evmChainLastSeenNoncesByNormalizedAddress: {
-    [chainID: string]: { [normalizedAddress: string]: number }
-  } = {}
+    [chainID: string]: { [normalizedAddress: string]: number };
+  } = {};
 
   /**
    * FIFO queues of transaction hashes per network that should be retrieved and
@@ -190,29 +190,29 @@ export default class ChainService extends BaseService<Events> {
    * for expiration purposes.
    */
   private transactionsToRetrieve: {
-    network: EVMNetwork | POKTNetwork
-    hash: HexString
-    firstSeen: UNIXTime
-    txData?: POKTTransaction | AssetTransfer
-  }[]
+    network: EVMNetwork | POKTNetwork;
+    hash: HexString;
+    firstSeen: UNIXTime;
+    txData?: POKTTransaction | AssetTransfer;
+  }[];
 
   static create: ServiceCreatorFunction<
     Events,
     ChainService,
     [Promise<PreferenceService>]
   > = async (preferenceService) => {
-    return new this(await getOrCreateDB(), await preferenceService)
-  }
+    return new this(await getOrCreateDB(), await preferenceService);
+  };
 
-  ethereumNetwork?: EVMNetwork
+  ethereumNetwork?: EVMNetwork;
 
-  pocketNetwork?: POKTNetwork
+  pocketNetwork?: POKTNetwork;
 
-  assetData: AssetDataHelper
+  assetData: AssetDataHelper;
 
   private constructor(
     private db: ChainDatabase,
-    private preferenceService: PreferenceService
+    private preferenceService: PreferenceService,
   ) {
     super({
       queuedTransactions: {
@@ -221,7 +221,7 @@ export default class ChainService extends BaseService<Events> {
           periodInMinutes: 1,
         },
         handler: () => {
-          this.handleQueuedTransactionAlarm()
+          this.handleQueuedTransactionAlarm();
         },
       },
       recentAssetTransferAlarm: {
@@ -230,7 +230,7 @@ export default class ChainService extends BaseService<Events> {
           periodInMinutes: 5, // Pocket block times are 15min so no need for short period
         },
         handler: () => {
-          this.handleRecentAssetTransferAlarm()
+          this.handleRecentAssetTransferAlarm();
         },
       },
       fetchRemoteConfig: {
@@ -241,15 +241,15 @@ export default class ChainService extends BaseService<Events> {
         },
         handler: async () => {
           const response = await fetch(
-            `${process.env.SENDWALLET_IO}api/remote-config`
+            `${process.env.SENDWALLET_IO}api/remote-config`,
           ).catch((e) => {
-            logger.warn("Failed to fetch remote config", e)
-            return {} as Response
-          })
+            logger.warn("Failed to fetch remote config", e);
+            return {} as Response;
+          });
           if (response.status === 200) {
-            const body: RemoteConfig = await response.json()
+            const body: RemoteConfig = await response.json();
             if (body) {
-              this.remoteConfig = body
+              this.remoteConfig = body;
             }
           }
         },
@@ -275,35 +275,35 @@ export default class ChainService extends BaseService<Events> {
       //     this.pollBlockPrices()
       //   },
       // },
-    })
+    });
 
-    this.subscribedAccounts = []
-    this.subscribedNetworks = []
-    this.transactionsToRetrieve = []
+    this.subscribedAccounts = [];
+    this.subscribedNetworks = [];
+    this.transactionsToRetrieve = [];
 
-    this.assetData = new AssetDataHelper(this)
+    this.assetData = new AssetDataHelper(this);
   }
 
   get ethProvider(): SerialFallbackProvider {
-    return this.providers![NetworkFamily.EVM]
+    return this.providers![NetworkFamily.EVM];
   }
 
   get poktProvider(): PocketProvider {
-    return this.providers![NetworkFamily.POKT]
+    return this.providers![NetworkFamily.POKT];
   }
 
   async internalStartService(): Promise<void> {
-    await super.internalStartService()
+    await super.internalStartService();
 
     await this.connectToAddressNetwork(
-      await this.preferenceService.getSelectedAccount()
-    )
+      await this.preferenceService.getSelectedAccount(),
+    );
 
     // listen for changes to selected account
     this.preferenceService.emitter.on(
       PreferencesEventNames.SELECTED_ACCOUNT_CHANGED,
-      this.connectToAddressNetwork.bind(this)
-    )
+      this.connectToAddressNetwork.bind(this),
+    );
   }
 
   /**
@@ -311,9 +311,9 @@ export default class ChainService extends BaseService<Events> {
    * provider exists.
    */
   providerForNetwork(
-    network: EVMNetwork | POKTNetwork
+    network: EVMNetwork | POKTNetwork,
   ): SerialFallbackProvider | PocketProvider | undefined {
-    return this.providers![network.family]
+    return this.providers![network.family];
   }
 
   /**
@@ -327,10 +327,10 @@ export default class ChainService extends BaseService<Events> {
    */
   async populatePartialEVMTransactionRequest(
     network: EVMNetwork,
-    partialRequest: EnrichedEVMTransactionSignatureRequest
+    partialRequest: EnrichedEVMTransactionSignatureRequest,
   ): Promise<{
-    transactionRequest: EnrichedEIP1559TransactionRequest
-    gasEstimationError: string | undefined
+    transactionRequest: EnrichedEIP1559TransactionRequest;
+    gasEstimationError: string | undefined;
   }> {
     // Basic transaction construction based on the provided options, with extra data from the chain service
     const transactionRequest: EnrichedEIP1559TransactionRequest = {
@@ -345,16 +345,16 @@ export default class ChainService extends BaseService<Events> {
       chainID: network.chainID,
       nonce: partialRequest.nonce,
       annotation: partialRequest.annotation,
-    }
+    };
 
     // Always estimate gas to decide whether the transaction will likely fail.
-    let estimatedGasLimit: bigint | undefined
-    let gasEstimationError: string | undefined
+    let estimatedGasLimit: bigint | undefined;
+    let gasEstimationError: string | undefined;
     try {
       estimatedGasLimit = await this.estimateGasLimit(
         network,
-        transactionRequest
-      )
+        transactionRequest,
+      );
     } catch (error) {
       // Try to identify unpredictable gas errors to bubble that information
       // out.
@@ -362,13 +362,13 @@ export default class ChainService extends BaseService<Events> {
         // Ethers does some heavily loose typing around errors to carry
         // arbitrary info without subclassing Error, so an any cast is needed.
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const anyError: any = error
+        const anyError: any = error;
 
         if (
           "code" in anyError &&
           anyError.code === Logger.errors.UNPREDICTABLE_GAS_LIMIT
         ) {
-          gasEstimationError = anyError.error ?? "unknown transaction error"
+          gasEstimationError = anyError.error ?? "unknown transaction error";
         }
       }
     }
@@ -380,10 +380,10 @@ export default class ChainService extends BaseService<Events> {
       (typeof partialRequest.gasLimit === "undefined" ||
         partialRequest.gasLimit < 21000n)
     ) {
-      transactionRequest.gasLimit = estimatedGasLimit
+      transactionRequest.gasLimit = estimatedGasLimit;
     }
 
-    return { transactionRequest, gasEstimationError }
+    return { transactionRequest, gasEstimationError };
   }
 
   /**
@@ -397,28 +397,30 @@ export default class ChainService extends BaseService<Events> {
    * for signing by a signer.
    */
   async populateEVMTransactionNonce(
-    transactionRequest: EIP1559TransactionRequest
+    transactionRequest: EIP1559TransactionRequest,
   ): Promise<EIP1559TransactionRequest & { nonce: number }> {
     if (typeof transactionRequest.nonce !== "undefined") {
       // TS undefined checks don't narrow the containing object's type, so we
       // have to cast `as` here.
-      return transactionRequest as EIP1559TransactionRequest & { nonce: number }
+      return transactionRequest as EIP1559TransactionRequest & {
+        nonce: number;
+      };
     }
 
-    const { chainID } = transactionRequest
-    const normalizedAddress = normalizeEVMAddress(transactionRequest.from)
+    const { chainID } = transactionRequest;
+    const normalizedAddress = normalizeEVMAddress(transactionRequest.from);
 
     const chainNonce =
       (await this.ethProvider.getTransactionCount(
         transactionRequest.from,
-        "latest"
-      )) - 1
+        "latest",
+      )) - 1;
     const existingNonce =
       this.evmChainLastSeenNoncesByNormalizedAddress[chainID]?.[
         normalizedAddress
-      ] ?? chainNonce
+      ] ?? chainNonce;
 
-    this.evmChainLastSeenNoncesByNormalizedAddress[chainID] ??= {}
+    this.evmChainLastSeenNoncesByNormalizedAddress[chainID] ??= {};
     // Use the network count, if needed. Note that the assumption here is that
     // all nonces for this address are increasing linearly and continuously; if
     // the address has a pending transaction floating around with a nonce that
@@ -426,14 +428,16 @@ export default class ChainService extends BaseService<Events> {
     // allocate more nonces that won't mine.
     // TODO Deal with multi-network.
     this.evmChainLastSeenNoncesByNormalizedAddress[chainID][normalizedAddress] =
-      Math.max(existingNonce, chainNonce)
+      Math.max(existingNonce, chainNonce);
 
     // Allocate a new nonce by incrementing the last seen one.
     this.evmChainLastSeenNoncesByNormalizedAddress[chainID][
       normalizedAddress
-    ] += 1
+    ] += 1;
     const knownNextNonce =
-      this.evmChainLastSeenNoncesByNormalizedAddress[chainID][normalizedAddress]
+      this.evmChainLastSeenNoncesByNormalizedAddress[chainID][
+        normalizedAddress
+      ];
 
     logger.debug(
       "Got chain nonce",
@@ -441,25 +445,25 @@ export default class ChainService extends BaseService<Events> {
       "existing nonce",
       existingNonce,
       "using",
-      knownNextNonce
-    )
+      knownNextNonce,
+    );
 
     return {
       ...transactionRequest,
       nonce: knownNextNonce,
-    }
+    };
   }
 
   resolveNetwork(
-    transactionRequest: EIP1559TransactionRequest | POKTTransactionRequest
+    transactionRequest: EIP1559TransactionRequest | POKTTransactionRequest,
   ): EVMNetwork | undefined | POKTNetwork {
     if ("network" in transactionRequest) {
-      return transactionRequest.network
+      return transactionRequest.network;
     }
     if (transactionRequest.chainID === this.ethereumNetwork!.chainID) {
-      return this.ethereumNetwork
+      return this.ethereumNetwork;
     }
-    return undefined
+    return undefined;
   }
 
   /**
@@ -471,20 +475,22 @@ export default class ChainService extends BaseService<Events> {
   releaseEVMTransactionNonce(
     transactionRequest:
       | (EIP1559TransactionRequest & {
-          nonce: number
+          nonce: number;
         })
       | (LegacyEVMTransactionRequest & { nonce: number })
-      | SignedEVMTransaction
+      | SignedEVMTransaction,
   ): void {
-    const { nonce } = transactionRequest
+    const { nonce } = transactionRequest;
     const chainID =
       "chainID" in transactionRequest
         ? transactionRequest.chainID
-        : transactionRequest.network.chainID
+        : transactionRequest.network.chainID;
 
-    const normalizedAddress = normalizeEVMAddress(transactionRequest.from)
+    const normalizedAddress = normalizeEVMAddress(transactionRequest.from);
     const lastSeenNonce =
-      this.evmChainLastSeenNoncesByNormalizedAddress[chainID][normalizedAddress]
+      this.evmChainLastSeenNoncesByNormalizedAddress[chainID][
+        normalizedAddress
+      ];
 
     // TODO Currently this assumes that the only place this nonce could have
     // TODO been used is this service; however, another wallet or service
@@ -494,7 +500,7 @@ export default class ChainService extends BaseService<Events> {
     if (nonce === lastSeenNonce) {
       this.evmChainLastSeenNoncesByNormalizedAddress[chainID][
         normalizedAddress
-      ] -= 1
+      ] -= 1;
     } else if (nonce < lastSeenNonce) {
       // If the nonce we're releasing is below the latest allocated nonce,
       // release all intervening nonces. This risks transaction replacement
@@ -503,28 +509,28 @@ export default class ChainService extends BaseService<Events> {
       // now-released-and-therefore-never-broadcast nonce).
       this.evmChainLastSeenNoncesByNormalizedAddress[chainID][
         normalizedAddress
-      ] = lastSeenNonce - 1
+      ] = lastSeenNonce - 1;
     }
   }
 
   async getAccountsToTrack(): Promise<AddressOnNetwork[]> {
-    const { network } = await this.preferenceService.getSelectedAccount()
+    const { network } = await this.preferenceService.getSelectedAccount();
     return (
       (await this.db.getAccountsToTrack()) // work with chosen network family
         .filter((an) => an.network.family === network.family)
         // wire all accounts within the same family to the new network
         .map(({ address }) => ({ address, network }))
-    )
+    );
   }
 
   async getLatestBaseAccountBalance(
-    addressNetwork: AddressOnNetwork
+    addressNetwork: AddressOnNetwork,
   ): Promise<AccountBalance> {
-    const { address, network } = addressNetwork
+    const { address, network } = addressNetwork;
     const balance =
       network.family === "EVM"
         ? await this.ethProvider.getBalance(address)
-        : await this.poktProvider.getBalance(address)
+        : await this.poktProvider.getBalance(address);
 
     const accountBalance: AccountBalance = {
       address,
@@ -535,21 +541,21 @@ export default class ChainService extends BaseService<Events> {
       network,
       dataSource: "local",
       retrievedAt: Date.now(),
-    }
-    this.emitter.emit("accountsWithBalances", [accountBalance])
-    await this.db.addBalance(accountBalance)
-    return accountBalance
+    };
+    this.emitter.emit("accountsWithBalances", [accountBalance]);
+    await this.db.addBalance(accountBalance);
+    return accountBalance;
   }
 
   async addAccountToTrack(addressNetwork: AddressOnNetwork): Promise<void> {
-    await this.db.addAccountToTrack(addressNetwork)
+    await this.db.addAccountToTrack(addressNetwork);
 
-    this.emitter.emit("newAccountToTrack", addressNetwork)
-    this.getLatestBaseAccountBalance(addressNetwork)
-    this.subscribeToAccountTransactions(addressNetwork)
+    this.emitter.emit("newAccountToTrack", addressNetwork);
+    this.getLatestBaseAccountBalance(addressNetwork);
+    this.subscribeToAccountTransactions(addressNetwork);
     this.loadRecentAssetTransfers(addressNetwork).then(() =>
-      this.handleQueuedTransactionAlarm()
-    )
+      this.handleQueuedTransactionAlarm(),
+    );
   }
 
   async removeAccountToTrack(address: HexString): Promise<void> {
@@ -557,30 +563,30 @@ export default class ChainService extends BaseService<Events> {
       Set<AddressOnNetwork>
     >((accnts, curr) => {
       if (curr.address !== address) {
-        accnts.add(curr)
+        accnts.add(curr);
       }
-      return accnts
-    }, new Set<AddressOnNetwork>())
-    await this.db.setAccountsToTrack(accounts)
+      return accnts;
+    }, new Set<AddressOnNetwork>());
+    await this.db.setAccountsToTrack(accounts);
   }
 
   async getBlockHeight(network: Network): Promise<number> {
-    const cachedBlock = await this.db.getLatestBlock(network)
+    const cachedBlock = await this.db.getLatestBlock(network);
 
     if (network.family === "EVM") {
       if (cachedBlock) {
-        return (cachedBlock as AnyEVMBlock).blockHeight
+        return (cachedBlock as AnyEVMBlock).blockHeight;
       }
-      return this.ethProvider.getBlockNumber()
+      return this.ethProvider.getBlockNumber();
     }
     if (network.family === "POKT") {
       if (cachedBlock) {
-        return (cachedBlock as POKTBlock).header.height
+        return (cachedBlock as POKTBlock).header.height;
       }
-      return this.poktProvider.getBlockNumber()
+      return this.poktProvider.getBlockNumber();
     }
 
-    throw new Error(`Invalid network family: ${network.family}`)
+    throw new Error(`Invalid network family: ${network.family}`);
   }
 
   /**
@@ -594,33 +600,33 @@ export default class ChainService extends BaseService<Events> {
    */
   async getBlockData(
     network: EVMNetwork | POKTNetwork,
-    blockTag: string | number
+    blockTag: string | number,
   ): Promise<AnyEVMBlock | POKTBlock | POKTSkinnyBlock> {
     // TODO make this multi network
-    const cachedBlock = await this.db.getBlock(network, blockTag)
+    const cachedBlock = await this.db.getBlock(network, blockTag);
     if (cachedBlock) {
-      return cachedBlock
+      return cachedBlock;
     }
 
     if (network.family === "EVM") {
       // Looking for new EVM block
-      const resultBlock = await this.ethProvider.getBlock(blockTag)
-      const block = blockFromEthersBlock(network as EVMNetwork, resultBlock)
+      const resultBlock = await this.ethProvider.getBlock(blockTag);
+      const block = blockFromEthersBlock(network as EVMNetwork, resultBlock);
 
-      await this.db.addBlock(block)
-      this.emitter.emit("block", block)
-      return block
+      await this.db.addBlock(block);
+      this.emitter.emit("block", block);
+      return block;
     }
 
     // Looking for new POKT block
     const resultBlock = await this.poktProvider.getSkinnyBlock(
-      blockTag as number
-    )
-    const block = blockFromPoktBlock(network as POKTNetwork, resultBlock)
+      blockTag as number,
+    );
+    const block = blockFromPoktBlock(network as POKTNetwork, resultBlock);
 
-    await this.db.addBlock(block)
-    this.emitter.emit("block", block)
-    return block
+    await this.db.addBlock(block);
+    this.emitter.emit("block", block);
+    return block;
   }
 
   /**
@@ -635,48 +641,48 @@ export default class ChainService extends BaseService<Events> {
    */
   async getTransaction(
     network: EVMNetwork | POKTNetwork,
-    txHash: HexString
+    txHash: HexString,
   ): Promise<AnyEVMTransaction | AnyPOKTTransaction> {
-    const cachedTx = await this.db.getTransaction(network, txHash)
+    const cachedTx = await this.db.getTransaction(network, txHash);
     if (cachedTx) {
-      return cachedTx
+      return cachedTx;
     }
 
     if (network.family === "EVM") {
       // TODO make proper use of the network
-      const gethResult = await this.ethProvider.getTransaction(txHash)
+      const gethResult = await this.ethProvider.getTransaction(txHash);
       const newTransaction = transactionFromEthersTransaction(
         gethResult,
-        network as EVMNetwork
-      )
+        network as EVMNetwork,
+      );
 
-      if (!newTransaction.blockHash && !newTransaction.blockHeight) {
+      if (!(newTransaction.blockHash || newTransaction.blockHeight)) {
         this.subscribeToTransactionConfirmation(
           network as EVMNetwork,
-          newTransaction
-        )
+          newTransaction,
+        );
       }
 
       // TODO proper provider string
-      this.saveTransaction(newTransaction, "alchemy")
+      this.saveTransaction(newTransaction, "alchemy");
     }
 
-    const poktResult = await this.poktProvider.getTransaction(txHash)
+    const poktResult = await this.poktProvider.getTransaction(txHash);
     const newPoktTransaction = transactionFromPoktTransaction(
       poktResult,
-      network as POKTNetwork
-    )
+      network as POKTNetwork,
+    );
 
     if (!newPoktTransaction.height || newPoktTransaction.height === 0) {
       this.subscribeToTransactionConfirmation(
         network as POKTNetwork,
-        newPoktTransaction
-      )
+        newPoktTransaction,
+      );
     }
 
-    this.saveTransaction(newPoktTransaction, "local")
+    this.saveTransaction(newPoktTransaction, "local");
 
-    return newPoktTransaction
+    return newPoktTransaction;
   }
 
   /**
@@ -696,7 +702,7 @@ export default class ChainService extends BaseService<Events> {
     network: EVMNetwork | POKTNetwork,
     txHash: HexString,
     firstSeen: UNIXTime,
-    txData?: POKTTransaction | AssetTransfer
+    txData?: POKTTransaction | AssetTransfer,
   ): Promise<void> {
     try {
       const txToRetrieve: TransactionRetrieval = {
@@ -704,12 +710,12 @@ export default class ChainService extends BaseService<Events> {
         hash: txHash,
         firstSeen,
         txData,
-      }
+      };
       if (txData && "height" in txData)
-        txToRetrieve.height = BigInt(txData.height)
-      await this.db.queueTransactionRetrieval(txToRetrieve)
+        txToRetrieve.height = BigInt(txData.height);
+      await this.db.queueTransactionRetrieval(txToRetrieve);
     } catch (e) {
-      throw new Error(`Unable to fetch network family: ${network.family}`)
+      throw new Error(`Unable to fetch network family: ${network.family}`);
     }
   }
 
@@ -719,14 +725,14 @@ export default class ChainService extends BaseService<Events> {
    */
   async estimateGasLimit(
     network: EVMNetwork | POKTNetwork,
-    transactionRequest: EIP1559TransactionRequest
+    transactionRequest: EIP1559TransactionRequest,
   ): Promise<bigint> {
     const estimate = await this.ethProvider.estimateGas(
-      ethersTransactionRequestFromEIP1559TransactionRequest(transactionRequest)
-    )
+      ethersTransactionRequestFromEIP1559TransactionRequest(transactionRequest),
+    );
     // Add 10% more gas as a safety net
-    const uppedEstimate = estimate.add(estimate.div(10))
-    return BigInt(uppedEstimate.toString())
+    const uppedEstimate = estimate.add(estimate.div(10));
+    return BigInt(uppedEstimate.toString());
   }
 
   /**
@@ -736,75 +742,78 @@ export default class ChainService extends BaseService<Events> {
    *        it needs to include all gas limit and price params.
    */
   async broadcastSignedTransaction(
-    transaction: SignedEVMTransaction | SignedPOKTTransaction
+    transaction: SignedEVMTransaction | SignedPOKTTransaction,
   ): Promise<string | undefined> {
     try {
       if (transaction.network.family === "EVM") {
-        const tx = transaction as SignedEVMTransaction
+        const tx = transaction as SignedEVMTransaction;
         // TODO make proper use of tx.network to choose provider
         const serialized = utils.serializeTransaction(
           ethersTransactionFromSignedTransaction(tx),
-          { r: tx.r, s: tx.s, v: tx.v }
-        )
+          { r: tx.r, s: tx.s, v: tx.v },
+        );
 
         await Promise.all([
           this.ethProvider
             .sendTransaction(serialized)
             .then((transactionResponse) => {
-              this.emitter.emit("transactionSend", transactionResponse)
+              this.emitter.emit("transactionSend", transactionResponse);
             })
             .catch((error) => {
               logger.debug(
                 "Broadcast error caught, saving failed status and releasing nonce...",
                 tx,
-                error
-              )
+                error,
+              );
               // Failure to broadcast needs to be registered.
               this.saveTransaction(
                 { ...tx, status: 0, error: error.toString() },
-                "alchemy"
-              )
-              this.releaseEVMTransactionNonce(tx)
-              return Promise.reject(error)
+                "alchemy",
+              );
+              this.releaseEVMTransactionNonce(tx);
+              return Promise.reject(error);
             }),
           this.subscribeToTransactionConfirmation(tx.network, tx),
           this.saveTransaction(tx, "local"),
-        ])
-        return tx.hash
+        ]);
+        return tx.hash;
       }
 
-      const tx = transaction as SignedPOKTTransaction
+      const tx = transaction as SignedPOKTTransaction;
 
       return await this.poktProvider
         .sendTransaction(tx)
         .then(async (transactionResponse) => {
-          this.emitter.emit("transactionSend", transactionResponse)
-          await this.saveTransaction({ ...tx, ...transactionResponse }, "local")
+          this.emitter.emit("transactionSend", transactionResponse);
+          await this.saveTransaction(
+            { ...tx, ...transactionResponse },
+            "local",
+          );
           // TODO subscribe to pokt tx confirmation
           await this.subscribeToTransactionConfirmation(
             tx.network,
-            transactionResponse
-          )
-          return transactionResponse.hash
+            transactionResponse,
+          );
+          return transactionResponse.hash;
         })
         .catch((error) => {
           logger.debug(
             "Broadcast error caught, saving failed status...",
             transaction,
-            error
-          )
+            error,
+          );
           // Failure to broadcast needs to be registered.
           // this.saveTransaction(
           //   { ...transaction, status: 0, error: error.toString() },
           //   "alchemy"
           // )
-          return Promise.reject(error)
-        })
+          return Promise.reject(error);
+        });
     } catch (error) {
-      this.emitter.emit("transactionSendFailure", error)
-      logger.error("Error broadcasting transaction", transaction, error)
+      this.emitter.emit("transactionSendFailure", error);
+      logger.error("Error broadcasting transaction", transaction, error);
 
-      throw error
+      throw error;
     }
   }
 
@@ -816,19 +825,19 @@ export default class ChainService extends BaseService<Events> {
     await Promise.allSettled(
       this.subscribedNetworks.map(async ({ network, provider }) => {
         if (network.family === "EVM") {
-          const blockPrices = await getBlockPrices(network, provider)
-          this.emitter.emit(ChainEventNames.BLOCK_PRICES, blockPrices)
+          const blockPrices = await getBlockPrices(network, provider);
+          this.emitter.emit(ChainEventNames.BLOCK_PRICES, blockPrices);
         }
-      })
-    )
+      }),
+    );
   }
 
   async send(
     method: string,
     params: unknown[],
-    network: AnyNetwork
+    network: AnyNetwork,
   ): Promise<unknown> {
-    return this.providerForNetwork(network)?.send(method, params)
+    return this.providerForNetwork(network)?.send(method, params);
   }
 
   /* *****************
@@ -842,94 +851,94 @@ export default class ChainService extends BaseService<Events> {
    * @param addressNetwork the address and network whose asset transfers we need
    */
   private async loadRecentAssetTransfers(
-    addressNetwork: AddressOnNetwork
+    addressNetwork: AddressOnNetwork,
   ): Promise<void> {
     if (addressNetwork.network.family === "EVM") {
       const blockHeight =
         (await this.getBlockHeight(addressNetwork.network)) -
-        BLOCKS_TO_SKIP_FOR_EVM_TRANSACTION_HISTORY
-      let fromBlock = blockHeight - BLOCKS_FOR_EVM_TRANSACTION_HISTORY
+        BLOCKS_TO_SKIP_FOR_EVM_TRANSACTION_HISTORY;
+      let fromBlock = blockHeight - BLOCKS_FOR_EVM_TRANSACTION_HISTORY;
       try {
         return await this.loadAssetTransfers(
           addressNetwork,
           BigInt(fromBlock),
-          BigInt(blockHeight)
-        )
+          BigInt(blockHeight),
+        );
       } catch (err) {
         logger.error(
           "Failed loaded recent assets, retrying with shorter block range",
           addressNetwork,
-          err
-        )
+          err,
+        );
       }
 
       // TODO replace the home-spun backoff with a util function
       fromBlock =
-        blockHeight - Math.floor(BLOCKS_FOR_EVM_TRANSACTION_HISTORY / 2)
+        blockHeight - Math.floor(BLOCKS_FOR_EVM_TRANSACTION_HISTORY / 2);
       try {
         return await this.loadAssetTransfers(
           addressNetwork,
           BigInt(fromBlock),
-          BigInt(blockHeight)
-        )
+          BigInt(blockHeight),
+        );
       } catch (err) {
         logger.error(
           "Second failure loading recent assets, retrying with shorter block range",
           addressNetwork,
-          err
-        )
+          err,
+        );
       }
 
       fromBlock =
-        blockHeight - Math.floor(BLOCKS_FOR_EVM_TRANSACTION_HISTORY / 4)
+        blockHeight - Math.floor(BLOCKS_FOR_EVM_TRANSACTION_HISTORY / 4);
       try {
         return await this.loadAssetTransfers(
           addressNetwork,
           BigInt(fromBlock),
-          BigInt(blockHeight)
-        )
+          BigInt(blockHeight),
+        );
       } catch (err) {
         logger.error(
           "Final failure loading recent assets for account",
           addressNetwork,
-          err
-        )
+          err,
+        );
       }
-      return Promise.resolve()
+      return Promise.resolve();
     }
 
     if (addressNetwork.network.family === "POKT") {
       try {
         const oldest = await this.db.getOldestAccountAssetTransferLookup(
-          addressNetwork
-        )
+          addressNetwork,
+        );
         const newest = await this.db.getNewestAccountAssetTransferLookup(
-          addressNetwork
-        )
+          addressNetwork,
+        );
 
         // load 100 historical asset transfers
         if (oldest === null && newest === null)
-          return await this.loadAssetTransfers(addressNetwork)
+          return await this.loadAssetTransfers(addressNetwork);
 
         // load new txs
-        const height = await this.getBlockHeight(addressNetwork.network)
+        const height = await this.getBlockHeight(addressNetwork.network);
         if (newest !== null && newest.valueOf() < height) {
           return await this.loadAssetTransfers(
             addressNetwork,
             newest,
-            BigInt(height)
-          )
+            BigInt(height),
+          );
         }
       } catch (err) {
         logger.error(
           "Failure loading recent assets for account",
           addressNetwork,
-          err
-        )
+          err,
+        );
       }
     }
 
-    return Promise.resolve()
+    return Promise.resolve();
   }
 
   /**
@@ -939,17 +948,17 @@ export default class ChainService extends BaseService<Events> {
    * @param addressNetwork The account whose asset transfers are being loaded.
    */
   private async loadHistoricEVMAssetTransfers(
-    addressNetwork: AddressOnNetwork
+    addressNetwork: AddressOnNetwork,
   ): Promise<void> {
     if (addressNetwork.network.family === "EVM") {
       const oldest = await this.db.getOldestAccountAssetTransferLookup(
-        addressNetwork
-      )
+        addressNetwork,
+      );
       const newest = await this.db.getNewestAccountAssetTransferLookup(
-        addressNetwork
-      )
+        addressNetwork,
+      );
       if (newest !== null && oldest !== null) {
-        const range = newest - oldest
+        const range = newest - oldest;
         if (
           range <
           BLOCKS_FOR_EVM_TRANSACTION_HISTORY *
@@ -959,8 +968,8 @@ export default class ChainService extends BaseService<Events> {
           await this.loadAssetTransfers(
             addressNetwork,
             oldest - BigInt(BLOCKS_FOR_EVM_TRANSACTION_HISTORY),
-            oldest
-          )
+            oldest,
+          );
         }
       }
     }
@@ -976,35 +985,35 @@ export default class ChainService extends BaseService<Events> {
   private async loadAssetTransfers(
     addressOnNetwork: AddressOnNetwork,
     startBlock?: bigint,
-    endBlock?: bigint
+    endBlock?: bigint,
   ): Promise<void> {
     if (addressOnNetwork.network.family === "EVM" && startBlock && endBlock) {
       const assetTransfers = await this.assetData.getAssetTransfers(
         addressOnNetwork,
         Number(startBlock),
-        Number(endBlock)
-      )
+        Number(endBlock),
+      );
 
       await this.db.recordAccountAssetTransferLookup(
         addressOnNetwork,
         startBlock,
-        endBlock
-      )
+        endBlock,
+      );
 
       this.emitter.emit("assetTransfers", {
         addressNetwork: addressOnNetwork,
         assetTransfers,
-      })
+      });
 
-      const firstSeen = Date.now()
+      const firstSeen = Date.now();
       /// send all found tx hashes into a queue to retrieve + cache
       assetTransfers.forEach((a) =>
         this.queueTransactionHashToRetrieve(
           addressOnNetwork.network,
           a.txHash,
-          firstSeen
-        )
-      )
+          firstSeen,
+        ),
+      );
     }
 
     if (addressOnNetwork.network.family === "POKT") {
@@ -1014,74 +1023,74 @@ export default class ChainService extends BaseService<Events> {
           false,
           false,
           1,
-          100
+          100,
         ),
         this.poktProvider.getTransactions(
           addressOnNetwork.address,
           true,
           false,
           1,
-          100
+          100,
         ),
         this.getBlockHeight(addressOnNetwork.network),
-      ])
+      ]);
       const allTxs = [...txsSent, ...txsReceived].sort((a, b) => {
-        return Number(b.height.toString()) - Number(a.height.toString())
-      })
+        return Number(b.height.toString()) - Number(a.height.toString());
+      });
 
-      const txsToRecord: PoktJSTransaction[] = []
+      const txsToRecord: PoktJSTransaction[] = [];
       for (const tx of allTxs) {
-        if (txsToRecord.length >= MAX_HISTORIC_ASSET_TRANSFERS_POCKET) break
-        if (startBlock && tx.height <= startBlock) break
-        if (tx.txResult.messageType !== "send") continue
-        txsToRecord.push(tx)
+        if (txsToRecord.length >= MAX_HISTORIC_ASSET_TRANSFERS_POCKET) break;
+        if (startBlock && tx.height <= startBlock) break;
+        if (tx.txResult.messageType !== "send") continue;
+        txsToRecord.push(tx);
       }
 
       if (!txsToRecord.length) {
         await this.db.recordAccountAssetTransferLookup(
           addressOnNetwork,
           BigInt(1),
-          BigInt(height)
-        )
-        return
+          BigInt(height),
+        );
+        return;
       }
 
-      const firstSeen = Date.now()
+      const firstSeen = Date.now();
       for (const pocketTx of txsToRecord) {
         const tx = transactionFromPoktTransaction(
           pocketTx,
-          addressOnNetwork.network
-        )
+          addressOnNetwork.network,
+        );
         await this.queueTransactionHashToRetrieve(
           addressOnNetwork.network,
           tx.hash,
           firstSeen,
-          tx
-        )
+          tx,
+        );
       }
 
       const startHeight =
-        startBlock ?? txsToRecord[txsToRecord.length - 1].height.valueOf()
-      const endHeight = endBlock ?? txsToRecord[0].height.valueOf()
+        startBlock ?? txsToRecord[txsToRecord.length - 1].height.valueOf();
+      const endHeight = endBlock ?? txsToRecord[0].height.valueOf();
 
       await this.db.recordAccountAssetTransferLookup(
         addressOnNetwork,
         startHeight,
-        endHeight
-      )
+        endHeight,
+      );
     }
   }
 
   private async handleRecentAssetTransferAlarm(): Promise<void> {
-    const accountsToTrack = await this.getAccountsToTrack()
+    const accountsToTrack = await this.getAccountsToTrack();
     await Promise.allSettled(
       accountsToTrack.map((an) => {
         // dont load EVM txs for now
         if (an.network.family === "POKT") {
-          return this.loadRecentAssetTransfers(an)
+          return this.loadRecentAssetTransfers(an);
         }
-      })
-    )
+      }),
+    );
   }
 
   // private async handleHistoricEVMAssetTransferAlarm(): Promise<void> {
@@ -1094,39 +1103,38 @@ export default class ChainService extends BaseService<Events> {
 
   private async handleQueuedTransactionAlarm(): Promise<void> {
     const txsToRetrieve = await this.db.deQueueTransactionRetrieval(
-      MAX_CONCURRENT_TRANSACTION_REQUESTS
-    )
+      MAX_CONCURRENT_TRANSACTION_REQUESTS,
+    );
     for (const tx of txsToRetrieve) {
-      const { network, hash, firstSeen, txData } = tx
+      const { network, hash, firstSeen, txData } = tx;
       if (network.family === "EVM") {
         try {
-          const result = await this.ethProvider.getTransaction(hash)
+          const result = await this.ethProvider.getTransaction(hash);
 
-          const transaction = transactionFromEthersTransaction(result, network)
+          const transaction = transactionFromEthersTransaction(result, network);
 
           // TODO make this provider specific
-          await this.saveTransaction(transaction, "alchemy")
+          await this.saveTransaction(transaction, "alchemy");
 
-          if (!transaction.blockHash && !transaction.blockHeight) {
+          if (!(transaction.blockHash || transaction.blockHeight)) {
             this.subscribeToTransactionConfirmation(
               transaction.network,
-              transaction
-            )
+              transaction,
+            );
           } else if (transaction.blockHash) {
             // Get relevant block data.
-            await this.getBlockData(transaction.network, transaction.blockHash)
+            await this.getBlockData(transaction.network, transaction.blockHash);
             // Retrieve gas used, status, etc
-            this.retrieveTransactionReceipt(transaction.network, transaction)
+            this.retrieveTransactionReceipt(transaction.network, transaction);
           }
         } catch (error) {
-          logger.error(`Error retrieving transaction ${hash}`, error)
+          logger.error(`Error retrieving transaction ${hash}`, error);
           if (Date.now() <= firstSeen + TRANSACTION_CHECK_LIFETIME_MS) {
-            this.queueTransactionHashToRetrieve(network, hash, firstSeen)
+            this.queueTransactionHashToRetrieve(network, hash, firstSeen);
           } else {
             logger.warn(
-              `Transaction ${hash} is too old to keep looking for it; treating ` +
-                "it as expired."
-            )
+              `Transaction ${hash} is too old to keep looking for it; treating it as expired.`,
+            );
 
             this.db
               .getTransaction(network, hash)
@@ -1134,33 +1142,33 @@ export default class ChainService extends BaseService<Events> {
                 if (existingTransaction !== null) {
                   logger.debug(
                     "Found existing transaction for expired lookup; marking as " +
-                      "failed if no other status exists."
-                  )
+                      "failed if no other status exists.",
+                  );
                   this.saveTransaction(
                     // Don't override an already-persisted successful status with
                     // an expiration-based failed status, but do set status to
                     // failure if no transaction was seen.
                     { status: 0, ...existingTransaction },
-                    "local"
-                  )
+                    "local",
+                  );
                 }
-              })
+              });
           }
         }
       }
 
       if (network.family === "POKT" && txData) {
         try {
-          const tx = txData as POKTTransaction
-          const existingBlock = await this.db.getBlock(network, tx.height)
+          const tx = txData as POKTTransaction;
+          const existingBlock = await this.db.getBlock(network, tx.height);
           // important to save the block before the tx so the block timestamp is readily available
           // should not load blocks and txs in parallel so the UI loads the most recent txs first and populates down
           if (!existingBlock) {
-            await this.getBlockData(network, tx.height.toString())
+            await this.getBlockData(network, tx.height.toString());
           }
-          await this.saveTransaction(tx, "local")
+          await this.saveTransaction(tx, "local");
         } catch (error) {
-          logger.error(`Error retrieving transaction ${hash}`, error)
+          logger.error(`Error retrieving transaction ${hash}`, error);
         }
       }
     }
@@ -1175,21 +1183,21 @@ export default class ChainService extends BaseService<Events> {
    */
   private async saveTransaction(
     transaction: AnyEVMTransaction | AnyPOKTTransaction,
-    dataSource: "local" | "alchemy"
+    dataSource: "local" | "alchemy",
   ): Promise<void> {
     // Merge existing data into the updated transaction data. This handles
     // cases where an existing transaction has been enriched by e.g. a receipt,
     // and new data comes in.
     const existing = await this.db.getTransaction(
       transaction.network,
-      transaction.hash
-    )
+      transaction.hash,
+    );
     const finalTransaction = {
       ...existing,
       ...transaction,
-    }
+    };
 
-    let error: unknown = null
+    let error: unknown = null;
     try {
       await this.db.addOrUpdateTransaction(
         {
@@ -1198,56 +1206,56 @@ export default class ChainService extends BaseService<Events> {
           ...existing,
           ...finalTransaction,
         },
-        dataSource
-      )
+        dataSource,
+      );
     } catch (err) {
-      error = err
-      logger.error(`Error saving tx ${finalTransaction}`, error)
+      error = err;
+      logger.error(`Error saving tx ${finalTransaction}`, error);
     }
     try {
       if (finalTransaction.network.family === "EVM") {
-        const fTx = finalTransaction as AnyEVMTransaction
-        const accounts = await this.getAccountsToTrack()
+        const fTx = finalTransaction as AnyEVMTransaction;
+        const accounts = await this.getAccountsToTrack();
 
         const forAccounts = accounts
           .filter(
             ({ address }) =>
               sameEVMAddress(fTx.from, address) ||
-              sameEVMAddress(fTx.to, address)
+              sameEVMAddress(fTx.to, address),
           )
           .map(({ address }) => {
-            return normalizeEVMAddress(address)
-          })
+            return normalizeEVMAddress(address);
+          });
 
         // emit in a separate try so outside services still get the tx
         this.emitter.emit("transaction", {
           transaction: fTx,
           forAccounts,
-        })
+        });
       }
 
       if (finalTransaction.network.family === "POKT") {
-        const fTx = finalTransaction as AnyPOKTTransaction
-        const accounts = await this.getAccountsToTrack()
+        const fTx = finalTransaction as AnyPOKTTransaction;
+        const accounts = await this.getAccountsToTrack();
 
         const forAccounts = accounts
-          .filter(({ address }) => fTx.from == address || fTx.to == address)
+          .filter(({ address }) => fTx.from === address || fTx.to === address)
           .map(({ address }) => {
-            return normalizeAddress(address, fTx.network)
-          })
+            return normalizeAddress(address, fTx.network);
+          });
 
         // emit in a separate try so outside services still get the tx
         this.emitter.emit("transaction", {
           transaction: fTx,
           forAccounts,
-        })
+        });
       }
     } catch (err) {
-      error = err
-      logger.error(`Error emitting tx ${finalTransaction}`, error)
+      error = err;
+      logger.error(`Error emitting tx ${finalTransaction}`, error);
     }
     if (error) {
-      throw error
+      throw error;
     }
   }
 
@@ -1256,17 +1264,17 @@ export default class ChainService extends BaseService<Events> {
    * are currently being tracked.
    */
   async filterTrackedAddressesOnNetworks(
-    addressesOnNetworks: AddressOnNetwork[]
+    addressesOnNetworks: AddressOnNetwork[],
   ): Promise<AddressOnNetwork[]> {
-    const accounts = await this.getAccountsToTrack()
+    const accounts = await this.getAccountsToTrack();
 
     return addressesOnNetworks.filter(({ address, network }) =>
       accounts.some(
         ({ address: trackedAddress, network: trackedNetwork }) =>
           sameEVMAddress(trackedAddress, address) &&
-          network.name === trackedNetwork.name
-      )
-    )
+          network.name === trackedNetwork.name,
+      ),
+    );
   }
 
   /**
@@ -1276,7 +1284,7 @@ export default class ChainService extends BaseService<Events> {
    * @param network The EVM network to watch.
    */
   private async subscribeToNewHeads(
-    network: EVMNetwork | POKTNetwork
+    network: EVMNetwork | POKTNetwork,
   ): Promise<void> {
     if (network.family === "EVM") {
       // TODO look up provider network properly
@@ -1286,29 +1294,29 @@ export default class ChainService extends BaseService<Events> {
         ["newHeads"],
         async (result: unknown) => {
           // add new head to database
-          const block = blockFromWebsocketBlock(network, result)
-          await this.db.addBlock(block)
+          const block = blockFromWebsocketBlock(network, result);
+          await this.db.addBlock(block);
           // emit the new block, don't wait to settle
-          this.emitter.emit("block", block)
+          this.emitter.emit("block", block);
           // TODO if it matches a known blockheight and the difficulty is higher,
           // emit a reorg event
-        }
-      )
+        },
+      );
       this.subscribedNetworks.push({
         network,
         provider: this.ethProvider,
-      })
+      });
 
-      this.pollBlockPrices()
+      this.pollBlockPrices();
     }
 
     if (network.family === "POKT") {
       this.poktProvider.on("block", async (n) => {
-        const blockResult = await this.poktProvider.getSkinnyBlock(n)
-        const block = blockFromPoktBlock(network, blockResult)
-        await this.db.addBlock(block)
-        this.emitter.emit("block", block)
-      })
+        const blockResult = await this.poktProvider.getSkinnyBlock(n);
+        const block = blockFromPoktBlock(network, blockResult);
+        await this.db.addBlock(block);
+        this.emitter.emit("block", block);
+      });
     }
   }
 
@@ -1328,7 +1336,7 @@ export default class ChainService extends BaseService<Events> {
         async (transaction) => {
           // handle incoming transactions for an account
           try {
-            const normalizedFromAddress = normalizeEVMAddress(transaction.from)
+            const normalizedFromAddress = normalizeEVMAddress(transaction.from);
 
             // If this is an EVM chain, we're tracking the from address's
             // nonce, and the pending transaction has a higher nonce, update our
@@ -1346,22 +1354,22 @@ export default class ChainService extends BaseService<Events> {
             ) {
               this.evmChainLastSeenNoncesByNormalizedAddress[network.chainID][
                 normalizedFromAddress
-              ] = transaction.nonce
+              ] = transaction.nonce;
             }
-            await this.saveTransaction(transaction, "alchemy")
+            await this.saveTransaction(transaction, "alchemy");
 
             // Wait for confirmation/receipt information.
-            this.subscribeToTransactionConfirmation(network, transaction)
+            this.subscribeToTransactionConfirmation(network, transaction);
           } catch (error) {
-            logger.error(`Error saving tx: ${transaction}`, error)
+            logger.error(`Error saving tx: ${transaction}`, error);
           }
-        }
-      )
+        },
+      );
 
       this.subscribedAccounts.push({
         account: address,
         provider: this.ethProvider,
-      })
+      });
     }
 
     // TODO: v0.2.0 add POKT network family transaction subscribing
@@ -1376,7 +1384,7 @@ export default class ChainService extends BaseService<Events> {
    */
   private async subscribeToTransactionConfirmation(
     network: EVMNetwork | POKTNetwork,
-    transaction: AnyEVMTransaction | POKTTransaction
+    transaction: AnyEVMTransaction | POKTTransaction,
   ): Promise<void> {
     if (network.family === "EVM") {
       this.ethProvider.once(
@@ -1385,39 +1393,39 @@ export default class ChainService extends BaseService<Events> {
           this.saveTransaction(
             enrichTransactionWithReceipt(
               transaction as AnyEVMTransaction,
-              confirmedReceipt
+              confirmedReceipt,
             ),
-            "alchemy"
-          )
-        }
-      )
-      return
+            "alchemy",
+          );
+        },
+      );
+      return;
     }
 
     if (network.family === "POKT") {
-      const tx = transaction as POKTTransaction
+      const tx = transaction as POKTTransaction;
       const listener = (poktNetworkTransaction: PoktJSTransaction) => {
-        if (poktNetworkTransaction && poktNetworkTransaction.height) {
-          this.poktProvider.off(tx.hash, listener)
+        if (poktNetworkTransaction?.height) {
+          this.poktProvider.off(tx.hash, listener);
           this.saveTransaction(
             transactionFromPoktTransaction(
               poktNetworkTransaction,
               network,
-              tx.targetHeight
+              tx.targetHeight,
             ),
-            "local"
-          )
+            "local",
+          );
         } else {
           this.saveTransaction(
             {
               ...tx,
               targetHeight: tx.targetHeight + 1,
             },
-            "local"
-          )
+            "local",
+          );
         }
-      }
-      this.poktProvider.on(tx.hash, listener)
+      };
+      this.poktProvider.on(tx.hash, listener);
     }
   }
 
@@ -1429,28 +1437,28 @@ export default class ChainService extends BaseService<Events> {
    */
   private async retrieveTransactionReceipt(
     network: EVMNetwork,
-    transaction: AnyEVMTransaction
+    transaction: AnyEVMTransaction,
   ): Promise<void> {
     if (network.family === "EVM") {
       const receipt = await this.ethProvider.getTransactionReceipt(
-        transaction.hash
-      )
+        transaction.hash,
+      );
       await this.saveTransaction(
         enrichTransactionWithReceipt(transaction, receipt),
-        "alchemy"
-      )
+        "alchemy",
+      );
     }
   }
 
   private configureProviders(addressNetwork: AddressOnNetwork) {
-    const { network } = addressNetwork
+    const { network } = addressNetwork;
     // always default to mainnets
-    this.ethereumNetwork = ETHEREUM
-    this.pocketNetwork = POCKET
+    this.ethereumNetwork = ETHEREUM;
+    this.pocketNetwork = POCKET;
     if (network.family === "EVM") {
-      this.ethereumNetwork = network
+      this.ethereumNetwork = network;
     } else if (network.family === "POKT") {
-      this.pocketNetwork = network
+      this.pocketNetwork = network;
       // if mainnet, allow for remote config
       if (network.chainID === "mainnet" && this.remoteConfig) {
         try {
@@ -1458,16 +1466,16 @@ export default class ChainService extends BaseService<Events> {
             _.get(
               this.remoteConfig,
               `${network.family}.${network.chainID}.rpc`,
-              this.pocketNetwork?.rcpUrl
-            ) ?? this.pocketNetwork?.rcpUrl
-          )
+              this.pocketNetwork?.rcpUrl,
+            ) ?? this.pocketNetwork?.rcpUrl,
+          );
           logger.debug("Attempted to configure with remote config", {
             rpcUrl: pocketRPC.toString(),
-          })
+          });
           this.pocketNetwork = {
             ...this.pocketNetwork,
             rcpUrl: pocketRPC.toString(),
-          }
+          };
         } catch (e) {
           // ignored
         }
@@ -1475,7 +1483,7 @@ export default class ChainService extends BaseService<Events> {
     }
 
     if (this.providers) {
-      this.cleanupProvider(this.providers[network.family])
+      this.cleanupProvider(this.providers[network.family]);
     }
 
     return {
@@ -1486,56 +1494,56 @@ export default class ChainService extends BaseService<Events> {
             new SerialFallbackProvider(
               this.ethereumNetwork!,
               () => new WebSocketProvider("ws://localhost:8545"),
-              () => new JsonRpcProvider(process.env.MAINNET_FORK_URL)
+              () => new JsonRpcProvider(process.env.MAINNET_FORK_URL),
             )
           : new SerialFallbackProvider(
               this.ethereumNetwork!,
               () =>
                 new AlchemyWebSocketProvider(
                   getEthNetwork(Number(this.ethereumNetwork!.chainID)),
-                  ALCHEMY_KEY
+                  ALCHEMY_KEY,
                 ),
               () =>
                 new AlchemyProvider(
                   getEthNetwork(Number(this.ethereumNetwork!.chainID)),
-                  ALCHEMY_KEY
-                )
+                  ALCHEMY_KEY,
+                ),
             ),
 
       [NetworkFamily.POKT]: new PocketProvider(this.pocketNetwork?.rcpUrl),
-    }
+    };
   }
 
   /**
    * Connects chain service to the address on network.
    */
   private async connectToAddressNetwork(addressNetwork: AddressOnNetwork) {
-    logger.debug("connecting to address network", addressNetwork)
-    this.providers = this.configureProviders(addressNetwork)
+    logger.debug("connecting to address network", addressNetwork);
+    this.providers = this.configureProviders(addressNetwork);
 
     // POKT provider needs a kick to get going, restart it here
     if (addressNetwork.network.family === "POKT") {
-      this.poktProvider.startService()
+      this.poktProvider.startService();
     }
 
     if (addressNetwork.network && addressNetwork.address) {
-      this.subscribeToAccountTransactions(addressNetwork)
-      this.getLatestBaseAccountBalance(addressNetwork)
+      this.subscribeToAccountTransactions(addressNetwork);
+      this.getLatestBaseAccountBalance(addressNetwork);
       this.db
         .getNetworkPendingTransactions(addressNetwork.network)
         .then((pendingTransactions) => {
           pendingTransactions.forEach(({ hash, firstSeen }) => {
             logger.debug(
-              `Queuing pending transaction ${hash} for status lookup.`
-            )
+              `Queuing pending transaction ${hash} for status lookup.`,
+            );
             this.queueTransactionHashToRetrieve(
               addressNetwork.network,
               hash,
-              firstSeen
-            )
-          })
+              firstSeen,
+            );
+          });
         }),
-        this.getLatestBlockHeightPendingTransactions(addressNetwork)
+        this.getLatestBlockHeightPendingTransactions(addressNetwork);
     }
   }
 
@@ -1544,50 +1552,53 @@ export default class ChainService extends BaseService<Events> {
    * Attempts to resubscribe to any pending transactions found in the database.
    */
   private async getLatestBlockHeightPendingTransactions(
-    addressNetwork: AddressOnNetwork
+    addressNetwork: AddressOnNetwork,
   ) {
     return new Promise(async (resolve, reject) => {
       if (addressNetwork.network.family === "EVM")
         resolve(
           this.ethProvider!.getBlockNumber()
             .then(async (n) => {
-              const result = await this.ethProvider!.getBlock(n)
-              const block = blockFromEthersBlock(this.ethereumNetwork!, result)
-              await this.db.addBlock(block)
+              const result = await this.ethProvider!.getBlock(n);
+              const block = blockFromEthersBlock(this.ethereumNetwork!, result);
+              await this.db.addBlock(block);
             })
-            .catch((e) => logger.error("Failed fetching eth block", e))
-        )
+            .catch((e) => logger.error("Failed fetching eth block", e)),
+        );
       else if (addressNetwork.network.family === "POKT")
         resolve(
           this.poktProvider!.getBlockNumber()
             .then(async (height) => {
-              const result = await this.poktProvider!.getSkinnyBlock(height)
-              const block = blockFromPoktBlock(this.pocketNetwork!, result)
-              await this.db.addBlock(block)
+              const result = await this.poktProvider!.getSkinnyBlock(height);
+              const block = blockFromPoktBlock(this.pocketNetwork!, result);
+              await this.db.addBlock(block);
               const pendingTxs = (await this.db.getNetworkPendingTransactions(
-                this.pocketNetwork!
-              )) as POKTTransaction[]
+                this.pocketNetwork!,
+              )) as POKTTransaction[];
               // Check pending tx for confirmation
               for (const tx of pendingTxs) {
-                this.subscribeToTransactionConfirmation(this.pocketNetwork!, tx)
+                this.subscribeToTransactionConfirmation(
+                  this.pocketNetwork!,
+                  tx,
+                );
               }
             })
-            .catch((e) => logger.error("Failed fetching pokt block", e))
-        )
+            .catch((e) => logger.error("Failed fetching pokt block", e)),
+        );
       else
         logger.error(
-          "Unable to get latest block height and pending transactions"
-        )
+          "Unable to get latest block height and pending transactions",
+        );
     }).then(() => {
-      logger.debug("Subscribing to new heads", { addressNetwork })
-      this.subscribeToNewHeads(addressNetwork.network)
-    })
+      logger.debug("Subscribing to new heads", { addressNetwork });
+      this.subscribeToNewHeads(addressNetwork.network);
+    });
   }
 
   private cleanupProvider(provider: SerialFallbackProvider | PocketProvider) {
-    provider.removeAllListeners()
+    provider.removeAllListeners();
     // FIXME: only remove subscribers to provider
-    this.subscribedAccounts = []
-    this.subscribedNetworks = []
+    this.subscribedAccounts = [];
+    this.subscribedNetworks = [];
   }
 }

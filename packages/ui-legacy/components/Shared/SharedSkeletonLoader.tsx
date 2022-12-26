@@ -1,11 +1,11 @@
-import React, { ReactElement } from "react"
-import classNames from "clsx"
+import React, { ReactElement } from "react";
+import classNames from "clsx";
 
 export default function SharedSkeletonLoader(props: {
-  width: number
-  height: number
+  width: number;
+  height: number;
 }): ReactElement {
-  const { width, height } = props
+  const { width, height } = props;
 
   return (
     <div className={classNames("skeleton")}>
@@ -21,10 +21,10 @@ export default function SharedSkeletonLoader(props: {
         `}
       </style>
     </div>
-  )
+  );
 }
 
 SharedSkeletonLoader.defaultProps = {
   width: 100,
   height: 24,
-}
+};

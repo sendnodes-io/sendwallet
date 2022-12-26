@@ -1,95 +1,95 @@
-import React, { ReactElement, useCallback, useState } from "react"
+import React, { ReactElement, useCallback, useState } from "react";
 import {
   selectCurrentAccount,
   selectCurrentAccountBalances,
   selectMainCurrencySymbol,
-} from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
+} from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
 import {
   NetworkFeeSettings,
   selectEstimatedFeesPerGas,
   setFeeType,
-} from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction"
+} from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction";
 import {
   FungibleAsset,
   isFungibleAssetAmount,
-} from "@sendnodes/pokt-wallet-background/assets"
-import { ETH } from "@sendnodes/pokt-wallet-background/constants"
+} from "@sendnodes/pokt-wallet-background/assets";
+import { ETH } from "@sendnodes/pokt-wallet-background/constants";
 import {
   convertFixedPointNumber,
   parseToFixedPointNumber,
-} from "@sendnodes/pokt-wallet-background/lib/fixed-point"
+} from "@sendnodes/pokt-wallet-background/lib/fixed-point";
 import {
   selectAssetPricePoint,
   transferAsset,
-} from "@sendnodes/pokt-wallet-background/redux-slices/assets"
-import { CompleteAssetAmount } from "@sendnodes/pokt-wallet-background/redux-slices/accounts"
-import { enrichAssetAmountWithMainCurrencyValues } from "@sendnodes/pokt-wallet-background/redux-slices/utils/asset-utils"
-import { useHistory, useLocation } from "react-router-dom"
-import classNames from "clsx"
-import NetworkSettingsChooser from "../NetworkFees/NetworkSettingsChooser"
-import SharedAssetInput from "../Shared/SharedAssetInput"
-import SharedBackButton from "../Shared/SharedBackButton"
-import SharedButton from "../Shared/SharedButton"
+} from "@sendnodes/pokt-wallet-background/redux-slices/assets";
+import { CompleteAssetAmount } from "@sendnodes/pokt-wallet-background/redux-slices/accounts";
+import { enrichAssetAmountWithMainCurrencyValues } from "@sendnodes/pokt-wallet-background/redux-slices/utils/asset-utils";
+import { useHistory, useLocation } from "react-router-dom";
+import classNames from "clsx";
+import NetworkSettingsChooser from "../NetworkFees/NetworkSettingsChooser";
+import SharedAssetInput from "../Shared/SharedAssetInput";
+import SharedBackButton from "../Shared/SharedBackButton";
+import SharedButton from "../Shared/SharedButton";
 import {
   useAddressOrNameValidation,
   useAreKeyringsUnlocked,
   useBackgroundDispatch,
   useBackgroundSelector,
-} from "../../hooks"
-import SharedSlideUpMenu from "../Shared/SharedSlideUpMenu"
-import FeeSettingsButton from "../NetworkFees/FeeSettingsButton"
-import SharedLoadingSpinner from "../Shared/SharedLoadingSpinner"
-import SharedInput from "../Shared/SharedInput"
-import SharedSplashScreen from "../Shared/SharedSplashScreen"
+} from "../../hooks";
+import SharedSlideUpMenu from "../Shared/SharedSlideUpMenu";
+import FeeSettingsButton from "../NetworkFees/FeeSettingsButton";
+import SharedLoadingSpinner from "../Shared/SharedLoadingSpinner";
+import SharedInput from "../Shared/SharedInput";
+import SharedSplashScreen from "../Shared/SharedSplashScreen";
 
 export default function Send(): ReactElement {
-  const location = useLocation<FungibleAsset>()
+  const location = useLocation<FungibleAsset>();
   const [selectedAsset, setSelectedAsset] = useState<FungibleAsset>(
-    location.state ?? ETH
-  )
+    location.state ?? ETH,
+  );
   const [destinationAddress, setDestinationAddress] = useState<
     string | undefined
-  >(undefined)
-  const [amount, setAmount] = useState("")
-  const [gasLimit, setGasLimit] = useState<bigint | undefined>(undefined)
+  >(undefined);
+  const [amount, setAmount] = useState("");
+  const [gasLimit, setGasLimit] = useState<bigint | undefined>(undefined);
   const [isSendingTransactionRequest, setIsSendingTransactionRequest] =
-    useState(false)
-  const [hasError, setHasError] = useState(false)
+    useState(false);
+  const [hasError, setHasError] = useState(false);
   const [networkSettingsModalOpen, setNetworkSettingsModalOpen] =
-    useState(false)
+    useState(false);
 
-  const history = useHistory()
+  const history = useHistory();
 
-  const dispatch = useBackgroundDispatch()
-  const estimatedFeesPerGas = useBackgroundSelector(selectEstimatedFeesPerGas)
-  const currentAccount = useBackgroundSelector(selectCurrentAccount)
-  const balanceData = useBackgroundSelector(selectCurrentAccountBalances)
-  const mainCurrencySymbol = useBackgroundSelector(selectMainCurrencySymbol)
+  const dispatch = useBackgroundDispatch();
+  const estimatedFeesPerGas = useBackgroundSelector(selectEstimatedFeesPerGas);
+  const currentAccount = useBackgroundSelector(selectCurrentAccount);
+  const balanceData = useBackgroundSelector(selectCurrentAccountBalances);
+  const mainCurrencySymbol = useBackgroundSelector(selectMainCurrencySymbol);
 
   const fungibleAssetAmounts =
     // Only look at fungible assets.
     balanceData?.assetAmounts?.filter(
       (assetAmount): assetAmount is CompleteAssetAmount<FungibleAsset> =>
-        isFungibleAssetAmount(assetAmount)
-    )
+        isFungibleAssetAmount(assetAmount),
+    );
   const assetPricePoint = useBackgroundSelector((state) =>
     selectAssetPricePoint(
       state.assets,
       selectedAsset.symbol,
-      mainCurrencySymbol
-    )
-  )
+      mainCurrencySymbol,
+    ),
+  );
 
   const assetAmountFromForm = () => {
-    const fixedPointAmount = parseToFixedPointNumber(amount.toString())
+    const fixedPointAmount = parseToFixedPointNumber(amount.toString());
     if (typeof fixedPointAmount === "undefined") {
-      return undefined
+      return undefined;
     }
 
     const decimalMatched = convertFixedPointNumber(
       fixedPointAmount,
-      selectedAsset.decimals
-    )
+      selectedAsset.decimals,
+    );
 
     return enrichAssetAmountWithMainCurrencyValues(
       {
@@ -97,20 +97,20 @@ export default function Send(): ReactElement {
         amount: decimalMatched.amount,
       },
       assetPricePoint,
-      2
-    )
-  }
+      2,
+    );
+  };
 
-  const assetAmount = assetAmountFromForm()
-  const areKeyringsUnlocked = useAreKeyringsUnlocked(true)
+  const assetAmount = assetAmountFromForm();
+  const areKeyringsUnlocked = useAreKeyringsUnlocked(true);
 
   const sendTransactionRequest = useCallback(async () => {
     if (assetAmount === undefined || destinationAddress === undefined) {
-      return
+      return;
     }
 
     try {
-      setIsSendingTransactionRequest(true)
+      setIsSendingTransactionRequest(true);
 
       dispatch(
         transferAsset({
@@ -121,13 +121,13 @@ export default function Send(): ReactElement {
           },
           assetAmount,
           gasLimit,
-        })
-      )
+        }),
+      );
     } finally {
-      setIsSendingTransactionRequest(false)
+      setIsSendingTransactionRequest(false);
     }
 
-    history.push("/sign-transaction")
+    history.push("/sign-transaction");
   }, [
     assetAmount,
     currentAccount,
@@ -135,22 +135,22 @@ export default function Send(): ReactElement {
     dispatch,
     gasLimit,
     history,
-  ])
+  ]);
 
   const networkSettingsSaved = (networkSetting: NetworkFeeSettings) => {
-    setGasLimit(networkSetting.gasLimit)
-    dispatch(setFeeType(networkSetting.feeType))
-    setNetworkSettingsModalOpen(false)
-  }
+    setGasLimit(networkSetting.gasLimit);
+    dispatch(setFeeType(networkSetting.feeType));
+    setNetworkSettingsModalOpen(false);
+  };
 
   const {
     errorMessage: addressErrorMessage,
     isValidating: addressIsValidating,
     handleInputChange: handleAddressChange,
-  } = useAddressOrNameValidation(setDestinationAddress)
+  } = useAddressOrNameValidation(setDestinationAddress);
 
   if (!areKeyringsUnlocked) {
-    return <SharedSplashScreen />
+    return <SharedSplashScreen />;
   }
 
   return (
@@ -173,7 +173,7 @@ export default function Send(): ReactElement {
                   aria-label="close"
                   className="icon_close"
                   onClick={() => {
-                    history.push("/")
+                    history.push("/");
                   }}
                 />
               </div>
@@ -189,13 +189,13 @@ export default function Send(): ReactElement {
               assetsAndAmounts={fungibleAssetAmounts}
               disableDropdown
               onAmountChange={(value, errorMessage) => {
-                setAmount(value)
+                setAmount(value);
                 if (errorMessage) {
-                  setHasError(true)
-                  return
+                  setHasError(true);
+                  return;
                 }
 
-                setHasError(false)
+                setHasError(false);
               }}
               selectedAsset={selectedAsset}
               amount={amount}
@@ -354,5 +354,5 @@ export default function Send(): ReactElement {
         </style>
       </div>
     </>
-  )
+  );
 }

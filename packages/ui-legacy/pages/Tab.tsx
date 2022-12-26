@@ -1,13 +1,13 @@
-import React, { ReactElement } from "react"
-import { Provider } from "react-redux"
-import { HashRouter, Redirect, Route, Switch } from "react-router-dom"
-import { Store } from "@0xbigboss/webext-redux"
-import { ErrorBoundary } from "react-error-boundary"
-import Ledger from "./Ledger/Ledger"
-import TabNotFound from "./TabNotFound"
-import pageList from "../routes/routes"
-import CorePopupPage from "../components/Core/CorePopupPage"
-import ErrorFallback from "./ErrorFallback"
+import React, { ReactElement } from "react";
+import { Provider } from "react-redux";
+import { HashRouter, Redirect, Route, Switch } from "react-router-dom";
+import { Store } from "@0xbigboss/webext-redux";
+import { ErrorBoundary } from "react-error-boundary";
+import Ledger from "./Ledger/Ledger";
+import TabNotFound from "./TabNotFound";
+import pageList from "../routes/routes";
+import CorePopupPage from "../components/Core/CorePopupPage";
+import ErrorFallback from "./ErrorFallback";
 
 /**
  * Entry point for UI shown in browser tabs.
@@ -34,7 +34,7 @@ export default function Tab({ store }: { store: Store }): ReactElement {
                   </ErrorBoundary>
                 </CorePopupPage>
               </Route>
-            )
+            );
           })}
           <Route path="/*">
             <CorePopupPage hasTopBar={false}>
@@ -46,5 +46,5 @@ export default function Tab({ store }: { store: Store }): ReactElement {
         </Switch>
       </HashRouter>
     </Provider>
-  )
+  );
 }

@@ -1,10 +1,10 @@
-import { FiatCurrency, FungibleAsset } from "../../assets"
-import { AddressOnNetwork } from "../../accounts"
-import { ServiceLifecycleEvents, ServiceCreatorFunction } from "../types"
+import { FiatCurrency, FungibleAsset } from "../../assets";
+import { AddressOnNetwork } from "../../accounts";
+import { ServiceLifecycleEvents, ServiceCreatorFunction } from "../types";
 
-import { Preferences, TokenListPreferences } from "./types"
-import { getOrCreateDB, PreferenceDatabase } from "./db"
-import BaseService from "../base"
+import { Preferences, TokenListPreferences } from "./types";
+import { getOrCreateDB, PreferenceDatabase } from "./db";
+import BaseService from "../base";
 
 export enum EventNames {
   PREFERENCES_CHANGES = "preferencesChanges",
@@ -13,9 +13,9 @@ export enum EventNames {
 }
 
 interface Events extends ServiceLifecycleEvents {
-  [EventNames.PREFERENCES_CHANGES]: Preferences
-  [EventNames.INITIALIZE_DEFAULT_WALLET]: boolean
-  [EventNames.SELECTED_ACCOUNT_CHANGED]: AddressOnNetwork
+  [EventNames.PREFERENCES_CHANGES]: Preferences;
+  [EventNames.INITIALIZE_DEFAULT_WALLET]: boolean;
+  [EventNames.SELECTED_ACCOUNT_CHANGED]: AddressOnNetwork;
 }
 
 /*
@@ -29,63 +29,63 @@ export default class PreferenceService extends BaseService<Events> {
    */
   static create: ServiceCreatorFunction<Events, PreferenceService, []> =
     async () => {
-      const db = await getOrCreateDB()
+      const db = await getOrCreateDB();
 
-      return new this(db)
-    }
+      return new this(db);
+    };
 
   private constructor(private db: PreferenceDatabase) {
-    super()
+    super();
   }
 
   protected async internalStartService(): Promise<void> {
-    await super.internalStartService()
+    await super.internalStartService();
 
     await this.emitter.emit(
       EventNames.INITIALIZE_DEFAULT_WALLET,
-      await this.getDefaultWallet()
-    )
+      await this.getDefaultWallet(),
+    );
     await this.emitter.emit(
       EventNames.SELECTED_ACCOUNT_CHANGED,
-      await this.getSelectedAccount()
-    )
+      await this.getSelectedAccount(),
+    );
   }
 
   protected async internalStopService(): Promise<void> {
-    this.db.close()
+    this.db.close();
 
-    await super.internalStopService()
+    await super.internalStopService();
   }
 
   async getCurrency(): Promise<FiatCurrency> {
-    return (await this.db.getPreferences())?.currency
+    return (await this.db.getPreferences())?.currency;
   }
 
   async getTokenListPreferences(): Promise<TokenListPreferences> {
-    return (await this.db.getPreferences())?.tokenLists
+    return (await this.db.getPreferences())?.tokenLists;
   }
 
   async getDefaultWallet(): Promise<boolean> {
-    return (await this.db.getPreferences())?.defaultWallet
+    return (await this.db.getPreferences())?.defaultWallet;
   }
 
   async setDefaultWalletValue(newDefaultWalletValue: boolean): Promise<void> {
-    return this.db.setDefaultWalletValue(newDefaultWalletValue)
+    return this.db.setDefaultWalletValue(newDefaultWalletValue);
   }
 
   async getSelectedAccount(): Promise<AddressOnNetwork> {
-    return (await this.db.getPreferences())?.selectedAccount
+    return (await this.db.getPreferences())?.selectedAccount;
   }
 
   async setSelectedAccount(addressNetwork: AddressOnNetwork): Promise<void> {
-    await this.db.setSelectedAccount(addressNetwork)
+    await this.db.setSelectedAccount(addressNetwork);
     this.emitter.emit(
       EventNames.SELECTED_ACCOUNT_CHANGED,
-      await this.getSelectedAccount()
-    )
+      await this.getSelectedAccount(),
+    );
   }
 
   async getDefaultCustomAssets(): Promise<FungibleAsset[]> {
-    return (await this.db.getPreferences())?.customAssets
+    return (await this.db.getPreferences())?.customAssets;
   }
 }

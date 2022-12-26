@@ -1,43 +1,43 @@
-import React, { ReactElement } from "react"
+import React, { ReactElement } from "react";
 import {
   AnyAsset,
   AnyAssetAmount,
-} from "@sendnodes/pokt-wallet-background/assets"
-import SharedAssetIcon from "./SharedAssetIcon"
+} from "@sendnodes/pokt-wallet-background/assets";
+import SharedAssetIcon from "./SharedAssetIcon";
 
 export type AnyAssetWithOptionalAmount<T extends AnyAsset> =
   | {
-      asset: T
+      asset: T;
     }
   | {
-      asset: T
-      amount: bigint
-      localizedDecimalAmount: string
-    }
+      asset: T;
+      amount: bigint;
+      localizedDecimalAmount: string;
+    };
 
 export function hasAmounts<T extends AnyAsset>(
-  assetWithOptionalAmount: AnyAssetWithOptionalAmount<T>
+  assetWithOptionalAmount: AnyAssetWithOptionalAmount<T>,
 ): assetWithOptionalAmount is AnyAssetAmount<T> & {
-  localizedDecimalAmount: string
+  localizedDecimalAmount: string;
 } {
   // The types on AnyAssetWithOptionalAmount ensures that if amount exists, so
   // does localizedDecimalAmount.
-  return "amount" in assetWithOptionalAmount
+  return "amount" in assetWithOptionalAmount;
 }
 
 interface Props<T extends AnyAsset> {
-  assetAndAmount: AnyAssetWithOptionalAmount<T>
-  onClick?: (asset: T) => void
+  assetAndAmount: AnyAssetWithOptionalAmount<T>;
+  onClick?: (asset: T) => void;
 }
 
 export default function SharedAssetItem<T extends AnyAsset>(
-  props: Props<T>
+  props: Props<T>,
 ): ReactElement {
-  const { onClick, assetAndAmount } = props
-  const { asset } = assetAndAmount
+  const { onClick, assetAndAmount } = props;
+  const { asset } = assetAndAmount;
 
   function handleClick() {
-    onClick?.(asset)
+    onClick?.(asset);
   }
 
   return (
@@ -133,5 +133,5 @@ export default function SharedAssetItem<T extends AnyAsset>(
         `}
       </style>
     </li>
-  )
+  );
 }

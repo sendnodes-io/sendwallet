@@ -1,11 +1,11 @@
-import React, { ReactElement } from "react"
-import LedgerPanelContainer from "../../components/Ledger/LedgerPanelContainer"
-import SharedButton from "../../components/Shared/SharedButton"
+import React, { ReactElement } from "react";
+import LedgerPanelContainer from "../../components/Ledger/LedgerPanelContainer";
+import SharedButton from "../../components/Shared/SharedButton";
 
 export default function LedgerImportDone({
   onClose,
 }: {
-  onClose: () => void
+  onClose: () => void;
 }): ReactElement {
   return (
     <LedgerPanelContainer
@@ -38,5 +38,5 @@ export default function LedgerImportDone({
         }
       `}</style>
     </LedgerPanelContainer>
-  )
+  );
 }

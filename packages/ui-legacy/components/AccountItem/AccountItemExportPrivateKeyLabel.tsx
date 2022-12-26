@@ -1,9 +1,9 @@
-import classNames from "clsx"
-import React, { ReactElement } from "react"
-import { Icon } from "@iconify/react"
+import classNames from "clsx";
+import React, { ReactElement } from "react";
+import { Icon } from "@iconify/react";
 
 interface ExportPrivateKeyProps {
-  hoverable?: boolean
+  hoverable?: boolean;
 }
 
 export default function ExportPrivateKeyLabel({
@@ -36,8 +36,8 @@ export default function ExportPrivateKeyLabel({
           }
         `}</style>
     </div>
-  )
+  );
 }
 ExportPrivateKeyLabel.defaultProps = {
   hoverable: false,
-}
+};

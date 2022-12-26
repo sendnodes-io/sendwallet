@@ -1,28 +1,28 @@
-import { RefObject, useEffect, useRef, useState } from "react"
+import { RefObject, useEffect, useRef, useState } from "react";
 
 export const useOnClickOutside = <T extends HTMLElement = HTMLElement>(
   ref: RefObject<T>,
-  handler: (event: MouseEvent | TouchEvent) => void
+  handler: (event: MouseEvent | TouchEvent) => void,
 ): void => {
   useEffect(() => {
     const listener = (event: MouseEvent | TouchEvent) => {
-      const el = ref?.current
+      const el = ref?.current;
       if (!el || el.contains((event?.target as Node) || null)) {
-        return
+        return;
       }
 
-      handler(event) // Call the handler only if the click is outside of the element passed.
-    }
+      handler(event); // Call the handler only if the click is outside of the element passed.
+    };
 
-    document.addEventListener("mousedown", listener)
-    document.addEventListener("touchstart", listener)
+    document.addEventListener("mousedown", listener);
+    document.addEventListener("touchstart", listener);
 
     return () => {
-      document.removeEventListener("mousedown", listener)
-      document.removeEventListener("touchstart", listener)
-    }
-  }, [ref, handler]) // Reload only if ref or handler changes
-}
+      document.removeEventListener("mousedown", listener);
+      document.removeEventListener("touchstart", listener);
+    };
+  }, [ref, handler]); // Reload only if ref or handler changes
+};
 
 /**
  * Hook that takes any piece of content that at times may need to be updated in
@@ -51,51 +51,51 @@ export const useOnClickOutside = <T extends HTMLElement = HTMLElement>(
 export function useDelayContentChange<T>(
   storedContent: T,
   delayCondition: boolean,
-  delayMs: number
+  delayMs: number,
 ): T {
-  const [delayedContent, setDelayedContent] = useState(storedContent)
-  const delayedContentUpdateTimeout = useRef<number | undefined>(undefined)
+  const [delayedContent, setDelayedContent] = useState(storedContent);
+  const delayedContentUpdateTimeout = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     if (typeof delayedContentUpdateTimeout.current !== "undefined") {
-      clearTimeout(delayedContentUpdateTimeout.current)
+      clearTimeout(delayedContentUpdateTimeout.current);
     }
 
     // If the delay condition is true, update the display element after
     // delayMs. Otherwise, update it immediately.
     if (delayCondition) {
       delayedContentUpdateTimeout.current = window.setTimeout(() => {
-        setDelayedContent(storedContent)
-        delayedContentUpdateTimeout.current = undefined
-      }, delayMs)
+        setDelayedContent(storedContent);
+        delayedContentUpdateTimeout.current = undefined;
+      }, delayMs);
     } else {
-      setDelayedContent(storedContent)
+      setDelayedContent(storedContent);
     }
     return () => {
       if (typeof delayedContentUpdateTimeout.current !== "undefined") {
-        clearTimeout(delayedContentUpdateTimeout.current)
+        clearTimeout(delayedContentUpdateTimeout.current);
       }
-    }
-  }, [delayCondition, delayMs, storedContent])
+    };
+  }, [delayCondition, delayMs, storedContent]);
 
   if (!delayCondition) {
-    return storedContent
+    return storedContent;
   }
 
-  return delayedContent
+  return delayedContent;
 }
 
 export function useLocalStorage(
   key: string,
-  initialValue: string
+  initialValue: string,
 ): [string, React.Dispatch<React.SetStateAction<string>>] {
   const [value, setValue] = useState(() => {
-    return localStorage.getItem(key) || initialValue
-  })
+    return localStorage.getItem(key) || initialValue;
+  });
 
   useEffect(() => {
-    localStorage.setItem(key, value)
-  }, [key, value])
+    localStorage.setItem(key, value);
+  }, [key, value]);
 
-  return [value, setValue]
+  return [value, setValue];
 }

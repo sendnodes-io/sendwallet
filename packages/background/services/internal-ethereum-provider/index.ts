@@ -1,36 +1,36 @@
-import { TransactionRequest as EthersTransactionRequest } from "@ethersproject/abstract-provider"
-import { serialize as serializeEthersTransaction } from "@ethersproject/transactions"
+import { TransactionRequest as EthersTransactionRequest } from "@ethersproject/abstract-provider";
+import { serialize as serializeEthersTransaction } from "@ethersproject/transactions";
 
 import {
   EIP1193Error,
   EIP1193_ERROR_CODES,
   RPCRequest,
-} from "@sendnodes/provider-bridge-shared"
-import logger from "../../lib/logger"
+} from "@sendnodes/provider-bridge-shared";
+import logger from "../../lib/logger";
 
-import BaseService from "../base"
-import { ServiceCreatorFunction, ServiceLifecycleEvents } from "../types"
-import ChainService from "../chain"
+import BaseService from "../base";
+import { ServiceCreatorFunction, ServiceLifecycleEvents } from "../types";
+import ChainService from "../chain";
 import {
   EIP1559TransactionRequest,
   NetworkFamily,
   SignedEVMTransaction,
   SignedPOKTTransaction,
-} from "../../networks"
+} from "../../networks";
 import {
   eip1559TransactionRequestFromEthersTransactionRequest,
   ethersTransactionFromSignedTransaction,
-} from "../chain/utils"
-import PreferenceService from "../preferences"
-import { internalEthereumProviderPort } from "../../redux-slices/utils/contract-utils"
+} from "../chain/utils";
+import PreferenceService from "../preferences";
+import { internalEthereumProviderPort } from "../../redux-slices/utils/contract-utils";
 
 import {
   SignTypedDataRequest,
   SignDataRequest,
   parseSigningData,
-} from "../../utils/signing"
-import { hexToAscii } from "../../lib/utils"
-import { ETHEREUM } from "../../constants"
+} from "../../utils/signing";
+import { hexToAscii } from "../../lib/utils";
+import { ETHEREUM } from "../../constants";
 
 // A type representing the transaction requests that come in over JSON-RPC
 // requests like eth_sendTransaction and eth_signTransaction. These are very
@@ -44,28 +44,28 @@ import { ETHEREUM } from "../../constants"
 // rather than `input` when used as a JSON-RPC client, and expects it as the
 // `EthersTransactionRequest` field for that info.
 type JsonRpcTransactionRequest = Omit<EthersTransactionRequest, "gasLimit"> & {
-  gas?: string
-  input?: string
-}
+  gas?: string;
+  input?: string;
+};
 
 type DAppRequestEvent<T, E> = {
-  payload: T
-  resolver: (result: E | PromiseLike<E>) => void
-  rejecter: () => void
-}
+  payload: T;
+  resolver: (result: E | PromiseLike<E>) => void;
+  rejecter: () => void;
+};
 
 type Events = ServiceLifecycleEvents & {
   transactionSignatureRequest: DAppRequestEvent<
     Partial<EIP1559TransactionRequest> & { from: string },
     SignedEVMTransaction
-  >
-  signTypedDataRequest: DAppRequestEvent<SignTypedDataRequest, string>
-  signDataRequest: DAppRequestEvent<SignDataRequest, string>
+  >;
+  signTypedDataRequest: DAppRequestEvent<SignTypedDataRequest, string>;
+  signDataRequest: DAppRequestEvent<SignDataRequest, string>;
   // connect
   // disconnet
   // account change
   // networkchange
-}
+};
 
 export default class InternalEthereumProviderService extends BaseService<Events> {
   static create: ServiceCreatorFunction<
@@ -73,47 +73,47 @@ export default class InternalEthereumProviderService extends BaseService<Events>
     InternalEthereumProviderService,
     [Promise<ChainService>, Promise<PreferenceService>]
   > = async (chainService, preferenceService) => {
-    return new this(await chainService, await preferenceService)
-  }
+    return new this(await chainService, await preferenceService);
+  };
 
   private constructor(
     private chainService: ChainService,
-    private preferenceService: PreferenceService
+    private preferenceService: PreferenceService,
   ) {
-    super()
+    super();
 
     internalEthereumProviderPort.emitter.on("message", async (event) => {
-      logger.log(`internal: request payload: ${JSON.stringify(event)}`)
+      logger.log(`internal: request payload: ${JSON.stringify(event)}`);
       try {
         const response = {
           id: event.id,
           result: await this.routeSafeRPCRequest(
             event.request.method,
-            event.request.params
+            event.request.params,
           ),
-        }
-        logger.log("internal response:", response)
+        };
+        logger.log("internal response:", response);
 
-        internalEthereumProviderPort.postResponse(response)
+        internalEthereumProviderPort.postResponse(response);
       } catch (error) {
-        logger.error("error processing request", event.id, error)
+        logger.error("error processing request", event.id, error);
 
         internalEthereumProviderPort.postResponse({
           id: event.id,
           result: new EIP1193Error(
-            EIP1193_ERROR_CODES.userRejectedRequest
+            EIP1193_ERROR_CODES.userRejectedRequest,
           ).toJSON(),
-        })
+        });
       }
-    })
+    });
   }
 
   async routeSafeRPCRequest(
     method: string,
-    params: RPCRequest["params"]
+    params: RPCRequest["params"],
   ): Promise<unknown> {
     const { address, network } =
-      await this.preferenceService.getSelectedAccount()
+      await this.preferenceService.getSelectedAccount();
 
     switch (method) {
       // supported alchemy methods: https://docs.alchemy.com/alchemy/apis/ethereum
@@ -124,9 +124,9 @@ export default class InternalEthereumProviderService extends BaseService<Events>
         return this.signTypedData({
           account: params[0] as string,
           typedData: JSON.parse(params[1] as string),
-        })
+        });
       case "eth_chainId":
-        return `0x${BigInt(network.chainID).toString(16)}`
+        return `0x${BigInt(network.chainID).toString(16)}`;
       case "eth_blockNumber":
       case "eth_call":
       case "eth_estimateGas":
@@ -166,44 +166,48 @@ export default class InternalEthereumProviderService extends BaseService<Events>
       case "net_version":
       case "web3_clientVersion":
       case "web3_sha3":
-        return this.chainService.send(method, params, network)
+        return this.chainService.send(method, params, network);
       case "eth_accounts": {
-        return [address]
+        return [address];
       }
       case "eth_sendTransaction":
         return this.signTransaction(
-          params[0] as JsonRpcTransactionRequest
+          params[0] as JsonRpcTransactionRequest,
         ).then(async (sig) => {
-          const signed = sig as SignedEVMTransaction
-          await this.chainService.broadcastSignedTransaction(signed)
-          return signed.hash
-        })
+          const signed = sig as SignedEVMTransaction;
+          await this.chainService.broadcastSignedTransaction(signed);
+          return signed.hash;
+        });
       case "eth_signTransaction":
         return this.signTransaction(
-          params[0] as JsonRpcTransactionRequest
+          params[0] as JsonRpcTransactionRequest,
         ).then((signed) => {
-          const signedTransaction = signed as SignedEVMTransaction
+          const signedTransaction = signed as SignedEVMTransaction;
           return serializeEthersTransaction(
             ethersTransactionFromSignedTransaction(signedTransaction),
             {
               r: signedTransaction.r,
               s: signedTransaction.s,
               v: signedTransaction.v,
-            }
-          )
-        })
-      case "eth_sign": // --- important wallet methods ---
+            },
+          );
+        });
+      case "eth_sign":
+      // --- important wallet methods ---
       case "personal_sign":
         return this.signData({
           hexData: params[0] as string,
           account: params[1] as string,
-        })
-      case "metamask_getProviderState": // --- important MM only methods ---
+        });
+      case "metamask_getProviderState":
+      // --- important MM only methods ---
       case "metamask_sendDomainMetadata":
       case "wallet_requestPermissions":
       case "wallet_watchAsset":
-      case "estimateGas": // --- eip1193-bridge only method --
-      case "eth_coinbase": // --- MM only methods ---
+      case "estimateGas":
+      // --- eip1193-bridge only method --
+      case "eth_coinbase":
+      // --- MM only methods ---
       case "eth_decrypt":
       case "eth_getEncryptionPublicKey":
       case "eth_getWork":
@@ -222,7 +226,7 @@ export default class InternalEthereumProviderService extends BaseService<Events>
       case "wallet_registerOnboarding":
       case "wallet_switchEthereumChain":
       default:
-        throw new EIP1193Error(EIP1193_ERROR_CODES.unsupportedMethod)
+        throw new EIP1193Error(EIP1193_ERROR_CODES.unsupportedMethod);
     }
   }
 
@@ -236,10 +240,10 @@ export default class InternalEthereumProviderService extends BaseService<Events>
         data: transactionRequest.input,
         ...transactionRequest,
         gasLimit: transactionRequest.gas, // convert gas -> gasLimit
-      })
+      });
 
     if (typeof from === "undefined") {
-      throw new Error("Transactions must have a from address for signing.")
+      throw new Error("Transactions must have a from address for signing.");
     }
 
     return new Promise<SignedEVMTransaction | SignedPOKTTransaction>(
@@ -251,9 +255,9 @@ export default class InternalEthereumProviderService extends BaseService<Events>
           },
           resolver: resolve,
           rejecter: reject,
-        })
-      }
-    )
+        });
+      },
+    );
   }
 
   private async signTypedData(params: SignTypedDataRequest) {
@@ -262,19 +266,19 @@ export default class InternalEthereumProviderService extends BaseService<Events>
         payload: params,
         resolver: resolve,
         rejecter: reject,
-      })
-    })
+      });
+    });
   }
 
   private async signData({
     hexData,
     account,
   }: {
-    hexData: string
-    account: string
+    hexData: string;
+    account: string;
   }) {
-    const asciiData = hexToAscii(hexData)
-    const { data, type } = parseSigningData(asciiData)
+    const asciiData = hexToAscii(hexData);
+    const { data, type } = parseSigningData(asciiData);
 
     return new Promise<string>((resolve, reject) => {
       this.emitter.emit("signDataRequest", {
@@ -286,7 +290,7 @@ export default class InternalEthereumProviderService extends BaseService<Events>
         },
         resolver: resolve,
         rejecter: reject,
-      })
-    })
+      });
+    });
   }
 }

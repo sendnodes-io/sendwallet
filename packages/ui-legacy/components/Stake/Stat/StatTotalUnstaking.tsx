@@ -1,40 +1,42 @@
-import React from "react"
-import { BigNumber, formatFixed } from "@ethersproject/bignumber"
-import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts"
-import { FungibleAsset } from "@sendnodes/pokt-wallet-background/assets"
-import { SnAction, useStakingUserData } from "../../../hooks/staking-hooks"
-import formatTokenAmount from "../../../utils/formatTokenAmount"
-import SharedLoadingSpinner from "../../Shared/SharedLoadingSpinner"
-import useStakingPendingTransactions from "../../../hooks/staking-hooks/use-staking-pending-transactions"
-import useAssetInMainCurrency from "../../../hooks/assets/use-asset-in-main-currency"
+import React from "react";
+import { BigNumber, formatFixed } from "@ethersproject/bignumber";
+import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts";
+import { FungibleAsset } from "@sendnodes/pokt-wallet-background/assets";
+import { SnAction, useStakingUserData } from "../../../hooks/staking-hooks";
+import formatTokenAmount from "../../../utils/formatTokenAmount";
+import SharedLoadingSpinner from "../../Shared/SharedLoadingSpinner";
+import useStakingPendingTransactions from "../../../hooks/staking-hooks/use-staking-pending-transactions";
+import useAssetInMainCurrency from "../../../hooks/assets/use-asset-in-main-currency";
 
 export default function StatTotalUnstaking({
   aon,
   asset,
 }: {
-  aon: AddressOnNetwork
-  asset: FungibleAsset
+  aon: AddressOnNetwork;
+  asset: FungibleAsset;
 }) {
   const pendingUnstakeTransactions = useStakingPendingTransactions().filter(
-    (activity) => activity !== null && activity.action === SnAction.UNSTAKE
-  )
+    (activity) => activity !== null && activity.action === SnAction.UNSTAKE,
+  );
 
-  const { data, isLoading } = useStakingUserData(aon)
+  const { data, isLoading } = useStakingUserData(aon);
   const amount = BigNumber.from(
-    data?.userStakingData[0]?.pendingUnstaked ?? 0
+    data?.userStakingData[0]?.pendingUnstaked ?? 0,
   ).add(
     pendingUnstakeTransactions.reduce((pendingUnstaked, transaction) => {
-      return pendingUnstaked.add(BigNumber.from(transaction.memo.split(":")[1]))
-    }, BigNumber.from(0))
-  )
-  const fixedAmount = formatFixed(amount, asset.decimals)
+      return pendingUnstaked.add(
+        BigNumber.from(transaction.memo.split(":")[1]),
+      );
+    }, BigNumber.from(0)),
+  );
+  const fixedAmount = formatFixed(amount, asset.decimals);
 
   const amountInMainCurrency = useAssetInMainCurrency({
     assetAmount: {
       amount: amount.toBigInt(),
       asset,
     },
-  })
+  });
 
   return (
     <div
@@ -61,5 +63,5 @@ export default function StatTotalUnstaking({
         </div>
       </div>
     </div>
-  )
+  );
 }

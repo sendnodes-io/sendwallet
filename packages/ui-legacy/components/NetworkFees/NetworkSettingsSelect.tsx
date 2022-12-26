@@ -1,53 +1,53 @@
-import { BlockEstimate } from "@sendnodes/pokt-wallet-background/networks"
+import { BlockEstimate } from "@sendnodes/pokt-wallet-background/networks";
 import {
   EstimatedFeesPerGas,
   NetworkFeeSettings,
   NetworkFeeTypeChosen,
   selectLastGasEstimatesRefreshTime,
-} from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction"
-import { ESTIMATED_FEE_MULTIPLIERS } from "@sendnodes/pokt-wallet-background/constants/network-fees"
-import { selectMainCurrencyPricePoint } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
-import React, { ReactElement, useCallback, useEffect, useState } from "react"
-import { weiToGwei } from "@sendnodes/pokt-wallet-background/lib/utils"
-import { ETH } from "@sendnodes/pokt-wallet-background/constants"
-import { PricePoint } from "@sendnodes/pokt-wallet-background/assets"
-import { enrichAssetAmountWithMainCurrencyValues } from "@sendnodes/pokt-wallet-background/redux-slices/utils/asset-utils"
-import { SharedTypedInput } from "../Shared/SharedInput"
-import { useBackgroundSelector } from "../../hooks"
-import capitalize from "../../utils/capitalize"
+} from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction";
+import { ESTIMATED_FEE_MULTIPLIERS } from "@sendnodes/pokt-wallet-background/constants/network-fees";
+import { selectMainCurrencyPricePoint } from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
+import React, { ReactElement, useCallback, useEffect, useState } from "react";
+import { weiToGwei } from "@sendnodes/pokt-wallet-background/lib/utils";
+import { ETH } from "@sendnodes/pokt-wallet-background/constants";
+import { PricePoint } from "@sendnodes/pokt-wallet-background/assets";
+import { enrichAssetAmountWithMainCurrencyValues } from "@sendnodes/pokt-wallet-background/redux-slices/utils/asset-utils";
+import { SharedTypedInput } from "../Shared/SharedInput";
+import { useBackgroundSelector } from "../../hooks";
+import capitalize from "../../utils/capitalize";
 
 interface NetworkSettingsSelectProps {
-  estimatedFeesPerGas: EstimatedFeesPerGas | undefined
-  networkSettings: NetworkFeeSettings
-  onNetworkSettingsChange: (newSettings: NetworkFeeSettings) => void
+  estimatedFeesPerGas: EstimatedFeesPerGas | undefined;
+  networkSettings: NetworkFeeSettings;
+  onNetworkSettingsChange: (newSettings: NetworkFeeSettings) => void;
 }
 
 type GasOption = {
-  confidence: string
-  type: NetworkFeeTypeChosen
-  estimatedGwei: string
-  maxGwei: string
-  dollarValue: string
-  price: bigint
-  estimatedFeePerGas: bigint
-  maxFeePerGas: bigint
-  maxPriorityFeePerGas: bigint
-}
+  confidence: string;
+  type: NetworkFeeTypeChosen;
+  estimatedGwei: string;
+  maxGwei: string;
+  dollarValue: string;
+  price: bigint;
+  estimatedFeePerGas: bigint;
+  maxFeePerGas: bigint;
+  maxPriorityFeePerGas: bigint;
+};
 
 // Map a BlockEstimate from the backend to a GasOption for the UI.
 const gasOptionFromEstimate = (
   mainCurrencyPricePoint: PricePoint | undefined,
   baseFeePerGas: bigint,
   gasLimit: bigint | undefined,
-  { confidence, price, maxFeePerGas, maxPriorityFeePerGas }: BlockEstimate
+  { confidence, price, maxFeePerGas, maxPriorityFeePerGas }: BlockEstimate,
 ): GasOption => {
   const feeOptionData: {
-    [confidence: number]: NetworkFeeTypeChosen
+    [confidence: number]: NetworkFeeTypeChosen;
   } = {
     70: NetworkFeeTypeChosen.Regular,
     95: NetworkFeeTypeChosen.Express,
     99: NetworkFeeTypeChosen.Instant,
-  }
+  };
 
   const feeAssetAmount =
     typeof gasLimit !== "undefined"
@@ -57,16 +57,16 @@ const gasOptionFromEstimate = (
             amount: (maxFeePerGas + maxPriorityFeePerGas) * gasLimit,
           },
           mainCurrencyPricePoint,
-          2
+          2,
         )
-      : undefined
-  const dollarValue = feeAssetAmount?.localizedMainCurrencyAmount
+      : undefined;
+  const dollarValue = feeAssetAmount?.localizedMainCurrencyAmount;
 
   return {
     confidence: `${confidence}`,
     type: feeOptionData[confidence],
     estimatedGwei: weiToGwei(
-      (baseFeePerGas * ESTIMATED_FEE_MULTIPLIERS[confidence]) / 10n
+      (baseFeePerGas * ESTIMATED_FEE_MULTIPLIERS[confidence]) / 10n,
     ).split(".")[0],
     maxGwei: weiToGwei(maxFeePerGas).split(".")[0],
     dollarValue: dollarValue ? `${dollarValue}` : "-",
@@ -75,25 +75,25 @@ const gasOptionFromEstimate = (
     price,
     maxFeePerGas,
     maxPriorityFeePerGas,
-  }
-}
+  };
+};
 
 function EstimateRefreshCountdownDivider() {
-  const [timeRemaining, setTimeRemaining] = useState(0)
-  const gasTime = useBackgroundSelector(selectLastGasEstimatesRefreshTime)
+  const [timeRemaining, setTimeRemaining] = useState(0);
+  const gasTime = useBackgroundSelector(selectLastGasEstimatesRefreshTime);
 
   const getSecondsTillGasUpdate = useCallback(() => {
-    const now = Date.now()
-    setTimeRemaining(Number((120 - (now - gasTime) / 1000).toFixed()))
-  }, [gasTime])
+    const now = Date.now();
+    setTimeRemaining(Number((120 - (now - gasTime) / 1000).toFixed()));
+  }, [gasTime]);
 
   useEffect(() => {
-    getSecondsTillGasUpdate()
-    const interval = setTimeout(getSecondsTillGasUpdate, 1000)
+    getSecondsTillGasUpdate();
+    const interval = setTimeout(getSecondsTillGasUpdate, 1000);
     return () => {
-      clearTimeout(interval)
-    }
-  })
+      clearTimeout(interval);
+    };
+  });
 
   return (
     <div className="divider">
@@ -103,7 +103,7 @@ function EstimateRefreshCountdownDivider() {
         style={{ left: -384 + (384 - timeRemaining * (384 / 120)) }}
       />
     </div>
-  )
+  );
 }
 
 export default function NetworkSettingsSelect({
@@ -112,15 +112,15 @@ export default function NetworkSettingsSelect({
   networkSettings,
   onNetworkSettingsChange,
 }: NetworkSettingsSelectProps): ReactElement {
-  const [gasOptions, setGasOptions] = useState<GasOption[]>([])
-  const [activeFeeIndex, setActiveFeeIndex] = useState(0)
+  const [gasOptions, setGasOptions] = useState<GasOption[]>([]);
+  const [activeFeeIndex, setActiveFeeIndex] = useState(0);
   const [currentlySelectedType, setCurrentlySelectedType] = useState(
-    networkSettings.feeType
-  )
+    networkSettings.feeType,
+  );
 
   const mainCurrencyPricePoint = useBackgroundSelector(
-    selectMainCurrencyPricePoint
-  )
+    selectMainCurrencyPricePoint,
+  );
 
   // Select activeFeeIndex to regular option once gasOptions load
   useEffect(() => {
@@ -133,7 +133,7 @@ export default function NetworkSettingsSelect({
         },
         gasLimit: networkSettings.gasLimit,
         suggestedGasLimit: networkSettings.suggestedGasLimit,
-      })
+      });
     }
   }, [
     gasOptions,
@@ -141,11 +141,11 @@ export default function NetworkSettingsSelect({
     onNetworkSettingsChange,
     networkSettings.gasLimit,
     networkSettings.suggestedGasLimit,
-  ])
+  ]);
 
   const handleSelectGasOption = (index: number) => {
-    setActiveFeeIndex(index)
-    setCurrentlySelectedType(gasOptions[index].type)
+    setActiveFeeIndex(index);
+    setCurrentlySelectedType(gasOptions[index].type);
     onNetworkSettingsChange({
       feeType: gasOptions[index].type,
       values: {
@@ -154,38 +154,38 @@ export default function NetworkSettingsSelect({
       },
       gasLimit: networkSettings.gasLimit,
       suggestedGasLimit: networkSettings.suggestedGasLimit,
-    })
-  }
+    });
+  };
 
   const updateGasOptions = useCallback(() => {
     if (typeof estimatedFeesPerGas !== "undefined") {
-      const { regular, express, instant } = estimatedFeesPerGas ?? {}
+      const { regular, express, instant } = estimatedFeesPerGas ?? {};
       const gasLimit =
-        networkSettings.gasLimit ?? networkSettings.suggestedGasLimit
+        networkSettings.gasLimit ?? networkSettings.suggestedGasLimit;
 
       if (
         typeof instant !== "undefined" &&
         typeof express !== "undefined" &&
         typeof regular !== "undefined"
       ) {
-        const basePrices = [regular, express, instant]
+        const basePrices = [regular, express, instant];
 
         const updatedGasOptions = basePrices.map((option) =>
           gasOptionFromEstimate(
             mainCurrencyPricePoint,
             estimatedFeesPerGas.baseFeePerGas,
             gasLimit,
-            option
-          )
-        )
+            option,
+          ),
+        );
         const selectedGasFeeIndex = updatedGasOptions.findIndex(
-          (el) => el.type === currentlySelectedType
-        )
+          (el) => el.type === currentlySelectedType,
+        );
         const currentlySelectedFeeIndex =
-          selectedGasFeeIndex === -1 ? 0 : selectedGasFeeIndex
+          selectedGasFeeIndex === -1 ? 0 : selectedGasFeeIndex;
 
-        setGasOptions(updatedGasOptions)
-        setActiveFeeIndex(currentlySelectedFeeIndex)
+        setGasOptions(updatedGasOptions);
+        setActiveFeeIndex(currentlySelectedFeeIndex);
       }
     }
   }, [
@@ -194,15 +194,15 @@ export default function NetworkSettingsSelect({
     networkSettings.gasLimit,
     mainCurrencyPricePoint,
     currentlySelectedType,
-  ])
+  ]);
 
   useEffect(() => {
-    updateGasOptions()
-  }, [updateGasOptions])
+    updateGasOptions();
+  }, [updateGasOptions]);
 
   const setGasLimit = (gasLimit: bigint | undefined) => {
-    onNetworkSettingsChange({ ...networkSettings, gasLimit })
-  }
+    onNetworkSettingsChange({ ...networkSettings, gasLimit });
+  };
 
   return (
     <div className="fees standard_width">
@@ -227,7 +227,7 @@ export default function NetworkSettingsSelect({
               <div className="subtext">{option.dollarValue}</div>
             </div>
           </button>
-        )
+        );
       })}
       <div className="info">
         <div className="limit">
@@ -238,19 +238,19 @@ export default function NetworkSettingsSelect({
             onChange={setGasLimit}
             parseAndValidate={(value) => {
               if (value.trim() === "") {
-                return { parsed: undefined }
+                return { parsed: undefined };
               }
               try {
-                const parsed = BigInt(value)
+                const parsed = BigInt(value);
                 if (parsed < 0n) {
                   return {
                     error: "Gas Limit must be greater than 0",
-                  }
+                  };
                 }
 
-                return { parsed }
+                return { parsed };
               } catch (e) {
-                return { error: "Gas Limit must be a number" }
+                return { error: "Gas Limit must be a number" };
               }
             }}
             label="Gas limit"
@@ -339,5 +339,5 @@ export default function NetworkSettingsSelect({
         `}
       </style>
     </div>
-  )
+  );
 }

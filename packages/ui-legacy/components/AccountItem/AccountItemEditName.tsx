@@ -1,19 +1,19 @@
 import {
   AccountTotal,
   selectCurrentAccount,
-} from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
-import { HexString } from "@sendnodes/pokt-wallet-background/types"
-import { updateName } from "@sendnodes/pokt-wallet-background/redux-slices/accounts"
-import React, { ReactElement, useEffect, useState } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import SharedButton from "../Shared/SharedButton"
-import SharedInput from "../Shared/SharedInput"
-import SharedAccountItemSummary from "../Shared/SharedAccountItemSummary"
+} from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
+import { HexString } from "@sendnodes/pokt-wallet-background/types";
+import { updateName } from "@sendnodes/pokt-wallet-background/redux-slices/accounts";
+import React, { ReactElement, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import SharedButton from "../Shared/SharedButton";
+import SharedInput from "../Shared/SharedInput";
+import SharedAccountItemSummary from "../Shared/SharedAccountItemSummary";
 
 interface AccountItemEditNameProps {
-  account: AccountTotal
-  address: HexString
-  close: () => void
+  account: AccountTotal;
+  address: HexString;
+  close: () => void;
 }
 
 export default function AccountItemEditName({
@@ -21,15 +21,15 @@ export default function AccountItemEditName({
   address,
   close,
 }: AccountItemEditNameProps): ReactElement {
-  const currentAccount = useSelector(selectCurrentAccount)
-  const [name, setName] = useState(account.name)
-  const [error, setError] = useState("")
-  const dispatch = useDispatch()
+  const currentAccount = useSelector(selectCurrentAccount);
+  const [name, setName] = useState(account.name);
+  const [error, setError] = useState("");
+  const dispatch = useDispatch();
 
   const accountPreview = {
     ...account,
-  }
-  if (name) accountPreview.name = name
+  };
+  if (name) accountPreview.name = name;
 
   return (
     <div className="remove_address_option">
@@ -43,16 +43,16 @@ export default function AccountItemEditName({
       </ul>
       <form
         onSubmit={(e) => {
-          e.preventDefault()
+          e.preventDefault();
           if (error === "") {
             dispatch(
               updateName({
                 address,
                 network: currentAccount.network,
                 name: name || "",
-              })
-            )
-            close()
+              }),
+            );
+            close();
           }
         }}
       >
@@ -63,11 +63,11 @@ export default function AccountItemEditName({
             value={name}
             onChange={(val) => {
               if (name && name?.length > 50) {
-                setError("Name is too long")
+                setError("Name is too long");
               } else {
-                setError("")
+                setError("");
               }
-              setName(val)
+              setName(val);
             }}
             label="Name"
             placeholder={account.defaultName}
@@ -107,5 +107,5 @@ export default function AccountItemEditName({
         }
       `}</style>
     </div>
-  )
+  );
 }

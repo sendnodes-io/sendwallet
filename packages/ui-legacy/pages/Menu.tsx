@@ -1,21 +1,21 @@
-import React, { ReactElement } from "react"
-import { useDispatch, useSelector } from "react-redux"
+import React, { ReactElement } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   setNewDefaultWalletValue,
   selectDefaultWallet,
   selectHideDust,
   toggleHideDust,
-} from "@sendnodes/pokt-wallet-background/redux-slices/ui"
-import browser from "webextension-polyfill"
-import SharedButton from "../components/Shared/SharedButton"
-import SharedToggleButton from "../components/Shared/SharedToggleButton"
-import t from "../utils/i18n"
+} from "@sendnodes/pokt-wallet-background/redux-slices/ui";
+import browser from "webextension-polyfill";
+import SharedButton from "../components/Shared/SharedButton";
+import SharedToggleButton from "../components/Shared/SharedToggleButton";
+import t from "../utils/i18n";
 
 function SettingRow(props: {
-  title: string
-  component: () => ReactElement
+  title: string;
+  component: () => ReactElement;
 }): ReactElement {
-  const { title, component } = props
+  const { title, component } = props;
 
   return (
     <li>
@@ -38,20 +38,20 @@ function SettingRow(props: {
         `}
       </style>
     </li>
-  )
+  );
 }
 
 export default function Menu(): ReactElement {
-  const dispatch = useDispatch()
-  const hideDust = useSelector(selectHideDust)
-  const defaultWallet = useSelector(selectDefaultWallet)
+  const dispatch = useDispatch();
+  const hideDust = useSelector(selectHideDust);
+  const defaultWallet = useSelector(selectDefaultWallet);
 
   const toggleHideDustAssets = (toggleValue: boolean) => {
-    dispatch(toggleHideDust(toggleValue))
-  }
+    dispatch(toggleHideDust(toggleValue));
+  };
   const toggleDefaultWallet = (defaultWalletValue: boolean) => {
-    dispatch(setNewDefaultWalletValue(defaultWalletValue))
-  }
+    dispatch(setNewDefaultWalletValue(defaultWalletValue));
+  };
   const settings = {
     general: [
       {
@@ -75,7 +75,7 @@ export default function Menu(): ReactElement {
       //   ),
       // },
     ],
-  }
+  };
 
   return (
     <>
@@ -100,14 +100,14 @@ export default function Menu(): ReactElement {
             iconSize="large"
             iconPosition="left"
             onClick={() => {
-              window.open(`https://discord.gg/TmfYqaXzGb`, "_blank")?.focus()
+              window.open("https://discord.gg/TmfYqaXzGb", "_blank")?.focus();
             }}
           >
             Join and give feedback
           </SharedButton>
         </div>
         <div className="version">
-          Version: {browser.runtime.getManifest()?.version ?? `<unknown>`}
+          Version: {browser.runtime.getManifest()?.version ?? "<unknown>"}
         </div>
       </section>
       <style jsx>
@@ -177,5 +177,5 @@ export default function Menu(): ReactElement {
         `}
       </style>
     </>
-  )
+  );
 }

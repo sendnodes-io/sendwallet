@@ -1,17 +1,17 @@
-import React, { ReactElement } from "react"
-import { useDispatch } from "react-redux"
-import { selectCurrentAccount } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
-import { setSnackbarMessage } from "@sendnodes/pokt-wallet-background/redux-slices/ui"
-import QRCode from "react-qr-code"
-import { useBackgroundSelector } from "../hooks"
-import SharedButton from "../components/Shared/SharedButton"
+import React, { ReactElement } from "react";
+import { useDispatch } from "react-redux";
+import { selectCurrentAccount } from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
+import { setSnackbarMessage } from "@sendnodes/pokt-wallet-background/redux-slices/ui";
+import QRCode from "react-qr-code";
+import { useBackgroundSelector } from "../hooks";
+import SharedButton from "../components/Shared/SharedButton";
 
 export default function Receive(): ReactElement {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const currentAccount: { address: string } =
-    useBackgroundSelector(selectCurrentAccount)
-  if (!currentAccount) return <></>
+    useBackgroundSelector(selectCurrentAccount);
+  if (!currentAccount) return <></>;
 
   return (
     <section>
@@ -32,13 +32,13 @@ export default function Receive(): ReactElement {
           iconSize="large"
           type="primary"
           onClick={() => {
-            navigator.clipboard.writeText(currentAccount.address)
-            dispatch(setSnackbarMessage("Copied!"))
+            navigator.clipboard.writeText(currentAccount.address);
+            dispatch(setSnackbarMessage("Copied!"));
           }}
         >
           {`${currentAccount.address.slice(
             0,
-            7
+            7,
           )}...${currentAccount.address.slice(-6)}`}
         </SharedButton>
       </div>
@@ -101,5 +101,5 @@ export default function Receive(): ReactElement {
         `}
       </style>
     </section>
-  )
+  );
 }

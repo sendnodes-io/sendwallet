@@ -1,20 +1,20 @@
-import { BigNumber } from "ethers"
+import { BigNumber } from "ethers";
 import {
   Block as EthersBlock,
   TransactionReceipt as EthersTransactionReceipt,
   TransactionRequest as EthersTransactionRequest,
-} from "@ethersproject/abstract-provider"
-import dayjs from "dayjs"
-import * as utc from "dayjs/plugin/utc"
+} from "@ethersproject/abstract-provider";
+import dayjs from "dayjs";
+import * as utc from "dayjs/plugin/utc";
 
-import { Transaction as EthersTransaction } from "@ethersproject/transactions"
+import { Transaction as EthersTransaction } from "@ethersproject/transactions";
 import {
   Transaction as PoktTransaction,
   MsgProtoSend as PoktMsgSend,
   Block as PoktBlock,
-} from "@pokt-network/pocket-js/dist/index"
-import { Transaction as PoktHDKeyringTransactionRequest } from "@sendnodes/hd-keyring/dist/wallet"
-import { normalizeAddress } from "../../lib/utils"
+} from "@pokt-network/pocket-js/dist/index";
+import { Transaction as PoktHDKeyringTransactionRequest } from "@sendnodes/hd-keyring/dist/wallet";
+import { normalizeAddress } from "../../lib/utils";
 import {
   AnyEVMTransaction,
   AnyPOKTTransaction,
@@ -29,28 +29,28 @@ import {
   POKTTransactionRPCRequest,
   POKTMsgType,
   POKTSkinnyBlock,
-} from "../../networks"
-import { USE_MAINNET_FORK } from "../../features/features"
-import { FORK, POCKET } from "../../constants"
-import { BASE_POKT_FEE } from "../../constants/network-fees"
+} from "../../networks";
+import { USE_MAINNET_FORK } from "../../features/features";
+import { FORK, POCKET } from "../../constants";
+import { BASE_POKT_FEE } from "../../constants/network-fees";
 
-dayjs.extend(utc.default)
+dayjs.extend(utc.default);
 
 export type POKTWatchBlock = {
-  height: number
-  time: string
-  proposer: string
-  relays: number
-  timestamp: string
-  txs: number
-}
+  height: number;
+  time: string;
+  proposer: string;
+  relays: number;
+  timestamp: string;
+  txs: number;
+};
 
 /**
  * Parse a block as returned by a polling provider.
  */
 export function blockFromEthersBlock(
   network: EVMNetwork,
-  gethResult: EthersBlock
+  gethResult: EthersBlock,
 ): AnyEVMBlock {
   return {
     hash: gethResult.hash,
@@ -66,7 +66,7 @@ export function blockFromEthersBlock(
     timestamp: gethResult.timestamp,
     baseFeePerGas: gethResult.baseFeePerGas?.toBigInt(),
     network,
-  }
+  };
 }
 
 /**
@@ -74,16 +74,16 @@ export function blockFromEthersBlock(
  */
 export function blockFromWebsocketBlock(
   network: EVMNetwork,
-  incomingGethResult: unknown
+  incomingGethResult: unknown,
 ): AnyEVMBlock {
   const gethResult = incomingGethResult as {
-    hash: string
-    number: string
-    parentHash: string
-    difficulty: string
-    timestamp: string
-    baseFeePerGas?: string
-  }
+    hash: string;
+    number: string;
+    parentHash: string;
+    difficulty: string;
+    timestamp: string;
+    baseFeePerGas?: string;
+  };
 
   return {
     hash: gethResult.hash,
@@ -95,7 +95,7 @@ export function blockFromWebsocketBlock(
       ? BigInt(gethResult.baseFeePerGas)
       : undefined,
     network,
-  }
+  };
 }
 
 /**
@@ -103,17 +103,17 @@ export function blockFromWebsocketBlock(
  */
 export function blockFromPoktBlock(
   network: POKTNetwork,
-  result: PoktBlock | POKTWatchBlock
+  result: PoktBlock | POKTWatchBlock,
 ): POKTBlock | POKTSkinnyBlock {
   if (typeof (result as PoktBlock).toJSON === "function") {
-    const parsed = (result as PoktBlock).toJSON()
+    const parsed = (result as PoktBlock).toJSON();
     return {
       header: parsed.header,
       network,
       timestamp: dayjs.utc(parsed.header.time).unix(),
-    }
+    };
   }
-  result = result as POKTWatchBlock
+  result = result as POKTWatchBlock;
   return {
     header: {
       height: result.height,
@@ -123,11 +123,11 @@ export function blockFromPoktBlock(
     },
     network,
     timestamp: dayjs.utc(result.timestamp).unix(),
-  }
+  };
 }
 
 export function poktHDKeyringTransactionRequestFromPoktTransactionRequest(
-  transaction: POKTTransactionRequest
+  transaction: POKTTransactionRequest,
 ): PoktHDKeyringTransactionRequest {
   const {
     txMsg: {
@@ -138,12 +138,16 @@ export function poktHDKeyringTransactionRequestFromPoktTransactionRequest(
     fee,
     feeDenom,
     memo,
-  } = transaction
+  } = transaction;
 
   // TODO: v1
   // For now transaction.txMsg.type is always POKTMsgType.send
   // When we support more msg types we will need to do a switch case here
-  const send = new PoktMsgSend(value.fromAddress, value.toAddress, value.amount)
+  const send = new PoktMsgSend(
+    value.fromAddress,
+    value.toAddress,
+    value.amount,
+  );
 
   return {
     txMsg: send,
@@ -151,13 +155,13 @@ export function poktHDKeyringTransactionRequestFromPoktTransactionRequest(
     fee,
     feeDenom: feeDenom || undefined,
     memo: memo || undefined,
-  }
+  };
 }
 
 export function poktTransactionRequestFromPoktTransactionRPCRequest(
-  transaction: POKTTransactionRPCRequest
+  transaction: POKTTransactionRPCRequest,
 ): POKTTransactionRequest {
-  const { amount, from, to, fee, memo } = transaction
+  const { amount, from, to, fee, memo } = transaction;
 
   return {
     txMsg: {
@@ -174,11 +178,11 @@ export function poktTransactionRequestFromPoktTransactionRPCRequest(
     from,
     to,
     memo,
-  }
+  };
 }
 
 export function ethersTransactionRequestFromEIP1559TransactionRequest(
-  transaction: EIP1559TransactionRequest
+  transaction: EIP1559TransactionRequest,
 ): EthersTransactionRequest {
   return {
     to: transaction.to,
@@ -191,11 +195,11 @@ export function ethersTransactionRequestFromEIP1559TransactionRequest(
     gasLimit: transaction.gasLimit,
     maxFeePerGas: transaction.maxFeePerGas,
     maxPriorityFeePerGas: transaction.maxPriorityFeePerGas,
-  }
+  };
 }
 
 export function eip1559TransactionRequestFromEthersTransactionRequest(
-  transaction: EthersTransactionRequest
+  transaction: EthersTransactionRequest,
 ): Partial<EIP1559TransactionRequest> {
   // TODO What to do if transaction is not EIP1559?
   return {
@@ -224,11 +228,11 @@ export function eip1559TransactionRequestFromEthersTransactionRequest(
       typeof transaction.maxPriorityFeePerGas !== "undefined"
         ? BigInt(transaction.maxPriorityFeePerGas.toString())
         : undefined,
-  }
+  };
 }
 
 export function ethersTransactionFromSignedTransaction(
-  tx: SignedEVMTransaction
+  tx: SignedEVMTransaction,
 ): EthersTransaction {
   const baseTx = {
     nonce: Number(tx.nonce),
@@ -243,14 +247,14 @@ export function ethersTransactionFromSignedTransaction(
     chainId: parseInt(USE_MAINNET_FORK ? FORK.chainID : tx.network.chainID, 10),
     value: BigNumber.from(tx.value),
     gasLimit: BigNumber.from(tx.gasLimit),
-  }
+  };
 
   return {
     ...baseTx,
     r: tx.r,
     s: tx.s,
     v: tx.v,
-  }
+  };
 }
 
 /**
@@ -258,9 +262,9 @@ export function ethersTransactionFromSignedTransaction(
  */
 export function enrichTransactionWithReceipt(
   transaction: AnyEVMTransaction,
-  receipt: EthersTransactionReceipt
+  receipt: EthersTransactionReceipt,
 ): ConfirmedEVMTransaction {
-  const gasUsed = receipt.gasUsed.toBigInt()
+  const gasUsed = receipt.gasUsed.toBigInt();
 
   return {
     ...transaction,
@@ -278,7 +282,7 @@ export function enrichTransactionWithReceipt(
       (gasUsed === transaction.gasLimit ? 0 : 1),
     blockHash: receipt.blockHash,
     blockHeight: receipt.blockNumber,
-  }
+  };
 }
 
 /**
@@ -286,18 +290,18 @@ export function enrichTransactionWithReceipt(
  */
 export function transactionFromEthersTransaction(
   tx: EthersTransaction & {
-    from: string
-    blockHash?: string
-    blockNumber?: number
-    type?: number | null
+    from: string;
+    blockHash?: string;
+    blockNumber?: number;
+    type?: number | null;
   },
-  network: EVMNetwork
+  network: EVMNetwork,
 ): AnyEVMTransaction {
   if (tx.hash === undefined) {
-    throw Error("Malformed transaction")
+    throw Error("Malformed transaction");
   }
   if (tx.type !== 0 && tx.type !== 1 && tx.type !== 2) {
-    throw Error(`Unknown transaction type ${tx.type}`)
+    throw Error(`Unknown transaction type ${tx.type}`);
   }
 
   const newTx = {
@@ -318,7 +322,7 @@ export function transactionFromEthersTransaction(
     blockHeight: tx.blockNumber || null,
     network,
     asset: network.baseAsset,
-  } as const // narrow types for compatiblity with our internal ones
+  } as const; // narrow types for compatiblity with our internal ones
 
   if (tx.r && tx.s && tx.v) {
     const signedTx: SignedEVMTransaction = {
@@ -326,10 +330,10 @@ export function transactionFromEthersTransaction(
       r: tx.r,
       s: tx.s,
       v: tx.v,
-    }
-    return signedTx
+    };
+    return signedTx;
   }
-  return newTx
+  return newTx;
 }
 
 /**
@@ -338,17 +342,17 @@ export function transactionFromEthersTransaction(
 export function transactionFromPoktTransaction(
   tx: PoktTransaction,
   network: POKTNetwork,
-  targetHeight?: number
+  targetHeight?: number,
 ): AnyPOKTTransaction {
   if (tx.hash === undefined) {
-    throw Error("Malformed transaction")
+    throw Error("Malformed transaction");
   }
 
   if (Number(tx.height.toString()) === 0 && !targetHeight) {
-    throw Error("Pending txs require a targetHeight")
+    throw Error("Pending txs require a targetHeight");
   }
 
-  const stdTx = tx.stdTx.toJSON()
+  const stdTx = tx.stdTx.toJSON();
   const newTx = {
     hash: tx.hash,
     height: Number(tx.height.toString()),
@@ -363,7 +367,7 @@ export function transactionFromPoktTransaction(
     network,
     asset: network.baseAsset,
     memo: stdTx.memo,
-  } as const // narrow types for compatiblity with our internal ones
+  } as const; // narrow types for compatiblity with our internal ones
 
-  return newTx
+  return newTx;
 }

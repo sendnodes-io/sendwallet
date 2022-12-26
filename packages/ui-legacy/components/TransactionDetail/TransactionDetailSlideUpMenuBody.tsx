@@ -1,56 +1,56 @@
 import {
   EVMActivityItem,
   POKTActivityItem,
-} from "@sendnodes/pokt-wallet-background/redux-slices/activities"
-import React, { ReactElement, useCallback, useState } from "react"
+} from "@sendnodes/pokt-wallet-background/redux-slices/activities";
+import React, { ReactElement, useCallback, useState } from "react";
 import {
   selectBlockExplorerForTxHash,
   selectCurrentAccountActivityForTxHash,
-} from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
-import classNames from "clsx"
-import TransactionSendDetail from "./TransactionSendDetail"
-import SharedButton from "../Shared/SharedButton"
-import { useBackgroundSelector } from "../../hooks"
-import useStakingAllTransactions from "../../hooks/staking-hooks/use-staking-all-transactions"
-import StakeTransactionInfo from "../Stake/StakeTransactionInfo"
-import WalletStakeTransactionSendDetail from "../Wallet/WalletStakeTransactionSendDetail"
+} from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
+import classNames from "clsx";
+import TransactionSendDetail from "./TransactionSendDetail";
+import SharedButton from "../Shared/SharedButton";
+import { useBackgroundSelector } from "../../hooks";
+import useStakingAllTransactions from "../../hooks/staking-hooks/use-staking-all-transactions";
+import StakeTransactionInfo from "../Stake/StakeTransactionInfo";
+import WalletStakeTransactionSendDetail from "../Wallet/WalletStakeTransactionSendDetail";
 
 export type TransactionDetailSlideUpMenuBodyProps = {
-  activity: POKTActivityItem | EVMActivityItem
-}
+  activity: POKTActivityItem | EVMActivityItem;
+};
 
 export default function TransactionDetailSlideUpMenuBody({
   activity,
 }: TransactionDetailSlideUpMenuBodyProps): ReactElement {
-  const { data: allStakingTransactions } = useStakingAllTransactions()
+  const { data: allStakingTransactions } = useStakingAllTransactions();
 
   const stakingTransaction = allStakingTransactions.find(
-    (tx) => tx.hash === activity.hash
-  )
+    (tx) => tx.hash === activity.hash,
+  );
   const blockExplorerUrl = useBackgroundSelector((_) =>
     selectBlockExplorerForTxHash({
       network: activity.network,
       txHash: activity.hash,
-    })
-  )
+    }),
+  );
   const openExplorer = useCallback(() => {
-    window.open(blockExplorerUrl, "_blank")?.focus()
-  }, [blockExplorerUrl])
+    window.open(blockExplorerUrl, "_blank")?.focus();
+  }, [blockExplorerUrl]);
 
   const currentActivity = useBackgroundSelector((state) =>
-    selectCurrentAccountActivityForTxHash(state, activity.hash)
-  )
+    selectCurrentAccountActivityForTxHash(state, activity.hash),
+  );
 
-  const [showUtcTimestamp, setShowUtcTimestamp] = useState(false)
+  const [showUtcTimestamp, setShowUtcTimestamp] = useState(false);
 
   if (!currentActivity) {
-    return <></>
+    return <></>;
   }
 
   const memo =
-    currentActivity.network.family == "POKT" && !stakingTransaction
+    currentActivity.network.family === "POKT" && !stakingTransaction
       ? (currentActivity as POKTActivityItem).memo
-      : null
+      : null;
 
   return (
     <div className="tx_detail_wrap">
@@ -133,7 +133,7 @@ export default function TransactionDetailSlideUpMenuBody({
       </div>
       <div className="buttons">
         <SharedButton type="primaryGhost" size="medium" onClick={openExplorer}>
-          {activity.network.family == "POKT" ? "POKT Watch" : "Etherscan"}
+          {activity.network.family === "POKT" ? "POKT Watch" : "Etherscan"}
         </SharedButton>
       </div>
       <style jsx>
@@ -173,5 +173,5 @@ export default function TransactionDetailSlideUpMenuBody({
         `}
       </style>
     </div>
-  )
+  );
 }

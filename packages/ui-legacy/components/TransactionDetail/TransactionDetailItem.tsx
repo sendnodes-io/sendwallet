@@ -1,14 +1,14 @@
-import classNames from "clsx"
-import React, { ReactElement, ReactNode } from "react"
+import classNames from "clsx";
+import React, { ReactElement, ReactNode } from "react";
 
 export default function TransactionDetailItem({
   name,
   value,
   type = "inline",
 }: {
-  name: ReactNode
-  value: ReactNode
-  type?: "block" | "inline"
+  name: ReactNode;
+  value: ReactNode;
+  type?: "block" | "inline";
 }): ReactElement {
   return (
     <div className={classNames("container", type)}>
@@ -40,5 +40,5 @@ export default function TransactionDetailItem({
         }
       `}</style>
     </div>
-  )
+  );
 }

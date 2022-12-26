@@ -1,20 +1,20 @@
-import React, { ReactElement } from "react"
+import React, { ReactElement } from "react";
 
-import { AccountTotal } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
+import { AccountTotal } from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
 
-import formatTokenAmount from "../../utils/formatTokenAmount"
-import { useBackgroundDispatch } from "../../hooks"
-import SharedAddress from "./SharedAddress"
+import formatTokenAmount from "../../utils/formatTokenAmount";
+import { useBackgroundDispatch } from "../../hooks";
+import SharedAddress from "./SharedAddress";
 
 interface Props {
-  isSelected?: boolean
-  accountTotal: AccountTotal
-  children?: React.ReactNode
+  isSelected?: boolean;
+  accountTotal: AccountTotal;
+  children?: React.ReactNode;
 }
 
 export default function SharedAccountItemSummary(props: Props): ReactElement {
-  const dispatch = useBackgroundDispatch()
-  const { isSelected, accountTotal, children } = props
+  const dispatch = useBackgroundDispatch();
+  const { isSelected, accountTotal, children } = props;
   const {
     shortenedAddress,
     name,
@@ -24,9 +24,9 @@ export default function SharedAccountItemSummary(props: Props): ReactElement {
     address,
     network,
     networkTokenAmount,
-  } = accountTotal
+  } = accountTotal;
 
-  const nameOrDefaultName = name || defaultName
+  const nameOrDefaultName = name || defaultName;
   return (
     <div className="wrap">
       <div className="summary">
@@ -139,9 +139,9 @@ export default function SharedAccountItemSummary(props: Props): ReactElement {
         `}
       </style>
     </div>
-  )
+  );
 }
 
 SharedAccountItemSummary.defaultProps = {
   isSelected: false,
-}
+};

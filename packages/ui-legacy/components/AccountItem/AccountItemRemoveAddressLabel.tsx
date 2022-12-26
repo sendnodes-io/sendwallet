@@ -1,8 +1,8 @@
-import classNames from "clsx"
-import React, { ReactElement } from "react"
+import classNames from "clsx";
+import React, { ReactElement } from "react";
 
 interface RemoveAddressProps {
-  hoverable?: boolean
+  hoverable?: boolean;
 }
 
 export default function RemoveAddressLabel({
@@ -40,8 +40,8 @@ export default function RemoveAddressLabel({
           }
         `}</style>
     </div>
-  )
+  );
 }
 RemoveAddressLabel.defaultProps = {
   hoverable: false,
-}
+};

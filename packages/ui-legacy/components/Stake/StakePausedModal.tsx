@@ -1,14 +1,14 @@
-import React, { Fragment, useState } from "react"
-import { Dialog, Transition } from "@headlessui/react"
-import { Icon } from "@iconify/react"
-import { XIcon } from "@heroicons/react/outline"
+import React, { Fragment, useState } from "react";
+import { Dialog, Transition } from "@headlessui/react";
+import { Icon } from "@iconify/react";
+import { XIcon } from "@heroicons/react/outline";
 
 export default function StakePausedModal({
   open,
   setOpen,
 }: {
-  open: boolean
-  setOpen: (open: boolean) => void
+  open: boolean;
+  setOpen: (open: boolean) => void;
 }) {
   return (
     <Transition.Root show={open} as={Fragment}>
@@ -16,7 +16,7 @@ export default function StakePausedModal({
         as="div"
         className="relative z-10"
         onClose={() => {
-          setOpen(false)
+          setOpen(false);
         }}
       >
         <Transition.Child
@@ -50,8 +50,8 @@ export default function StakePausedModal({
                         type="button"
                         className="rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-aqua focus:ring-offset-aqua"
                         onClick={(e) => {
-                          e.preventDefault()
-                          setOpen(false)
+                          e.preventDefault();
+                          setOpen(false);
                         }}
                       >
                         <span className="sr-only">Close</span>
@@ -113,5 +113,5 @@ export default function StakePausedModal({
         </div>
       </Dialog>
     </Transition.Root>
-  )
+  );
 }

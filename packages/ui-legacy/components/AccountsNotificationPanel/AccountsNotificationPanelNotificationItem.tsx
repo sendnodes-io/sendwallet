@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react"
+import React, { ReactElement } from "react";
 
 export default function NotificationItem(): ReactElement {
   return (
@@ -41,5 +41,5 @@ export default function NotificationItem(): ReactElement {
         }
       `}</style>
     </li>
-  )
+  );
 }

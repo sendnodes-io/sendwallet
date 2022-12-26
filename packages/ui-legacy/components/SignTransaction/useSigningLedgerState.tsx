@@ -1,5 +1,5 @@
-import { SigningMethod } from "@sendnodes/pokt-wallet-background/utils/signing"
-import { useBackgroundSelector } from "../../hooks"
+import { SigningMethod } from "@sendnodes/pokt-wallet-background/utils/signing";
+import { useBackgroundSelector } from "../../hooks";
 
 export type SigningLedgerState =
   | {
@@ -7,39 +7,39 @@ export type SigningLedgerState =
         | "no-ledger-connected"
         | "wrong-ledger-connected"
         | "busy"
-        | "multiple-ledgers-connected"
+        | "multiple-ledgers-connected";
     }
-  | { state: "available"; arbitraryDataEnabled: boolean }
+  | { state: "available"; arbitraryDataEnabled: boolean };
 
 export function useSigningLedgerState(
-  signingMethod: SigningMethod | null
+  signingMethod: SigningMethod | null,
 ): SigningLedgerState | null {
   return useBackgroundSelector((state) => {
-    if (signingMethod?.type !== "ledger") return null
+    if (signingMethod?.type !== "ledger") return null;
 
-    const { deviceID } = signingMethod
+    const { deviceID } = signingMethod;
 
     const connectedDevices = Object.values(state.ledger.devices).filter(
-      (device) => device.status !== "disconnected"
-    )
-    if (connectedDevices.length === 0) return { state: "no-ledger-connected" }
+      (device) => device.status !== "disconnected",
+    );
+    if (connectedDevices.length === 0) return { state: "no-ledger-connected" };
     if (state.ledger.usbDeviceCount > 1)
-      return { state: "multiple-ledgers-connected" }
+      return { state: "multiple-ledgers-connected" };
 
-    const device = state.ledger.devices[deviceID]
+    const device = state.ledger.devices[deviceID];
 
     switch (device.status) {
       case "available":
         return {
           state: "available",
           arbitraryDataEnabled: device?.isArbitraryDataSigningEnabled ?? false,
-        }
+        };
       case "busy":
-        return { state: "busy" }
+        return { state: "busy" };
       case "disconnected":
-        return { state: "wrong-ledger-connected" }
+        return { state: "wrong-ledger-connected" };
       default:
-        throw new Error("unreachable")
+        throw new Error("unreachable");
     }
-  })
+  });
 }

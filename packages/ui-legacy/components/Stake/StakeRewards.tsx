@@ -1,20 +1,20 @@
-import React, { ReactElement, useState } from "react"
-import { selectCurrentAccount } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
+import React, { ReactElement, useState } from "react";
+import { selectCurrentAccount } from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
 
-import { InformationCircleIcon } from "@heroicons/react/outline"
+import { InformationCircleIcon } from "@heroicons/react/outline";
 
-import { groupBy, isEqual, last, reduce, uniqBy } from "lodash"
-import clsx from "clsx"
-import { Link } from "react-router-dom"
+import { groupBy, isEqual, last, reduce, uniqBy } from "lodash";
+import clsx from "clsx";
+import { Link } from "react-router-dom";
 
-import { BigNumber, formatFixed } from "@ethersproject/bignumber"
+import { BigNumber, formatFixed } from "@ethersproject/bignumber";
 
-import dayjs from "dayjs"
-import * as relativeTime from "dayjs/plugin/relativeTime"
-import * as updateLocale from "dayjs/plugin/updateLocale"
-import * as localizedFormat from "dayjs/plugin/localizedFormat"
-import * as utc from "dayjs/plugin/utc"
-import * as isSameOrBefore from "dayjs/plugin/isSameOrBefore"
+import dayjs from "dayjs";
+import * as relativeTime from "dayjs/plugin/relativeTime";
+import * as updateLocale from "dayjs/plugin/updateLocale";
+import * as localizedFormat from "dayjs/plugin/localizedFormat";
+import * as utc from "dayjs/plugin/utc";
+import * as isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 
 import {
   Chart as ChartJS,
@@ -28,19 +28,19 @@ import {
   ChartDataset,
   ChartData,
   ChartOptions,
-} from "chart.js"
-import { Line } from "react-chartjs-2"
-import { SnAction, useStakingUserData } from "../../hooks/staking-hooks"
-import SharedSplashScreen from "../Shared/SharedSplashScreen"
-import { useBackgroundSelector, useAreKeyringsUnlocked } from "../../hooks"
-import StakeToggleCompounding from "./StakeToggleCompounding"
-import StatAPY from "./Stat/StatAPY"
-import StatTotalStaked from "./Stat/StatTotalStaked"
-import StatTotalUpcomingRewards from "./Stat/StatTotalUpcomingRewards"
-import StatTotalRewards from "./Stat/StatTotalRewards"
-import useStakingPoktParams from "../../hooks/staking-hooks/use-staking-pokt-params"
-import useStakingRewardsTransactions from "../../hooks/staking-hooks/use-staking-rewards-transactions"
-import useStakingRequestsTransactions from "../../hooks/staking-hooks/use-staking-requests-transactions"
+} from "chart.js";
+import { Line } from "react-chartjs-2";
+import { SnAction, useStakingUserData } from "../../hooks/staking-hooks";
+import SharedSplashScreen from "../Shared/SharedSplashScreen";
+import { useBackgroundSelector, useAreKeyringsUnlocked } from "../../hooks";
+import StakeToggleCompounding from "./StakeToggleCompounding";
+import StatAPY from "./Stat/StatAPY";
+import StatTotalStaked from "./Stat/StatTotalStaked";
+import StatTotalUpcomingRewards from "./Stat/StatTotalUpcomingRewards";
+import StatTotalRewards from "./Stat/StatTotalRewards";
+import useStakingPoktParams from "../../hooks/staking-hooks/use-staking-pokt-params";
+import useStakingRewardsTransactions from "../../hooks/staking-hooks/use-staking-rewards-transactions";
+import useStakingRequestsTransactions from "../../hooks/staking-hooks/use-staking-requests-transactions";
 
 ChartJS.register(
   CategoryScale,
@@ -49,44 +49,44 @@ ChartJS.register(
   LineElement,
   Title,
   Tooltip,
-  Legend
-)
+  Legend,
+);
 
-dayjs.extend(updateLocale.default)
-dayjs.extend(localizedFormat.default)
-dayjs.extend(relativeTime.default)
-dayjs.extend(utc.default)
-dayjs.extend(isSameOrBefore.default)
+dayjs.extend(updateLocale.default);
+dayjs.extend(localizedFormat.default);
+dayjs.extend(relativeTime.default);
+dayjs.extend(utc.default);
+dayjs.extend(isSameOrBefore.default);
 
 export default function StakeRewards(): ReactElement {
-  const areKeyringsUnlocked = useAreKeyringsUnlocked(true)
-  const currentAccount = useBackgroundSelector(selectCurrentAccount, isEqual)
+  const areKeyringsUnlocked = useAreKeyringsUnlocked(true);
+  const currentAccount = useBackgroundSelector(selectCurrentAccount, isEqual);
   const {
     data: stakingPoktParams,
     isLoading: isStakingParamsLoading,
     isError: isStakingParamsError,
-  } = useStakingPoktParams()
+  } = useStakingPoktParams();
   const {
     data: rewardsTransactions,
     isLoading: isRewardsTransactionsLoading,
     isError: isRewardsTransactionsError,
-  } = useStakingRewardsTransactions()
+  } = useStakingRewardsTransactions();
   const {
     data: stakingTransactions,
     isLoading: isStakingTransactionsLoading,
     isError: isStakingTransactionsError,
-  } = useStakingRequestsTransactions()
+  } = useStakingRequestsTransactions();
 
   const {
     data: stakingUserData,
     isLoading: isStakingUserDataLoading,
     isError: isStakingUserDataError,
-  } = useStakingUserData(currentAccount)
+  } = useStakingUserData(currentAccount);
 
-  if (isStakingParamsError) throw isStakingParamsError
-  if (isStakingUserDataError) throw isStakingUserDataError
-  if (isRewardsTransactionsError) throw isRewardsTransactionsError
-  if (isStakingTransactionsError) throw isStakingTransactionsError
+  if (isStakingParamsError) throw isStakingParamsError;
+  if (isStakingUserDataError) throw isStakingUserDataError;
+  if (isRewardsTransactionsError) throw isRewardsTransactionsError;
+  if (isStakingTransactionsError) throw isStakingTransactionsError;
 
   if (
     !areKeyringsUnlocked ||
@@ -99,106 +99,110 @@ export default function StakeRewards(): ReactElement {
       <div className="grow w-full relative flex flex-col justify-center items-center">
         <SharedSplashScreen />
       </div>
-    )
+    );
   }
 
   const allTransactions = uniqBy(
     [
       ...[...(stakingTransactions ?? []), ...(rewardsTransactions ?? [])].sort(
         (a, b) => {
-          return dayjs.utc(a.timestamp).unix() - dayjs.utc(b.timestamp).unix()
-        }
+          return dayjs.utc(a.timestamp).unix() - dayjs.utc(b.timestamp).unix();
+        },
       ),
     ],
-    (tx) => tx.hash
-  )
+    (tx) => tx.hash,
+  );
 
   const txsByDate = groupBy(allTransactions, (transaction) => {
-    return dayjs.utc(transaction.timestamp).format("YYYY-MM-DD")
-  })
+    return dayjs.utc(transaction.timestamp).format("YYYY-MM-DD");
+  });
 
-  const endDate = dayjs.utc(last(allTransactions)?.timestamp)
-  const startDate = dayjs.utc(allTransactions[0]?.timestamp)
+  const endDate = dayjs.utc(last(allTransactions)?.timestamp);
+  const startDate = dayjs.utc(allTransactions[0]?.timestamp);
 
   const cummRewardsDataset = {
     label: "Total Rewards",
     data: [],
     borderColor: "rgb(51, 184, 255)",
     backgroundColor: "rgba(51, 184, 255, 0.5)",
-  } as ChartDataset<"line", number[]>
+  } as ChartDataset<"line", number[]>;
   const dailyRewardsDataset = {
     label: "Daily Rewards",
     data: [],
     borderColor: "rgb(51, 184, 255)",
     backgroundColor: "rgba(51, 184, 255, 0.5)",
-  } as ChartDataset<"line", number[]>
+  } as ChartDataset<"line", number[]>;
   const stakedDataset = {
     label: "Staked",
     data: [],
     borderColor: "rgb(51, 255, 255)",
     backgroundColor: "rgba(51, 255, 255, 0.5)",
-  } as ChartDataset<"line", number[]>
+  } as ChartDataset<"line", number[]>;
   const unstakedDataset = {
     label: "Unstaked",
     data: [],
     borderColor: "rgb(255, 255, 255)",
     backgroundColor: "rgba(255, 255, 255, 0.5)",
-  } as ChartDataset<"line", number[]>
+  } as ChartDataset<"line", number[]>;
 
-  const labels: string[] = []
-  let date = startDate.clone().subtract(1, "day")
-  let cummReward = BigNumber.from(0)
-  let cummStaked = BigNumber.from(0)
+  const labels: string[] = [];
+  let date = startDate.clone().subtract(1, "day");
+  let cummReward = BigNumber.from(0);
+  let cummStaked = BigNumber.from(0);
   while (date.isSameOrBefore(endDate, "day")) {
-    const label = date.format("YYYY-MM-DD")
-    labels.push(label)
-    const txs = txsByDate[label] ?? []
+    const label = date.format("YYYY-MM-DD");
+    labels.push(label);
+    const txs = txsByDate[label] ?? [];
     const unstakedAmount = reduce(
       txs.filter((tx) => tx.action === SnAction.UNSTAKE),
       (sum, tx) => sum.add(BigNumber.from(tx.amount)),
-      BigNumber.from(0)
-    )
+      BigNumber.from(0),
+    );
     const dailyReward = reduce(
       txs.filter((tx) => tx.reward),
       (sum, tx) => sum.add(BigNumber.from(tx.amount)),
-      BigNumber.from(0)
-    )
-    cummReward = cummReward.add(dailyReward)
+      BigNumber.from(0),
+    );
+    cummReward = cummReward.add(dailyReward);
     cummStaked = reduce(
       txs.filter((tx) => tx.action === SnAction.STAKE),
       (sum, tx) => sum.add(BigNumber.from(tx.amount)),
-      cummStaked
-    ).sub(unstakedAmount)
+      cummStaked,
+    ).sub(unstakedAmount);
 
     cummRewardsDataset.data.push(
-      Number(formatFixed(cummReward, currentAccount.network.baseAsset.decimals))
-    )
+      Number(
+        formatFixed(cummReward, currentAccount.network.baseAsset.decimals),
+      ),
+    );
     dailyRewardsDataset.data.push(
       Number(
-        formatFixed(dailyReward, currentAccount.network.baseAsset.decimals)
-      )
-    )
+        formatFixed(dailyReward, currentAccount.network.baseAsset.decimals),
+      ),
+    );
     stakedDataset.data.push(
-      Number(formatFixed(cummStaked, currentAccount.network.baseAsset.decimals))
-    )
+      Number(
+        formatFixed(cummStaked, currentAccount.network.baseAsset.decimals),
+      ),
+    );
     unstakedDataset.data.push(
       Number(
-        formatFixed(unstakedAmount, currentAccount.network.baseAsset.decimals)
-      )
-    )
-    date = date.add(1, "day")
+        formatFixed(unstakedAmount, currentAccount.network.baseAsset.decimals),
+      ),
+    );
+    date = date.add(1, "day");
   }
 
-  const thirtyDaysAgo = dayjs.utc().subtract(30, "day")
-  let index = startDate.clone()
+  const thirtyDaysAgo = dayjs.utc().subtract(30, "day");
+  let index = startDate.clone();
 
   while (index.isSameOrBefore(thirtyDaysAgo, "day")) {
-    cummRewardsDataset.data.shift()
-    dailyRewardsDataset.data.shift()
-    stakedDataset.data.shift()
-    unstakedDataset.data.shift()
-    labels.shift()
-    index = index.add(1, "day")
+    cummRewardsDataset.data.shift();
+    dailyRewardsDataset.data.shift();
+    stakedDataset.data.shift();
+    unstakedDataset.data.shift();
+    labels.shift();
+    index = index.add(1, "day");
   }
 
   const options = {
@@ -207,9 +211,9 @@ export default function StakeRewards(): ReactElement {
     stacked: false,
     onResize: (chart, size) => {
       if (size.width < 500) {
-        chart.options.aspectRatio = 1.25
+        chart.options.aspectRatio = 1.25;
       } else {
-        chart.options.aspectRatio = 2.25
+        chart.options.aspectRatio = 2.25;
       }
     },
     animations: {
@@ -250,7 +254,7 @@ export default function StakeRewards(): ReactElement {
         beginAtZero: true,
       },
     },
-  } as ChartOptions<"line">
+  } as ChartOptions<"line">;
 
   return (
     <div className="w-full">
@@ -260,7 +264,7 @@ export default function StakeRewards(): ReactElement {
             <h1 className="text-xl font-semibold">
               <div
                 className={clsx(
-                  "icon-mask h-10 w-10 bg-white inline-block align-middle"
+                  "icon-mask h-10 w-10 bg-white inline-block align-middle",
                 )}
                 css={`
                   mask-image: url("../../public/images/rewards@2x.png");
@@ -284,7 +288,7 @@ export default function StakeRewards(): ReactElement {
           </div>
           <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
             {BigNumber.from(
-              stakingUserData?.userStakingData[0]?.staked ?? 0
+              stakingUserData?.userStakingData[0]?.staked ?? 0,
             ).gt(0) ? (
               <StakeToggleCompounding />
             ) : (
@@ -353,5 +357,5 @@ export default function StakeRewards(): ReactElement {
         </div>
       </div>
     </div>
-  )
+  );
 }

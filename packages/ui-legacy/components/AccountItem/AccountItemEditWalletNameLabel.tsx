@@ -1,8 +1,8 @@
-import classNames from "clsx"
-import React, { ReactElement } from "react"
+import classNames from "clsx";
+import React, { ReactElement } from "react";
 
 interface EditWalletNameProps {
-  hoverable?: boolean
+  hoverable?: boolean;
 }
 
 export default function EditWalletNameLabel({
@@ -41,8 +41,8 @@ export default function EditWalletNameLabel({
           }
         `}</style>
     </div>
-  )
+  );
 }
 EditWalletNameLabel.defaultProps = {
   hoverable: false,
-}
+};

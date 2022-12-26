@@ -1,16 +1,16 @@
-import { HexString } from "@sendnodes/pokt-wallet-background/types"
-import React, { ReactElement } from "react"
-import { useAddressOrNameValidation } from "../../hooks/validation-hooks"
+import { HexString } from "@sendnodes/pokt-wallet-background/types";
+import React, { ReactElement } from "react";
+import { useAddressOrNameValidation } from "../../hooks/validation-hooks";
 
-import SharedInput from "./SharedInput"
-import SharedLoadingSpinner from "./SharedLoadingSpinner"
+import SharedInput from "./SharedInput";
+import SharedLoadingSpinner from "./SharedLoadingSpinner";
 
 type Props = {
-  label: string
-  onAddressChange: (value: HexString | undefined) => void
-  id?: string
-  placeholder?: string
-}
+  label: string;
+  onAddressChange: (value: HexString | undefined) => void;
+  id?: string;
+  placeholder?: string;
+};
 
 export default function SharedAddressInput({
   label,
@@ -19,7 +19,7 @@ export default function SharedAddressInput({
   placeholder,
 }: Props): ReactElement {
   const { errorMessage, handleInputChange, isValidating } =
-    useAddressOrNameValidation(onAddressChange)
+    useAddressOrNameValidation(onAddressChange);
 
   return (
     <>
@@ -45,9 +45,9 @@ export default function SharedAddressInput({
         }
       `}</style>
     </>
-  )
+  );
 }
 
 SharedAddressInput.defaultProps = {
   label: "ETH address or name (e.g. ENS)",
-}
+};

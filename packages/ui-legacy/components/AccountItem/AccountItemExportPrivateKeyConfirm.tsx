@@ -1,58 +1,58 @@
-import { AccountTotal } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
+import { AccountTotal } from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
 import {
   ExportedPrivateKey,
   HexString,
-} from "@sendnodes/pokt-wallet-background/types"
+} from "@sendnodes/pokt-wallet-background/types";
 
-import React, { ReactElement, useCallback, useEffect, useState } from "react"
-import { setSnackbarMessage } from "@sendnodes/pokt-wallet-background/redux-slices/ui"
-import { browser } from "@sendnodes/pokt-wallet-background"
-import { exportPrivateKey } from "@sendnodes/pokt-wallet-background/redux-slices/keyrings"
-import SharedButton from "../Shared/SharedButton"
-import SharedAccountItemSummary from "../Shared/SharedAccountItemSummary"
-import { useBackgroundDispatch, useBackgroundSelector } from "../../hooks"
-import SharedInput from "../Shared/SharedInput"
+import React, { ReactElement, useCallback, useEffect, useState } from "react";
+import { setSnackbarMessage } from "@sendnodes/pokt-wallet-background/redux-slices/ui";
+import { browser } from "@sendnodes/pokt-wallet-background";
+import { exportPrivateKey } from "@sendnodes/pokt-wallet-background/redux-slices/keyrings";
+import SharedButton from "../Shared/SharedButton";
+import SharedAccountItemSummary from "../Shared/SharedAccountItemSummary";
+import { useBackgroundDispatch, useBackgroundSelector } from "../../hooks";
+import SharedInput from "../Shared/SharedInput";
 
 interface AccountItemExportPrivateKeyConfirmProps {
-  account: AccountTotal
-  address: HexString
-  close: () => void
+  account: AccountTotal;
+  address: HexString;
+  close: () => void;
 }
 export default function ({
   account,
   address,
 }: AccountItemExportPrivateKeyConfirmProps): ReactElement {
-  const dispatch = useBackgroundDispatch()
-  const [password, setPassword] = useState("")
-  const [privateKey, setPrivateKey] = useState("")
-  const [errorMessage, setErrorMessage] = useState("")
-  const [revealing, setRevealing] = useState(false)
+  const dispatch = useBackgroundDispatch();
+  const [password, setPassword] = useState("");
+  const [privateKey, setPrivateKey] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [revealing, setRevealing] = useState(false);
   // height gets messed up with input auto focus
-  const [autoFocus, setAutoFocus] = useState(false)
+  const [autoFocus, setAutoFocus] = useState(false);
 
   const revealPrivateKey = () => {
     if (!revealing) {
-      setRevealing(true)
+      setRevealing(true);
       // start listening for private key
-      browser.runtime.onMessage.addListener(revealPrivateKeyMessageHandler)
+      browser.runtime.onMessage.addListener(revealPrivateKeyMessageHandler);
       // signal ready for private key
-      dispatch(exportPrivateKey({ password, address }))
+      dispatch(exportPrivateKey({ password, address }));
     }
-  }
+  };
 
   const revealPrivateKeyMessageHandler = (message: any) => {
-    const { exportedPrivateKey } = message as ExportedPrivateKey
+    const { exportedPrivateKey } = message as ExportedPrivateKey;
     if (!exportedPrivateKey) {
-      return
+      return;
     }
 
     // stop listening
-    browser.runtime.onMessage.removeListener(revealPrivateKeyMessageHandler)
+    browser.runtime.onMessage.removeListener(revealPrivateKeyMessageHandler);
 
     if (exportedPrivateKey.error) {
-      setRevealing(false)
-      setErrorMessage(exportedPrivateKey.error)
-      return
+      setRevealing(false);
+      setErrorMessage(exportedPrivateKey.error);
+      return;
     }
 
     if (
@@ -60,23 +60,23 @@ export default function ({
       exportedPrivateKey.privateKey
     ) {
       // reveal the private key
-      setPrivateKey(exportedPrivateKey.privateKey)
+      setPrivateKey(exportedPrivateKey.privateKey);
     }
-  }
+  };
 
   // ensure no listeners left behind
   useEffect(() => {
     return () => {
-      browser.runtime.onMessage.removeListener(revealPrivateKeyMessageHandler)
-    }
-  }, [])
+      browser.runtime.onMessage.removeListener(revealPrivateKeyMessageHandler);
+    };
+  }, []);
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
-      setAutoFocus(true)
-    }, 300)
-    return () => window.clearTimeout(timeoutId)
-  }, [])
+      setAutoFocus(true);
+    }, 300);
+    return () => window.clearTimeout(timeoutId);
+  }, []);
 
   return (
     <div className="export_private_key_option">
@@ -112,8 +112,8 @@ export default function ({
             icon="copy"
             iconSize="large"
             onClick={() => {
-              navigator.clipboard.writeText(privateKey)
-              dispatch(setSnackbarMessage("Copied!"))
+              navigator.clipboard.writeText(privateKey);
+              dispatch(setSnackbarMessage("Copied!"));
             }}
           >
             Copy to Clipboard
@@ -121,8 +121,8 @@ export default function ({
         ) : (
           <form
             onSubmit={(e) => {
-              e.preventDefault()
-              revealPrivateKey()
+              e.preventDefault();
+              revealPrivateKey();
             }}
           >
             <SharedInput
@@ -130,9 +130,9 @@ export default function ({
               label="ENTER PASSWORD"
               autoFocus={autoFocus}
               onChange={(value) => {
-                setPassword(value)
+                setPassword(value);
                 // Clear error message on input change
-                setErrorMessage("")
+                setErrorMessage("");
               }}
               errorMessage={errorMessage}
             />
@@ -192,5 +192,5 @@ export default function ({
         }
       `}</style>
     </div>
-  )
+  );
 }

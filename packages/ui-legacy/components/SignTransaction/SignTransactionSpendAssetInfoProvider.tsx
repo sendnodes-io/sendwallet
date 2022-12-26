@@ -1,110 +1,110 @@
 import {
   ERC20_FUNCTIONS,
   ERC20_INTERFACE,
-} from "@sendnodes/pokt-wallet-background/lib/erc20"
+} from "@sendnodes/pokt-wallet-background/lib/erc20";
 import {
   convertFixedPointNumber,
   fixedPointNumberToString,
   parseToFixedPointNumber,
-} from "@sendnodes/pokt-wallet-background/lib/fixed-point"
-import { isMaxUint256 } from "@sendnodes/pokt-wallet-background/lib/utils"
-import { updateTransactionOptions } from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction"
-import { AssetApproval } from "@sendnodes/pokt-wallet-background/services/enrichment"
-import { ethers } from "ethers"
-import { hexlify } from "ethers/lib/utils"
-import React, { ReactElement, useState } from "react"
-import { useDispatch } from "react-redux"
-import classNames from "clsx"
-import FeeSettingsText from "../NetworkFees/FeeSettingsText"
-import SharedAssetIcon from "../Shared/SharedAssetIcon"
-import SharedButton from "../Shared/SharedButton"
-import SharedInput from "../Shared/SharedInput"
-import SharedSkeletonLoader from "../Shared/SharedSkeletonLoader"
-import SharedTooltip from "../Shared/SharedTooltip"
-import TransactionDetailAddressValue from "../TransactionDetail/TransactionDetailAddressValue"
-import TransactionDetailContainer from "../TransactionDetail/TransactionDetailContainer"
-import TransactionDetailItem from "../TransactionDetail/TransactionDetailItem"
+} from "@sendnodes/pokt-wallet-background/lib/fixed-point";
+import { isMaxUint256 } from "@sendnodes/pokt-wallet-background/lib/utils";
+import { updateTransactionOptions } from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction";
+import { AssetApproval } from "@sendnodes/pokt-wallet-background/services/enrichment";
+import { ethers } from "ethers";
+import { hexlify } from "ethers/lib/utils";
+import React, { ReactElement, useState } from "react";
+import { useDispatch } from "react-redux";
+import classNames from "clsx";
+import FeeSettingsText from "../NetworkFees/FeeSettingsText";
+import SharedAssetIcon from "../Shared/SharedAssetIcon";
+import SharedButton from "../Shared/SharedButton";
+import SharedInput from "../Shared/SharedInput";
+import SharedSkeletonLoader from "../Shared/SharedSkeletonLoader";
+import SharedTooltip from "../Shared/SharedTooltip";
+import TransactionDetailAddressValue from "../TransactionDetail/TransactionDetailAddressValue";
+import TransactionDetailContainer from "../TransactionDetail/TransactionDetailContainer";
+import TransactionDetailItem from "../TransactionDetail/TransactionDetailItem";
 import SignTransactionBaseInfoProvider, {
   SignTransactionInfoProviderProps,
-} from "./SignTransactionBaseInfoProvider"
-import SharedAddress from "../Shared/SharedAddress"
+} from "./SignTransactionBaseInfoProvider";
+import SharedAddress from "../Shared/SharedAddress";
 
 export default function SignTransactionSpendAssetInfoProvider({
   transactionDetails,
   annotation,
   inner,
 }: SignTransactionInfoProviderProps<AssetApproval>): ReactElement {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const {
     assetAmount: { asset, amount: approvalLimit },
     spenderAddress,
-  } = annotation
+  } = annotation;
   // `null` means no limit
   const approvalLimitString = isMaxUint256(approvalLimit)
     ? null
     : fixedPointNumberToString({
         amount: approvalLimit,
         decimals: asset.decimals,
-      })
+      });
 
   const approvalLimitDisplayValue = `${
     approvalLimitString ?? "Infinite"
-  } ${asset?.symbol.toUpperCase()}`
+  } ${asset?.symbol.toUpperCase()}`;
 
   const [approvalLimitInput, setApprovalLimitInput] = useState<string | null>(
-    null
-  )
+    null,
+  );
 
-  const [hasError, setHasError] = useState(false)
+  const [hasError, setHasError] = useState(false);
 
-  const changing = approvalLimitInput !== null
+  const changing = approvalLimitInput !== null;
 
   const handleChangeClick = () => {
-    setApprovalLimitInput(approvalLimitString ?? "")
-  }
+    setApprovalLimitInput(approvalLimitString ?? "");
+  };
 
   const handleCancelClick = () => {
-    setApprovalLimitInput(null)
-  }
+    setApprovalLimitInput(null);
+  };
 
   const handleSaveClick = () => {
-    if (!changing) return
+    if (!changing) return;
 
     if (
       approvalLimitInput === "" ||
       approvalLimitInput === approvalLimitString
     ) {
-      return
+      return;
     }
 
-    const decimalAmount = parseToFixedPointNumber(approvalLimitInput)
+    const decimalAmount = parseToFixedPointNumber(approvalLimitInput);
 
     if (
       decimalAmount === undefined ||
       (decimalAmount !== null && decimalAmount.amount < 0n)
     ) {
-      setHasError(true)
-      return
+      setHasError(true);
+      return;
     }
 
     const bigintAmount =
       decimalAmount === null
         ? ethers.constants.MaxUint256.toBigInt()
-        : convertFixedPointNumber(decimalAmount, asset.decimals).amount
+        : convertFixedPointNumber(decimalAmount, asset.decimals).amount;
 
-    setApprovalLimitInput(null)
+    setApprovalLimitInput(null);
 
     const updatedInput = ERC20_INTERFACE.encodeFunctionData(
       ERC20_FUNCTIONS.approve,
-      [spenderAddress, hexlify(bigintAmount)]
-    )
+      [spenderAddress, hexlify(bigintAmount)],
+    );
     dispatch(
       updateTransactionOptions({
         ...transactionDetails,
         input: updatedInput,
-      })
-    )
-  }
+      }),
+    );
+  };
 
   return (
     <SignTransactionBaseInfoProvider
@@ -167,10 +167,10 @@ export default function SignTransactionSpendAssetInfoProvider({
                   value={approvalLimitInput}
                   placeholder={approvalLimitString ?? ""}
                   onChange={(value) => {
-                    setApprovalLimitInput(value)
-                    setHasError(false)
+                    setApprovalLimitInput(value);
+                    setHasError(false);
                   }}
-                  errorMessage={hasError ? `Invalid amount` : undefined}
+                  errorMessage={hasError ? "Invalid amount" : undefined}
                   autoSelect
                 />
                 <div
@@ -330,5 +330,5 @@ export default function SignTransactionSpendAssetInfoProvider({
       }
       inner={inner}
     />
-  )
+  );
 }

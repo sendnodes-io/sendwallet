@@ -1,19 +1,19 @@
-import { Provider } from "@ethersproject/abstract-provider"
+import { Provider } from "@ethersproject/abstract-provider";
 
-import logger from "./logger"
+import logger from "./logger";
 import Blocknative, {
   BlocknativeNetworkIds,
-} from "../third-party-data/blocknative"
-import { BlockPriceDataSource, BlockPrices, EVMNetwork } from "../networks"
-import { ETHEREUM } from "../constants/networks"
+} from "../third-party-data/blocknative";
+import { BlockPriceDataSource, BlockPrices, EVMNetwork } from "../networks";
+import { ETHEREUM } from "../constants/networks";
 
 // We can't use destructuring because webpack has to replace all instances of
 // `process.env` variables in the bundled output
-const BLOCKNATIVE_API_KEY = process.env.BLOCKNATIVE_API_KEY // eslint-disable-line prefer-destructuring
+const BLOCKNATIVE_API_KEY = process.env.BLOCKNATIVE_API_KEY; // eslint-disable-line prefer-destructuring
 
 export default async function getBlockPrices(
   network: EVMNetwork,
-  provider: Provider
+  provider: Provider,
 ): Promise<BlockPrices> {
   // if BlockNative is configured and we're on mainnet, prefer their gas service
   if (
@@ -23,11 +23,11 @@ export default async function getBlockPrices(
     try {
       const blocknative = Blocknative.connect(
         BLOCKNATIVE_API_KEY,
-        BlocknativeNetworkIds.ethereum.mainnet
-      )
-      return await blocknative.getBlockPrices()
+        BlocknativeNetworkIds.ethereum.mainnet,
+      );
+      return await blocknative.getBlockPrices();
     } catch (err) {
-      logger.error("Error getting block prices from BlockNative", err)
+      logger.error("Error getting block prices from BlockNative", err);
     }
   }
 
@@ -36,14 +36,14 @@ export default async function getBlockPrices(
   const [currentBlock, feeData] = await Promise.all([
     provider.getBlock("latest"),
     provider.getFeeData(),
-  ])
-  const baseFeePerGas = currentBlock?.baseFeePerGas?.toBigInt()
+  ]);
+  const baseFeePerGas = currentBlock?.baseFeePerGas?.toBigInt();
 
   if (feeData.gasPrice === null) {
-    logger.warn("Not receiving accurate gas prices from provider", feeData)
+    logger.warn("Not receiving accurate gas prices from provider", feeData);
   }
 
-  const gasPrice = feeData?.gasPrice?.toBigInt() || 0n
+  const gasPrice = feeData?.gasPrice?.toBigInt() || 0n;
 
   // TODO: v0.2.0 calculate gas prices based on the network
   if (baseFeePerGas) {
@@ -73,20 +73,20 @@ export default async function getBlockPrices(
         },
       ],
       dataSource: BlockPriceDataSource.LOCAL,
-    }
-    logger.debug("base fee per gas", { baseFeePerGas, result })
-    return result
+    };
+    logger.debug("base fee per gas", { baseFeePerGas, result });
+    return result;
   }
 
   if (feeData.maxPriorityFeePerGas === null || feeData.maxFeePerGas === null) {
     logger.warn(
       "Not receiving accurate EIP-1559 gas prices from provider",
-      feeData
-    )
+      feeData,
+    );
   }
 
-  const maxFeePerGas = feeData?.maxFeePerGas?.toBigInt() || 0n
-  const maxPriorityFeePerGas = feeData?.maxPriorityFeePerGas?.toBigInt() || 0n
+  const maxFeePerGas = feeData?.maxFeePerGas?.toBigInt() || 0n;
+  const maxPriorityFeePerGas = feeData?.maxPriorityFeePerGas?.toBigInt() || 0n;
   const result = {
     network,
     blockNumber: currentBlock.number,
@@ -101,7 +101,7 @@ export default async function getBlockPrices(
       },
     ],
     dataSource: BlockPriceDataSource.LOCAL,
-  }
-  logger.debug("no base fee per gas", result)
-  return result
+  };
+  logger.debug("no base fee per gas", result);
+  return result;
 }

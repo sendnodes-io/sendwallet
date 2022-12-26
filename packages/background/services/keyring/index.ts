@@ -1,6 +1,6 @@
-import { Storage } from "webextension-polyfill"
+import { Storage } from "webextension-polyfill";
 
-import { parse as parseRawTransaction } from "@ethersproject/transactions"
+import { parse as parseRawTransaction } from "@ethersproject/transactions";
 
 import {
   defaultPathPokt,
@@ -13,60 +13,60 @@ import {
   SerializedHDKeyring,
   SerializedKeyring,
   v1KeyringDeserializer,
-} from "@sendnodes/hd-keyring"
-import { ServiceCreatorFunction, ServiceLifecycleEvents } from "../types"
-import { currentVault, writeLatestEncryptedVault } from "./storage"
+} from "@sendnodes/hd-keyring";
+import { ServiceCreatorFunction, ServiceLifecycleEvents } from "../types";
+import { currentVault, writeLatestEncryptedVault } from "./storage";
 import {
   decryptVault,
   deriveSymmetricKeyFromPassword,
   EncryptedVault,
   encryptVault,
   SaltedKey,
-} from "./encryption"
+} from "./encryption";
 import {
   EIP191Data,
   EIP712TypedData,
   HexString,
   KeyringTypes,
   UNIXTime,
-} from "../../types"
+} from "../../types";
 import {
   EIP1559TransactionRequest,
   POKTTransactionRequest,
   SignedEVMTransaction,
   SignedPOKTTransaction,
-} from "../../networks"
-import BaseService from "../base"
-import { ETH, FORK, MINUTE } from "../../constants"
+} from "../../networks";
+import BaseService from "../base";
+import { ETH, FORK, MINUTE } from "../../constants";
 import {
   ethersTransactionRequestFromEIP1559TransactionRequest,
   poktHDKeyringTransactionRequestFromPoktTransactionRequest,
-} from "../chain/utils"
-import { USE_MAINNET_FORK } from "../../features/features"
-import { AddressOnNetwork } from "../../accounts"
-import logger from "../../lib/logger"
+} from "../chain/utils";
+import { USE_MAINNET_FORK } from "../../features/features";
+import { AddressOnNetwork } from "../../accounts";
+import logger from "../../lib/logger";
 
-export const MAX_KEYRING_IDLE_TIME = 30 * MINUTE
-export const MAX_OUTSIDE_IDLE_TIME = 30 * MINUTE
+export const MAX_KEYRING_IDLE_TIME = 30 * MINUTE;
+export const MAX_OUTSIDE_IDLE_TIME = 30 * MINUTE;
 
-export { KeyType } from "@sendnodes/hd-keyring"
+export { KeyType } from "@sendnodes/hd-keyring";
 
 export type ExtensionKeyring = {
-  keyringType: KeyringType
-  keyType: KeyType
-  fingerprint: string
-  addresses: string[]
-}
+  keyringType: KeyringType;
+  keyType: KeyType;
+  fingerprint: string;
+  addresses: string[];
+};
 
 export interface KeyringMetadata {
-  source: "import" | "internal"
-  seedId: number
+  source: "import" | "internal";
+  seedId: number;
 }
 
 interface SerializedKeyringData {
-  keyrings: Keyring<SerializedKeyring>[]
-  metadata: { [keyringId: string]: KeyringMetadata }
-  hiddenAccounts: { [address: HexString]: boolean }
+  keyrings: Keyring<SerializedKeyring>[];
+  metadata: { [keyringId: string]: KeyringMetadata };
+  hiddenAccounts: { [address: HexString]: boolean };
 }
 
 export const enum KeyringEvents {
@@ -78,29 +78,29 @@ export const enum KeyringEvents {
 }
 
 interface Events extends ServiceLifecycleEvents {
-  [KeyringEvents.LOCKED]: boolean
+  [KeyringEvents.LOCKED]: boolean;
   [KeyringEvents.KEYRINGS]: {
-    keyrings: ExtensionKeyring[]
+    keyrings: ExtensionKeyring[];
     keyringMetadata: {
-      [keyringId: string]: KeyringMetadata
-    }
-  }
-  [KeyringEvents.ADDRESS]: { address: string; keyType: KeyType }
+      [keyringId: string]: KeyringMetadata;
+    };
+  };
+  [KeyringEvents.ADDRESS]: { address: string; keyType: KeyType };
   // TODO message was signed
-  [KeyringEvents.SIGNED_TX]: SignedEVMTransaction
-  [KeyringEvents.SIGNED_DATA]: string
+  [KeyringEvents.SIGNED_TX]: SignedEVMTransaction;
+  [KeyringEvents.SIGNED_DATA]: string;
 }
 
 type CachedKeySession = {
-  key: JsonWebKey | null
-  salt: string | null
-}
+  key: JsonWebKey | null;
+  salt: string | null;
+};
 
 type KeyringSession = {
-  saltedKey: CachedKeySession | null
-  lastKeyringActivity: UNIXTime | undefined
-  lastOutsideActivity: UNIXTime | undefined
-}
+  saltedKey: CachedKeySession | null;
+  lastKeyringActivity: UNIXTime | undefined;
+  lastOutsideActivity: UNIXTime | undefined;
+};
 
 /*
  * KeyringService is responsible for all key material, as well as applying the
@@ -116,30 +116,30 @@ type KeyringSession = {
  * lock, while no outside activity for 30 minutes has the same effect.
  */
 export default class KeyringService extends BaseService<Events> {
-  #cachedKey: SaltedKey | null = null
+  #cachedKey: SaltedKey | null = null;
 
-  #keyrings: Keyring<SerializedKeyring>[] = []
+  #keyrings: Keyring<SerializedKeyring>[] = [];
 
-  #keyringMetadata: { [keyringId: string]: KeyringMetadata } = {}
+  #keyringMetadata: { [keyringId: string]: KeyringMetadata } = {};
 
-  #hiddenAccounts: { [address: HexString]: boolean } = {}
+  #hiddenAccounts: { [address: HexString]: boolean } = {};
 
   /**
    * The last time a keyring took an action that required the service to be
    * unlocked (signing, adding a keyring, etc).
    */
-  lastKeyringActivity: UNIXTime | undefined
+  lastKeyringActivity: UNIXTime | undefined;
 
   /**
    * The last time the keyring was notified of an activity outside of the
    * keyring. {@see markOutsideActivity}
    */
-  lastOutsideActivity: UNIXTime | undefined
+  lastOutsideActivity: UNIXTime | undefined;
 
   static create: ServiceCreatorFunction<Events, KeyringService, []> =
     async () => {
-      return new this()
-    }
+      return new this();
+    };
 
   private constructor() {
     super({
@@ -148,45 +148,45 @@ export default class KeyringService extends BaseService<Events> {
           periodInMinutes: 1,
         },
         handler: () => {
-          this.autolockIfNeeded()
+          this.autolockIfNeeded();
         },
       },
-    })
+    });
   }
 
   async internalStartService(): Promise<void> {
-    await super.internalStartService()
+    await super.internalStartService();
 
-    const currentEncryptedVault = await currentVault()
+    const currentEncryptedVault = await currentVault();
 
     // nothing to unlock/lock if no vault
     if (!currentEncryptedVault) {
-      return
+      return;
     }
 
     // starts locked due to cached key being null so this may be a moot check
     if (this.#cachedKey === null) {
       // check if there is a keyring session
-      await this.loadKeyringSession()
+      await this.loadKeyringSession();
     }
 
     // if cached key set from session attempt to unlock
     if (this.#cachedKey !== null) {
       // emit locked if session expired
-      this.autolockIfNeeded()
+      this.autolockIfNeeded();
       if (this.#cachedKey === null) {
-        return // session expired
+        return; // session expired
       }
 
       // attempt to decrypt current vault
       if (
         (await this.decryptKeyringVault(
           currentEncryptedVault,
-          this.#cachedKey
+          this.#cachedKey,
         )) === true
       ) {
-        this.#unlock() // unlock and emit
-        return
+        this.#unlock(); // unlock and emit
+        return;
       }
     }
 
@@ -194,7 +194,7 @@ export default class KeyringService extends BaseService<Events> {
     // Should always be locked, but the main
     // goal is to have external viewers synced to internal state no matter what
     // it is. Don't emit if there are no keyrings to unlock.
-    this.lock()
+    this.lock();
   }
 
   /**
@@ -206,14 +206,14 @@ export default class KeyringService extends BaseService<Events> {
    */
   async loadKeyringSession(): Promise<void> {
     if (chrome?.storage) {
-      const storage = chrome.storage as unknown as Storage
+      const storage = chrome.storage as unknown as Storage;
       if ("session" in storage) {
-        const sessionStorage = storage.session as Storage.StorageArea
-        const { keyringSession } = await sessionStorage.get("keyringSession")
-        if (keyringSession === undefined) return
+        const sessionStorage = storage.session as Storage.StorageArea;
+        const { keyringSession } = await sessionStorage.get("keyringSession");
+        if (keyringSession === undefined) return;
         try {
           const { saltedKey, lastKeyringActivity, lastOutsideActivity } =
-            keyringSession
+            keyringSession;
           this.#cachedKey = {
             salt: saltedKey.salt,
             key: await crypto.subtle.importKey(
@@ -221,11 +221,11 @@ export default class KeyringService extends BaseService<Events> {
               saltedKey.key,
               { name: "AES-GCM", length: 256 },
               true,
-              ["encrypt", "decrypt"]
+              ["encrypt", "decrypt"],
             ),
-          }
-          this.lastKeyringActivity = lastKeyringActivity
-          this.lastOutsideActivity = lastOutsideActivity
+          };
+          this.lastKeyringActivity = lastKeyringActivity;
+          this.lastOutsideActivity = lastOutsideActivity;
         } catch (e) {
           // ignored
         }
@@ -242,9 +242,9 @@ export default class KeyringService extends BaseService<Events> {
    */
   async saveKeyringSession(): Promise<void> {
     if (chrome?.storage) {
-      const storage = chrome.storage as unknown as Storage
+      const storage = chrome.storage as unknown as Storage;
       if ("session" in storage) {
-        const sessionStorage = storage.session as Storage.StorageArea
+        const sessionStorage = storage.session as Storage.StorageArea;
         const keyringSession: KeyringSession = {
           saltedKey: this.#cachedKey
             ? {
@@ -254,34 +254,34 @@ export default class KeyringService extends BaseService<Events> {
             : null,
           lastKeyringActivity: this.lastKeyringActivity,
           lastOutsideActivity: this.lastOutsideActivity,
-        }
-        sessionStorage.set({ keyringSession })
+        };
+        sessionStorage.set({ keyringSession });
       }
     }
   }
 
   async internalStopService(): Promise<void> {
-    await this.lock()
+    await this.lock();
 
-    await super.internalStopService()
+    await super.internalStopService();
   }
 
   /**
    * @return True if the keyring is locked, false if it is unlocked.
    */
   locked(): boolean {
-    return this.#cachedKey === null
+    return this.#cachedKey === null;
   }
 
   /**
    * Update activity timestamps and emit unlocked event.
    */
   #unlock(): void {
-    this.lastKeyringActivity = Date.now()
-    this.lastOutsideActivity = Date.now()
+    this.lastKeyringActivity = Date.now();
+    this.lastOutsideActivity = Date.now();
     this.saveKeyringSession().then(() => {
-      this.emitter.emit(KeyringEvents.LOCKED, false)
-    })
+      this.emitter.emit(KeyringEvents.LOCKED, false);
+    });
   }
 
   /**
@@ -306,28 +306,28 @@ export default class KeyringService extends BaseService<Events> {
    */
   async unlock(
     password: string,
-    ignoreExistingVaults = false
+    ignoreExistingVaults = false,
   ): Promise<boolean> {
     if (!this.locked()) {
-      logger.warn("KeyringService is already unlocked!")
-      this.#unlock()
-      return true
+      logger.warn("KeyringService is already unlocked!");
+      this.#unlock();
+      return true;
     }
 
     if (!ignoreExistingVaults) {
-      const currentEncryptedVault = await currentVault()
+      const currentEncryptedVault = await currentVault();
       if (currentEncryptedVault) {
         // attempt to load the vault
         const saltedKey = await deriveSymmetricKeyFromPassword(
           password,
-          currentEncryptedVault.salt
-        )
+          currentEncryptedVault.salt,
+        );
 
         // decryption failed
         if (
           !(await this.decryptKeyringVault(currentEncryptedVault, saltedKey))
         ) {
-          return false
+          return false;
         }
       }
     }
@@ -335,106 +335,106 @@ export default class KeyringService extends BaseService<Events> {
     // if there's no vault or we want to force a new vault, generate a new key
     // and unlock
     if (!this.#cachedKey) {
-      this.#cachedKey = await deriveSymmetricKeyFromPassword(password)
-      await this.persistKeyrings()
+      this.#cachedKey = await deriveSymmetricKeyFromPassword(password);
+      await this.persistKeyrings();
     }
 
-    this.#unlock()
-    return true
+    this.#unlock();
+    return true;
   }
 
   /**
    * Attempts to decrypt the current encrypted vault with the password.
    */
   static async passwordChallenge(password: string): Promise<boolean> {
-    const currentEncryptedVault = await currentVault()
+    const currentEncryptedVault = await currentVault();
     if (!currentEncryptedVault) {
-      throw new Error("No keyring vault found")
+      throw new Error("No keyring vault found");
     }
 
     // attempt to load the vault
     const saltedKey = await deriveSymmetricKeyFromPassword(
       password,
-      currentEncryptedVault.salt
-    )
+      currentEncryptedVault.salt,
+    );
 
     try {
       await decryptVault<SerializedKeyringData>(
         currentEncryptedVault,
-        saltedKey
-      )
+        saltedKey,
+      );
       // success
-      return true
+      return true;
     } catch (err) {
       // failed
-      return false
+      return false;
     }
   }
 
   private async decryptKeyringVault(
     encryptedVault: EncryptedVault,
-    saltedKey: SaltedKey
+    saltedKey: SaltedKey,
   ) {
-    let plainTextVault: SerializedKeyringData
+    let plainTextVault: SerializedKeyringData;
     try {
       plainTextVault = await decryptVault<SerializedKeyringData>(
         encryptedVault,
-        saltedKey
-      )
-      this.#cachedKey = saltedKey
+        saltedKey,
+      );
+      this.#cachedKey = saltedKey;
     } catch (err) {
       // if we weren't able to load the vault, don't unlock
-      return false
+      return false;
     }
     // hooray! vault is loaded, import any serialized keyrings
-    this.#keyrings = []
+    this.#keyrings = [];
     this.#keyringMetadata = {
       ...plainTextVault.metadata,
-    }
+    };
     // track seeds to map to an index so there's a way to identify when a keyring comes from the same master seed
-    const seeds: Set<string> = new Set()
+    const seeds: Set<string> = new Set();
 
     // deserialize into keyrings
     plainTextVault.keyrings.forEach((kr) => {
-      const keyring = v1KeyringDeserializer(kr)
+      const keyring = v1KeyringDeserializer(kr);
 
       if (!keyring) {
-        logger.error(`Failed to deserialize keyring: ${kr.fingerprint}`)
-        return
+        logger.error(`Failed to deserialize keyring: ${kr.fingerprint}`);
+        return;
       }
 
       // determine seed
-      let seed
+      let seed;
       if ((kr as unknown as SerializedHDKeyring).mnemonic) {
-        seed = (kr as unknown as SerializedHDKeyring).mnemonic
+        seed = (kr as unknown as SerializedHDKeyring).mnemonic;
       } else if ((kr as unknown as SeralizedFixedKeyring).privateKey) {
-        seed = (kr as unknown as SeralizedFixedKeyring).privateKey
+        seed = (kr as unknown as SeralizedFixedKeyring).privateKey;
       } else {
-        seed = kr.fingerprint // default to fingerprint if no seed material
+        seed = kr.fingerprint; // default to fingerprint if no seed material
       }
       // track it
-      seeds.add(seed)
+      seeds.add(seed);
 
       // not the most efficient, but a simpler algo using positional index as the seedId since Set iterates with insert order
-      const seedId = [...seeds].indexOf(seed)
+      const seedId = [...seeds].indexOf(seed);
 
       // tie it all together for keyring metadata
       const keyringMetadata = {
         ...(this.#keyringMetadata[kr.fingerprint] ?? {}),
         seedId,
-      }
+      };
 
       // track it privately
-      this.#keyrings.push(keyring)
-      this.#keyringMetadata[kr.fingerprint] = keyringMetadata
-    })
+      this.#keyrings.push(keyring);
+      this.#keyringMetadata[kr.fingerprint] = keyringMetadata;
+    });
 
     this.#hiddenAccounts = {
       ...plainTextVault.hiddenAccounts,
-    }
+    };
 
-    this.emitKeyrings()
-    return true
+    this.emitKeyrings();
+    return true;
   }
 
   /**
@@ -442,15 +442,15 @@ export default class KeyringService extends BaseService<Events> {
    * encryption key and keyrings.
    */
   async lock(): Promise<void> {
-    this.lastKeyringActivity = undefined
-    this.lastOutsideActivity = undefined
-    this.#cachedKey = null
+    this.lastKeyringActivity = undefined;
+    this.lastOutsideActivity = undefined;
+    this.#cachedKey = null;
     this.saveKeyringSession().then(() => {
-      this.#keyrings = []
-      this.#keyringMetadata = {}
-      this.emitter.emit(KeyringEvents.LOCKED, true)
-      this.emitKeyrings()
-    })
+      this.#keyrings = [];
+      this.#keyringMetadata = {};
+      this.emitter.emit(KeyringEvents.LOCKED, true);
+      this.emitKeyrings();
+    });
   }
 
   /**
@@ -459,7 +459,7 @@ export default class KeyringService extends BaseService<Events> {
    */
   markOutsideActivity(): void {
     if (typeof this.lastOutsideActivity !== "undefined") {
-      this.lastOutsideActivity = Date.now()
+      this.lastOutsideActivity = Date.now();
     }
   }
 
@@ -474,20 +474,20 @@ export default class KeyringService extends BaseService<Events> {
       // is locked, otherwise they should both be set; regardless, fail safe if
       // either is undefined and the keyring is unlocked.
       if (!this.locked()) {
-        await this.lock()
+        await this.lock();
       }
 
-      return
+      return;
     }
 
-    const now = Date.now()
-    const timeSinceLastKeyringActivity = now - this.lastKeyringActivity
-    const timeSinceLastOutsideActivity = now - this.lastOutsideActivity
+    const now = Date.now();
+    const timeSinceLastKeyringActivity = now - this.lastKeyringActivity;
+    const timeSinceLastOutsideActivity = now - this.lastOutsideActivity;
 
     if (timeSinceLastKeyringActivity >= MAX_KEYRING_IDLE_TIME) {
-      this.lock()
+      this.lock();
     } else if (timeSinceLastOutsideActivity >= MAX_OUTSIDE_IDLE_TIME) {
-      this.lock()
+      this.lock();
     }
   }
 
@@ -495,12 +495,12 @@ export default class KeyringService extends BaseService<Events> {
   // activity timestamp.
   private requireUnlocked(): void {
     if (this.locked()) {
-      throw new Error("KeyringService must be unlocked.")
+      throw new Error("KeyringService must be unlocked.");
     }
 
-    this.lastKeyringActivity = Date.now()
-    this.markOutsideActivity()
-    this.saveKeyringSession()
+    this.lastKeyringActivity = Date.now();
+    this.markOutsideActivity();
+    this.saveKeyringSession();
   }
 
   // ///////////////////////////////////////////
@@ -519,21 +519,21 @@ export default class KeyringService extends BaseService<Events> {
    */
   async generateNewKeyring(
     type: KeyringTypes,
-    keyType: KeyType = KeyType.ED25519
+    keyType: KeyType = KeyType.ED25519,
   ): Promise<{ id: string; mnemonic: string[] }> {
-    this.requireUnlocked()
+    this.requireUnlocked();
 
     if (type !== KeyringTypes.mnemonicBIP39S256) {
       throw new Error(
-        "KeyringService only supports generating 256-bit HD key trees"
-      )
+        "KeyringService only supports generating 256-bit HD key trees",
+      );
     }
 
-    const newKeyring = new HDKeyring({ strength: 256, keyType })
+    const newKeyring = new HDKeyring({ strength: 256, keyType });
 
-    const { mnemonic } = newKeyring.serializeSync()
+    const { mnemonic } = newKeyring.serializeSync();
 
-    return { id: newKeyring.fingerprint, mnemonic: mnemonic.split(" ") }
+    return { id: newKeyring.fingerprint, mnemonic: mnemonic.split(" ") };
   }
 
   /**
@@ -546,32 +546,32 @@ export default class KeyringService extends BaseService<Events> {
   async importKeyring(
     mnemonic: string,
     source: "import" | "internal",
-    path?: string
+    path?: string,
   ): Promise<string[]> {
-    this.requireUnlocked()
+    this.requireUnlocked();
 
     // track this mnemonic uniquely by using current time plus some pseudo randomness
     const seedId =
-      new Date().getTime() + parseInt((Math.random() * 1000000).toString(), 10)
+      new Date().getTime() + parseInt((Math.random() * 1000000).toString(), 10);
     const keyringMetadata = {
       source,
       seedId,
-    }
+    };
 
     // path coming, assume caller knows what they are doing
     if (path) {
       const newKeyring = await this.saveKeyring(
         new HDKeyring({ mnemonic, path }),
-        keyringMetadata
-      )
-      return [newKeyring.fingerprint]
+        keyringMetadata,
+      );
+      return [newKeyring.fingerprint];
     }
 
     // create keyring for POKT and EVM
     const poktKeyring = await this.saveKeyring(
       new HDKeyring({ mnemonic, path: defaultPathPokt }),
-      keyringMetadata
-    )
+      keyringMetadata,
+    );
     // TODO: v0.4.0 wPOKT bridge: re-enable evm support
     // const evmKeyring = await this.saveKeyring(
     //   new HDKeyring({ mnemonic, path: defaultPathEth }),
@@ -581,7 +581,7 @@ export default class KeyringService extends BaseService<Events> {
     return [
       poktKeyring.fingerprint,
       // evmKeyring.fingerprint
-    ]
+    ];
   }
 
   /**
@@ -589,24 +589,24 @@ export default class KeyringService extends BaseService<Events> {
    */
   async importPrivateKey(
     privateKey: string,
-    keyType: KeyType
+    keyType: KeyType,
   ): Promise<string> {
-    this.requireUnlocked()
+    this.requireUnlocked();
     if (!Object.values(KeyType).includes(keyType)) {
-      throw new Error(`Unsupported keyType: ${keyType}`)
+      throw new Error(`Unsupported keyType: ${keyType}`);
     }
     // track this mnemonic uniquely by using current time plus some pseudo randomness
     const seedId =
-      new Date().getTime() + parseInt((Math.random() * 1000000).toString(), 10)
+      new Date().getTime() + parseInt((Math.random() * 1000000).toString(), 10);
     const keyringMetadata = {
       source: "import",
       seedId,
-    } as KeyringMetadata
+    } as KeyringMetadata;
     const newKeyring = await this.saveKeyring(
       new FixedKeyring({ privateKey, keyType }),
-      keyringMetadata
-    )
-    return newKeyring.fingerprint
+      keyringMetadata,
+    );
+    return newKeyring.fingerprint;
   }
 
   /**
@@ -614,7 +614,7 @@ export default class KeyringService extends BaseService<Events> {
    * used outside the extension.
    */
   getKeyrings(): ExtensionKeyring[] {
-    this.requireUnlocked()
+    this.requireUnlocked();
 
     return this.#keyrings.map((kr) => ({
       keyringType: kr.keyringType,
@@ -625,7 +625,7 @@ export default class KeyringService extends BaseService<Events> {
           .filter((address: string) => this.#hiddenAccounts[address] !== true),
       ],
       fingerprint: kr.fingerprint,
-    }))
+    }));
   }
 
   /**
@@ -634,92 +634,92 @@ export default class KeyringService extends BaseService<Events> {
    * @param fingerprint - a string corresponding to an unlocked keyring.
    */
   async deriveAddress(fingerprint: string): Promise<HexString> {
-    this.requireUnlocked()
+    this.requireUnlocked();
 
     // find the keyring using a linear search
-    const keyring = this.#keyrings.find((kr) => kr.fingerprint === fingerprint)
+    const keyring = this.#keyrings.find((kr) => kr.fingerprint === fingerprint);
     if (!keyring) {
-      throw new Error("Keyring not found.")
+      throw new Error("Keyring not found.");
     }
 
-    const keyringAddresses = keyring.getAddressesSync()
+    const keyringAddresses = keyring.getAddressesSync();
 
     // If There are any hidden addresses, show those first before adding new ones.
     const newAddress =
       keyringAddresses.find(
-        (address: string) => this.#hiddenAccounts[address] === true
-      ) ?? keyring.addAddressesSync(1)[0]
+        (address: string) => this.#hiddenAccounts[address] === true,
+      ) ?? keyring.addAddressesSync(1)[0];
 
     if (keyring.getAddressesSync().length > 10) {
-      throw new Error("Keyring has too many addresses")
+      throw new Error("Keyring has too many addresses");
     }
 
-    this.#hiddenAccounts[newAddress] = false
+    this.#hiddenAccounts[newAddress] = false;
 
-    await this.persistKeyrings()
+    await this.persistKeyrings();
 
     this.emitter.emit(KeyringEvents.ADDRESS, {
       address: newAddress,
       keyType: keyring.keyType,
-    })
-    this.emitKeyrings()
+    });
+    this.emitKeyrings();
 
-    return newAddress
+    return newAddress;
   }
 
   async hideAccount(address: HexString): Promise<void> {
-    this.#hiddenAccounts[address] = true
+    this.#hiddenAccounts[address] = true;
     // avoid using #findKeyring which will blow up if keyring not found
     const keyring = this.#keyrings.find((kr) =>
-      kr.getAddressesSync().includes(address)
-    )
+      kr.getAddressesSync().includes(address),
+    );
     if (!keyring) {
-      logger.warn(`Unknown keyring for address: ${address}`)
-      return
+      logger.warn(`Unknown keyring for address: ${address}`);
+      return;
     }
-    const keyringAddresses = await keyring.getAddresses()
+    const keyringAddresses = await keyring.getAddresses();
     const areAllAddressesHidden = keyringAddresses.every(
-      (keyringAddress: string) => this.#hiddenAccounts[keyringAddress] === true
-    )
+      (keyringAddress: string) => this.#hiddenAccounts[keyringAddress] === true,
+    );
     if (areAllAddressesHidden) {
-      this.#removeKeyring(keyring)
+      this.#removeKeyring(keyring);
     }
     // always save vaults to disk after hiding address
-    await this.persistKeyrings()
-    this.emitKeyrings()
+    await this.persistKeyrings();
+    this.emitKeyrings();
   }
 
   async exportPrivateKey(address: HexString): Promise<string> {
-    this.requireUnlocked()
-    const keyring = await this.#findKeyring(address)
-    return keyring.getPrivateKey(address)
+    this.requireUnlocked();
+    const keyring = await this.#findKeyring(address);
+    return keyring.getPrivateKey(address);
   }
 
   /**
    * Removes a keyring from memory and disk
    */
   #removeKeyring(
-    keyring: Keyring<SerializedKeyring>
+    keyring: Keyring<SerializedKeyring>,
   ): Keyring<SerializedKeyring>[] {
     const filteredKeyrings = this.#keyrings.filter(
-      (kr) => kr.fingerprint !== keyring.fingerprint
-    )
+      (kr) => kr.fingerprint !== keyring.fingerprint,
+    );
 
     // delete hidden addresses
     keyring.getAddressesSync().forEach((keyringAddress: string) => {
-      delete this.#hiddenAccounts[keyringAddress]
-    })
+      this.#hiddenAccounts[keyringAddress] = undefined;
+    });
 
     // delete keyring metadata
-    delete this.#keyringMetadata[keyring.fingerprint]
+    this.#keyringMetadata[keyring.fingerprint] = undefined;
 
     if (filteredKeyrings.length === this.#keyrings.length) {
       logger.warn(
-        `Attempting to remove keyring that does not exist. fingerprint: (${keyring.fingerprint})`
-      )
+        `Attempting to remove keyring that does not exist. fingerprint: (${keyring.fingerprint})`,
+      );
     }
-    this.#keyrings = filteredKeyrings
-    return filteredKeyrings
+    this.#keyrings = filteredKeyrings;
+    return filteredKeyrings;
   }
 
   /**
@@ -729,12 +729,12 @@ export default class KeyringService extends BaseService<Events> {
    */
   async #findKeyring(account: HexString): Promise<Keyring<SerializedKeyring>> {
     const keyring = this.#keyrings.find((kr) =>
-      kr.getAddressesSync().includes(account)
-    )
+      kr.getAddressesSync().includes(account),
+    );
     if (!keyring) {
-      throw new Error("Address keyring not found.")
+      throw new Error("Address keyring not found.");
     }
-    return keyring
+    return keyring;
   }
 
   /**
@@ -747,34 +747,31 @@ export default class KeyringService extends BaseService<Events> {
     addressOnNetwork: AddressOnNetwork,
     txRequest:
       | (EIP1559TransactionRequest & { nonce: number })
-      | POKTTransactionRequest
+      | POKTTransactionRequest,
   ): Promise<SignedEVMTransaction | SignedPOKTTransaction> {
-    this.requireUnlocked()
+    this.requireUnlocked();
 
-    const { address: account, network } = addressOnNetwork
+    const { address: account, network } = addressOnNetwork;
 
     // find the keyring using a linear search
-    const keyring = await this.#findKeyring(account)
+    const keyring = await this.#findKeyring(account);
 
     if (network.family === "EVM") {
-      const txReq = txRequest as EIP1559TransactionRequest & { nonce: number }
+      const txReq = txRequest as EIP1559TransactionRequest & { nonce: number };
       // ethers has a looser / slightly different request type
       const ethersTxRequest =
-        ethersTransactionRequestFromEIP1559TransactionRequest(txReq)
+        ethersTransactionRequestFromEIP1559TransactionRequest(txReq);
       // unfortunately, ethers gives us a serialized signed tx here
-      const signed = await keyring.signTransaction(account, ethersTxRequest)
+      const signed = await keyring.signTransaction(account, ethersTxRequest);
 
       // parse the tx, then unpack it as best we can
-      const tx = parseRawTransaction(signed)
+      const tx = parseRawTransaction(signed);
 
       if (
-        !tx.hash ||
-        !tx.from ||
-        !tx.r ||
-        !tx.s ||
+        !(((tx.hash &&tx.from ) &&tx.r ) &&tx.s ) ||
         typeof tx.v === "undefined"
       ) {
-        throw new Error("Transaction doesn't appear to have been signed.")
+        throw new Error("Transaction doesn't appear to have been signed.");
       }
 
       if (
@@ -782,7 +779,7 @@ export default class KeyringService extends BaseService<Events> {
         typeof tx.maxFeePerGas === "undefined" ||
         tx.type !== 2
       ) {
-        throw new Error("Can only sign EIP-1559 conforming transactions")
+        throw new Error("Can only sign EIP-1559 conforming transactions");
       }
 
       // TODO move this to a helper function
@@ -805,15 +802,15 @@ export default class KeyringService extends BaseService<Events> {
         blockHeight: null,
         asset: ETH,
         network: USE_MAINNET_FORK ? FORK : network,
-      }
+      };
 
-      return signedTx
+      return signedTx;
     }
 
-    const txReq = txRequest as POKTTransactionRequest
+    const txReq = txRequest as POKTTransactionRequest;
     const poktTxRequest =
-      poktHDKeyringTransactionRequestFromPoktTransactionRequest(txReq)
-    const txBytes = await keyring.signTransaction(account, poktTxRequest)
+      poktHDKeyringTransactionRequestFromPoktTransactionRequest(txReq);
+    const txBytes = await keyring.signTransaction(account, poktTxRequest);
 
     // TODO move this to a helper function
     const signedTx: SignedPOKTTransaction = {
@@ -826,9 +823,9 @@ export default class KeyringService extends BaseService<Events> {
       tx: txBytes,
       network,
       memo: txReq.memo,
-    }
+    };
 
-    return signedTx
+    return signedTx;
   }
 
   /**
@@ -843,26 +840,26 @@ export default class KeyringService extends BaseService<Events> {
     typedData,
     account,
   }: {
-    typedData: EIP712TypedData
-    account: HexString
+    typedData: EIP712TypedData;
+    account: HexString;
   }): Promise<string> {
-    this.requireUnlocked()
-    const { domain, types, message } = typedData
+    this.requireUnlocked();
+    const { domain, types, message } = typedData;
     // find the keyring using a linear search
-    const keyring = await this.#findKeyring(account)
+    const keyring = await this.#findKeyring(account);
     // When signing we should not include EIP712Domain type
-    const { EIP712Domain, ...typesForSigning } = types
+    const { EIP712Domain, ...typesForSigning } = types;
     try {
       const signature = await keyring.signTypedData(
         account,
         domain,
         typesForSigning,
-        message
-      )
+        message,
+      );
 
-      return signature
+      return signature;
     } catch (error) {
-      throw new Error("Signing data failed")
+      throw new Error("Signing data failed");
     }
   }
 
@@ -878,18 +875,18 @@ export default class KeyringService extends BaseService<Events> {
     signingData,
     account,
   }: {
-    signingData: EIP191Data
-    account: HexString
+    signingData: EIP191Data;
+    account: HexString;
   }): Promise<string> {
-    this.requireUnlocked()
+    this.requireUnlocked();
     // find the keyring using a linear search
-    const keyring = await this.#findKeyring(account)
+    const keyring = await this.#findKeyring(account);
     try {
-      const signature = await keyring.signMessage(account, signingData)
+      const signature = await keyring.signMessage(account, signingData);
 
-      return signature
+      return signature;
     } catch (error) {
-      throw new Error("Signing data failed")
+      throw new Error("Signing data failed");
     }
   }
 
@@ -902,13 +899,13 @@ export default class KeyringService extends BaseService<Events> {
       this.emitter.emit(KeyringEvents.KEYRINGS, {
         keyrings: [],
         keyringMetadata: {},
-      })
+      });
     } else {
-      const keyrings = this.getKeyrings()
+      const keyrings = this.getKeyrings();
       this.emitter.emit(KeyringEvents.KEYRINGS, {
         keyrings,
         keyringMetadata: { ...this.#keyringMetadata },
-      })
+      });
     }
   }
 
@@ -917,64 +914,64 @@ export default class KeyringService extends BaseService<Events> {
    */
   private async saveKeyring(
     keyring: Keyring<SerializedKeyring>,
-    keyringMetadata: KeyringMetadata
+    keyringMetadata: KeyringMetadata,
   ) {
     // track metadata always
-    this.#keyringMetadata[keyring.fingerprint] = keyringMetadata
+    this.#keyringMetadata[keyring.fingerprint] = keyringMetadata;
 
     // ensure addresses are set by finding the first address or add the first one
-    const addresses = keyring.getAddressesSync()
+    const addresses = keyring.getAddressesSync();
     const [address] =
-      addresses.length > 0 ? addresses : keyring.addAddressesSync(1)
+      addresses.length > 0 ? addresses : keyring.addAddressesSync(1);
 
     // ensure not hidden in case of a previsouly added account
-    this.#hiddenAccounts[address] = false
+    this.#hiddenAccounts[address] = false;
 
     // emits to update selected address
     this.emitter.emit(KeyringEvents.ADDRESS, {
       address,
       keyType: keyring.keyType,
-    })
+    });
 
     // remove this keyring in case already tracking
     this.#keyrings = this.#keyrings.filter(
-      (kr) => kr.fingerprint !== keyring.fingerprint
-    )
+      (kr) => kr.fingerprint !== keyring.fingerprint,
+    );
 
     // track in memory
-    this.#keyrings.push(keyring)
+    this.#keyrings.push(keyring);
     // track in vaults
-    await this.persistKeyrings()
+    await this.persistKeyrings();
     // notify redux
-    this.emitKeyrings()
+    this.emitKeyrings();
 
-    return keyring
+    return keyring;
   }
 
   /**
    * Serialize, encrypt, and persist all HDKeyrings.
    */
   private async persistKeyrings() {
-    this.requireUnlocked()
+    this.requireUnlocked();
 
     // This if guard will always pass due to requireUnlocked, but statically
     // prove it to TypeScript.
     if (this.#cachedKey !== null) {
-      const serializedKeyrings = this.#keyrings.map((kr) => kr.serializeSync())
-      const hiddenAccounts = { ...this.#hiddenAccounts }
-      const keyringMetadata = { ...this.#keyringMetadata }
+      const serializedKeyrings = this.#keyrings.map((kr) => kr.serializeSync());
+      const hiddenAccounts = { ...this.#hiddenAccounts };
+      const keyringMetadata = { ...this.#keyringMetadata };
       serializedKeyrings.sort((a, b) =>
-        a.fingerprint > b.fingerprint ? 1 : -1
-      )
+        a.fingerprint > b.fingerprint ? 1 : -1,
+      );
       const vault = await encryptVault(
         {
           keyrings: serializedKeyrings,
           metadata: keyringMetadata,
           hiddenAccounts,
         },
-        this.#cachedKey
-      )
-      await writeLatestEncryptedVault(vault)
+        this.#cachedKey,
+      );
+      await writeLatestEncryptedVault(vault);
     }
   }
 }

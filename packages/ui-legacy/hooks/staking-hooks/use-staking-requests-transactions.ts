@@ -1,37 +1,37 @@
-import useSWR from "swr"
-import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts"
-import { isEmpty, isEqual, lowerCase } from "lodash"
-import { selectCurrentAccount } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
+import useSWR from "swr";
+import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts";
+import { isEmpty, isEqual, lowerCase } from "lodash";
+import { selectCurrentAccount } from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
 import {
   fetcher,
   SENDNODES_ONCHAIN_API_URL,
   SnAction,
   SnTransaction,
-} from "./constants"
-import { useBackgroundSelector } from "../redux-hooks"
+} from "./constants";
+import { useBackgroundSelector } from "../redux-hooks";
 
 const enrichWithUnstakeInfo = (
   tx: SnTransaction,
-  allTransactions: SnTransaction[]
+  allTransactions: SnTransaction[],
 ) => {
   if (tx.action === SnAction.UNSTAKE && isEmpty(tx.unstakeStatus)) {
-    tx.unstakeStatus = "requested"
-    return true
+    tx.unstakeStatus = "requested";
+    return true;
   }
 
-  const isUnstakeReceipt = tx.action === SnAction.UNSTAKE_RECEIPT
-  const unstakeReceiptHash = isUnstakeReceipt && tx.memo?.split(":")[1]
+  const isUnstakeReceipt = tx.action === SnAction.UNSTAKE_RECEIPT;
+  const unstakeReceiptHash = isUnstakeReceipt && tx.memo?.split(":")[1];
   const unstakeRequest = allTransactions.find(
-    (tx) => tx.hash === unstakeReceiptHash
-  )
+    (tx) => tx.hash === unstakeReceiptHash,
+  );
   if (unstakeRequest) {
-    unstakeRequest.unstakeStatus = "filled"
-    unstakeRequest.unstakeReceiptAt = tx.timestamp
+    unstakeRequest.unstakeStatus = "filled";
+    unstakeRequest.unstakeReceiptAt = tx.timestamp;
   }
-}
+};
 
 export function useStakingRequestsTransactionsForAddress(
-  addressOnNetwork: AddressOnNetwork
+  addressOnNetwork: AddressOnNetwork,
 ) {
   const raw = JSON.stringify({
     method: "pokt_getStakingRequestsTransactions",
@@ -40,7 +40,7 @@ export function useStakingRequestsTransactionsForAddress(
     params: {
       userWalletAddress: addressOnNetwork.address,
     },
-  })
+  });
   const request = {
     method: "POST",
     headers: {
@@ -48,7 +48,7 @@ export function useStakingRequestsTransactionsForAddress(
     },
     body: raw,
     redirect: "follow",
-  }
+  };
 
   const { data, error } = useSWR<SnTransaction[], unknown>(
     // TODO: support more than one network name
@@ -59,33 +59,33 @@ export function useStakingRequestsTransactionsForAddress(
     fetcher,
     {
       refreshInterval: 60 * 1000,
-    }
-  )
+    },
+  );
 
   const allTransactions = (data ?? []).filter(
     (user: any) =>
-      lowerCase(user.userWalletAddress) === lowerCase(addressOnNetwork.address)
-  )
+      lowerCase(user.userWalletAddress) === lowerCase(addressOnNetwork.address),
+  );
 
   // enrich all staking request txs with the status of the unstake receipt tx
-  allTransactions.forEach((tx) => enrichWithUnstakeInfo(tx, allTransactions))
+  allTransactions.forEach((tx) => enrichWithUnstakeInfo(tx, allTransactions));
 
   return {
     data: allTransactions,
-    isLoading: !error && !data,
+    isLoading: !(error || data),
     isError: error,
-  }
+  };
 }
 
 export default function useStakingRequestsTransactions() {
-  const currentAccount = useBackgroundSelector(selectCurrentAccount, isEqual)
+  const currentAccount = useBackgroundSelector(selectCurrentAccount, isEqual);
 
   const { data, isLoading, isError } =
-    useStakingRequestsTransactionsForAddress(currentAccount)
+    useStakingRequestsTransactionsForAddress(currentAccount);
 
   return {
     data,
     isLoading,
     isError,
-  }
+  };
 }

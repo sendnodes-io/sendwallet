@@ -1,12 +1,12 @@
-import React, { ReactElement } from "react"
+import React, { ReactElement } from "react";
 
 interface Props {
-  label: string
-  activity: string
+  label: string;
+  activity: string;
 }
 
 export default function SharedActivityHeader(props: Props): ReactElement {
-  const { label, activity } = props
+  const { label, activity } = props;
 
   return (
     <h1>
@@ -35,5 +35,5 @@ export default function SharedActivityHeader(props: Props): ReactElement {
         `}
       </style>
     </h1>
-  )
+  );
 }

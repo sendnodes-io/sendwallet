@@ -1,6 +1,6 @@
-import { QueryHeightResponse } from "@pokt-network/pocket-js"
-import { POCKET } from "@sendnodes/pokt-wallet-background/constants"
-import useSWR from "swr"
+import { QueryHeightResponse } from "@pokt-network/pocket-js";
+import { POCKET } from "@sendnodes/pokt-wallet-background/constants";
+import useSWR from "swr";
 
 const fetcher = (url: string): Promise<QueryHeightResponse> =>
   fetch(url, {
@@ -8,7 +8,7 @@ const fetcher = (url: string): Promise<QueryHeightResponse> =>
     headers: {
       accept: "application/json",
     },
-  }).then((res) => res.json())
+  }).then((res) => res.json());
 
 export const usePoktNetworkBlockHeight = () => {
   const { data, error } = useSWR<QueryHeightResponse, unknown>(
@@ -16,12 +16,12 @@ export const usePoktNetworkBlockHeight = () => {
     fetcher,
     {
       refreshInterval: 15 * 1000,
-    }
-  )
+    },
+  );
 
   return {
     data,
-    isLoading: !error && !data,
+    isLoading: !(error || data),
     isError: error,
-  }
-}
+  };
+};

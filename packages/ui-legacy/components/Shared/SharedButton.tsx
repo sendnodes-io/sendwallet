@@ -1,12 +1,12 @@
-import React, { ReactElement, useState, useEffect } from "react"
-import classNames from "clsx"
-import { Redirect } from "react-router-dom"
-import { History } from "history"
-import SharedLoadingSpinner from "./SharedLoadingSpinner"
+import React, { ReactElement, useState, useEffect } from "react";
+import classNames from "clsx";
+import { Redirect } from "react-router-dom";
+import { History } from "history";
+import SharedLoadingSpinner from "./SharedLoadingSpinner";
 
 interface Props {
-  children: React.ReactNode
-  id?: string
+  children: React.ReactNode;
+  id?: string;
   type:
     | "primary"
     | "primaryGhost"
@@ -17,23 +17,23 @@ interface Props {
     | "tertiaryGray"
     | "deemphasizedWhite"
     | "warning"
-    | "unstyled"
-  size: "small" | "medium" | "large" | "xlarge"
-  icon?: string
-  iconSize?: "small" | "medium" | "large" | "xlarge" | "secondaryMedium"
-  iconPosition?: "left" | "right"
-  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void
-  isDisabled?: boolean
-  linkTo?: History.LocationDescriptor<unknown>
-  showLoadingOnClick: boolean
+    | "unstyled";
+  size: "small" | "medium" | "large" | "xlarge";
+  icon?: string;
+  iconSize?: "small" | "medium" | "large" | "xlarge" | "secondaryMedium";
+  iconPosition?: "left" | "right";
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  isDisabled?: boolean;
+  linkTo?: History.LocationDescriptor<unknown>;
+  showLoadingOnClick: boolean;
   /**
    * Disable button before calling onClick
    */
-  disableOnClick?: boolean
-  isLoading: boolean
-  isFormSubmit: boolean
-  title?: string
-  className?: string
+  disableOnClick?: boolean;
+  isLoading: boolean;
+  isFormSubmit: boolean;
+  title?: string;
+  className?: string;
 }
 
 export default function SharedButton(props: Props): ReactElement {
@@ -54,34 +54,35 @@ export default function SharedButton(props: Props): ReactElement {
     isFormSubmit,
     title = "",
     className,
-  } = props
+  } = props;
 
   const [navigateTo, setNavigateTo] =
-    React.useState<History.LocationDescriptor<unknown> | null>(null)
-  const [isClicked, setIsClicked] = useState(false)
+    React.useState<History.LocationDescriptor<unknown> | null>(null);
+  const [isClicked, setIsClicked] = useState(false);
 
   // If the prop deciding if the loader should be displayed or not
   // changes, assume resetting the loading state condition.
   useEffect(() => {
-    setIsClicked(false)
-  }, [showLoadingOnClick, disableOnClick])
+    setIsClicked(false);
+  }, [showLoadingOnClick, disableOnClick]);
 
   if (navigateTo && navigateTo === linkTo) {
-    return <Redirect push to={linkTo} />
+    return <Redirect push to={linkTo} />;
   }
 
   async function handleClick(
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) {
-    setIsClicked(true)
-    onClick?.(e)
+    setIsClicked(true);
+    onClick?.(e);
     if (linkTo) {
-      setNavigateTo(linkTo)
+      setNavigateTo(linkTo);
     }
   }
 
-  const isShowingLoadingSpinner = isLoading || (isClicked && showLoadingOnClick)
-  const disabled = isDisabled || (isClicked && disableOnClick && !!handleClick)
+  const isShowingLoadingSpinner =
+    isLoading || (isClicked && showLoadingOnClick);
+  const disabled = isDisabled || (isClicked && disableOnClick && !!handleClick);
 
   return (
     <button
@@ -104,7 +105,7 @@ export default function SharedButton(props: Props): ReactElement {
         { deemphasized_white: type === "deemphasizedWhite" },
         { warning: type === "warning" },
         { icon_button: icon },
-        className
+        className,
       )}
       onClick={handleClick}
     >
@@ -127,7 +128,7 @@ export default function SharedButton(props: Props): ReactElement {
               { icon_large: iconSize === "large" },
               { icon_xlarge: iconSize === "xlarge" },
               { icon_secondary_medium: iconSize === "secondaryMedium" },
-              `${icon}_icon`
+              `${icon}_icon`,
             )}
           />
         ) : null}
@@ -376,7 +377,7 @@ export default function SharedButton(props: Props): ReactElement {
         `}
       </style>
     </button>
-  )
+  );
 }
 
 SharedButton.defaultProps = {
@@ -388,4 +389,4 @@ SharedButton.defaultProps = {
   showLoadingOnClick: false,
   isLoading: false,
   isFormSubmit: false,
-}
+};

@@ -1,5 +1,5 @@
-import React, { ReactElement } from "react"
-import SignTransactionSlideUpContentLayout from "./SignTransactionSlideUpContentLayout"
+import React, { ReactElement } from "react";
+import SignTransactionSlideUpContentLayout from "./SignTransactionSlideUpContentLayout";
 
 export default function SignTransactionLedgerActivateBlindSigning(): ReactElement {
   return (
@@ -13,9 +13,9 @@ export default function SignTransactionLedgerActivateBlindSigning(): ReactElemen
       ]}
       onHelpClick={() =>
         window.open(
-          "https://support.ledger.com/hc/en-us/articles/4405481324433-Enable-blind-signing-in-the-Ethereum-ETH-app?docs=true"
+          "https://support.ledger.com/hc/en-us/articles/4405481324433-Enable-blind-signing-in-the-Ethereum-ETH-app?docs=true",
         )
       }
     />
-  )
+  );
 }

@@ -1,21 +1,21 @@
-import React, { useState, ReactElement } from "react"
-import classNames from "clsx"
+import React, { useState, ReactElement } from "react";
+import classNames from "clsx";
 
 interface SharedToggleButtonProps {
-  onChange: (toggleValue: boolean) => void
-  value?: boolean | undefined
+  onChange: (toggleValue: boolean) => void;
+  value?: boolean | undefined;
 }
 
 export default function SharedToggleButton({
   onChange,
   value,
 }: SharedToggleButtonProps): ReactElement {
-  const [isActive, setIsActive] = useState(value || false)
+  const [isActive, setIsActive] = useState(value);
 
   const handleToggleAction = () => {
-    setIsActive(!isActive)
-    onChange(!isActive)
-  }
+    setIsActive(!isActive);
+    onChange(!isActive);
+  };
 
   return (
     <button
@@ -50,5 +50,5 @@ export default function SharedToggleButton({
         `}
       </style>
     </button>
-  )
+  );
 }

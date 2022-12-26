@@ -1,39 +1,39 @@
-import React, { ReactElement, useCallback, useEffect, useState } from "react"
-import { useHistory } from "react-router-dom"
+import React, { ReactElement, useCallback, useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
 import {
   clearImporting,
   importKeyring,
   KeyringMnemonic,
-} from "@sendnodes/pokt-wallet-background/redux-slices/keyrings"
-import { setSnackbarMessage } from "@sendnodes/pokt-wallet-background/redux-slices/ui"
-import SharedButton from "../Shared/SharedButton"
+} from "@sendnodes/pokt-wallet-background/redux-slices/keyrings";
+import { setSnackbarMessage } from "@sendnodes/pokt-wallet-background/redux-slices/ui";
+import SharedButton from "../Shared/SharedButton";
 import {
   useAreKeyringsUnlocked,
   useBackgroundDispatch,
   useBackgroundSelector,
-} from "../../hooks"
-import OnboardingAccountLayout from "./OnboardingAccountLayout"
-import OnboardingRecoveryPhrase from "./OnboardingRecoveryPhrase"
-import { OnboardingNewAccountIcon } from "./Icons"
-import SharedSplashScreen from "../Shared/SharedSplashScreen"
+} from "../../hooks";
+import OnboardingAccountLayout from "./OnboardingAccountLayout";
+import OnboardingRecoveryPhrase from "./OnboardingRecoveryPhrase";
+import { OnboardingNewAccountIcon } from "./Icons";
+import SharedSplashScreen from "../Shared/SharedSplashScreen";
 
 export default function OnboardingVerifySeed({
   freshKeyring,
 }: {
-  freshKeyring: KeyringMnemonic
+  freshKeyring: KeyringMnemonic;
 }) {
-  const dispatch = useBackgroundDispatch()
-  const history = useHistory()
-  const [selected, setSelected] = useState<number[]>([])
-  const [isImporting, setIsImporting] = useState(false)
-  const areKeyringsUnlocked = useAreKeyringsUnlocked(true)
+  const dispatch = useBackgroundDispatch();
+  const history = useHistory();
+  const [selected, setSelected] = useState<number[]>([]);
+  const [isImporting, setIsImporting] = useState(false);
+  const areKeyringsUnlocked = useAreKeyringsUnlocked(true);
   const keyringImport = useBackgroundSelector(
-    (state) => state.keyrings.importing
-  )
-  const freshMnemonic = freshKeyring.mnemonic
+    (state) => state.keyrings.importing,
+  );
+  const freshMnemonic = freshKeyring.mnemonic;
 
   if (!freshMnemonic) {
-    throw new Error("Cannot verify without a mnemonic")
+    throw new Error("Cannot verify without a mnemonic");
   }
 
   // A random set of 8 word indices from the mnemonic to verify
@@ -43,78 +43,78 @@ export default function OnboardingVerifySeed({
       .sort(() => Math.random() - 0.5)
       .slice(0, 8)
       .map((item) => {
-        return freshMnemonic.indexOf(item)
-      })
-  )
+        return freshMnemonic.indexOf(item);
+      }),
+  );
 
   // sort word indices to verify for easier checking
-  const verify = randomWords.slice().sort((a, b) => a - b)
+  const verify = randomWords.slice().sort((a, b) => a - b);
 
   // initialize the choices
-  const [notSelected, setNotSelected] = useState(randomWords)
+  const [notSelected, setNotSelected] = useState(randomWords);
 
   const handleAdd = useCallback((item) => {
-    setSelected((currentlySelected) => [...currentlySelected, item])
+    setSelected((currentlySelected) => [...currentlySelected, item]);
     setNotSelected((currentlyUnselected) =>
-      currentlyUnselected?.filter((e) => e !== item)
-    )
-  }, [])
+      currentlyUnselected?.filter((e) => e !== item),
+    );
+  }, []);
 
   const handleRemove = useCallback((selectedItem: number | undefined) => {
-    if (selectedItem === undefined) return
+    if (selectedItem === undefined) return;
     setNotSelected((currentlyUnselected) => [
       ...currentlyUnselected,
       selectedItem,
-    ])
+    ]);
     setSelected((currentlySelected) =>
-      currentlySelected?.filter((e) => e !== selectedItem)
-    )
-  }, [])
+      currentlySelected?.filter((e) => e !== selectedItem),
+    );
+  }, []);
 
   function isVerified() {
     return (
       selected.length === verify.length &&
       selected.every((selectedIdx, i) => {
-        const assignedNumber = (verify && verify[i]) || 0
-        return freshMnemonic[assignedNumber] === freshMnemonic[selectedIdx]
+        const assignedNumber = (verify?.[i]) || 0;
+        return freshMnemonic[assignedNumber] === freshMnemonic[selectedIdx];
       })
-    )
+    );
   }
 
   useEffect(() => {
     // always start fresh
-    dispatch(clearImporting())
-  }, [dispatch])
+    dispatch(clearImporting());
+  }, [dispatch]);
 
   useEffect(() => {
     if (isVerified()) {
       // crypto initiated... save to keyring
-      setIsImporting(true)
+      setIsImporting(true);
       dispatch(
         importKeyring({
           mnemonic: freshMnemonic.join(" "),
           source: "internal",
-        })
-      )
+        }),
+      );
     }
-  }, [selected])
+  }, [selected]);
 
   useEffect(() => {
     if (isImporting && keyringImport === "done") {
-      dispatch(clearImporting()) // clean up
+      dispatch(clearImporting()); // clean up
       // yay! account created
-      history.push("/onboarding/account-created")
+      history.push("/onboarding/account-created");
     }
 
     if (keyringImport === "failed") {
-      dispatch(setSnackbarMessage("Something went wrong. Please try again."))
+      dispatch(setSnackbarMessage("Something went wrong. Please try again."));
 
-      setIsImporting(false)
+      setIsImporting(false);
     }
-  }, [history, areKeyringsUnlocked, keyringImport, isImporting])
+  }, [history, areKeyringsUnlocked, keyringImport, isImporting]);
 
   if (!areKeyringsUnlocked) {
-    return <SharedSplashScreen />
+    return <SharedSplashScreen />;
   }
 
   return (
@@ -156,7 +156,7 @@ export default function OnboardingVerifySeed({
                       type="primary"
                       size="small"
                       onClick={() => {
-                        handleAdd(item)
+                        handleAdd(item);
                       }}
                     >
                       {freshMnemonic[item]}
@@ -212,5 +212,5 @@ export default function OnboardingVerifySeed({
         `}
       </style>
     </div>
-  )
+  );
 }

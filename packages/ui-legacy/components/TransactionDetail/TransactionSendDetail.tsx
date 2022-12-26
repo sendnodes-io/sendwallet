@@ -1,49 +1,49 @@
-import { unitPricePointForPricePoint } from "@sendnodes/pokt-wallet-background/assets"
-import { POKT, USD } from "@sendnodes/pokt-wallet-background/constants"
-import { POKTTransactionRequest } from "@sendnodes/pokt-wallet-background/networks"
-import { ActivityItem } from "@sendnodes/pokt-wallet-background/redux-slices/activities"
-import { selectAssetPricePoint } from "@sendnodes/pokt-wallet-background/redux-slices/assets"
+import { unitPricePointForPricePoint } from "@sendnodes/pokt-wallet-background/assets";
+import { POKT, USD } from "@sendnodes/pokt-wallet-background/constants";
+import { POKTTransactionRequest } from "@sendnodes/pokt-wallet-background/networks";
+import { ActivityItem } from "@sendnodes/pokt-wallet-background/redux-slices/activities";
+import { selectAssetPricePoint } from "@sendnodes/pokt-wallet-background/redux-slices/assets";
 import {
   getAccountData,
   selectCurrentAddressNetwork,
-} from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
+} from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
 import {
   enrichAssetAmountWithDecimalValues,
   enrichAssetAmountWithMainCurrencyValues,
   heuristicDesiredDecimalsForUnitPrice,
-} from "@sendnodes/pokt-wallet-background/redux-slices/utils/asset-utils"
-import React, { ReactElement } from "react"
-import { useBackgroundSelector } from "../../hooks"
-import formatTokenAmount from "../../utils/formatTokenAmount"
-import SharedAddress from "../Shared/SharedAddress"
-import SharedAssetIcon from "../Shared/SharedAssetIcon"
+} from "@sendnodes/pokt-wallet-background/redux-slices/utils/asset-utils";
+import React, { ReactElement } from "react";
+import { useBackgroundSelector } from "../../hooks";
+import formatTokenAmount from "../../utils/formatTokenAmount";
+import SharedAddress from "../Shared/SharedAddress";
+import SharedAssetIcon from "../Shared/SharedAssetIcon";
 
 export type TransactionSendDetailProps = {
-  transaction: ActivityItem
-}
+  transaction: ActivityItem;
+};
 
 export default function TransactionSendDetail({
   transaction,
 }: TransactionSendDetailProps): ReactElement {
   const { address, network } = useBackgroundSelector(
-    selectCurrentAddressNetwork
-  )
+    selectCurrentAddressNetwork,
+  );
   const baseAssetPricePoint = useBackgroundSelector((state) =>
-    selectAssetPricePoint(state.assets, network.baseAsset.symbol, USD.symbol)
-  )
-  let amount = BigInt(0)
-  let from = address
-  let to: string | undefined
+    selectAssetPricePoint(state.assets, network.baseAsset.symbol, USD.symbol),
+  );
+  let amount = BigInt(0);
+  let from = address;
+  let to: string | undefined;
 
   if ("value" in transaction) {
-    amount = transaction.value
+    amount = transaction.value;
   }
   if ("txMsg" in transaction) {
-    amount = BigInt(transaction.txMsg.value.amount)
-    to = transaction.to
-    from = transaction.from
+    amount = BigInt(transaction.txMsg.value.amount);
+    to = transaction.to;
+    from = transaction.from;
   }
-  if ("to" in transaction) to = transaction.to
+  if ("to" in transaction) to = transaction.to;
   const transactionAssetAmount = enrichAssetAmountWithDecimalValues(
     {
       asset: network.baseAsset,
@@ -53,11 +53,11 @@ export default function TransactionSendDetail({
       network.baseAsset.decimals,
       typeof baseAssetPricePoint !== "undefined"
         ? unitPricePointForPricePoint(baseAssetPricePoint)
-        : undefined
-    )
-  )
+        : undefined,
+    ),
+  );
 
-  const decimalPlaces = transactionAssetAmount.decimalAmount < 1 ? 6 : 2
+  const decimalPlaces = transactionAssetAmount.decimalAmount < 1 ? 6 : 2;
   const {
     decimalAmount: tokenValue,
     mainCurrencyAmount: dollarValue,
@@ -66,16 +66,16 @@ export default function TransactionSendDetail({
   } = enrichAssetAmountWithMainCurrencyValues(
     transactionAssetAmount,
     baseAssetPricePoint,
-    decimalPlaces
-  )
+    decimalPlaces,
+  );
 
   const fromAccountData = useBackgroundSelector((state) =>
-    getAccountData(state, from)
-  )
+    getAccountData(state, from),
+  );
 
   const toAccountData = useBackgroundSelector((state) =>
-    getAccountData(state, to ?? "")
-  )
+    getAccountData(state, to ?? ""),
+  );
 
   return (
     <div className="sign_block">
@@ -234,5 +234,5 @@ export default function TransactionSendDetail({
         `}
       </style>
     </div>
-  )
+  );
 }

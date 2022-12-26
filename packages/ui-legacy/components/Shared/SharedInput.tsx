@@ -1,24 +1,24 @@
-import React, { ChangeEvent, ReactElement, useEffect, useRef } from "react"
-import classNames from "clsx"
-import { useParsedValidation, useRunOnFirstRender } from "../../hooks"
+import React, { ChangeEvent, ReactElement, useEffect, useRef } from "react";
+import classNames from "clsx";
+import { useParsedValidation, useRunOnFirstRender } from "../../hooks";
 
 interface Props<T> {
-  id?: string
-  label: string
-  focusedLabelBackgroundColor: string
-  placeholder?: string
-  type: "password" | "text" | "number" | "textarea"
-  value?: string | undefined
-  onChange?: (value: T | undefined) => void
-  onFocus?: () => void
-  errorMessage?: string
-  autoFocus?: boolean
-  autoSelect?: boolean
-  maxLength?: number
-  disabled?: boolean
+  id?: string;
+  label: string;
+  focusedLabelBackgroundColor: string;
+  placeholder?: string;
+  type: "password" | "text" | "number" | "textarea";
+  value?: string | undefined;
+  onChange?: (value: T | undefined) => void;
+  onFocus?: () => void;
+  errorMessage?: string;
+  autoFocus?: boolean;
+  autoSelect?: boolean;
+  maxLength?: number;
+  disabled?: boolean;
   parseAndValidate: (
-    value: string
-  ) => { parsed: T | undefined } | { error: string }
+    value: string,
+  ) => { parsed: T | undefined } | { error: string };
 }
 
 export function SharedTypedInput<T = string>(props: Props<T>): ReactElement {
@@ -37,19 +37,19 @@ export function SharedTypedInput<T = string>(props: Props<T>): ReactElement {
     parseAndValidate,
     maxLength,
     disabled = false,
-  } = props
-  const textAreaRef = useRef<HTMLTextAreaElement | null>(null)
-  const inputRef = useRef<HTMLInputElement | null>(null)
+  } = props;
+  const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
-    if (autoFocus) textAreaRef.current?.focus()
-    if (autoFocus) inputRef.current?.focus()
-  }, [autoFocus])
+    if (autoFocus) textAreaRef.current?.focus();
+    if (autoFocus) inputRef.current?.focus();
+  }, [autoFocus]);
 
   useEffect(() => {
-    if (autoSelect) textAreaRef.current?.select()
-    if (autoSelect) inputRef.current?.select()
-  }, [autoSelect])
+    if (autoSelect) textAreaRef.current?.select();
+    if (autoSelect) inputRef.current?.select();
+  }, [autoSelect]);
 
   const {
     rawValue: inputValue,
@@ -57,14 +57,14 @@ export function SharedTypedInput<T = string>(props: Props<T>): ReactElement {
     handleInputChange,
   } = useParsedValidation<T | undefined>(
     onChange ?? (() => {}),
-    parseAndValidate
-  )
+    parseAndValidate,
+  );
 
   useRunOnFirstRender(() => {
     if (currentValue && currentValue.trim() !== inputValue) {
-      handleInputChange(currentValue)
+      handleInputChange(currentValue);
     }
-  })
+  });
 
   return (
     <div className="wrap shared_input">
@@ -194,28 +194,28 @@ export function SharedTypedInput<T = string>(props: Props<T>): ReactElement {
         `}
       </style>
     </div>
-  )
+  );
 }
 
 SharedTypedInput.defaultProps = {
   type: "text",
   focusedLabelBackgroundColor: "var(--eerie-black-100)",
-}
+};
 
 export default function SharedInput(
-  props: Omit<Props<string>, "onChange"> & { onChange?: (_: string) => void }
+  props: Omit<Props<string>, "onChange"> & { onChange?: (_: string) => void },
 ): ReactElement {
   const onChangeWrapper = (newValue: string | undefined) => {
-    props.onChange?.(newValue ?? "")
-  }
+    props.onChange?.(newValue ?? "");
+  };
 
   return SharedTypedInput({
     ...props,
     onChange: onChangeWrapper,
-  })
+  });
 }
 
 SharedInput.defaultProps = {
   ...SharedTypedInput.defaultProps,
   parseAndValidate: (v: string) => ({ parsed: v }),
-}
+};

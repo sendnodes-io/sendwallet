@@ -1,10 +1,10 @@
-import React, { ReactElement, useState } from "react"
-import SharedPanelSwitcher from "../Shared/SharedPanelSwitcher"
-import SignTransactionDetailPanel from "./SignTransactionDetailPanel"
-import SignTransactionRawDataPanel from "./SignTransactionRawDataPanel"
+import React, { ReactElement, useState } from "react";
+import SharedPanelSwitcher from "../Shared/SharedPanelSwitcher";
+import SignTransactionDetailPanel from "./SignTransactionDetailPanel";
+import SignTransactionRawDataPanel from "./SignTransactionRawDataPanel";
 
 export default function SignTransactionPanelSwitcher(): ReactElement {
-  const [panelNumber, setPanelNumber] = useState(0)
+  const [panelNumber, setPanelNumber] = useState(0);
 
   return (
     <div className="wrap">
@@ -35,5 +35,5 @@ export default function SignTransactionPanelSwitcher(): ReactElement {
         `}
       </style>
     </div>
-  )
+  );
 }

@@ -3,28 +3,28 @@ import React, {
   ReactElement,
   useCallback,
   useState,
-} from "react"
-import classNames from "clsx"
-import { useDispatch } from "react-redux"
+} from "react";
+import classNames from "clsx";
+import { useDispatch } from "react-redux";
 import {
   refreshBackgroundPage,
   setSnackbarMessage,
-} from "@sendnodes/pokt-wallet-background/redux-slices/ui"
+} from "@sendnodes/pokt-wallet-background/redux-slices/ui";
 import {
   selectCurrentAccountSigningMethod,
   selectCurrentAccount,
-} from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
-import { CompleteAssetAmount } from "@sendnodes/pokt-wallet-background/redux-slices/accounts"
-import { POKT } from "@sendnodes/pokt-wallet-background/constants"
-import { browser } from "@sendnodes/pokt-wallet-background"
-import { useBackgroundSelector, useLocalStorage } from "../../hooks"
-import SharedButton from "../Shared/SharedButton"
-import t from "../../utils/i18n"
-import DollarSvg from "../Icons/DollarSvg"
-import SharedAddress from "../Shared/SharedAddress"
-import formatTokenAmount from "../../utils/formatTokenAmount"
-import SharedLoadingSpinner from "../Shared/SharedLoadingSpinner"
-import SharedAssetIcon from "../Shared/SharedAssetIcon"
+} from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
+import { CompleteAssetAmount } from "@sendnodes/pokt-wallet-background/redux-slices/accounts";
+import { POKT } from "@sendnodes/pokt-wallet-background/constants";
+import { browser } from "@sendnodes/pokt-wallet-background";
+import { useBackgroundSelector, useLocalStorage } from "../../hooks";
+import SharedButton from "../Shared/SharedButton";
+import t from "../../utils/i18n";
+import DollarSvg from "../Icons/DollarSvg";
+import SharedAddress from "../Shared/SharedAddress";
+import formatTokenAmount from "../../utils/formatTokenAmount";
+import SharedLoadingSpinner from "../Shared/SharedLoadingSpinner";
+import SharedAssetIcon from "../Shared/SharedAssetIcon";
 
 function ReadOnlyNotice(): ReactElement {
   return (
@@ -53,22 +53,22 @@ function ReadOnlyNotice(): ReactElement {
         }
       `}</style>
     </div>
-  )
+  );
 }
 
 function BalanceReloader(): ReactElement {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
-  const [isSpinning, setIsSpinning] = useState(false)
+  const [isSpinning, setIsSpinning] = useState(false);
 
   // 0 = never
   const [timeWhenLastReloaded, setTimeWhenLastReloaded] = useLocalStorage(
     "timeWhenLastReloaded",
-    "0"
-  )
+    "0",
+  );
 
-  const loadingTimeMs = 15000
-  const timeGapBetweenRunningReloadMs = 60000 * 2
+  const loadingTimeMs = 15000;
+  const timeGapBetweenRunningReloadMs = 60000 * 2;
 
   return (
     <button
@@ -76,8 +76,8 @@ function BalanceReloader(): ReactElement {
       disabled={isSpinning}
       className={classNames("reload", { spinning: isSpinning })}
       onClick={() => {
-        const currentTime = new Date().getTime()
-        setIsSpinning(true)
+        const currentTime = new Date().getTime();
+        setIsSpinning(true);
 
         // Appear to spin regardless if too recent. Only refresh
         // background page if timeGapBetweenRunningReloadMs is met.
@@ -85,13 +85,13 @@ function BalanceReloader(): ReactElement {
           Number(timeWhenLastReloaded) + timeGapBetweenRunningReloadMs <
           currentTime
         ) {
-          setTimeWhenLastReloaded(`${currentTime}`)
-          dispatch(refreshBackgroundPage())
+          setTimeWhenLastReloaded(`${currentTime}`);
+          dispatch(refreshBackgroundPage());
         }
         setTimeout(() => {
-          setIsSpinning(false)
-          window.location.reload()
-        }, loadingTimeMs)
+          setIsSpinning(false);
+          window.location.reload();
+        }, loadingTimeMs);
       }}
     >
       <style jsx>{`
@@ -122,33 +122,33 @@ function BalanceReloader(): ReactElement {
         }
       `}</style>
     </button>
-  )
+  );
 }
 
 interface Props {
-  assets: CompleteAssetAmount[]
-  balance?: number
-  initializationLoadingTimeExpired: boolean
+  assets: CompleteAssetAmount[];
+  balance?: number;
+  initializationLoadingTimeExpired: boolean;
 }
 
 export default function WalletAccountBalanceControl(
-  props: Props
+  props: Props,
 ): ReactElement {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
-  const selectedAccount = useBackgroundSelector(selectCurrentAccount)
-  const { address: selectedAccountAddress, network } = selectedAccount
-  const { assets, balance, initializationLoadingTimeExpired } = props
+  const selectedAccount = useBackgroundSelector(selectCurrentAccount);
+  const { address: selectedAccountAddress, network } = selectedAccount;
+  const { assets, balance, initializationLoadingTimeExpired } = props;
   const assetAmount = assets.find(
-    (a) => a.asset.symbol === network.baseAsset.symbol
-  )
+    (a) => a.asset.symbol === network.baseAsset.symbol,
+  );
 
-  const shouldIndicateLoading = typeof balance === "undefined"
+  const shouldIndicateLoading = typeof balance === "undefined";
 
   const copyBalance = (bal: string | undefined) => () => {
-    navigator.clipboard.writeText(bal ?? "")
-    dispatch(setSnackbarMessage("Balance copied to clipboard"))
-  }
+    navigator.clipboard.writeText(bal ?? "");
+    dispatch(setSnackbarMessage("Balance copied to clipboard"));
+  };
 
   return (
     <>
@@ -214,7 +214,7 @@ export default function WalletAccountBalanceControl(
                 onClick={() =>
                   window.open(
                     browser.runtime.getURL("stake.html"),
-                    "poktwallet_stake"
+                    "poktwallet_stake",
                   )
                 }
                 title="Stake POKT"
@@ -358,5 +358,5 @@ export default function WalletAccountBalanceControl(
         `}
       </style>
     </>
-  )
+  );
 }

@@ -8,9 +8,9 @@ import {
   FungibleAsset,
   UnitPricePoint,
   AnyAsset,
-} from "../../assets"
-import { fromFixedPointNumber } from "../../lib/fixed-point"
-import { AnyNetwork } from "../../networks"
+} from "../../assets";
+import { fromFixedPointNumber } from "../../lib/fixed-point";
+import { AnyNetwork } from "../../networks";
 
 /**
  * Adds user-specific amounts based on preferences. This is the combination of
@@ -20,20 +20,20 @@ import { AnyNetwork } from "../../networks"
  * localized form.
  */
 export type AssetMainCurrencyAmount = {
-  mainCurrencyAmount?: number
-  localizedMainCurrencyAmount?: string
-  unitPrice?: number
-  localizedUnitPrice?: string
-}
+  mainCurrencyAmount?: number;
+  localizedMainCurrencyAmount?: string;
+  unitPrice?: number;
+  localizedUnitPrice?: string;
+};
 
 /**
  * Adds a conversion of the asset amount to a floating point number, as well as
  * a conversion to a localized form of that representation.
  */
 export type AssetDecimalAmount = {
-  decimalAmount: number
-  localizedDecimalAmount: string
-}
+  decimalAmount: number;
+  localizedDecimalAmount: string;
+};
 
 /**
  * Given an asset and a network, determines whether the given asset is the base
@@ -47,14 +47,14 @@ export type AssetDecimalAmount = {
  */
 export function isNetworkBaseAsset(
   asset: AnyAsset,
-  network: AnyNetwork
+  network: AnyNetwork,
 ): boolean {
   return (
     !("homeNetwork" in asset) &&
     "family" in network &&
     (network.family === "EVM" || network.family === "POKT") &&
     asset.symbol === network.baseAsset.symbol
-  )
+  );
 }
 
 /**
@@ -73,14 +73,14 @@ export function isNetworkBaseAsset(
 export function formatCurrencyAmount(
   currencySymbol: string,
   currencyAmount: number,
-  desiredDecimals: number
+  desiredDecimals: number,
 ): string {
   return new Intl.NumberFormat("default", {
     style: "currency",
     currency: currencySymbol,
     minimumFractionDigits: desiredDecimals,
     maximumFractionDigits: desiredDecimals,
-  }).format(currencyAmount)
+  }).format(currencyAmount);
 }
 
 /**
@@ -110,29 +110,29 @@ export function formatCurrencyAmount(
  *         localized string based on the user's locale.
  */
 export function enrichAssetAmountWithMainCurrencyValues<
-  T extends AnyAssetAmount
+  T extends AnyAssetAmount,
 >(
   assetAmount: T,
   assetPricePoint: PricePoint | undefined,
-  desiredDecimals: number
+  desiredDecimals: number,
 ): T & AssetMainCurrencyAmount {
   const convertedAssetAmount = convertAssetAmountViaPricePoint(
     assetAmount,
-    assetPricePoint
-  )
+    assetPricePoint,
+  );
   const { unitPrice } = unitPricePointForPricePoint(assetPricePoint) ?? {
     unitPrice: undefined,
-  }
+  };
 
   if (typeof convertedAssetAmount !== "undefined") {
     const convertedDecimalValue = assetAmountToDesiredDecimals(
       convertedAssetAmount,
-      desiredDecimals
-    )
+      desiredDecimals,
+    );
     const unitPriceDecimalValue =
       typeof unitPrice === "undefined"
         ? undefined
-        : assetAmountToDesiredDecimals(unitPrice, desiredDecimals)
+        : assetAmountToDesiredDecimals(unitPrice, desiredDecimals);
 
     return {
       ...assetAmount,
@@ -140,7 +140,7 @@ export function enrichAssetAmountWithMainCurrencyValues<
       localizedMainCurrencyAmount: formatCurrencyAmount(
         convertedAssetAmount.asset.symbol,
         convertedDecimalValue,
-        desiredDecimals
+        desiredDecimals,
       ),
       unitPrice: unitPriceDecimalValue,
       localizedUnitPrice:
@@ -149,14 +149,14 @@ export function enrichAssetAmountWithMainCurrencyValues<
           : formatCurrencyAmount(
               convertedAssetAmount.asset.symbol,
               unitPriceDecimalValue,
-              desiredDecimals
+              desiredDecimals,
             ),
-    }
+    };
   }
 
   return {
     ...assetAmount,
-  }
+  };
 }
 
 /**
@@ -165,7 +165,7 @@ export function enrichAssetAmountWithMainCurrencyValues<
  */
 export function enrichAssetAmountWithDecimalValues<T extends AnyAssetAmount>(
   assetAmount: T,
-  desiredDecimals: number
+  desiredDecimals: number,
 ): T & AssetDecimalAmount {
   const decimalAmount = isFungibleAssetAmount(assetAmount)
     ? assetAmountToDesiredDecimals(assetAmount, desiredDecimals)
@@ -173,8 +173,8 @@ export function enrichAssetAmountWithDecimalValues<T extends AnyAssetAmount>(
       // precision.
       assetAmountToDesiredDecimals(
         { ...assetAmount, asset: { ...assetAmount.asset, decimals: 0 } },
-        desiredDecimals
-      )
+        desiredDecimals,
+      );
 
   return {
     ...assetAmount,
@@ -182,7 +182,7 @@ export function enrichAssetAmountWithDecimalValues<T extends AnyAssetAmount>(
     localizedDecimalAmount: decimalAmount.toLocaleString(undefined, {
       maximumFractionDigits: desiredDecimals,
     }),
-  }
+  };
 }
 
 /**
@@ -205,7 +205,7 @@ export function enrichAssetAmountWithDecimalValues<T extends AnyAssetAmount>(
  */
 export function heuristicDesiredDecimalsForUnitPrice(
   minimumDesiredDecimals: number,
-  unitPrice: UnitPricePoint<FungibleAsset> | number | undefined
+  unitPrice: UnitPricePoint<FungibleAsset> | number | undefined,
 ): number {
   const numericUnitPrice =
     typeof unitPrice === "undefined" || typeof unitPrice === "number"
@@ -215,14 +215,14 @@ export function heuristicDesiredDecimalsForUnitPrice(
             amount: unitPrice.unitPrice.amount,
             decimals: unitPrice.unitPrice.asset.decimals,
           },
-          10
-        )
+          10,
+        );
 
   return Math.max(
     // If no unit price is provided, just assume 0, which will use the minimum
     // desired decimals. Supporting this makes it easier for callers to
     // special-case unit prices that could not be resolved.
     Math.ceil(Math.log10(numericUnitPrice ?? 0)),
-    minimumDesiredDecimals
-  )
+    minimumDesiredDecimals,
+  );
 }

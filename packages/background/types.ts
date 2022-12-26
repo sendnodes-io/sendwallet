@@ -1,4 +1,4 @@
-import { TypedDataField } from "@ethersproject/abstract-signer"
+import { TypedDataField } from "@ethersproject/abstract-signer";
 
 /**
  * Named type for strings that should be URIs.
@@ -9,7 +9,7 @@ import { TypedDataField } from "@ethersproject/abstract-signer"
  * would give this some more teeth. Right now, any `string` can be assigned
  * into a variable of type `URI` and vice versa.
  */
-export type URI = string
+export type URI = string;
 
 /**
  * Named type for strings that should be domain names.
@@ -20,7 +20,7 @@ export type URI = string
  * would give this some more teeth. Right now, any `string` can be assigned
  * into a variable of type `DomainName` and vice versa.
  */
-export type DomainName = string
+export type DomainName = string;
 
 /**
  * Named type for strings that should be hexadecimal numbers.
@@ -31,7 +31,7 @@ export type DomainName = string
  * would give this some more teeth. Right now, any `string` can be assigned
  * into a variable of type `HexString` and vice versa.
  */
-export type HexString = string
+export type HexString = string;
 
 /*
  * Named type for a number measuring time in seconds since the Unix Epoch,
@@ -42,7 +42,7 @@ export type HexString = string
  * would give this some more teeth. Right now, any `number` can be assigned
  * into a variable of type `UNIXTime` and vice versa.
  */
-export type UNIXTime = number
+export type UNIXTime = number;
 
 // KEY TYPES
 
@@ -55,28 +55,28 @@ export enum KeyringTypes {
 }
 
 export type EIP712DomainType = {
-  name?: string
-  version?: string
-  chainId?: number
-  verifyingContract?: HexString
-}
+  name?: string;
+  version?: string;
+  chainId?: number;
+  verifyingContract?: HexString;
+};
 
 export type EIP712TypedData<T = Record<string, unknown>> = {
-  domain: EIP712DomainType
-  types: Record<string, TypedDataField[]>
-  message: T
-  primaryType: string
-}
+  domain: EIP712DomainType;
+  types: Record<string, TypedDataField[]>;
+  message: T;
+  primaryType: string;
+};
 
-export type EIP191Data = string
+export type EIP191Data = string;
 
 /**
  * Result of ExportPrivateKey
  */
 export type ExportedPrivateKey = {
   exportedPrivateKey?: {
-    address?: string
-    privateKey?: string
-    error: string | false
-  }
-}
+    address?: string;
+    privateKey?: string;
+    error: string | false;
+  };
+};

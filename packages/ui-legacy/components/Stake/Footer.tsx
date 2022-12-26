@@ -1,5 +1,5 @@
-import { Icon } from "@iconify/react"
-import React from "react"
+import { Icon } from "@iconify/react";
+import React from "react";
 
 export default function Footer() {
   return (
@@ -69,5 +69,5 @@ export default function Footer() {
         </p>
       </div>
     </footer>
-  )
+  );
 }

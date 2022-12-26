@@ -1,10 +1,10 @@
-import React, { ReactElement } from "react"
-import SharedAssetIcon from "../Shared/SharedAssetIcon"
-import TransactionDetailContainer from "../TransactionDetail/TransactionDetailContainer"
-import TransactionDetailItem from "../TransactionDetail/TransactionDetailItem"
+import React, { ReactElement } from "react";
+import SharedAssetIcon from "../Shared/SharedAssetIcon";
+import TransactionDetailContainer from "../TransactionDetail/TransactionDetailContainer";
+import TransactionDetailItem from "../TransactionDetail/TransactionDetailItem";
 import SignTransactionBaseInfoProvider, {
   SignTransactionInfoProviderProps,
-} from "./SignTransactionBaseInfoProvider"
+} from "./SignTransactionBaseInfoProvider";
 
 export default function SignTransactionSwapAssetInfoProvider({
   inner,
@@ -110,5 +110,5 @@ export default function SignTransactionSwapAssetInfoProvider({
       confirmButtonLabel="Confirm"
       inner={inner}
     />
-  )
+  );
 }

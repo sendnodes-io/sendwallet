@@ -1,54 +1,54 @@
-import useSWR from "swr"
-import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts"
-import { fetcher, SENDNODES_ONCHAIN_API_URL } from "./constants"
+import useSWR from "swr";
+import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts";
+import { fetcher, SENDNODES_ONCHAIN_API_URL } from "./constants";
 
 export interface ISnRewardStatsFormatted {
-  startTimestamp: string
-  endTimestamp: string
-  startHeight: string
-  endHeight: string
-  blocksPerDay: string
-  apy: number
-  apy1d: number | null
-  apy7d: number | null
-  apyNoCompounding: number
-  apyNoCompounding1d: number | null
-  apyNoCompounding7d: number | null
-  grossRewardsPerNodePerDay: string
-  grossRewardsTotal: string
-  netRewardsPerNodePerDay: string
-  netRewardsPerPoktStakedPerDay: string
-  netRewardsUsersTotal: string
-  netRewardsUsersTotalCompound: string
-  netRewardsUsersTotalSweep: string
-  avgPoktPricePerUSD: string
-  totalStaked: string
-  totalUnstaked: string
-  totalPendingStaked: string
-  totalPendingUnstaked: string
-  userStakeAvg: string
-  userStakeMin: string
-  userStakeMax: string
-  stakedUsers: number
-  parent?: string
+  startTimestamp: string;
+  endTimestamp: string;
+  startHeight: string;
+  endHeight: string;
+  blocksPerDay: string;
+  apy: number;
+  apy1d: number | null;
+  apy7d: number | null;
+  apyNoCompounding: number;
+  apyNoCompounding1d: number | null;
+  apyNoCompounding7d: number | null;
+  grossRewardsPerNodePerDay: string;
+  grossRewardsTotal: string;
+  netRewardsPerNodePerDay: string;
+  netRewardsPerPoktStakedPerDay: string;
+  netRewardsUsersTotal: string;
+  netRewardsUsersTotalCompound: string;
+  netRewardsUsersTotalSweep: string;
+  avgPoktPricePerUSD: string;
+  totalStaked: string;
+  totalUnstaked: string;
+  totalPendingStaked: string;
+  totalPendingUnstaked: string;
+  userStakeAvg: string;
+  userStakeMin: string;
+  userStakeMax: string;
+  stakedUsers: number;
+  parent?: string;
 }
 
 export interface IUserStakingDataFormatted {
-  staked: string
-  unstaked: string
-  pendingStaked: string
-  pendingUnstaked: string
-  rewards: string
-  pendingRewards: string
-  rewardsAPY: string
-  compound: boolean
-  stakedWeight: string
-  userWalletAddress: string
+  staked: string;
+  unstaked: string;
+  pendingStaked: string;
+  pendingUnstaked: string;
+  rewards: string;
+  pendingRewards: string;
+  rewardsAPY: string;
+  compound: boolean;
+  stakedWeight: string;
+  userWalletAddress: string;
 }
 
 export interface IGetStakingUserData {
-  rewardsData: ISnRewardStatsFormatted
-  userStakingData: IUserStakingDataFormatted[]
+  rewardsData: ISnRewardStatsFormatted;
+  userStakingData: IUserStakingDataFormatted[];
 }
 
 export function useStakingUserData(addressOnNetwork: AddressOnNetwork) {
@@ -59,7 +59,7 @@ export function useStakingUserData(addressOnNetwork: AddressOnNetwork) {
     params: {
       userWalletAddress: addressOnNetwork.address,
     },
-  })
+  });
 
   const request = {
     method: "POST",
@@ -68,7 +68,7 @@ export function useStakingUserData(addressOnNetwork: AddressOnNetwork) {
     },
     body: raw,
     redirect: "follow",
-  }
+  };
 
   const { data, error } = useSWR<IGetStakingUserData, unknown>(
     // TODO: support more than one network name
@@ -79,12 +79,12 @@ export function useStakingUserData(addressOnNetwork: AddressOnNetwork) {
     fetcher,
     {
       refreshInterval: 60 * 1000,
-    }
-  )
+    },
+  );
 
   return {
     data,
-    isLoading: !error && !data,
+    isLoading: !(error || data),
     isError: error,
-  }
+  };
 }

@@ -1,25 +1,25 @@
-import React, { ReactElement } from "react"
-import { Link } from "react-router-dom"
-import { CompleteAssetAmount } from "@sendnodes/pokt-wallet-background/redux-slices/accounts"
+import React, { ReactElement } from "react";
+import { Link } from "react-router-dom";
+import { CompleteAssetAmount } from "@sendnodes/pokt-wallet-background/redux-slices/accounts";
 
-import SharedLoadingSpinner from "../Shared/SharedLoadingSpinner"
-import SharedAssetIcon from "../Shared/SharedAssetIcon"
+import SharedLoadingSpinner from "../Shared/SharedLoadingSpinner";
+import SharedAssetIcon from "../Shared/SharedAssetIcon";
 
 interface Props {
-  assetAmount: CompleteAssetAmount
-  initializationLoadingTimeExpired: boolean
+  assetAmount: CompleteAssetAmount;
+  initializationLoadingTimeExpired: boolean;
 }
 
 export default function WalletAssetListItem(props: Props): ReactElement {
-  const { assetAmount, initializationLoadingTimeExpired } = props
+  const { assetAmount, initializationLoadingTimeExpired } = props;
 
   const isMissingLocalizedUserValue =
-    typeof assetAmount.localizedMainCurrencyAmount === "undefined"
+    typeof assetAmount.localizedMainCurrencyAmount === "undefined";
 
   const contractAddress =
     "contractAddress" in assetAmount.asset
       ? assetAmount.asset.contractAddress
-      : undefined
+      : undefined;
 
   return (
     <li>
@@ -153,5 +153,5 @@ export default function WalletAssetListItem(props: Props): ReactElement {
         `}
       </style>
     </li>
-  )
+  );
 }

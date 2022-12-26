@@ -1,13 +1,13 @@
-import React, { ReactElement, useState } from "react"
-import { useHistory, Redirect } from "react-router-dom"
-import classNames from "clsx"
+import React, { ReactElement, useState } from "react";
+import { useHistory, Redirect } from "react-router-dom";
+import classNames from "clsx";
 
 export default function SharedBackButton(): ReactElement {
-  const historyPre: unknown = useHistory()
-  const [redirect, setRedirect] = useState(false)
+  const historyPre: unknown = useHistory();
+  const [redirect, setRedirect] = useState(false);
   const history = historyPre as {
-    entries: { pathName: string }[]
-  }
+    entries: { pathName: string }[];
+  };
 
   if (redirect) {
     return (
@@ -21,7 +21,7 @@ export default function SharedBackButton(): ReactElement {
           state: { isBack: true },
         }}
       />
-    )
+    );
   }
 
   return (
@@ -31,7 +31,7 @@ export default function SharedBackButton(): ReactElement {
         hide: history.entries?.length <= 1,
       })}
       onClick={() => {
-        setRedirect(true)
+        setRedirect(true);
       }}
     >
       <div className="icon_chevron_left" />
@@ -63,5 +63,5 @@ export default function SharedBackButton(): ReactElement {
         }
       `}</style>
     </button>
-  )
+  );
 }

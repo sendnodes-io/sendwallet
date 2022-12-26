@@ -1,22 +1,22 @@
-import { fetchJson } from "@ethersproject/web"
-import BlocknativeSdk from "bnc-sdk"
+import { fetchJson } from "@ethersproject/web";
+import BlocknativeSdk from "bnc-sdk";
 
 import {
   BlockPrices,
   BlockEstimate,
   BlockPriceDataSource,
-} from "../../networks"
-import { EthereumTransactionData } from "./types"
-import { gweiToWei } from "../../lib/utils"
-import { ETHEREUM } from "../../constants/networks"
+} from "../../networks";
+import { EthereumTransactionData } from "./types";
+import { gweiToWei } from "../../lib/utils";
+import { ETHEREUM } from "../../constants/networks";
 
-const BLOCKNATIVE_API_ROOT = "https://api.blocknative.com"
+const BLOCKNATIVE_API_ROOT = "https://api.blocknative.com";
 
 export const BlocknativeNetworkIds = {
   ethereum: {
     mainnet: 1,
   },
-}
+};
 
 // TODO Improve code to clearly discriminate between Bitcoin and
 // TODO Ethereum---either top-level or inside the instance.
@@ -28,14 +28,14 @@ export const BlocknativeNetworkIds = {
  * feedback from the Blocknative system to minimize usage when possible.
  */
 export default class Blocknative {
-  private blocknative: BlocknativeSdk
+  private blocknative: BlocknativeSdk;
 
-  private apiKey: string
+  private apiKey: string;
 
   static connect(apiKey: string, networkId: number): Blocknative {
-    const connection = new this(apiKey, networkId)
+    const connection = new this(apiKey, networkId);
 
-    return connection
+    return connection;
   }
 
   private constructor(apiKey: string, networkId: number) {
@@ -44,17 +44,17 @@ export default class Blocknative {
     this.blocknative = new BlocknativeSdk({
       dappId: apiKey,
       networkId,
-    })
+    });
 
-    this.apiKey = apiKey
+    this.apiKey = apiKey;
   }
 
   watchBalanceUpdatesFor(
     accountAddress: string,
     handler: (
       transactionData: EthereumTransactionData,
-      balanceDelta: bigint
-    ) => void
+      balanceDelta: bigint,
+    ) => void,
   ): void {
     // TODO Centralize handling of txConfirmed.
     this.blocknative
@@ -64,7 +64,7 @@ export default class Blocknative {
           "system" in transactionData &&
           transactionData.system === "ethereum" // not Bitcoin or a log
         ) {
-          const transaction = transactionData as EthereumTransactionData
+          const transaction = transactionData as EthereumTransactionData;
 
           const balanceDelta = transaction.netBalanceChanges
             ?.filter(({ address }) => address.toLowerCase() === accountAddress)
@@ -73,22 +73,22 @@ export default class Blocknative {
             .reduce(
               (ethBalanceChangeDelta, { delta }) =>
                 ethBalanceChangeDelta + BigInt(delta),
-              0n
-            )
+              0n,
+            );
 
           if (balanceDelta) {
             // Only if there is a balance delta to report.
-            handler(transaction, balanceDelta)
+            handler(transaction, balanceDelta);
           }
         }
-      })
+      });
   }
 
   unwatchBalanceUpdatesFor(accountAddress: string): void {
     // TODO After centralizing handling, handle overall unsubscribing through
     // that mechanism.
-    this.blocknative.account(accountAddress).emitter.off("txConfirmed")
-    this.blocknative.unsubscribe(accountAddress)
+    this.blocknative.account(accountAddress).emitter.off("txConfirmed");
+    this.blocknative.unsubscribe(accountAddress);
   }
 
   /*
@@ -99,11 +99,11 @@ export default class Blocknative {
     const request = {
       url: `${BLOCKNATIVE_API_ROOT}/gasprices/blockprices`,
       headers: { Authorization: this.apiKey },
-    }
+    };
 
     // TODO: What happens if the blocknative API request fails or gets rate limited?
-    const response = await fetchJson(request)
-    const currentBlock = response.blockPrices[0]
+    const response = await fetchJson(request);
+    const currentBlock = response.blockPrices[0];
 
     return {
       network: ETHEREUM,
@@ -117,10 +117,10 @@ export default class Blocknative {
             price: gweiToWei(estimate.price),
             maxPriorityFeePerGas: gweiToWei(estimate.maxPriorityFeePerGas),
             maxFeePerGas: gweiToWei(estimate.maxFeePerGas),
-          }
-        }
+          };
+        },
       ),
       dataSource: BlockPriceDataSource.BLOCKNATIVE,
-    }
+    };
   }
 }

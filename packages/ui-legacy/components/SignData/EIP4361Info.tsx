@@ -1,17 +1,17 @@
-import React from "react"
-import { EIP4361Data } from "@sendnodes/pokt-wallet-background/utils/signing"
-import SignDataInfo from "./SignDataInfo"
+import React from "react";
+import { EIP4361Data } from "@sendnodes/pokt-wallet-background/utils/signing";
+import SignDataInfo from "./SignDataInfo";
 
 // can add networks, ideally should come from some sort of network config
 // TODO fetch this from NETWORK config
 const CHAIN_NAMES: (chain: number) => string = (chain) => {
   switch (chain) {
     case 1:
-      return "Ethereum"
+      return "Ethereum";
     default:
-      return "Unknown"
+      return "Unknown";
   }
-}
+};
 
 // this overides the type to expect EIP4361Data
 const EIP4361Info: React.FC<{ signingData: EIP4361Data }> = ({
@@ -36,7 +36,7 @@ const EIP4361Info: React.FC<{ signingData: EIP4361Data }> = ({
       <SignDataInfo
         label="Chain ID"
         content={`${signingData.chainId.toString()} (${CHAIN_NAMES(
-          signingData.chainId
+          signingData.chainId,
         )})`}
       />
       {signingData?.expiration ? (
@@ -64,7 +64,7 @@ const EIP4361Info: React.FC<{ signingData: EIP4361Data }> = ({
         }
       `}</style>
     </>
-  )
-}
+  );
+};
 
-export default EIP4361Info
+export default EIP4361Info;

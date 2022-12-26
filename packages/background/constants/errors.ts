@@ -13,4 +13,4 @@ export const NETWORK_ERRORS = {
   CONNECT_NOT_SUPPORTED:
     "The provided endpoint does not support socket connections",
   SOCKET_CLOSED: "Connection with node is no longer open",
-}
+};

@@ -1,15 +1,15 @@
-import { FiatCurrency, FungibleAsset } from "../../assets"
-import { AddressOnNetwork } from "../../accounts"
+import { FiatCurrency, FungibleAsset } from "../../assets";
+import { AddressOnNetwork } from "../../accounts";
 
 export interface TokenListPreferences {
-  autoUpdate: boolean
-  urls: string[]
+  autoUpdate: boolean;
+  urls: string[];
 }
 
 export interface Preferences {
-  tokenLists: TokenListPreferences
-  currency: FiatCurrency
-  defaultWallet: boolean
-  selectedAccount: AddressOnNetwork
-  customAssets: FungibleAsset[]
+  tokenLists: TokenListPreferences;
+  currency: FiatCurrency;
+  defaultWallet: boolean;
+  selectedAccount: AddressOnNetwork;
+  customAssets: FungibleAsset[];
 }

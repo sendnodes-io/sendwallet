@@ -1,10 +1,10 @@
-import React from "react"
-import { SignDataRequest } from "@sendnodes/pokt-wallet-background/utils/signing"
+import React from "react";
+import { SignDataRequest } from "@sendnodes/pokt-wallet-background/utils/signing";
 
 const EIP191Info: React.FC<{
-  signingData: SignDataRequest["signingData"]
-  account: string
-  internal: boolean
+  signingData: SignDataRequest["signingData"];
+  account: string;
+  internal: boolean;
 }> = ({ signingData, account, internal }) => {
   return (
     <>
@@ -48,6 +48,6 @@ const EIP191Info: React.FC<{
         }
       `}</style>
     </>
-  )
-}
-export default EIP191Info
+  );
+};
+export default EIP191Info;

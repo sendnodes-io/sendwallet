@@ -1,12 +1,12 @@
-import { POKTTransactionRequest } from "@sendnodes/pokt-wallet-background/networks"
-import { selectTransactionData } from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction"
-import React, { ReactElement } from "react"
-import { useBackgroundSelector } from "../../hooks"
-import { SignTransactionInfo } from "./SignTransactionBaseInfoProvider"
-import SignTransactionSignInfoProvider from "./SignTransactionSignInfoProvider"
-import SignTransactionSpendAssetInfoProvider from "./SignTransactionSpendAssetInfoProvider"
-import SignTransactionSwapAssetInfoProvider from "./SignTransactionSwapAssetInfoProvider"
-import SignTransactionTransferInfoProvider from "./SignTransactionTransferInfoProvider"
+import { POKTTransactionRequest } from "@sendnodes/pokt-wallet-background/networks";
+import { selectTransactionData } from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction";
+import React, { ReactElement } from "react";
+import { useBackgroundSelector } from "../../hooks";
+import { SignTransactionInfo } from "./SignTransactionBaseInfoProvider";
+import SignTransactionSignInfoProvider from "./SignTransactionSignInfoProvider";
+import SignTransactionSpendAssetInfoProvider from "./SignTransactionSpendAssetInfoProvider";
+import SignTransactionSwapAssetInfoProvider from "./SignTransactionSwapAssetInfoProvider";
+import SignTransactionTransferInfoProvider from "./SignTransactionTransferInfoProvider";
 
 /**
  * Creates transaction type-specific UI blocks and provides them to children.
@@ -14,16 +14,16 @@ import SignTransactionTransferInfoProvider from "./SignTransactionTransferInfoPr
 export default function SignTransactionInfoProvider({
   children,
 }: {
-  children: (info: SignTransactionInfo) => ReactElement
+  children: (info: SignTransactionInfo) => ReactElement;
 }): ReactElement {
-  const transactionDetails = useBackgroundSelector(selectTransactionData)
+  const transactionDetails = useBackgroundSelector(selectTransactionData);
 
-  if (!transactionDetails) return <></>
+  if (!transactionDetails) return <></>;
 
   const annotation =
     "annotation" in transactionDetails
       ? transactionDetails.annotation
-      : undefined
+      : undefined;
 
   switch (annotation?.type) {
     case "asset-swap":
@@ -33,7 +33,7 @@ export default function SignTransactionInfoProvider({
           transactionDetails={transactionDetails}
           annotation={annotation}
         />
-      )
+      );
     case "asset-approval":
       return (
         <SignTransactionSpendAssetInfoProvider
@@ -41,7 +41,7 @@ export default function SignTransactionInfoProvider({
           transactionDetails={transactionDetails}
           annotation={annotation}
         />
-      )
+      );
     case "asset-transfer":
       return (
         <SignTransactionTransferInfoProvider
@@ -49,7 +49,7 @@ export default function SignTransactionInfoProvider({
           transactionDetails={transactionDetails}
           annotation={annotation}
         />
-      )
+      );
     default:
       return (
         <SignTransactionSignInfoProvider
@@ -57,6 +57,6 @@ export default function SignTransactionInfoProvider({
           transactionDetails={transactionDetails as POKTTransactionRequest}
           annotation={annotation}
         />
-      )
+      );
   }
 }

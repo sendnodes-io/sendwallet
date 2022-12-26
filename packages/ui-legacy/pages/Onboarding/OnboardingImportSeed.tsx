@@ -5,95 +5,95 @@ import React, {
   useState,
   useEffect,
   useCallback,
-} from "react"
+} from "react";
 import {
   clearImporting,
   importKeyring,
-} from "@sendnodes/pokt-wallet-background/redux-slices/keyrings"
-import { isValidMnemonic } from "@ethersproject/hdnode"
-import { useHistory } from "react-router-dom"
-import { setSnackbarMessage } from "@sendnodes/pokt-wallet-background/redux-slices/ui"
-import SharedButton from "../../components/Shared/SharedButton"
-import OnboardingRecoveryPhrase from "../../components/Onboarding/OnboardingRecoveryPhrase"
-import OnboardingAccountLayout from "../../components/Onboarding/OnboardingAccountLayout"
+} from "@sendnodes/pokt-wallet-background/redux-slices/keyrings";
+import { isValidMnemonic } from "@ethersproject/hdnode";
+import { useHistory } from "react-router-dom";
+import { setSnackbarMessage } from "@sendnodes/pokt-wallet-background/redux-slices/ui";
+import SharedButton from "../../components/Shared/SharedButton";
+import OnboardingRecoveryPhrase from "../../components/Onboarding/OnboardingRecoveryPhrase";
+import OnboardingAccountLayout from "../../components/Onboarding/OnboardingAccountLayout";
 import {
   useBackgroundSelector,
   useAreKeyringsUnlocked,
   useBackgroundDispatch,
-} from "../../hooks"
-import { OnboardingImportRecoveryPhraseIcon } from "../../components/Onboarding/Icons"
-import SharedSplashScreen from "../../components/Shared/SharedSplashScreen"
+} from "../../hooks";
+import { OnboardingImportRecoveryPhraseIcon } from "../../components/Onboarding/Icons";
+import SharedSplashScreen from "../../components/Shared/SharedSplashScreen";
 
 export default function OnboardingImportSeed() {
-  const rootRef = useRef<HTMLDivElement>(null)
+  const rootRef = useRef<HTMLDivElement>(null);
 
-  const areKeyringsUnlocked = useAreKeyringsUnlocked(true)
+  const areKeyringsUnlocked = useAreKeyringsUnlocked(true);
 
-  const [importMnemonic, setImportMnemonic] = useState(Array(24).fill(""))
-  const [errorMessage, setErrorMessage] = useState("")
-  const [isImporting, setIsImporting] = useState(false)
+  const [importMnemonic, setImportMnemonic] = useState(Array(24).fill(""));
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isImporting, setIsImporting] = useState(false);
 
-  const dispatch = useBackgroundDispatch()
+  const dispatch = useBackgroundDispatch();
   const keyringImport = useBackgroundSelector(
-    (state) => state.keyrings.importing
-  )
+    (state) => state.keyrings.importing,
+  );
 
-  const history = useHistory()
+  const history = useHistory();
 
   useEffect(() => {
     // always start fresh
-    dispatch(clearImporting())
-  }, [dispatch])
+    dispatch(clearImporting());
+  }, [dispatch]);
 
   useEffect(() => {
     if (isImporting && keyringImport === "done") {
-      dispatch(clearImporting()) // clean up
+      dispatch(clearImporting()); // clean up
       // yay! account created
-      history.push("/onboarding/account-created")
+      history.push("/onboarding/account-created");
     }
 
     if (keyringImport === "failed") {
-      dispatch(setSnackbarMessage("Something went wrong. Please try again."))
-      setIsImporting(false)
+      dispatch(setSnackbarMessage("Something went wrong. Please try again."));
+      setIsImporting(false);
     }
-  }, [history, areKeyringsUnlocked, keyringImport, isImporting])
+  }, [history, areKeyringsUnlocked, keyringImport, isImporting]);
 
-  if (!areKeyringsUnlocked) return <SharedSplashScreen />
+  if (!areKeyringsUnlocked) return <SharedSplashScreen />;
 
   const onInput = (e: FormEvent, wordIndex: number) => {
     // clear error
-    setErrorMessage("")
+    setErrorMessage("");
 
     // handle pastes first
     if (e.type === "paste") {
-      const nativeEvent = e.nativeEvent as ClipboardEvent
+      const nativeEvent = e.nativeEvent as ClipboardEvent;
       // Stop data actually being pasted into div
-      e.stopPropagation()
-      e.preventDefault()
+      e.stopPropagation();
+      e.preventDefault();
 
       // Get pasted data via clipboard API
-      const { clipboardData } = nativeEvent
-      const pastedData = clipboardData?.getData("Text")
+      const { clipboardData } = nativeEvent;
+      const pastedData = clipboardData?.getData("Text");
       if (pastedData === undefined || rootRef.current === null) {
-        return
+        return;
       }
-      const inputs = Array.from(rootRef.current.querySelectorAll("input"))
+      const inputs = Array.from(rootRef.current.querySelectorAll("input"));
       setImportMnemonic((importMnemonic) => {
         pastedData
           .toLowerCase()
           .match(/([a-z]+)/g)
           ?.forEach((word, idx) => {
             if (importMnemonic[wordIndex + idx] !== undefined) {
-              importMnemonic[wordIndex + idx] = word
-              inputs[wordIndex + idx].value = word
+              importMnemonic[wordIndex + idx] = word;
+              inputs[wordIndex + idx].value = word;
             }
-          })
-        return importMnemonic
-      })
-      return
+          });
+        return importMnemonic;
+      });
+      return;
     }
 
-    const nativeEvent = e.nativeEvent as InputEvent
+    const nativeEvent = e.nativeEvent as InputEvent;
 
     switch (nativeEvent.data) {
       // space bar selects next input
@@ -101,43 +101,43 @@ export default function OnboardingImportSeed() {
         e.currentTarget
           .closest(".word")
           ?.nextElementSibling?.querySelector("input")
-          ?.select()
+          ?.select();
     }
     if (importMnemonic[wordIndex] === undefined) {
       throw new Error(
-        `Mnemonic index out of bounds, tried to update word ${wordIndex}`
-      )
+        `Mnemonic index out of bounds, tried to update word ${wordIndex}`,
+      );
     }
-    const input = e.target as HTMLInputElement
-    const newValue = input.value.toLowerCase().replaceAll(/[^a-z]/g, "")
+    const input = e.target as HTMLInputElement;
+    const newValue = input.value.toLowerCase().replaceAll(/[^a-z]/g, "");
     setImportMnemonic((importMnemonic) => {
-      input.value = importMnemonic[wordIndex] = newValue
-      return importMnemonic
-    })
-  }
+      input.value = importMnemonic[wordIndex] = newValue;
+      return importMnemonic;
+    });
+  };
 
   const importWallet = useCallback(async () => {
     const trimmedRecoveryPhrase = importMnemonic
       .filter((w) => !!w && w.length > 0)
-      .join(" ")
-    const splitTrimmedRecoveryPhrase = trimmedRecoveryPhrase.split(" ")
+      .join(" ");
+    const splitTrimmedRecoveryPhrase = trimmedRecoveryPhrase.split(" ");
     if (
       splitTrimmedRecoveryPhrase.length !== 12 &&
       splitTrimmedRecoveryPhrase.length !== 24
     ) {
-      setErrorMessage("Must be a 12 or 24 word recovery phrase")
+      setErrorMessage("Must be a 12 or 24 word recovery phrase");
     } else if (isValidMnemonic(trimmedRecoveryPhrase)) {
-      setIsImporting(true)
+      setIsImporting(true);
       dispatch(
         importKeyring({
           mnemonic: trimmedRecoveryPhrase,
           source: "import",
-        })
-      )
+        }),
+      );
     } else {
-      setErrorMessage("Invalid recovery phrase")
+      setErrorMessage("Invalid recovery phrase");
     }
-  }, [dispatch, importMnemonic])
+  }, [dispatch, importMnemonic]);
 
   return (
     <div ref={rootRef}>
@@ -222,5 +222,5 @@ export default function OnboardingImportSeed() {
         `}
       </style>
     </div>
-  )
+  );
 }

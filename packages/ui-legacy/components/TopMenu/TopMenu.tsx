@@ -1,37 +1,37 @@
-import React, { ReactElement, useState, useEffect, useCallback } from "react"
-import { browser } from "@sendnodes/pokt-wallet-background"
-import { PermissionRequest } from "@sendnodes/provider-bridge-shared"
+import React, { ReactElement, useState, useEffect, useCallback } from "react";
+import { browser } from "@sendnodes/pokt-wallet-background";
+import { PermissionRequest } from "@sendnodes/provider-bridge-shared";
 import {
   selectAllowedPages,
   selectCurrentAccount,
-} from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
-import { denyOrRevokePermission } from "@sendnodes/pokt-wallet-background/redux-slices/dapp-permission"
-import TopMenuProtocolSwitcher from "./TopMenuProtocolSwitcher"
-import TopMenuProfileButton from "./TopMenuProfileButton"
+} from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
+import { denyOrRevokePermission } from "@sendnodes/pokt-wallet-background/redux-slices/dapp-permission";
+import TopMenuProtocolSwitcher from "./TopMenuProtocolSwitcher";
+import TopMenuProfileButton from "./TopMenuProfileButton";
 
-import AccountsNotificationPanel from "../AccountsNotificationPanel/AccountsNotificationPanel"
-import SharedSlideUpMenu from "../Shared/SharedSlideUpMenu"
-import TopMenuConnectedDAppInfo from "./TopMenuConnectedDAppInfo"
-import TopMenuProtocolList from "./TopMenuProtocolList"
+import AccountsNotificationPanel from "../AccountsNotificationPanel/AccountsNotificationPanel";
+import SharedSlideUpMenu from "../Shared/SharedSlideUpMenu";
+import TopMenuConnectedDAppInfo from "./TopMenuConnectedDAppInfo";
+import TopMenuProtocolList from "./TopMenuProtocolList";
 
-import { useBackgroundDispatch, useBackgroundSelector } from "../../hooks"
+import { useBackgroundDispatch, useBackgroundSelector } from "../../hooks";
 
 export default function TopMenu(): ReactElement {
-  const [isProtocolListOpen, setIsProtocolListOpen] = useState(false)
-  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
+  const [isProtocolListOpen, setIsProtocolListOpen] = useState(false);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 
   const [isActiveDAppConnectionInfoOpen, setIsActiveDAppConnectionInfoOpen] =
-    useState(false)
+    useState(false);
 
-  const dispatch = useBackgroundDispatch()
+  const dispatch = useBackgroundDispatch();
 
   const [currentPermission, setCurrentPermission] = useState<PermissionRequest>(
-    {} as PermissionRequest
-  )
-  const [isConnectedToDApp, setIsConnectedToDApp] = useState(false)
+    {} as PermissionRequest,
+  );
+  const [isConnectedToDApp, setIsConnectedToDApp] = useState(false);
 
-  const allowedPages = useBackgroundSelector(selectAllowedPages)
-  const currentAccount = useBackgroundSelector(selectCurrentAccount)
+  const allowedPages = useBackgroundSelector(selectAllowedPages);
+  const currentAccount = useBackgroundSelector(selectCurrentAccount);
 
   const initPermissionAndOrigin = useCallback(async () => {
     const { url } = await browser.tabs
@@ -40,35 +40,35 @@ export default function TopMenu(): ReactElement {
         lastFocusedWindow: true,
       })
       .then((tabs) =>
-        tabs[0] ? tabs[0] : { url: "", favIconUrl: "", title: "" }
-      )
+        tabs[0] ? tabs[0] : { url: "", favIconUrl: "", title: "" },
+      );
 
-    if (!url) return
+    if (!url) return;
 
-    const { origin } = new URL(url)
+    const { origin } = new URL(url);
 
-    const allowPermission = allowedPages[`${origin}_${currentAccount.address}`]
+    const allowPermission = allowedPages[`${origin}_${currentAccount.address}`];
 
     if (allowPermission) {
-      setCurrentPermission(allowPermission)
-      setIsConnectedToDApp(true)
+      setCurrentPermission(allowPermission);
+      setIsConnectedToDApp(true);
     } else {
-      setIsConnectedToDApp(false)
+      setIsConnectedToDApp(false);
     }
-  }, [allowedPages, setCurrentPermission, currentAccount])
+  }, [allowedPages, setCurrentPermission, currentAccount]);
 
   useEffect(() => {
-    initPermissionAndOrigin()
-  }, [initPermissionAndOrigin])
+    initPermissionAndOrigin();
+  }, [initPermissionAndOrigin]);
 
   const deny = useCallback(async () => {
     if (typeof currentPermission !== "undefined") {
       await dispatch(
-        denyOrRevokePermission({ ...currentPermission, state: "deny" })
-      )
+        denyOrRevokePermission({ ...currentPermission, state: "deny" }),
+      );
     }
-    window.close()
-  }, [dispatch, currentPermission])
+    window.close();
+  }, [dispatch, currentPermission]);
 
   return (
     <>
@@ -78,7 +78,7 @@ export default function TopMenu(): ReactElement {
           url={currentPermission.origin}
           faviconUrl={currentPermission.faviconUrl}
           close={() => {
-            setIsActiveDAppConnectionInfoOpen(false)
+            setIsActiveDAppConnectionInfoOpen(false);
           }}
           disconnect={deny}
         />
@@ -86,7 +86,7 @@ export default function TopMenu(): ReactElement {
       <SharedSlideUpMenu
         isOpen={isProtocolListOpen}
         close={() => {
-          setIsProtocolListOpen(false)
+          setIsProtocolListOpen(false);
         }}
       >
         <TopMenuProtocolList />
@@ -94,7 +94,7 @@ export default function TopMenu(): ReactElement {
       <SharedSlideUpMenu
         isOpen={isNotificationsOpen}
         close={() => {
-          setIsNotificationsOpen(false)
+          setIsNotificationsOpen(false);
         }}
       >
         <AccountsNotificationPanel
@@ -112,14 +112,14 @@ export default function TopMenu(): ReactElement {
                 className="connection_button"
                 onClick={() => {
                   setIsActiveDAppConnectionInfoOpen(
-                    !isActiveDAppConnectionInfoOpen
-                  )
+                    !isActiveDAppConnectionInfoOpen,
+                  );
                 }}
               />
             )}
             <TopMenuProfileButton
               onClick={() => {
-                setIsNotificationsOpen(!isNotificationsOpen)
+                setIsNotificationsOpen(!isNotificationsOpen);
               }}
             />
           </div>
@@ -163,5 +163,5 @@ export default function TopMenu(): ReactElement {
         </style>
       </div>
     </>
-  )
+  );
 }

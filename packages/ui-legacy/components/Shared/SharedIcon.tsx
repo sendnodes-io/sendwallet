@@ -1,17 +1,17 @@
-import clsx from "clsx"
-import React, { ReactElement } from "react"
+import clsx from "clsx";
+import React, { ReactElement } from "react";
 
 type Props = {
-  icon: string
-  width: string
-  height?: string
-  color?: string
-  hoverColor?: string
-  customStyles?: string
-  ariaLabel?: string
-  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
-  className?: string
-}
+  icon: string;
+  width: string;
+  height?: string;
+  color?: string;
+  hoverColor?: string;
+  customStyles?: string;
+  ariaLabel?: string;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  className?: string;
+};
 
 export function SharedIconButton(props: Props): ReactElement {
   const {
@@ -23,7 +23,7 @@ export function SharedIconButton(props: Props): ReactElement {
     customStyles = "",
     ariaLabel,
     onClick,
-  } = props
+  } = props;
 
   return (
     <button
@@ -42,7 +42,7 @@ export function SharedIconButton(props: Props): ReactElement {
         ariaLabel={ariaLabel}
       />
     </button>
-  )
+  );
 }
 
 export function SharedIcon(props: Props): ReactElement {
@@ -55,7 +55,7 @@ export function SharedIcon(props: Props): ReactElement {
     customStyles = "",
     ariaLabel,
     className = "",
-  } = props
+  } = props;
 
   return (
     <div className={clsx("icon", className)} aria-label={ariaLabel}>
@@ -73,5 +73,5 @@ export function SharedIcon(props: Props): ReactElement {
         }
       `}</style>
     </div>
-  )
+  );
 }

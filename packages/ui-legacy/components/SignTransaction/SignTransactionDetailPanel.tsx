@@ -1,29 +1,29 @@
-import React, { ReactElement, useState } from "react"
+import React, { ReactElement, useState } from "react";
 import {
   NetworkFeeSettings,
   selectEstimatedFeesPerGas,
   selectTransactionData,
   updateTransactionOptions,
-} from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction"
-import { EnrichedPOKTTransactionRequest } from "@sendnodes/pokt-wallet-background/services/enrichment"
-import { useBackgroundDispatch, useBackgroundSelector } from "../../hooks"
-import FeeSettingsText from "../NetworkFees/FeeSettingsText"
-import NetworkSettingsChooser from "../NetworkFees/NetworkSettingsChooser"
-import SharedSlideUpMenu from "../Shared/SharedSlideUpMenu"
+} from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction";
+import { EnrichedPOKTTransactionRequest } from "@sendnodes/pokt-wallet-background/services/enrichment";
+import { useBackgroundDispatch, useBackgroundSelector } from "../../hooks";
+import FeeSettingsText from "../NetworkFees/FeeSettingsText";
+import NetworkSettingsChooser from "../NetworkFees/NetworkSettingsChooser";
+import SharedSlideUpMenu from "../Shared/SharedSlideUpMenu";
 
 export default function SignTransactionDetailPanel(): ReactElement {
-  const dispatch = useBackgroundDispatch()
+  const dispatch = useBackgroundDispatch();
   const [networkSettingsModalOpen, setNetworkSettingsModalOpen] =
-    useState(false)
+    useState(false);
 
-  const estimatedFeesPerGas = useBackgroundSelector(selectEstimatedFeesPerGas)
+  const estimatedFeesPerGas = useBackgroundSelector(selectEstimatedFeesPerGas);
 
   // TODO: v0.2.0 handle more than one kind of TX
   const transactionDetails = useBackgroundSelector(
-    selectTransactionData
-  ) as EnrichedPOKTTransactionRequest
+    selectTransactionData,
+  ) as EnrichedPOKTTransactionRequest;
 
-  if (transactionDetails === undefined) return <></>
+  if (transactionDetails === undefined) return <></>;
 
   const networkSettingsSaved = async (networkSetting: NetworkFeeSettings) => {
     dispatch(
@@ -34,11 +34,11 @@ export default function SignTransactionDetailPanel(): ReactElement {
           //   ? transactionDetails.gasLimit
           //   :
           networkSetting.gasLimit,
-      })
-    )
+      }),
+    );
 
-    setNetworkSettingsModalOpen(false)
-  }
+    setNetworkSettingsModalOpen(false);
+  };
 
   return (
     <div className="detail_items_wrap width_full">
@@ -79,5 +79,5 @@ export default function SignTransactionDetailPanel(): ReactElement {
         `}
       </style>
     </div>
-  )
+  );
 }

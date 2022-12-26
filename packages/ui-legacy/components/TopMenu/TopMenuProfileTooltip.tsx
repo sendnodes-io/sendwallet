@@ -1,9 +1,9 @@
-import React, { ReactElement } from "react"
+import React, { ReactElement } from "react";
 
 export default function TopMenuProfileTooltip(props: {
-  copyAddress: () => void
+  copyAddress: () => void;
 }): ReactElement {
-  const { copyAddress } = props
+  const { copyAddress } = props;
 
   return (
     <button type="button" className="tooltip" onClick={copyAddress}>
@@ -45,5 +45,5 @@ export default function TopMenuProfileTooltip(props: {
         }
       `}</style>
     </button>
-  )
+  );
 }

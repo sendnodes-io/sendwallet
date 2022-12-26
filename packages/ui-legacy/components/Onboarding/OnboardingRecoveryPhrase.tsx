@@ -1,16 +1,16 @@
-import React, { ReactElement } from "react"
+import React, { ReactElement } from "react";
 
 export interface OnboardingRecoveryPhraseProps {
-  mnemonic?: string[]
-  verify?: number[]
-  selected?: number[]
-  onClick?: (word: number) => void
-  importing?: boolean
-  onInput?: (e: React.FormEvent, index: number) => void
+  mnemonic?: string[];
+  verify?: number[];
+  selected?: number[];
+  onClick?: (word: number) => void;
+  importing?: boolean;
+  onInput?: (e: React.FormEvent, index: number) => void;
 }
 
 export default function OnboardingRecoveryPhrase(
-  props: OnboardingRecoveryPhraseProps
+  props: OnboardingRecoveryPhraseProps,
 ) {
   const {
     mnemonic = [],
@@ -19,9 +19,9 @@ export default function OnboardingRecoveryPhrase(
     onClick,
     importing = false,
     onInput,
-  } = props
-  const isImporting = importing
-  const isVerifying = !isImporting && verify.length > 0
+  } = props;
+  const isImporting = importing;
+  const isVerifying = !isImporting && verify.length > 0;
   return (
     <>
       <div className={`mnemonic ${isVerifying && "verifying"}`}>
@@ -36,27 +36,26 @@ export default function OnboardingRecoveryPhrase(
                   <span>
                     {" "}
                     <input
-                      autoFocus={idx === 0}
                       type="password"
-                      onInput={(e) => onInput && onInput(e, idx)}
-                      onPaste={(e) => onInput && onInput(e, idx)}
+                      onInput={(e) => onInput?.(e, idx)}
+                      onPaste={(e) => onInput?.(e, idx)}
                     />
                   </span>
                 </div>
-              )
+              );
             })
           : mnemonic.map((word, idx) => {
-              const verifiableIndex = verify.indexOf(idx)
-              const isVerifiable = verifiableIndex > -1
+              const verifiableIndex = verify.indexOf(idx);
+              const isVerifiable = verifiableIndex > -1;
               const isSelected =
-                isVerifiable && selected[verifiableIndex] !== undefined
+                isVerifiable && selected[verifiableIndex] !== undefined;
               const wordComponent = (
                 <span>
                   {isVerifiable
                     ? mnemonic[selected[verifiableIndex]] || <br />
                     : word}
                 </span>
-              )
+              );
 
               return (
                 <div
@@ -69,7 +68,7 @@ export default function OnboardingRecoveryPhrase(
                 >
                   {wordComponent}
                 </div>
-              )
+              );
             })}
       </div>
       <style jsx>
@@ -158,5 +157,5 @@ export default function OnboardingRecoveryPhrase(
         `}
       </style>
     </>
-  )
+  );
 }

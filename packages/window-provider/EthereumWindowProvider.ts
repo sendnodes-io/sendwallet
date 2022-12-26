@@ -1,4 +1,4 @@
-import { NetworkFamily } from "@sendnodes/pokt-wallet-background/networks"
+import { NetworkFamily } from "@sendnodes/pokt-wallet-background/networks";
 import {
   PROVIDER_BRIDGE_TARGET,
   WINDOW_PROVIDER_TARGET,
@@ -14,31 +14,31 @@ import {
   isPoktWalletInternalCommunication,
   PoktWalletAccountPayload,
   isPoktWalletAccountPayload,
-} from "@sendnodes/provider-bridge-shared"
-import { EventEmitter } from "events"
+} from "@sendnodes/provider-bridge-shared";
+import { EventEmitter } from "events";
 
 export default class EthereumWindowProvider extends EventEmitter {
   // TODO: This should come from the background with onConnect when any interaction is initiated by the dApp.
   // onboard.js relies on this, or uses a deprecated api. It seemed to be a reasonable workaround for now.
-  chainId = "0x1"
+  chainId = "0x1";
 
-  selectedAddress: string | undefined
+  selectedAddress: string | undefined;
 
   isConnected(): boolean {
-    return this.#isConnected
+    return this.#isConnected;
   }
 
-  #isConnected = false
+  #isConnected = false;
 
-  isPoktWallet = true
+  isPoktWallet = true;
 
-  bridgeListeners = new Map()
+  bridgeListeners = new Map();
 
   constructor(public transport: ProviderTransport) {
-    super()
+    super();
 
     const internalListener = (event: unknown) => {
-      let result: PoktWalletConfigPayload | PoktWalletAccountPayload
+      let result: PoktWalletConfigPayload | PoktWalletAccountPayload;
       if (
         isWindowResponseEvent(event) &&
         isPoktWalletInternalCommunication(event.data)
@@ -48,17 +48,16 @@ export default class EthereumWindowProvider extends EventEmitter {
           event.source !== window || // we want to recieve messages only from the provider-bridge script
           event.data.target !== WINDOW_PROVIDER_TARGET
         ) {
-          return
+          return;
         }
-
-        ;({ result } = event.data)
+        ({ result } = event.data);
       } else if (
         isPortResponseEvent(event) &&
         isPoktWalletInternalCommunication(event)
       ) {
-        ;({ result } = event)
+        ({ result } = event);
       } else {
-        return
+        return;
       }
 
       if (isPoktWalletConfigPayload(result)) {
@@ -73,55 +72,58 @@ export default class EthereumWindowProvider extends EventEmitter {
         //   // if there is nothing else that want's to use it.
         // }
       } else if (isPoktWalletAccountPayload(result)) {
-        this.handleAddressChange.bind(this)(result.address)
+        this.handleAddressChange.bind(this)(result.address);
       }
-    }
+    };
 
-    this.transport.addEventListener(internalListener)
+    this.transport.addEventListener(internalListener);
   }
 
   // deprecated EIP-1193 method
   async enable(): Promise<unknown> {
-    return this.request({ method: "eth_requestAccounts" })
+    return this.request({ method: "eth_requestAccounts" });
   }
 
   // deprecated EIP1193 send for web3-react injected provider Send type:
   // https://github.com/NoahZinsmeister/web3-react/blob/d0b038c748a42ec85641a307e6c588546d86afc2/packages/injected-connector/src/types.ts#L4
-  send(method: string, params: Array<unknown>): Promise<unknown>
+  send(method: string, params: Array<unknown>): Promise<unknown>;
   // deprecated EIP1193 send for ethers.js Web3Provider > ExternalProvider:
   // https://github.com/ethers-io/ethers.js/blob/73a46efea32c3f9a4833ed77896a216e3d3752a0/packages/providers/src.ts/web3-provider.ts#L19
   send(
     request: RequestArgument,
-    callback: (error: unknown, response: unknown) => void
-  ): void
+    callback: (error: unknown, response: unknown) => void,
+  ): void;
   send(
     methodOrRequest: string | RequestArgument,
-    paramsOrCallback: Array<unknown> | EthersSendCallback
+    paramsOrCallback: Array<unknown> | EthersSendCallback,
   ): Promise<unknown> | void {
     if (
       typeof methodOrRequest === "string" &&
       typeof paramsOrCallback !== "function"
     ) {
-      return this.request({ method: methodOrRequest, params: paramsOrCallback })
+      return this.request({
+        method: methodOrRequest,
+        params: paramsOrCallback,
+      });
     }
 
     if (isObject(methodOrRequest) && typeof paramsOrCallback === "function") {
       return this.request(methodOrRequest).then(
         (response) => paramsOrCallback(null, response),
-        (error) => paramsOrCallback(error, null)
-      )
+        (error) => paramsOrCallback(error, null),
+      );
     }
 
-    return Promise.reject(new Error("Unsupported function parameters"))
+    return Promise.reject(new Error("Unsupported function parameters"));
   }
 
   // Provider-wide counter for requests.
-  private requestID = 0n
+  private requestID = 0n;
 
   request(arg: RequestArgument): Promise<unknown> {
-    const { method, params = [] } = arg
+    const { method, params = [] } = arg;
     if (typeof method !== "string") {
-      return Promise.reject(new Error(`unsupported method type: ${method}`))
+      return Promise.reject(new Error(`unsupported method type: ${method}`));
     }
 
     const sendData = {
@@ -132,17 +134,17 @@ export default class EthereumWindowProvider extends EventEmitter {
         params,
       },
       network: NetworkFamily.EVM,
-    }
+    };
 
-    this.requestID += 1n
+    this.requestID += 1n;
 
-    this.transport.postMessage(sendData)
+    this.transport.postMessage(sendData);
 
     return new Promise((resolve, reject) => {
       // TODO: refactor the listener function out of the Promise
       const listener = (event: unknown) => {
-        let id
-        let result: unknown
+        let id;
+        let result: unknown;
 
         if (isWindowResponseEvent(event)) {
           if (
@@ -150,33 +152,32 @@ export default class EthereumWindowProvider extends EventEmitter {
             event.source !== window || // we want to recieve messages only from the provider-bridge script
             event.data.target !== WINDOW_PROVIDER_TARGET
           ) {
-            return
+            return;
           }
-
-          ;({ id, result } = event.data)
+          ({ id, result } = event.data);
         } else if (isPortResponseEvent(event)) {
-          ;({ id, result } = event)
+          ({ id, result } = event);
         } else {
-          return
+          return;
         }
 
-        if (sendData.id !== id) return
+        if (sendData.id !== id) return;
 
         this.transport.removeEventListener(
-          this.bridgeListeners.get(sendData.id)
-        )
-        this.bridgeListeners.delete(sendData.id)
+          this.bridgeListeners.get(sendData.id),
+        );
+        this.bridgeListeners.delete(sendData.id);
 
-        const { method: sentMethod } = sendData.request
+        const { method: sentMethod } = sendData.request;
 
         if (isEIP1193Error(result)) {
-          return reject(result)
+          return reject(result);
         }
 
         // let's emmit connected on the first successful response from background
         if (!this.#isConnected) {
-          this.#isConnected = true
-          this.emit("connect", { chainId: this.chainId })
+          this.#isConnected = true;
+          this.emit("connect", { chainId: this.chainId });
         }
 
         if (sentMethod === "eth_chainId" || sentMethod === "net_version") {
@@ -184,9 +185,9 @@ export default class EthereumWindowProvider extends EventEmitter {
             typeof result === "string" &&
             Number(this.chainId) !== Number(result)
           ) {
-            this.chainId = `0x${Number(result).toString(16)}`
-            this.emit("chainChanged", this.chainId)
-            this.emit("networkChanged", Number(this.chainId).toString())
+            this.chainId = `0x${Number(result).toString(16)}`;
+            this.emit("chainChanged", this.chainId);
+            this.emit("networkChanged", Number(this.chainId).toString());
           }
         }
 
@@ -196,22 +197,22 @@ export default class EthereumWindowProvider extends EventEmitter {
           Array.isArray(result) &&
           result.length !== 0
         ) {
-          this.handleAddressChange.bind(this)(result)
+          this.handleAddressChange.bind(this)(result);
         }
 
-        resolve(result)
-      }
+        resolve(result);
+      };
 
-      this.bridgeListeners.set(sendData.id, listener)
-      this.transport.addEventListener(this.bridgeListeners.get(sendData.id))
-    })
+      this.bridgeListeners.set(sendData.id, listener);
+      this.transport.addEventListener(this.bridgeListeners.get(sendData.id));
+    });
   }
 
   handleAddressChange(address: Array<string>): void {
     if (this.selectedAddress !== address[0]) {
       // eslint-disable-next-line prefer-destructuring
-      this.selectedAddress = address[0]
-      this.emit("accountsChanged", address)
+      this.selectedAddress = address[0];
+      this.emit("accountsChanged", address);
     }
   }
 }

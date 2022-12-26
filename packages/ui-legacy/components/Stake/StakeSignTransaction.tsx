@@ -4,88 +4,88 @@ import React, {
   useCallback,
   useEffect,
   useState,
-} from "react"
+} from "react";
 import {
   rejectTransactionSignature,
   selectIsTransactionLoaded,
   selectIsTransactionSigned,
   selectTransactionData,
   signTransaction,
-} from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction"
+} from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction";
 import {
   getAccountTotal,
   selectCurrentAccount,
-} from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
-import { SigningMethod } from "@sendnodes/pokt-wallet-background/utils/signing"
-import { POKTTransactionRequest } from "@sendnodes/pokt-wallet-background/networks"
-import { useHistory } from "react-router-dom"
-import { capitalize, floor, isEqual } from "lodash"
-import { Dialog } from "@headlessui/react"
-import clsx from "clsx"
-import { BigNumber, formatFixed } from "@ethersproject/bignumber"
-import { EnrichedPOKTTransactionRequest } from "@sendnodes/pokt-wallet-background/services/enrichment"
-import { truncateAddress } from "@sendnodes/pokt-wallet-background/lib/utils"
-import dayjs from "dayjs"
-import * as utc from "dayjs/plugin/utc"
-import * as relativeTime from "dayjs/plugin/relativeTime"
-import * as localizedFormat from "dayjs/plugin/localizedFormat"
+} from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
+import { SigningMethod } from "@sendnodes/pokt-wallet-background/utils/signing";
+import { POKTTransactionRequest } from "@sendnodes/pokt-wallet-background/networks";
+import { useHistory } from "react-router-dom";
+import { capitalize, floor, isEqual } from "lodash";
+import { Dialog } from "@headlessui/react";
+import clsx from "clsx";
+import { BigNumber, formatFixed } from "@ethersproject/bignumber";
+import { EnrichedPOKTTransactionRequest } from "@sendnodes/pokt-wallet-background/services/enrichment";
+import { truncateAddress } from "@sendnodes/pokt-wallet-background/lib/utils";
+import dayjs from "dayjs";
+import * as utc from "dayjs/plugin/utc";
+import * as relativeTime from "dayjs/plugin/relativeTime";
+import * as localizedFormat from "dayjs/plugin/localizedFormat";
 
-import { InformationCircleIcon, XIcon } from "@heroicons/react/outline"
-import SharedButton from "../Shared/SharedButton"
-import { SnAction, useStakingUserData } from "../../hooks/staking-hooks"
-import SharedSplashScreen from "../Shared/SharedSplashScreen"
+import { InformationCircleIcon, XIcon } from "@heroicons/react/outline";
+import SharedButton from "../Shared/SharedButton";
+import { SnAction, useStakingUserData } from "../../hooks/staking-hooks";
+import SharedSplashScreen from "../Shared/SharedSplashScreen";
 import {
   useBackgroundDispatch,
   useBackgroundSelector,
   useIsSigningMethodLocked,
-} from "../../hooks"
-import getSnActionFromMemo from "../../helpers/get-sn-action-from-memo"
-import { usePoktWatchLatestBlock } from "../../hooks/pokt-watch/use-latest-block"
-import usePocketNetworkFee from "../../hooks/pocket-network/use-network-fee"
-import formatTokenAmount from "../../utils/formatTokenAmount"
-import useStakingPoktParams from "../../hooks/staking-hooks/use-staking-pokt-params"
-import useAssetInMainCurrency from "../../hooks/assets/use-asset-in-main-currency"
+} from "../../hooks";
+import getSnActionFromMemo from "../../helpers/get-sn-action-from-memo";
+import { usePoktWatchLatestBlock } from "../../hooks/pokt-watch/use-latest-block";
+import usePocketNetworkFee from "../../hooks/pocket-network/use-network-fee";
+import formatTokenAmount from "../../utils/formatTokenAmount";
+import useStakingPoktParams from "../../hooks/staking-hooks/use-staking-pokt-params";
+import useAssetInMainCurrency from "../../hooks/assets/use-asset-in-main-currency";
 
-dayjs.extend(utc.default)
-dayjs.extend(localizedFormat.default)
-dayjs.extend(relativeTime.default)
+dayjs.extend(utc.default);
+dayjs.extend(localizedFormat.default);
+dayjs.extend(relativeTime.default);
 
 export default function StakeSignTransaction(): ReactElement {
-  const history = useHistory()
-  const dispatch = useBackgroundDispatch()
-  const { latestBlock } = usePoktWatchLatestBlock()
+  const history = useHistory();
+  const dispatch = useBackgroundDispatch();
+  const { latestBlock } = usePoktWatchLatestBlock();
   const transactionDetails = useBackgroundSelector(
     selectTransactionData,
-    isEqual
-  ) as EnrichedPOKTTransactionRequest | undefined
+    isEqual,
+  ) as EnrichedPOKTTransactionRequest | undefined;
 
   const isTransactionDataReady = useBackgroundSelector(
     selectIsTransactionLoaded,
-    isEqual
-  )
+    isEqual,
+  );
 
-  const currentAccount = useBackgroundSelector(selectCurrentAccount, isEqual)
+  const currentAccount = useBackgroundSelector(selectCurrentAccount, isEqual);
   const signerAccountTotal = useBackgroundSelector((state: any) => {
     if (typeof transactionDetails !== "undefined") {
-      return getAccountTotal(state, transactionDetails.from)
+      return getAccountTotal(state, transactionDetails.from);
     }
-    return undefined
-  }, isEqual)
+    return undefined;
+  }, isEqual);
 
-  const { isLoading: isStakingPoktParamsLoading } = useStakingPoktParams()
+  const { isLoading: isStakingPoktParamsLoading } = useStakingPoktParams();
 
-  const { data: stakingUserData } = useStakingUserData(currentAccount)
-  const [isTransactionSigning, setIsTransactionSigning] = useState(false)
-  const signingMethod = signerAccountTotal?.signingMethod ?? null
-  const isLocked = useIsSigningMethodLocked(signingMethod as SigningMethod)
+  const { data: stakingUserData } = useStakingUserData(currentAccount);
+  const [isTransactionSigning, setIsTransactionSigning] = useState(false);
+  const signingMethod = signerAccountTotal?.signingMethod ?? null;
+  const isLocked = useIsSigningMethodLocked(signingMethod as SigningMethod);
   const isTransactionSigned = useBackgroundSelector(
     selectIsTransactionSigned,
-    isEqual
-  )
+    isEqual,
+  );
 
   const handleReject = useCallback(async () => {
-    dispatch(rejectTransactionSignature())
-  }, [dispatch])
+    dispatch(rejectTransactionSignature());
+  }, [dispatch]);
   const handleConfirm = useCallback(async () => {
     if (
       isTransactionDataReady &&
@@ -96,44 +96,44 @@ export default function StakeSignTransaction(): ReactElement {
         signTransaction({
           transaction: transactionDetails as POKTTransactionRequest,
           method: signingMethod as SigningMethod,
-        })
-      )
-      setIsTransactionSigning(true)
+        }),
+      );
+      setIsTransactionSigning(true);
     }
-  }, [dispatch, isTransactionDataReady, transactionDetails, signingMethod])
+  }, [dispatch, isTransactionDataReady, transactionDetails, signingMethod]);
 
   // reject the transaction if the user navigates away from the page
   useEffect(() => {
     const reject = async () => {
-      await handleReject()
-      return true
-    }
-    window.addEventListener("beforeunload", reject)
+      await handleReject();
+      return true;
+    };
+    window.addEventListener("beforeunload", reject);
     return () => {
-      window.removeEventListener("beforeunload", reject)
-    }
-  }, [handleReject])
+      window.removeEventListener("beforeunload", reject);
+    };
+  }, [handleReject]);
 
   useEffect(() => {
     if (isTransactionSigned) {
-      history.push("/transactions")
+      history.push("/transactions");
     }
-  }, [isTransactionSigned])
+  }, [isTransactionSigned]);
 
-  const { networkFee } = usePocketNetworkFee()
+  const { networkFee } = usePocketNetworkFee();
 
-  const action = getSnActionFromMemo(transactionDetails?.memo)
+  const action = getSnActionFromMemo(transactionDetails?.memo);
   const amount =
     action === SnAction.UNSTAKE
       ? transactionDetails?.memo?.split(":")[1]
-      : transactionDetails?.txMsg.value.amount
+      : transactionDetails?.txMsg.value.amount;
 
   const amountInMainCurrency = useAssetInMainCurrency({
     assetAmount: {
       amount: BigNumber.from(amount ?? 0).toBigInt(),
       asset: currentAccount.network.baseAsset,
     },
-  })
+  });
 
   if (
     isLocked ||
@@ -141,7 +141,7 @@ export default function StakeSignTransaction(): ReactElement {
     typeof transactionDetails === "undefined" ||
     typeof signerAccountTotal === "undefined"
   ) {
-    return <SharedSplashScreen />
+    return <SharedSplashScreen />;
   }
 
   const signerComponent = (
@@ -153,7 +153,7 @@ export default function StakeSignTransaction(): ReactElement {
         ? signerAccountTotal.name
         : truncateAddress(signerAccountTotal.address)}
     </dd>
-  )
+  );
   const sendnodesComponent = (
     <dd
       title={transactionDetails.to}
@@ -169,32 +169,32 @@ export default function StakeSignTransaction(): ReactElement {
       />
       <span className="sr-only">SendNodes</span>
     </dd>
-  )
+  );
 
   const isCompound =
     action === SnAction.COMPOUND &&
-    transactionDetails.memo?.split(":")[1] === "true"
+    transactionDetails.memo?.split(":")[1] === "true";
   const isUncompound =
     action === SnAction.COMPOUND &&
-    transactionDetails.memo?.split(":")[1] === "false"
-  const isStake = action === SnAction.STAKE
-  const isUnstake = action === SnAction.UNSTAKE
+    transactionDetails.memo?.split(":")[1] === "false";
+  const isStake = action === SnAction.STAKE;
+  const isUnstake = action === SnAction.UNSTAKE;
   const { from, to } = isUnstake
     ? { from: sendnodesComponent, to: signerComponent }
-    : { from: signerComponent, to: sendnodesComponent }
+    : { from: signerComponent, to: sendnodesComponent };
 
   const lastBlockOrNow = latestBlock?.timestamp
     ? dayjs.utc(latestBlock?.timestamp)
-    : dayjs()
-  const avgBlockTime = 15
-  const avgBlocksPerDay = 96
-  const estimatedDays = isUnstake ? 21 : 1
+    : dayjs();
+  const avgBlockTime = 15;
+  const avgBlocksPerDay = 96;
+  const estimatedDays = isUnstake ? 21 : 1;
   const estimatedDeliveryTime = lastBlockOrNow.add(
     estimatedDays * avgBlocksPerDay * avgBlockTime,
-    "minutes"
-  )
+    "minutes",
+  );
 
-  const humanAction = capitalize(action?.toLowerCase())
+  const humanAction = capitalize(action?.toLowerCase());
 
   return (
     <div>
@@ -265,7 +265,7 @@ export default function StakeSignTransaction(): ReactElement {
                       <dd className="mt-1 text-sm text-white sm:mt-0 sm:col-span-2 text-right ">
                         {floor(
                           Number(stakingUserData?.rewardsData.apy),
-                          2
+                          2,
                         ).toLocaleString()}{" "}
                         %
                       </dd>
@@ -277,7 +277,7 @@ export default function StakeSignTransaction(): ReactElement {
                       <dd className="mt-1 text-sm text-white sm:mt-0 sm:col-span-2 text-right ">
                         {floor(
                           Number(stakingUserData?.rewardsData.apyNoCompounding),
-                          2
+                          2,
                         ).toLocaleString()}
                         %
                       </dd>
@@ -295,8 +295,8 @@ export default function StakeSignTransaction(): ReactElement {
                         title={Number(
                           formatFixed(
                             BigNumber.from(amount),
-                            currentAccount.network.baseAsset.decimals
-                          )
+                            currentAccount.network.baseAsset.decimals,
+                          ),
                         ).toLocaleString()}
                         className="mt-1 text-lg text-white sm:mt-0 sm:col-span-2 text-right relative"
                       >
@@ -308,10 +308,10 @@ export default function StakeSignTransaction(): ReactElement {
                         {formatTokenAmount(
                           formatFixed(
                             BigNumber.from(amount),
-                            currentAccount.network.baseAsset.decimals
+                            currentAccount.network.baseAsset.decimals,
                           ),
                           9,
-                          2
+                          2,
                         )}
                         {amountInMainCurrency && (
                           <small className="absolute left-0 right-0 top-6 text-spanish-gray text-xs">
@@ -435,5 +435,5 @@ export default function StakeSignTransaction(): ReactElement {
         </SharedButton>
       </div>
     </div>
-  )
+  );
 }

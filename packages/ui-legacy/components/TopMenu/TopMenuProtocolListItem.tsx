@@ -1,16 +1,16 @@
-import React, { ReactElement } from "react"
-import classNames from "clsx"
+import React, { ReactElement } from "react";
+import classNames from "clsx";
 
 interface Props {
-  name: string
-  info: string
-  width: number
-  height: number
-  isSelected: boolean
+  name: string;
+  info: string;
+  width: number;
+  height: number;
+  isSelected: boolean;
 }
 
 export default function TopMenuProtocolListItem(props: Props): ReactElement {
-  const { name, width, height, info, isSelected } = props
+  const { name, width, height, info, isSelected } = props;
 
   return (
     <li className={classNames({ select: isSelected })}>
@@ -43,9 +43,7 @@ export default function TopMenuProtocolListItem(props: Props): ReactElement {
             margin-left: 8px;
           }
           .icon {
-            background: url("./images/${name
-              .replaceAll(" ", "")
-              .toLowerCase()}@2x.png");
+            background: url("./images/${name.replaceAll(" ", "").toLowerCase()}@2x.png");
             background-size: cover;
             width: ${width}px;
             height: ${height}px;
@@ -94,9 +92,9 @@ export default function TopMenuProtocolListItem(props: Props): ReactElement {
         `}
       </style>
     </li>
-  )
+  );
 }
 
 TopMenuProtocolListItem.defaultProps = {
   isSelected: false,
-}
+};

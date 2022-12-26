@@ -1,32 +1,32 @@
-import React, { ReactElement } from "react"
-import Wallet from "../pages/Wallet"
-import SignTransaction from "../pages/SignTransaction"
-import SignData from "../pages/SignData"
-import PersonalSign from "../pages/PersonalSign"
-import OnboardingSaveSeed from "../pages/Onboarding/OnboardingSaveSeed"
-import OnboardingVerifySeed from "../components/Onboarding/OnboardingVerifySeed"
-import OnboardingImportSeed from "../pages/Onboarding/OnboardingImportSeed"
-import OnboardingImportKeyfile from "../pages/Onboarding/OnboardingImportKeyfile"
-import OnboardingInfoIntro from "../pages/Onboarding/OnboardingInfoIntro"
-import OnboardingAddWallet from "../pages/Onboarding/OnboardingAddWallet"
-import Overview from "../pages/Overview"
-import SingleAsset from "../pages/SingleAsset"
-import Menu from "../pages/Menu"
-import Send from "../pages/Send"
-import DAppPermissionRequest from "../pages/DAppConnectRequest"
-import KeyringUnlock from "../components/Keyring/KeyringUnlock"
-import KeyringSetPassword from "../components/Keyring/KeyringSetPassword"
-import OnboardingAccountCreated from "../pages/Onboarding/OnboardingAccountCreated"
+import React, { ReactElement } from "react";
+import Wallet from "../pages/Wallet";
+import SignTransaction from "../pages/SignTransaction";
+import SignData from "../pages/SignData";
+import PersonalSign from "../pages/PersonalSign";
+import OnboardingSaveSeed from "../pages/Onboarding/OnboardingSaveSeed";
+import OnboardingVerifySeed from "../components/Onboarding/OnboardingVerifySeed";
+import OnboardingImportSeed from "../pages/Onboarding/OnboardingImportSeed";
+import OnboardingImportKeyfile from "../pages/Onboarding/OnboardingImportKeyfile";
+import OnboardingInfoIntro from "../pages/Onboarding/OnboardingInfoIntro";
+import OnboardingAddWallet from "../pages/Onboarding/OnboardingAddWallet";
+import Overview from "../pages/Overview";
+import SingleAsset from "../pages/SingleAsset";
+import Menu from "../pages/Menu";
+import Send from "../pages/Send";
+import DAppPermissionRequest from "../pages/DAppConnectRequest";
+import KeyringUnlock from "../components/Keyring/KeyringUnlock";
+import KeyringSetPassword from "../components/Keyring/KeyringSetPassword";
+import OnboardingAccountCreated from "../pages/Onboarding/OnboardingAccountCreated";
 
 interface PageList {
-  path: string
+  path: string;
   // Tricky to handle all props components are
   // accepting here.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  Component: (...args: any[]) => ReactElement
-  hasTabBar: boolean
-  hasTopBar: boolean
-  persistOnClose: boolean
+  Component: (...args: any[]) => ReactElement;
+  hasTabBar: boolean;
+  hasTopBar: boolean;
+  persistOnClose: boolean;
 }
 
 const pageList: PageList[] = [
@@ -163,6 +163,6 @@ const pageList: PageList[] = [
     hasTopBar: false,
     persistOnClose: true,
   },
-]
+];
 
-export default pageList
+export default pageList;

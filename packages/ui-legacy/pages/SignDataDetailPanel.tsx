@@ -1,26 +1,26 @@
-import { selectTypedData } from "@sendnodes/pokt-wallet-background/redux-slices/signing"
-import React, { ReactElement } from "react"
-import SignTypedDataInfo from "../components/SignData/SignTypedDataInfo"
-import { useBackgroundSelector } from "../hooks"
-import capitalize from "../utils/capitalize"
+import { selectTypedData } from "@sendnodes/pokt-wallet-background/redux-slices/signing";
+import React, { ReactElement } from "react";
+import SignTypedDataInfo from "../components/SignData/SignTypedDataInfo";
+import { useBackgroundSelector } from "../hooks";
+import capitalize from "../utils/capitalize";
 
 export default function SignDataDetailPanel(): ReactElement {
-  const typedDataRequest = useBackgroundSelector(selectTypedData)
+  const typedDataRequest = useBackgroundSelector(selectTypedData);
   if (typeof typedDataRequest === "undefined") {
-    return <></>
+    return <></>;
   }
 
-  const { domain, message } = typedDataRequest.typedData
+  const { domain, message } = typedDataRequest.typedData;
 
   const typedDataRequestSource =
     typedDataRequest.annotation?.type !== "unrecognized"
       ? capitalize(typedDataRequest.annotation.source)
-      : domain.name
+      : domain.name;
 
-  const keys = Object.keys(message)
+  const keys = Object.keys(message);
 
   /* TODO: should be `true` if the request originates from within the wallet */
-  const isInternal = false
+  const isInternal = false;
 
   return (
     <>
@@ -115,5 +115,5 @@ export default function SignDataDetailPanel(): ReactElement {
         }
       `}</style>
     </>
-  )
+  );
 }

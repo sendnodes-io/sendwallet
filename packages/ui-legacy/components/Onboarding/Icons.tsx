@@ -1,4 +1,4 @@
-import React from "react"
+import React from "react";
 
 export const OnboardingNewAccountIcon = () => {
   return (
@@ -9,8 +9,8 @@ export const OnboardingNewAccountIcon = () => {
       width="44"
       height="44"
     />
-  )
-}
+  );
+};
 
 export const OnboardingImportRecoveryPhraseIcon = () => {
   return (
@@ -21,8 +21,8 @@ export const OnboardingImportRecoveryPhraseIcon = () => {
       width="44"
       height="44"
     />
-  )
-}
+  );
+};
 
 export const OnboardingImportKeyfileIcon = () => {
   return (
@@ -33,5 +33,5 @@ export const OnboardingImportKeyfileIcon = () => {
       width="44"
       height="44"
     />
-  )
-}
+  );
+};

@@ -1,14 +1,14 @@
-import { AccountTotal } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
-import React, { ReactElement, ReactNode, useState } from "react"
-import SharedButton from "../Shared/SharedButton"
-import SharedSlideUpMenu from "../Shared/SharedSlideUpMenu"
-import SignTransactionLedgerActivateBlindSigning from "./SignTransactionLedgerActivateBlindSigning"
-import SignTransactionLedgerBusy from "./SignTransactionLedgerBusy"
-import SignTransactionLedgerNotConnected from "./SignTransactionLedgerNotConnected"
-import SignTransactionMultipleLedgersConnected from "./SignTransactionMultipleLedgersConnected"
-import SignTransactionNetworkAccountInfoTopBar from "./SignTransactionNetworkAccountInfoTopBar"
-import SignTransactionWrongLedgerConnected from "./SignTransactionWrongLedgerConnected"
-import { useSigningLedgerState } from "./useSigningLedgerState"
+import { AccountTotal } from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
+import React, { ReactElement, ReactNode, useState } from "react";
+import SharedButton from "../Shared/SharedButton";
+import SharedSlideUpMenu from "../Shared/SharedSlideUpMenu";
+import SignTransactionLedgerActivateBlindSigning from "./SignTransactionLedgerActivateBlindSigning";
+import SignTransactionLedgerBusy from "./SignTransactionLedgerBusy";
+import SignTransactionLedgerNotConnected from "./SignTransactionLedgerNotConnected";
+import SignTransactionMultipleLedgersConnected from "./SignTransactionMultipleLedgersConnected";
+import SignTransactionNetworkAccountInfoTopBar from "./SignTransactionNetworkAccountInfoTopBar";
+import SignTransactionWrongLedgerConnected from "./SignTransactionWrongLedgerConnected";
+import { useSigningLedgerState } from "./useSigningLedgerState";
 
 export default function SignTransactionContainer({
   signerAccountTotal,
@@ -23,34 +23,34 @@ export default function SignTransactionContainer({
   isTransactionSigning,
   isArbitraryDataSigningRequired,
 }: {
-  signerAccountTotal: AccountTotal
-  title: ReactNode
-  detailPanel: ReactNode
-  reviewPanel: ReactNode
-  extraPanel: ReactNode
-  confirmButtonLabel: ReactNode
-  rejectButtonLabel?: ReactNode
-  handleConfirm: () => void
-  handleReject: () => void
-  isTransactionSigning: boolean
-  isArbitraryDataSigningRequired: boolean
+  signerAccountTotal: AccountTotal;
+  title: ReactNode;
+  detailPanel: ReactNode;
+  reviewPanel: ReactNode;
+  extraPanel: ReactNode;
+  confirmButtonLabel: ReactNode;
+  rejectButtonLabel?: ReactNode;
+  handleConfirm: () => void;
+  handleReject: () => void;
+  isTransactionSigning: boolean;
+  isArbitraryDataSigningRequired: boolean;
 }): ReactElement {
-  const { signingMethod } = signerAccountTotal
-  const [isSlideUpOpen, setSlideUpOpen] = useState(false)
+  const { signingMethod } = signerAccountTotal;
+  const [isSlideUpOpen, setSlideUpOpen] = useState(false);
 
-  const signingLedgerState = useSigningLedgerState(signingMethod ?? null)
+  const signingLedgerState = useSigningLedgerState(signingMethod ?? null);
 
-  const isLedgerSigning = signingMethod?.type === "ledger"
-  const isWaitingForHardware = isLedgerSigning && isTransactionSigning
+  const isLedgerSigning = signingMethod?.type === "ledger";
+  const isWaitingForHardware = isLedgerSigning && isTransactionSigning;
 
-  const isLedgerAvailable = signingLedgerState?.state === "available"
+  const isLedgerAvailable = signingLedgerState?.state === "available";
 
   const mustEnableArbitraryDataSigning =
     isLedgerAvailable &&
     isArbitraryDataSigningRequired &&
-    !signingLedgerState.arbitraryDataEnabled
+    !signingLedgerState.arbitraryDataEnabled;
 
-  const canLedgerSign = isLedgerAvailable && !mustEnableArbitraryDataSigning
+  const canLedgerSign = isLedgerAvailable && !mustEnableArbitraryDataSigning;
 
   return (
     <section>
@@ -94,7 +94,7 @@ export default function SignTransactionContainer({
                   iconSize="large"
                   size="large"
                   onClick={() => {
-                    setSlideUpOpen(true)
+                    setSlideUpOpen(true);
                   }}
                 >
                   Check Ledger
@@ -120,7 +120,7 @@ export default function SignTransactionContainer({
       <SharedSlideUpMenu
         isOpen={isSlideUpOpen && !canLedgerSign}
         close={() => {
-          setSlideUpOpen(false)
+          setSlideUpOpen(false);
         }}
         alwaysRenderChildren
         size="auto"
@@ -224,5 +224,5 @@ export default function SignTransactionContainer({
         `}
       </style>
     </section>
-  )
+  );
 }

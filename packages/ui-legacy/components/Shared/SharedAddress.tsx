@@ -1,23 +1,23 @@
-import { truncateAddress } from "@sendnodes/pokt-wallet-background/lib/utils"
-import { selectCurrentAccountTotal } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
-import { setSnackbarMessage } from "@sendnodes/pokt-wallet-background/redux-slices/ui"
-import { NameResolverSystem } from "@sendnodes/pokt-wallet-background/services/name"
-import React, { ReactElement, useCallback } from "react"
-import { useBackgroundDispatch, useBackgroundSelector } from "../../hooks"
-import SharedLoadingSpinner from "./SharedLoadingSpinner"
-import SharedTooltip from "./SharedTooltip"
+import { truncateAddress } from "@sendnodes/pokt-wallet-background/lib/utils";
+import { selectCurrentAccountTotal } from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
+import { setSnackbarMessage } from "@sendnodes/pokt-wallet-background/redux-slices/ui";
+import { NameResolverSystem } from "@sendnodes/pokt-wallet-background/services/name";
+import React, { ReactElement, useCallback } from "react";
+import { useBackgroundDispatch, useBackgroundSelector } from "../../hooks";
+import SharedLoadingSpinner from "./SharedLoadingSpinner";
+import SharedTooltip from "./SharedTooltip";
 
 type SharedAddressProps = {
-  address: string
-  name?: string | undefined
-  nameResolverSystem?: NameResolverSystem
-  alwaysShowAddress: boolean
-  showAvatar?: boolean
-  className?: string
-  onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
-  title?: string
-  icon?: JSX.Element
-}
+  address: string;
+  name?: string | undefined;
+  nameResolverSystem?: NameResolverSystem;
+  alwaysShowAddress: boolean;
+  showAvatar?: boolean;
+  className?: string;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  title?: string;
+  icon?: JSX.Element;
+};
 
 /**
  * The SharedAddress component is used to render addresses that can optionally
@@ -45,21 +45,21 @@ export default function SharedAddress({
   title = undefined,
   icon = undefined,
 }: SharedAddressProps): ReactElement {
-  const dispatch = useBackgroundDispatch()
+  const dispatch = useBackgroundDispatch();
   const currentAccountTotal = showAvatar
     ? useBackgroundSelector(selectCurrentAccountTotal)
-    : null
+    : null;
 
-  const primaryText = name || truncateAddress(address, 5, -3)
-  const isDefaultCopy = onClick === undefined
+  const primaryText = name || truncateAddress(address, 5, -3);
+  const isDefaultCopy = onClick === undefined;
   const copyAddress = useCallback(
     (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-      e.stopPropagation()
-      navigator.clipboard.writeText(address)
-      dispatch(setSnackbarMessage("Address copied to clipboard"))
+      e.stopPropagation();
+      navigator.clipboard.writeText(address);
+      dispatch(setSnackbarMessage("Address copied to clipboard"));
     },
-    [address, dispatch]
-  )
+    [address, dispatch],
+  );
 
   return (
     <button
@@ -160,9 +160,9 @@ export default function SharedAddress({
         }
       `}</style>
     </button>
-  )
+  );
 }
 
 SharedAddress.defaultProps = {
   alwaysShowAddress: false,
-}
+};

@@ -1,12 +1,12 @@
-import React, { ReactElement } from "react"
-import classNames from "clsx"
+import React, { ReactElement } from "react";
+import classNames from "clsx";
 
 export default function SharedProgressIndicator(props: {
-  activeStep: number
-  numberOfSteps: number
-  onProgressStepClicked: (step: number) => void
+  activeStep: number;
+  numberOfSteps: number;
+  onProgressStepClicked: (step: number) => void;
 }): ReactElement {
-  const { activeStep, numberOfSteps, onProgressStepClicked } = props
+  const { activeStep, numberOfSteps, onProgressStepClicked } = props;
 
   return (
     <div className="indicator_wrap">
@@ -24,10 +24,10 @@ export default function SharedProgressIndicator(props: {
                 active: index === activeStep - 1,
               })}
               onClick={() => {
-                onProgressStepClicked(index + 1)
+                onProgressStepClicked(index + 1);
               }}
             />
-          )
+          );
         })}
 
       <style jsx>
@@ -58,5 +58,5 @@ export default function SharedProgressIndicator(props: {
         `}
       </style>
     </div>
-  )
+  );
 }

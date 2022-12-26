@@ -1,22 +1,22 @@
 // It's necessary to have an object w/ the function on it so we can use spyOn
-import * as ethers from "@ethersproject/web" // << THIS IS THE IMPORTANT TRICK
+import * as ethers from "@ethersproject/web"; // << THIS IS THE IMPORTANT TRICK
 
-import logger from "../lib/logger"
-import { BTC, ETH, FIAT_CURRENCIES, USD } from "../constants"
-import { CoinGeckoAsset } from "../assets"
-import { getPrice, getPrices } from "../lib/prices"
-import { isValidCoinGeckoPriceResponse } from "../lib/validate"
+import logger from "../lib/logger";
+import { BTC, ETH, FIAT_CURRENCIES, USD } from "../constants";
+import { CoinGeckoAsset } from "../assets";
+import { getPrice, getPrices } from "../lib/prices";
+import { isValidCoinGeckoPriceResponse } from "../lib/validate";
 
-const dateNow = 1634911514834
+const dateNow = 1634911514834;
 
 describe("lib/prices.ts", () => {
   beforeAll(() => {
     // this is implementation detail, date should come through IoC
-    jest.spyOn(Date, "now").mockReturnValue(dateNow)
+    jest.spyOn(Date, "now").mockReturnValue(dateNow);
 
     // just to keep the output nice and tidy
     // jest.spyOn(logger, "warn").mockImplementation()
-  })
+  });
   describe("CoinGecko Price response validation", () => {
     xit("passes for correct simple price response", () => {
       const apiResponse = {
@@ -24,11 +24,11 @@ describe("lib/prices.ts", () => {
           usd: 3832.26,
           last_updated_at: 1634671650,
         },
-      }
+      };
 
-      expect(isValidCoinGeckoPriceResponse(apiResponse)).toBeTruthy()
-      expect(isValidCoinGeckoPriceResponse.errors).toBeNull()
-    })
+      expect(isValidCoinGeckoPriceResponse(apiResponse)).toBeTruthy();
+      expect(isValidCoinGeckoPriceResponse.errors).toBeNull();
+    });
 
     xit("passes for correct complex price response", () => {
       const apiResponse = {
@@ -44,18 +44,18 @@ describe("lib/prices.ts", () => {
           cny: 407908,
           last_updated_at: 1634672139,
         },
-      }
+      };
 
-      expect(isValidCoinGeckoPriceResponse(apiResponse)).toBeTruthy()
-      expect(isValidCoinGeckoPriceResponse.errors).toBeNull()
-    })
+      expect(isValidCoinGeckoPriceResponse(apiResponse)).toBeTruthy();
+      expect(isValidCoinGeckoPriceResponse.errors).toBeNull();
+    });
 
     xit("fails if required prop is missing w/ the correct error", () => {
       const apiResponse = {
         ethereum: {
           usd: 3832.26,
         },
-      }
+      };
 
       const error = [
         {
@@ -65,13 +65,13 @@ describe("lib/prices.ts", () => {
           params: { missingProperty: "last_updated_at" },
           schemaPath: "#/additionalProperties/required",
         },
-      ]
+      ];
 
-      const validationResult = isValidCoinGeckoPriceResponse(apiResponse)
+      const validationResult = isValidCoinGeckoPriceResponse(apiResponse);
 
-      expect(isValidCoinGeckoPriceResponse.errors).toMatchObject(error)
-      expect(validationResult).toBeFalsy()
-    })
+      expect(isValidCoinGeckoPriceResponse.errors).toMatchObject(error);
+      expect(validationResult).toBeFalsy();
+    });
 
     xit("fails if required prop is wrong type", () => {
       const apiResponse = {
@@ -79,7 +79,7 @@ describe("lib/prices.ts", () => {
           usd: 3832.26,
           last_updated_at: "1634672139",
         },
-      }
+      };
 
       const error = [
         {
@@ -89,13 +89,13 @@ describe("lib/prices.ts", () => {
           params: { type: "number" },
           schemaPath: "#/additionalProperties/properties/last_updated_at/type",
         },
-      ]
+      ];
 
-      const validationResult = isValidCoinGeckoPriceResponse(apiResponse)
+      const validationResult = isValidCoinGeckoPriceResponse(apiResponse);
 
-      expect(isValidCoinGeckoPriceResponse.errors).toMatchObject(error)
-      expect(validationResult).toBeFalsy()
-    })
+      expect(isValidCoinGeckoPriceResponse.errors).toMatchObject(error);
+      expect(validationResult).toBeFalsy();
+    });
 
     xit("fails if additional prop is wrong type", () => {
       const apiResponse = {
@@ -103,7 +103,7 @@ describe("lib/prices.ts", () => {
           usd: "3832.26",
           last_updated_at: "1634672139",
         },
-      }
+      };
 
       const error = [
         {
@@ -122,58 +122,58 @@ describe("lib/prices.ts", () => {
           },
           schemaPath: "#/additionalProperties/properties/last_updated_at/type",
         },
-      ]
+      ];
 
-      const validationResult = isValidCoinGeckoPriceResponse(apiResponse)
+      const validationResult = isValidCoinGeckoPriceResponse(apiResponse);
 
-      expect(isValidCoinGeckoPriceResponse.errors).toMatchObject(error)
-      expect(validationResult).toBeFalsy()
-    })
-  })
+      expect(isValidCoinGeckoPriceResponse.errors).toMatchObject(error);
+      expect(validationResult).toBeFalsy();
+    });
+  });
   describe("getPrice", () => {
     beforeEach(() => {
       // Important to clean up the internal mock variables between tests
-      jest.clearAllMocks()
-    })
+      jest.clearAllMocks();
+    });
     xit("should return correct price if the data exist", async () => {
       const response = {
         ethereum: {
           usd: 3832.26,
           last_updated_at: 1634671650,
         },
-      }
+      };
 
-      jest.spyOn(ethers, "fetchJson").mockResolvedValue(response)
+      jest.spyOn(ethers, "fetchJson").mockResolvedValue(response);
       await expect(getPrice("ethereum", "usd")).resolves.toEqual(
-        response.ethereum.usd
-      )
-      expect(ethers.fetchJson).toHaveBeenCalledTimes(1)
-    })
+        response.ethereum.usd,
+      );
+      expect(ethers.fetchJson).toHaveBeenCalledTimes(1);
+    });
     xit("should return null if the data DOESN'T exist", async () => {
       const response = {
         ethereum: {
           last_updated_at: 1634671650,
         },
-      }
+      };
 
-      jest.spyOn(ethers, "fetchJson").mockResolvedValue(response)
-      await expect(getPrice("ethereum", "usd")).resolves.toBeNull()
-      expect(ethers.fetchJson).toHaveBeenCalledTimes(1)
-    })
+      jest.spyOn(ethers, "fetchJson").mockResolvedValue(response);
+      await expect(getPrice("ethereum", "usd")).resolves.toBeNull();
+      expect(ethers.fetchJson).toHaveBeenCalledTimes(1);
+    });
     xit("should return null if the api response does not fit the schema", async () => {
-      const response = "Na na na na na na na na na na na na ... BATMAN!"
+      const response = "Na na na na na na na na na na na na ... BATMAN!";
 
-      jest.spyOn(ethers, "fetchJson").mockResolvedValue(response)
+      jest.spyOn(ethers, "fetchJson").mockResolvedValue(response);
 
-      await expect(getPrice("ethereum", "usd")).resolves.toBeNull()
-      expect(ethers.fetchJson).toHaveBeenCalledTimes(1)
-    })
-  })
+      await expect(getPrice("ethereum", "usd")).resolves.toBeNull();
+      expect(ethers.fetchJson).toHaveBeenCalledTimes(1);
+    });
+  });
   describe("getPrices", () => {
     beforeEach(() => {
       // Important to clean up the internal mock variables between tests
-      jest.clearAllMocks()
-    })
+      jest.clearAllMocks();
+    });
     xit("should return correct price if the data exist", async () => {
       const fetchJsonResponse = {
         ethereum: {
@@ -188,7 +188,7 @@ describe("lib/prices.ts", () => {
           cny: 407908,
           last_updated_at: 1634672139,
         },
-      }
+      };
 
       const getPricesResponse = [
         {
@@ -293,15 +293,15 @@ describe("lib/prices.ts", () => {
           ],
           time: dateNow,
         },
-      ]
+      ];
 
-      jest.spyOn(ethers, "fetchJson").mockResolvedValue(fetchJsonResponse)
+      jest.spyOn(ethers, "fetchJson").mockResolvedValue(fetchJsonResponse);
 
       await expect(
-        getPrices([BTC, ETH] as CoinGeckoAsset[], FIAT_CURRENCIES)
-      ).resolves.toEqual(getPricesResponse)
-      expect(ethers.fetchJson).toHaveBeenCalledTimes(1)
-    })
+        getPrices([BTC, ETH] as CoinGeckoAsset[], FIAT_CURRENCIES),
+      ).resolves.toEqual(getPricesResponse);
+      expect(ethers.fetchJson).toHaveBeenCalledTimes(1);
+    });
     xit("should filter out invalid pairs if the data DOESN'T exist", async () => {
       const currencies = [
         USD,
@@ -310,7 +310,7 @@ describe("lib/prices.ts", () => {
           symbol: "FAK",
           decimals: 10,
         },
-      ]
+      ];
       const FAKE_COIN = {
         name: "FakeCoin",
         symbol: "qwerqwer",
@@ -320,13 +320,13 @@ describe("lib/prices.ts", () => {
           tokenLists: [],
           websiteURL: "https://www.youtube.com/watch?v=xvFZjo5PgG0",
         },
-      }
+      };
       const fetchJsonResponse = {
         ethereum: {
           usd: 3836.53,
           last_updated_at: 1634672101,
         },
-      }
+      };
       const getPricesResponse = [
         {
           amounts: [38365300000000n, 1000000000000000000n],
@@ -345,23 +345,23 @@ describe("lib/prices.ts", () => {
           ],
           time: dateNow,
         },
-      ]
+      ];
 
-      jest.spyOn(ethers, "fetchJson").mockResolvedValue(fetchJsonResponse)
+      jest.spyOn(ethers, "fetchJson").mockResolvedValue(fetchJsonResponse);
       await expect(
-        getPrices([ETH, FAKE_COIN] as CoinGeckoAsset[], currencies)
-      ).resolves.toEqual(getPricesResponse)
-      expect(ethers.fetchJson).toHaveBeenCalledTimes(1)
-    })
+        getPrices([ETH, FAKE_COIN] as CoinGeckoAsset[], currencies),
+      ).resolves.toEqual(getPricesResponse);
+      expect(ethers.fetchJson).toHaveBeenCalledTimes(1);
+    });
     xit("should return [] if the api response does not fit the schema", async () => {
-      const response = "Na na na na na na na na na na na na ... BATMAN!"
+      const response = "Na na na na na na na na na na na na ... BATMAN!";
 
-      jest.spyOn(ethers, "fetchJson").mockResolvedValue(response)
+      jest.spyOn(ethers, "fetchJson").mockResolvedValue(response);
 
       await expect(
-        getPrices([ETH] as CoinGeckoAsset[], FIAT_CURRENCIES)
-      ).resolves.toEqual([])
-      expect(ethers.fetchJson).toHaveBeenCalledTimes(1)
-    })
-  })
-})
+        getPrices([ETH] as CoinGeckoAsset[], FIAT_CURRENCIES),
+      ).resolves.toEqual([]);
+      expect(ethers.fetchJson).toHaveBeenCalledTimes(1);
+    });
+  });
+});

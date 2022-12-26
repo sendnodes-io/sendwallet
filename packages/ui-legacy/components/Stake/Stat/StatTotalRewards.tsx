@@ -1,29 +1,29 @@
-import React from "react"
-import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts"
-import { FungibleAsset } from "@sendnodes/pokt-wallet-background/assets"
-import { BigNumber, formatFixed } from "@ethersproject/bignumber"
-import { useStakingUserData } from "../../../hooks/staking-hooks"
-import formatTokenAmount from "../../../utils/formatTokenAmount"
-import useAssetInMainCurrency from "../../../hooks/assets/use-asset-in-main-currency"
+import React from "react";
+import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts";
+import { FungibleAsset } from "@sendnodes/pokt-wallet-background/assets";
+import { BigNumber, formatFixed } from "@ethersproject/bignumber";
+import { useStakingUserData } from "../../../hooks/staking-hooks";
+import formatTokenAmount from "../../../utils/formatTokenAmount";
+import useAssetInMainCurrency from "../../../hooks/assets/use-asset-in-main-currency";
 
 export default function StatTotalRewards({
   aon,
   asset,
 }: {
-  aon: AddressOnNetwork
-  asset: FungibleAsset
+  aon: AddressOnNetwork;
+  asset: FungibleAsset;
 }) {
-  const { data } = useStakingUserData(aon)
+  const { data } = useStakingUserData(aon);
 
-  const amount = BigNumber.from(data?.userStakingData[0]?.rewards ?? 0)
-  const fixedAmount = formatFixed(amount, asset.decimals)
+  const amount = BigNumber.from(data?.userStakingData[0]?.rewards ?? 0);
+  const fixedAmount = formatFixed(amount, asset.decimals);
 
   const amountInMainCurrency = useAssetInMainCurrency({
     assetAmount: {
       amount: amount.toBigInt(),
       asset,
     },
-  })
+  });
   return (
     <div
       title={fixedAmount}
@@ -45,5 +45,5 @@ export default function StatTotalRewards({
         </div>
       </div>
     </div>
-  )
+  );
 }

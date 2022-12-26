@@ -1,27 +1,27 @@
-import React, { ReactElement, useCallback, useEffect } from "react"
+import React, { ReactElement, useCallback, useEffect } from "react";
 import {
   selectCurrentPendingPermission,
   selectCurrentAccountTotal,
-} from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
+} from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
 import {
   denyOrRevokePermission,
   grantPermission,
-} from "@sendnodes/pokt-wallet-background/redux-slices/dapp-permission"
+} from "@sendnodes/pokt-wallet-background/redux-slices/dapp-permission";
 
-import SharedButton from "../components/Shared/SharedButton"
+import SharedButton from "../components/Shared/SharedButton";
 import {
   useBackgroundDispatch,
   useBackgroundSelector,
   useAreKeyringsUnlocked,
-} from "../hooks"
-import SharedAccountItemSummary from "../components/Shared/SharedAccountItemSummary"
+} from "../hooks";
+import SharedAccountItemSummary from "../components/Shared/SharedAccountItemSummary";
 
 function RequestingDAppBlock(props: {
-  title: string
-  url: string
-  faviconUrl: string
+  title: string;
+  url: string;
+  faviconUrl: string;
 }) {
-  const { title, url, faviconUrl } = props
+  const { title, url, faviconUrl } = props;
   return (
     <div className="request_wrap">
       <div className="dapp_favicon" />
@@ -36,9 +36,11 @@ function RequestingDAppBlock(props: {
           width: 100%;
         }
         .dapp_favicon {
-          background: url("${faviconUrl === ""
-            ? "./images/dapp_favicon_default@2x.png"
-            : faviconUrl}");
+          background: url("${
+            faviconUrl === ""
+              ? "./images/dapp_favicon_default@2x.png"
+              : faviconUrl
+          }");
           background-size: cover;
           width: 48px;
           height: 48px;
@@ -58,15 +60,15 @@ function RequestingDAppBlock(props: {
         }
       `}</style>
     </div>
-  )
+  );
 }
 export default function DAppConnectRequest(): ReactElement {
-  useAreKeyringsUnlocked(true)
-  const currentAccountTotal = useBackgroundSelector(selectCurrentAccountTotal)
+  useAreKeyringsUnlocked(true);
+  const currentAccountTotal = useBackgroundSelector(selectCurrentAccountTotal);
 
-  const permission = useBackgroundSelector(selectCurrentPendingPermission)
+  const permission = useBackgroundSelector(selectCurrentPendingPermission);
 
-  const dispatch = useBackgroundDispatch()
+  const dispatch = useBackgroundDispatch();
 
   useEffect(() => {
     window.onbeforeunload = () => {
@@ -75,11 +77,11 @@ export default function DAppConnectRequest(): ReactElement {
           denyOrRevokePermission({
             ...permission,
             state: "deny",
-          })
-        )
+          }),
+        );
       }
-    }
-  }, [dispatch, permission])
+    };
+  }, [dispatch, permission]);
 
   const grant = useCallback(async () => {
     if (typeof permission !== "undefined") {
@@ -87,17 +89,17 @@ export default function DAppConnectRequest(): ReactElement {
         grantPermission({
           ...permission,
           state: "allow",
-        })
-      )
+        }),
+      );
     }
-    window.onbeforeunload = null
-    window.close()
-  }, [dispatch, permission])
+    window.onbeforeunload = null;
+    window.close();
+  }, [dispatch, permission]);
 
   const deny = useCallback(async () => {
     // The denyOrRevokePermission will be dispatched in the onbeforeunload effect
-    window.close()
-  }, [])
+    window.close();
+  }, []);
 
   if (
     typeof permission === "undefined" ||
@@ -109,7 +111,7 @@ export default function DAppConnectRequest(): ReactElement {
       <div>
         You do not seem to have an account, which is sad for a wallet :(
       </div>
-    )
+    );
   }
 
   return (
@@ -271,5 +273,5 @@ export default function DAppConnectRequest(): ReactElement {
         }
       `}</style>
     </div>
-  )
+  );
 }

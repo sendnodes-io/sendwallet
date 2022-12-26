@@ -1,23 +1,23 @@
-import React, { ReactElement } from "react"
-import classNames from "clsx"
-import { useHistory } from "react-router-dom"
+import React, { ReactElement } from "react";
+import classNames from "clsx";
+import { useHistory } from "react-router-dom";
 
 interface Props {
-  name: string
-  isActive: boolean
+  name: string;
+  isActive: boolean;
 }
 
 export default function TabBarIcon(props: Props): ReactElement {
-  const history = useHistory()
+  const history = useHistory();
 
-  const { name, isActive } = props
+  const { name, isActive } = props;
 
   return (
     <>
       <button
         type="button"
         onClick={() => {
-          history.push(`/${name}`)
+          history.push(`/${name}`);
         }}
       >
         <div className={classNames("tab_bar_icon_wrap", { active: isActive })}>
@@ -83,9 +83,9 @@ export default function TabBarIcon(props: Props): ReactElement {
         `}
       </style>
     </>
-  )
+  );
 }
 
 TabBarIcon.defaultProps = {
   isActive: false,
-}
+};

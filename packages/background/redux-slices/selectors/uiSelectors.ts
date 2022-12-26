@@ -1,6 +1,6 @@
-import { createSelector } from "@reduxjs/toolkit"
-import { RootState } from ".."
-import { AddressOnNetwork } from "../../accounts"
+import { createSelector } from "@reduxjs/toolkit";
+import { RootState } from "..";
+import { AddressOnNetwork } from "../../accounts";
 import {
   POCKET,
   ETHEREUM,
@@ -9,11 +9,11 @@ import {
   GOERLI,
   KOVAN,
   POLYGON,
-} from "../../constants"
-import { Network } from "../../networks"
+} from "../../constants";
+import { Network } from "../../networks";
 
 // FIXME Make this configurable.
-const hardcodedMainCurrencySymbol = "USD"
+const hardcodedMainCurrencySymbol = "USD";
 
 export const selectCurrentAccount = createSelector(
   (state: RootState) => state.ui.selectedAccount,
@@ -21,36 +21,36 @@ export const selectCurrentAccount = createSelector(
     address,
     network,
     truncatedAddress: address.toLowerCase().slice(0, 7),
-  })
-)
+  }),
+);
 
 export const selectCurrentAddressNetwork = createSelector(
   (state: RootState) => state.ui.selectedAccount,
-  (selectedAccount) => selectedAccount
-)
+  (selectedAccount) => selectedAccount,
+);
 
 export const selectMainCurrencySymbol = createSelector(
   () => null,
-  () => hardcodedMainCurrencySymbol
-)
+  () => hardcodedMainCurrencySymbol,
+);
 
 export const selectMainCurrency = createSelector(
   (state: RootState) => state.ui,
   (state: RootState) => state.assets,
   (state: RootState) => selectMainCurrencySymbol(state),
   (_, assets, mainCurrencySymbol) =>
-    assets.find((asset) => asset.symbol === mainCurrencySymbol)
-)
+    assets.find((asset) => asset.symbol === mainCurrencySymbol),
+);
 
 export const selectPopoutWindowId = createSelector(
   (state: RootState) => state.ui.popoutWindowId,
-  (popoutWindowId) => popoutWindowId
-)
+  (popoutWindowId) => popoutWindowId,
+);
 
 export const selectActiveTab = createSelector(
   (state: RootState) => state.ui.activeTab,
-  (activeTab) => activeTab
-)
+  (activeTab) => activeTab,
+);
 
 export const selectBlockExplorer = createSelector(
   (network: Network) => network,
@@ -59,39 +59,39 @@ export const selectBlockExplorer = createSelector(
       network.family === POCKET.family &&
       network.chainID === POCKET.chainID
     ) {
-      return POCKET.blockExplorerUrl
+      return POCKET.blockExplorerUrl;
     }
     if (network.family === ETHEREUM.family) {
       if (network.chainID === ETHEREUM.chainID) {
-        return ETHEREUM.blockExplorerUrl
+        return ETHEREUM.blockExplorerUrl;
       }
       if (network.chainID === ROPSTEN.chainID) {
-        return ROPSTEN.blockExplorerUrl
+        return ROPSTEN.blockExplorerUrl;
       }
       if (network.chainID === RINKEBY.chainID) {
-        return RINKEBY.blockExplorerUrl
+        return RINKEBY.blockExplorerUrl;
       }
       if (network.chainID === GOERLI.chainID) {
-        return GOERLI.blockExplorerUrl
+        return GOERLI.blockExplorerUrl;
       }
       if (network.chainID === KOVAN.chainID) {
-        return KOVAN.blockExplorerUrl
+        return KOVAN.blockExplorerUrl;
       }
       if (network.chainID === POLYGON.chainID) {
-        return POLYGON.blockExplorerUrl
+        return POLYGON.blockExplorerUrl;
       }
     }
-  }
-)
+  },
+);
 
 export const selectBlockExplorerForAddress = createSelector(
   (address: AddressOnNetwork) => address,
   (addressOnNetwork) => {
     // luckily they follow the same basic form
-    const blockExplorerUrl = selectBlockExplorer(addressOnNetwork.network)
-    return `${blockExplorerUrl}address/${addressOnNetwork.address}`
-  }
-)
+    const blockExplorerUrl = selectBlockExplorer(addressOnNetwork.network);
+    return `${blockExplorerUrl}address/${addressOnNetwork.address}`;
+  },
+);
 
 export const selectBlockExplorerForTxHash = createSelector(
   ({ network, txHash }: { network: Network; txHash: string }) => ({
@@ -100,7 +100,7 @@ export const selectBlockExplorerForTxHash = createSelector(
   }),
   ({ network, txHash }) => {
     // luckily they follow the same basic form
-    const blockExplorerUrl = selectBlockExplorer(network)
-    return `${blockExplorerUrl}tx/${txHash}`
-  }
-)
+    const blockExplorerUrl = selectBlockExplorer(network);
+    return `${blockExplorerUrl}tx/${txHash}`;
+  },
+);

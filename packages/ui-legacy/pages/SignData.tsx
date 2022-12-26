@@ -1,66 +1,68 @@
 import {
   getAccountTotal,
   selectCurrentAccountSigningMethod,
-} from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
+} from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
 import {
   rejectDataSignature,
   selectTypedData,
   signTypedData,
-} from "@sendnodes/pokt-wallet-background/redux-slices/signing"
-import React, { ReactElement, useState } from "react"
-import { useHistory } from "react-router-dom"
-import SignTransactionContainer from "../components/SignTransaction/SignTransactionContainer"
+} from "@sendnodes/pokt-wallet-background/redux-slices/signing";
+import React, { ReactElement, useState } from "react";
+import { useHistory } from "react-router-dom";
+import SignTransactionContainer from "../components/SignTransaction/SignTransactionContainer";
 import {
   useBackgroundDispatch,
   useBackgroundSelector,
   useIsSigningMethodLocked,
-} from "../hooks"
-import SignDataDetailPanel from "./SignDataDetailPanel"
+} from "../hooks";
+import SignDataDetailPanel from "./SignDataDetailPanel";
 
 export enum SignDataType {
   TypedData = "sign-typed-data",
 }
 
 export default function SignData(): ReactElement {
-  const dispatch = useBackgroundDispatch()
-  const typedDataRequest = useBackgroundSelector(selectTypedData)
+  const dispatch = useBackgroundDispatch();
+  const typedDataRequest = useBackgroundSelector(selectTypedData);
 
-  const history = useHistory()
+  const history = useHistory();
 
   const signerAccountTotal = useBackgroundSelector((state) => {
     if (typeof typedDataRequest !== "undefined") {
-      return getAccountTotal(state, typedDataRequest.account)
+      return getAccountTotal(state, typedDataRequest.account);
     }
-    return undefined
-  })
+    return undefined;
+  });
 
-  const signingMethod = useBackgroundSelector(selectCurrentAccountSigningMethod)
+  const signingMethod = useBackgroundSelector(
+    selectCurrentAccountSigningMethod,
+  );
 
-  const [isTransactionSigning, setIsTransactionSigning] = useState(false)
+  const [isTransactionSigning, setIsTransactionSigning] = useState(false);
 
-  const isLocked = useIsSigningMethodLocked(signingMethod)
-  if (isLocked) return <></>
+  const isLocked = useIsSigningMethodLocked(signingMethod);
+  if (isLocked) return <></>;
 
   if (
     typeof typedDataRequest === "undefined" ||
     typeof signerAccountTotal === "undefined"
   ) {
-    return <></>
+    return <></>;
   }
 
   const handleConfirm = () => {
     if (typedDataRequest !== undefined) {
       if (signingMethod) {
-        dispatch(signTypedData({ request: typedDataRequest, signingMethod }))
-        setIsTransactionSigning(true)
+        dispatch(signTypedData({ request: typedDataRequest, signingMethod }));
+        setIsTransactionSigning(true);
       }
     }
-  }
+  };
 
   const handleReject = async () => {
-    await dispatch(rejectDataSignature())
-    history.goBack()
-  }
+    await dispatch(rejectDataSignature());
+    history.goBack();
+  };
 
   return (
     <SignTransactionContainer
@@ -75,5 +77,5 @@ export default function SignData(): ReactElement {
       extraPanel={null}
       isArbitraryDataSigningRequired={false}
     />
-  )
+  );
 }

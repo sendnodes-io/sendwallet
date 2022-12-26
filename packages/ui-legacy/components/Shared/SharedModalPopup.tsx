@@ -1,18 +1,18 @@
-import React, { ReactElement, ReactNode, useRef } from "react"
-import { createPortal } from "react-dom"
-import classNames from "clsx"
-import { useOnClickOutside } from "../../hooks"
+import React, { ReactElement, ReactNode, useRef } from "react";
+import { createPortal } from "react-dom";
+import classNames from "clsx";
+import { useOnClickOutside } from "../../hooks";
 
 interface SharedModalProps {
-  children: ReactNode
-  header: string
-  onClose: () => void
-  isOpen: boolean
-  minHeight?: string
-  closeOnOverlayClick?: boolean
+  children: ReactNode;
+  header: string;
+  onClose: () => void;
+  isOpen: boolean;
+  minHeight?: string;
+  closeOnOverlayClick?: boolean;
 }
 
-const modalElement = document.getElementById("pokt-wallet-root") as HTMLElement
+const modalElement = document.getElementById("pokt-wallet-root") as HTMLElement;
 
 export default function SharedModalPopup({
   children,
@@ -22,9 +22,9 @@ export default function SharedModalPopup({
   minHeight,
   closeOnOverlayClick = true,
 }: SharedModalProps): ReactElement {
-  const ref = useRef(null)
+  const ref = useRef(null);
 
-  useOnClickOutside(ref, closeOnOverlayClick ? onClose : () => {})
+  useOnClickOutside(ref, closeOnOverlayClick ? onClose : () => {});
 
   return createPortal(
     isOpen ? (
@@ -111,6 +111,6 @@ export default function SharedModalPopup({
         `}</style>
       </>
     ) : null,
-    modalElement
-  )
+    modalElement,
+  );
 }

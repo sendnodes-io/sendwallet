@@ -1,14 +1,14 @@
-import { Icon } from "@iconify/react"
-import React, { ReactElement } from "react"
-import { useHistory } from "react-router-dom"
-import SharedButton from "../components/Shared/SharedButton"
+import { Icon } from "@iconify/react";
+import React, { ReactElement } from "react";
+import { useHistory } from "react-router-dom";
+import SharedButton from "../components/Shared/SharedButton";
 
 export default function ErrorFallback({
   error,
 }: {
-  error: Error
+  error: Error;
 }): ReactElement {
-  const history = useHistory()
+  const history = useHistory();
   return (
     <>
       <div className="static md:absolute md:top-1/2  md:-translate-y-1/2">
@@ -29,7 +29,7 @@ export default function ErrorFallback({
           type="primary"
           size="medium"
           onClick={() => {
-            window.location.reload()
+            window.location.reload();
           }}
         >
           Reload
@@ -53,5 +53,5 @@ export default function ErrorFallback({
         }
       `}</style>
     </>
-  )
+  );
 }

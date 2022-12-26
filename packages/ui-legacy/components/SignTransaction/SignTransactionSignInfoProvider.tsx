@@ -1,60 +1,60 @@
-import { unitPricePointForPricePoint } from "@sendnodes/pokt-wallet-background/assets"
-import { USD } from "@sendnodes/pokt-wallet-background/constants"
-import { selectAssetPricePoint } from "@sendnodes/pokt-wallet-background/redux-slices/assets"
-import { selectCurrentAccount } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
+import { unitPricePointForPricePoint } from "@sendnodes/pokt-wallet-background/assets";
+import { USD } from "@sendnodes/pokt-wallet-background/constants";
+import { selectAssetPricePoint } from "@sendnodes/pokt-wallet-background/redux-slices/assets";
+import { selectCurrentAccount } from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
 import {
   enrichAssetAmountWithDecimalValues,
   enrichAssetAmountWithMainCurrencyValues,
   heuristicDesiredDecimalsForUnitPrice,
-} from "@sendnodes/pokt-wallet-background/redux-slices/utils/asset-utils"
-import React, { ReactElement } from "react"
-import { ActivityItem } from "@sendnodes/pokt-wallet-background/redux-slices/activities"
-import { isEqual, startsWith } from "lodash"
-import { useBackgroundSelector } from "../../hooks"
-import TransactionDetailAddressValue from "../TransactionDetail/TransactionDetailAddressValue"
-import TransactionDetailContainer from "../TransactionDetail/TransactionDetailContainer"
-import TransactionDetailItem from "../TransactionDetail/TransactionDetailItem"
+} from "@sendnodes/pokt-wallet-background/redux-slices/utils/asset-utils";
+import React, { ReactElement } from "react";
+import { ActivityItem } from "@sendnodes/pokt-wallet-background/redux-slices/activities";
+import { isEqual, startsWith } from "lodash";
+import { useBackgroundSelector } from "../../hooks";
+import TransactionDetailAddressValue from "../TransactionDetail/TransactionDetailAddressValue";
+import TransactionDetailContainer from "../TransactionDetail/TransactionDetailContainer";
+import TransactionDetailItem from "../TransactionDetail/TransactionDetailItem";
 import SignTransactionBaseInfoProvider, {
   SignTransactionInfoProviderProps,
-} from "./SignTransactionBaseInfoProvider"
-import TransactionSendDetail from "../TransactionDetail/TransactionSendDetail"
-import { useStakingPoktParamsForAddress } from "../../hooks/staking-hooks"
+} from "./SignTransactionBaseInfoProvider";
+import TransactionSendDetail from "../TransactionDetail/TransactionSendDetail";
+import { useStakingPoktParamsForAddress } from "../../hooks/staking-hooks";
 
 export default function SignTransactionSignInfoProvider({
   transactionDetails,
   annotation,
   inner,
 }: SignTransactionInfoProviderProps): ReactElement {
-  const currentAccount = useBackgroundSelector(selectCurrentAccount, isEqual)
-  const { network } = currentAccount
+  const currentAccount = useBackgroundSelector(selectCurrentAccount, isEqual);
+  const { network } = currentAccount;
   const baseAssetPricePoint = useBackgroundSelector(
     (state) =>
       selectAssetPricePoint(state.assets, network.baseAsset.symbol, USD.symbol),
-    isEqual
-  )
+    isEqual,
+  );
 
   const { data: stakingPoktData, isError } =
-    useStakingPoktParamsForAddress(currentAccount)
+    useStakingPoktParamsForAddress(currentAccount);
 
   if (isError) {
-    console.error("Error fetching staking params", isError)
+    console.error("Error fetching staking params", isError);
   }
 
-  let amount = BigInt(0)
-  let to: string | undefined
-  let memo: string | undefined
+  let amount = BigInt(0);
+  let to: string | undefined;
+  let memo: string | undefined;
   if ("value" in transactionDetails) {
-    amount = transactionDetails.value
+    amount = transactionDetails.value;
   }
   if ("txMsg" in transactionDetails) {
-    amount = BigInt(transactionDetails.txMsg.value.amount)
-    to = transactionDetails.txMsg.value.toAddress
+    amount = BigInt(transactionDetails.txMsg.value.amount);
+    to = transactionDetails.txMsg.value.toAddress;
   }
   if ("to" in transactionDetails) {
-    to = transactionDetails.to
+    to = transactionDetails.to;
   }
   if ("memo" in transactionDetails) {
-    memo = transactionDetails.memo
+    memo = transactionDetails.memo;
   }
 
   const transactionAssetAmount = enrichAssetAmountWithDecimalValues(
@@ -66,11 +66,11 @@ export default function SignTransactionSignInfoProvider({
       network.baseAsset.decimals,
       typeof baseAssetPricePoint !== "undefined"
         ? unitPricePointForPricePoint(baseAssetPricePoint)
-        : undefined
-    )
-  )
+        : undefined,
+    ),
+  );
 
-  const decimalPlaces = transactionAssetAmount.decimalAmount < 1 ? 6 : 2
+  const decimalPlaces = transactionAssetAmount.decimalAmount < 1 ? 6 : 2;
   const {
     decimalAmount: tokenValue,
     mainCurrencyAmount: dollarValue,
@@ -79,29 +79,29 @@ export default function SignTransactionSignInfoProvider({
   } = enrichAssetAmountWithMainCurrencyValues(
     transactionAssetAmount,
     baseAssetPricePoint,
-    decimalPlaces
-  )
+    decimalPlaces,
+  );
 
-  let title = "Sign Transaction"
-  let confirmButtonLabel = "SIGN"
-  let rejectButtonLabel = "REJECT"
+  let title = "Sign Transaction";
+  let confirmButtonLabel = "SIGN";
+  let rejectButtonLabel = "REJECT";
 
   if (to && to === stakingPoktData?.wallets?.siw) {
     if (startsWith(memo, "s")) {
-      title = "Stake"
+      title = "Stake";
     }
     if (startsWith(memo, "u")) {
-      title = "Unstake"
+      title = "Unstake";
     }
     if (memo === "c:true") {
-      title = "Compounding On"
+      title = "Compounding On";
     }
     if (memo === "c:false") {
-      title = "Compounding Off"
+      title = "Compounding Off";
     }
 
-    confirmButtonLabel = title.toUpperCase()
-    rejectButtonLabel = "CANCEL"
+    confirmButtonLabel = title.toUpperCase();
+    rejectButtonLabel = "CANCEL";
   }
 
   return (
@@ -126,5 +126,5 @@ export default function SignTransactionSignInfoProvider({
       confirmButtonLabel={confirmButtonLabel}
       inner={inner}
     />
-  )
+  );
 }

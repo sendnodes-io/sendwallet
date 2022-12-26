@@ -5,144 +5,144 @@ import React, {
   useState,
   useEffect,
   useCallback,
-} from "react"
+} from "react";
 import {
   InMemoryKVStore as PocketInMemoryKVStore,
   Keybase as PocketKeybase,
-} from "@pokt-network/pocket-js/dist/index"
+} from "@pokt-network/pocket-js/dist/index";
 
 import {
   clearImporting,
   ImportPrivateKey,
   importPrivateKey as importPrivateKeyBackground,
-} from "@sendnodes/pokt-wallet-background/redux-slices/keyrings"
-import { useHistory } from "react-router-dom"
-import classNames from "clsx"
-import { IoIosCheckmark } from "react-icons/io"
-import { Buffer } from "buffer"
-import { ethers } from "ethers"
-import { KeyType } from "@sendnodes/pokt-wallet-background/services/keyring"
-import SharedButton from "../../components/Shared/SharedButton"
-import OnboardingAccountLayout from "../../components/Onboarding/OnboardingAccountLayout"
+} from "@sendnodes/pokt-wallet-background/redux-slices/keyrings";
+import { useHistory } from "react-router-dom";
+import classNames from "clsx";
+import { IoIosCheckmark } from "react-icons/io";
+import { Buffer } from "buffer";
+import { ethers } from "ethers";
+import { KeyType } from "@sendnodes/pokt-wallet-background/services/keyring";
+import SharedButton from "../../components/Shared/SharedButton";
+import OnboardingAccountLayout from "../../components/Onboarding/OnboardingAccountLayout";
 import {
   useBackgroundSelector,
   useAreKeyringsUnlocked,
   useBackgroundDispatch,
-} from "../../hooks"
-import { OnboardingImportRecoveryPhraseIcon } from "../../components/Onboarding/Icons"
-import SharedInput from "../../components/Shared/SharedInput"
-import { KeyringTypes } from "@sendnodes/pokt-wallet-background/types"
+} from "../../hooks";
+import { OnboardingImportRecoveryPhraseIcon } from "../../components/Onboarding/Icons";
+import SharedInput from "../../components/Shared/SharedInput";
+import { KeyringTypes } from "@sendnodes/pokt-wallet-background/types";
 
 export default function OnboardingImportKeyfile() {
-  const rootRef = useRef<HTMLDivElement>(null)
-  const keyfileInputRef = useRef<HTMLInputElement>(null)
-  const [usingPrivateKey, setUsingPrivateKey] = useState(false)
-  const [importPrivateKey, setImportPrivateKey] = useState("")
+  const rootRef = useRef<HTMLDivElement>(null);
+  const keyfileInputRef = useRef<HTMLInputElement>(null);
+  const [usingPrivateKey, setUsingPrivateKey] = useState(false);
+  const [importPrivateKey, setImportPrivateKey] = useState("");
   const [importPrivateKeyType, setImportPrivateKeyType] =
-    useState<KeyringTypes | null>(null)
-  const [importPrivateKeyLabel, setImportPrivateKeyLabel] = useState("")
+    useState<KeyringTypes | null>(null);
+  const [importPrivateKeyLabel, setImportPrivateKeyLabel] = useState("");
   const [importKeyfileContents, setImportKeyfileContents] = useState<
     string | null
-  >(null)
-  const [importKeyfile, setImportKeyfile] = useState<File | null>(null)
-  const [isDragging, setIsDragging] = useState(false)
-  const areKeyringsUnlocked = useAreKeyringsUnlocked(true)
+  >(null);
+  const [importKeyfile, setImportKeyfile] = useState<File | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const areKeyringsUnlocked = useAreKeyringsUnlocked(true);
 
-  const [importPassphrase, setImportPassphrase] = useState("")
-  const [errorMessage, setErrorMessage] = useState("")
-  const [isImporting, setIsImporting] = useState(false)
+  const [importPassphrase, setImportPassphrase] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isImporting, setIsImporting] = useState(false);
 
-  const dispatch = useBackgroundDispatch()
+  const dispatch = useBackgroundDispatch();
   const keyringImport = useBackgroundSelector(
-    (state) => state.keyrings.importing
-  )
+    (state) => state.keyrings.importing,
+  );
 
-  const history = useHistory()
+  const history = useHistory();
 
   useEffect(() => {
     // always start fresh
-    dispatch(clearImporting())
-  }, [dispatch])
+    dispatch(clearImporting());
+  }, [dispatch]);
 
   // handle success state or failure after importing started
   useEffect(() => {
     if (isImporting && keyringImport === "done") {
       // it worked
-      dispatch(clearImporting()) // clean up
-      history.push("/onboarding/account-created")
+      dispatch(clearImporting()); // clean up
+      history.push("/onboarding/account-created");
     }
 
     if (keyringImport === "failed") {
-      setErrorMessage("Something went wrong. Please try again.")
-      setIsImporting(false)
+      setErrorMessage("Something went wrong. Please try again.");
+      setIsImporting(false);
     }
-  }, [history, areKeyringsUnlocked, keyringImport, isImporting])
+  }, [history, areKeyringsUnlocked, keyringImport, isImporting]);
 
   // determine keyring type to show user
   useEffect(() => {
     if (importPrivateKeyType) {
       if (importPrivateKeyType === KeyringTypes.singleSECP) {
-        setImportPrivateKeyLabel("EVM compatible private key detected")
+        setImportPrivateKeyLabel("EVM compatible private key detected");
       }
       if (importPrivateKeyType === KeyringTypes.singleED25519) {
-        setImportPrivateKeyLabel("POKT compatible private key detected")
+        setImportPrivateKeyLabel("POKT compatible private key detected");
       }
     } else {
-      setImportPrivateKeyLabel("ENTER PRIVATE KEY")
+      setImportPrivateKeyLabel("ENTER PRIVATE KEY");
     }
-  }, [importPrivateKey, importPrivateKeyType])
+  }, [importPrivateKey, importPrivateKeyType]);
 
   const readKeyfile = async (file: File) => {
-    const fileReader = new FileReader()
+    const fileReader = new FileReader();
 
     const promise = new Promise<string | null>((resolve) => {
       fileReader.onloadend = (_) => {
         if (fileReader.error) {
-          return resolve(null)
+          return resolve(null);
         }
-        const contents = fileReader.result?.toString()
-        if (contents === undefined) return resolve(null)
-        return resolve(contents)
-      }
-    })
+        const contents = fileReader.result?.toString();
+        if (contents === undefined) return resolve(null);
+        return resolve(contents);
+      };
+    });
 
-    fileReader.readAsText(file, "UTF-8")
+    fileReader.readAsText(file, "UTF-8");
 
-    return promise
-  }
+    return promise;
+  };
 
   const computePrivateKey = async (keyfile: string, passphrase: string) => {
-    const pocketKeybase = new PocketKeybase(new PocketInMemoryKVStore())
+    const pocketKeybase = new PocketKeybase(new PocketInMemoryKVStore());
     const account = await pocketKeybase.importPPKFromJSON(
       passphrase,
       keyfile,
-      passphrase
-    )
+      passphrase,
+    );
     if (account instanceof Error) {
-      throw account
+      throw account;
     }
     const unlockedAccount = await pocketKeybase.getUnlockedAccount(
       account.addressHex,
-      passphrase
-    )
+      passphrase,
+    );
     if (unlockedAccount instanceof Error) {
-      throw account
+      throw account;
     }
 
-    return unlockedAccount.privateKey.toString("hex")
-  }
+    return unlockedAccount.privateKey.toString("hex");
+  };
 
   const importWallet = useCallback(async () => {
     if (isImporting) {
-      return
+      return;
     }
     // clear error
-    setErrorMessage("")
+    setErrorMessage("");
 
     if (usingPrivateKey) {
-      await importWalletFromPrivateKey()
+      await importWalletFromPrivateKey();
     } else {
-      await importWalletFromKeyfile()
+      await importWalletFromKeyfile();
     }
   }, [
     dispatch,
@@ -150,163 +150,163 @@ export default function OnboardingImportKeyfile() {
     importKeyfileContents,
     importPrivateKey,
     usingPrivateKey,
-  ])
+  ]);
 
   const importWalletFromKeyfile = useCallback(async () => {
     if (isImporting) {
-      return
+      return;
     }
     // clear error
-    setErrorMessage("")
+    setErrorMessage("");
 
     if (importKeyfileContents === null) {
-      setErrorMessage("Please attach a keyfile")
-      return
+      setErrorMessage("Please attach a keyfile");
+      return;
     }
 
     if (importPassphrase === "") {
-      setErrorMessage("Invalid passphrase")
-      return
+      setErrorMessage("Invalid passphrase");
+      return;
     }
 
-    setIsImporting(true)
+    setIsImporting(true);
 
     try {
       const privateKey = await computePrivateKey(
         importKeyfileContents,
-        importPassphrase
-      )
+        importPassphrase,
+      );
 
       await dispatch(
         importPrivateKeyBackground({
           privateKey,
           keyType: KeyType.ED25519,
-        })
-      )
+        }),
+      );
     } catch (e) {
-      setErrorMessage(`Invalid import, reason: ${e}`)
-      setIsImporting(false)
+      setErrorMessage(`Invalid import, reason: ${e}`);
+      setIsImporting(false);
     }
-  }, [dispatch, importPassphrase, importKeyfileContents])
+  }, [dispatch, importPassphrase, importKeyfileContents]);
 
   const importWalletFromPrivateKey = useCallback(async () => {
     if (isImporting) {
-      return
+      return;
     }
     // clear error
-    setErrorMessage("")
+    setErrorMessage("");
 
     if (importPrivateKey === "") {
-      setErrorMessage("Invalid private key")
-      return
+      setErrorMessage("Invalid private key");
+      return;
     }
 
-    setIsImporting(true)
+    setIsImporting(true);
 
     try {
-      let fixedKeyring: ImportPrivateKey
+      let fixedKeyring: ImportPrivateKey;
       // ed25519 private are 64 bytes
       if (ethers.utils.isHexString(`0x${importPrivateKey}`, 64)) {
-        const pocketKeybase = new PocketKeybase(new PocketInMemoryKVStore())
+        const pocketKeybase = new PocketKeybase(new PocketInMemoryKVStore());
         const account = await pocketKeybase.importAccount(
           Buffer.from(importPrivateKey, "hex"),
-          "poktwallet"
-        )
+          "poktwallet",
+        );
         if (account instanceof Error) {
-          throw account
+          throw account;
         }
         const unlockedAccount = await pocketKeybase.getUnlockedAccount(
           account.addressHex,
-          "poktwallet"
-        )
+          "poktwallet",
+        );
         if (unlockedAccount instanceof Error) {
-          throw unlockedAccount
+          throw unlockedAccount;
         }
 
         fixedKeyring = {
           privateKey: unlockedAccount.privateKey.toString("hex"),
           keyType: KeyType.ED25519,
-        }
+        };
       } else if (ethers.utils.isHexString(`0x${importPrivateKey}`, 32)) {
         // secp25k1 private are 32 bytes
         fixedKeyring = {
           privateKey: importPrivateKey,
           keyType: KeyType.SECP256K1,
-        }
+        };
       } else {
-        setErrorMessage("Invalid private key")
-        return
+        setErrorMessage("Invalid private key");
+        return;
       }
 
-      await dispatch(importPrivateKeyBackground(fixedKeyring))
+      await dispatch(importPrivateKeyBackground(fixedKeyring));
     } catch (e) {
-      setErrorMessage(`Invalid import. ${e}`)
+      setErrorMessage(`Invalid import. ${e}`);
     }
-  }, [dispatch, importPrivateKey])
+  }, [dispatch, importPrivateKey]);
 
   const handleDroppedFile = async (ev: DragEvent) => {
-    setIsDragging(false)
-    ev.stopPropagation()
-    ev.preventDefault()
+    setIsDragging(false);
+    ev.stopPropagation();
+    ev.preventDefault();
     if (ev.dataTransfer) {
       // validate JSON here
-      const file = ev.dataTransfer.files[0]
-      setImportKeyfile(file)
+      const file = ev.dataTransfer.files[0];
+      setImportKeyfile(file);
     }
-  }
+  };
 
   // listen for drag events on window for easy DnD
   useEffect(() => {
     const handleDragging = (ev: DragEvent) => {
-      ev.stopPropagation()
-      ev.preventDefault()
-      setIsDragging(true)
-    }
+      ev.stopPropagation();
+      ev.preventDefault();
+      setIsDragging(true);
+    };
     const handleDragLeave = (ev: DragEvent) => {
-      if (ev.target === document.documentElement) setIsDragging(false)
-      if (ev.screenX === 0 && ev.screenY === 0) setIsDragging(false)
-    }
-    document.addEventListener("dragenter", handleDragging)
-    document.addEventListener("dragover", handleDragging)
-    document.addEventListener("dragend", handleDragLeave)
-    document.addEventListener("dragleave", handleDragLeave)
-    document.addEventListener("drop", handleDroppedFile)
+      if (ev.target === document.documentElement) setIsDragging(false);
+      if (ev.screenX === 0 && ev.screenY === 0) setIsDragging(false);
+    };
+    document.addEventListener("dragenter", handleDragging);
+    document.addEventListener("dragover", handleDragging);
+    document.addEventListener("dragend", handleDragLeave);
+    document.addEventListener("dragleave", handleDragLeave);
+    document.addEventListener("drop", handleDroppedFile);
 
     return () => {
-      document.removeEventListener("dragenter", handleDragging)
-      document.removeEventListener("dragover", handleDragging)
-      document.removeEventListener("dragend", handleDragLeave)
-      document.removeEventListener("dragleave", handleDragLeave)
-      document.removeEventListener("drop", handleDroppedFile)
-    }
-  }, [])
+      document.removeEventListener("dragenter", handleDragging);
+      document.removeEventListener("dragover", handleDragging);
+      document.removeEventListener("dragend", handleDragLeave);
+      document.removeEventListener("dragleave", handleDragLeave);
+      document.removeEventListener("drop", handleDroppedFile);
+    };
+  }, []);
 
   // validate
   useEffect(() => {
     const validate = async () => {
-      setErrorMessage("")
-      setImportKeyfileContents(null)
+      setErrorMessage("");
+      setImportKeyfileContents(null);
 
       if (importKeyfile === null) {
-        return
+        return;
       }
       const results =
-        importKeyfile === null ? null : await readKeyfile(importKeyfile)
+        importKeyfile === null ? null : await readKeyfile(importKeyfile);
       try {
         if (results) {
-          JSON.parse(results)
-          setImportKeyfileContents(results)
-          return
+          JSON.parse(results);
+          setImportKeyfileContents(results);
+          return;
         }
       } catch (e) {
-        console.warn("Invalid JSON", e)
+        console.warn("Invalid JSON", e);
       }
-      setErrorMessage("Invalid keyfile")
-    }
-    validate().catch(console.error)
-  }, [importKeyfile, setImportPassphrase])
+      setErrorMessage("Invalid keyfile");
+    };
+    validate().catch(console.error);
+  }, [importKeyfile, setImportPassphrase]);
 
-  if (!areKeyringsUnlocked) return <></>
+  if (!areKeyringsUnlocked) return <></>;
 
   return (
     <div ref={rootRef}>
@@ -356,8 +356,8 @@ export default function OnboardingImportKeyfile() {
               <div className="import_private_key_wrap">
                 <form
                   onSubmit={async (e) => {
-                    e.preventDefault()
-                    await importWalletFromPrivateKey()
+                    e.preventDefault();
+                    await importWalletFromPrivateKey();
                   }}
                   style={{ width: "100%" }}
                 >
@@ -366,19 +366,19 @@ export default function OnboardingImportKeyfile() {
                     type="password"
                     disabled={isImporting}
                     parseAndValidate={(val) => {
-                      val = val.replace(/^0x/, "").trim()
+                      val = val.replace(/^0x/, "").trim();
                       if (!val) {
-                        return { parsed: undefined }
+                        return { parsed: undefined };
                       }
                       if (ethers.utils.isHexString(`0x${val}`, 32)) {
-                        setImportPrivateKeyType(KeyringTypes.singleSECP)
+                        setImportPrivateKeyType(KeyringTypes.singleSECP);
                       } else if (ethers.utils.isHexString(`0x${val}`, 64)) {
-                        setImportPrivateKeyType(KeyringTypes.singleED25519)
+                        setImportPrivateKeyType(KeyringTypes.singleED25519);
                       } else {
-                        setImportPrivateKeyType(null)
-                        return { parsed: val, error: "Invalid private key" }
+                        setImportPrivateKeyType(null);
+                        return { parsed: val, error: "Invalid private key" };
                       }
-                      return { parsed: val }
+                      return { parsed: val };
                     }}
                     onChange={setImportPrivateKey}
                     focusedLabelBackgroundColor="var(--eerie-black-200)"
@@ -389,8 +389,8 @@ export default function OnboardingImportKeyfile() {
               <div className="import_keyfile_wrap">
                 <form
                   onSubmit={async (e) => {
-                    e.preventDefault()
-                    await importWallet()
+                    e.preventDefault();
+                    await importWallet();
                   }}
                   style={{ width: "100%" }}
                 >
@@ -656,5 +656,5 @@ export default function OnboardingImportKeyfile() {
         `}
       </style>
     </div>
-  )
+  );
 }

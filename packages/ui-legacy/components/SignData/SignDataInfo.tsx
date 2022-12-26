@@ -1,8 +1,8 @@
-import React from "react"
+import React from "react";
 
 const SignDataInfo: React.FC<{
-  label: string
-  content: string
+  label: string;
+  content: string;
 }> = ({ label, content }) => {
   return (
     <>
@@ -26,7 +26,7 @@ const SignDataInfo: React.FC<{
         }
       `}</style>
     </>
-  )
-}
+  );
+};
 
-export default SignDataInfo
+export default SignDataInfo;

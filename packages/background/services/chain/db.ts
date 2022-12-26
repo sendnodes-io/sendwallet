@@ -1,7 +1,7 @@
-import Dexie from "dexie"
+import Dexie from "dexie";
 
-import { UNIXTime } from "../../types"
-import { AccountBalance, AddressOnNetwork } from "../../accounts"
+import { UNIXTime } from "../../types";
+import { AccountBalance, AddressOnNetwork } from "../../accounts";
 import {
   AnyEVMBlock,
   AnyEVMTransaction,
@@ -11,37 +11,37 @@ import {
   POKTSkinnyBlock,
   EVMNetwork,
   POKTNetwork,
-} from "../../networks"
-import { FungibleAsset, AssetTransfer } from "../../assets"
+} from "../../networks";
+import { FungibleAsset, AssetTransfer } from "../../assets";
 
 type EVMTransaction = AnyEVMTransaction & {
-  dataSource: "alchemy" | "local"
-  firstSeen: UNIXTime
-}
+  dataSource: "alchemy" | "local";
+  firstSeen: UNIXTime;
+};
 
 type POKTTransaction = AnyPOKTTransaction & {
-  dataSource: "alchemy" | "local"
-  firstSeen: UNIXTime
-}
+  dataSource: "alchemy" | "local";
+  firstSeen: UNIXTime;
+};
 
 type AccountAssetTransferLookup = {
-  addressNetwork: AddressOnNetwork
-  retrievedAt: UNIXTime
-  startBlock: bigint
-  endBlock: bigint
-}
+  addressNetwork: AddressOnNetwork;
+  retrievedAt: UNIXTime;
+  startBlock: bigint;
+  endBlock: bigint;
+};
 
 export type TransactionRetrieval = {
-  network: EVMNetwork | POKTNetwork
-  hash: string
-  firstSeen: UNIXTime
-  height?: bigint
-  txData?: AnyPOKTTransaction | AssetTransfer
-}
+  network: EVMNetwork | POKTNetwork;
+  hash: string;
+  firstSeen: UNIXTime;
+  height?: bigint;
+  txData?: AnyPOKTTransaction | AssetTransfer;
+};
 
 interface Migration {
-  id: number
-  appliedAt: number
+  id: number;
+  appliedAt: number;
 }
 
 // TODO keep track of blocks invalidated by a reorg
@@ -57,7 +57,7 @@ export class ChainDatabase extends Dexie {
   private accountsToTrack!: Dexie.Table<
     AddressOnNetwork,
     [string, string, string]
-  >
+  >;
 
   /**
    * Keep track of details of asset transfers we've looked up before per
@@ -66,19 +66,19 @@ export class ChainDatabase extends Dexie {
   private accountAssetTransferLookups!: Dexie.Table<
     AccountAssetTransferLookup,
     [number]
-  >
+  >;
 
   private queuedTransactionsToRetrieve!: Dexie.Table<
     TransactionRetrieval,
     [number, string, string]
-  >
+  >;
 
   /*
    * Partial block headers cached to track reorgs and network status.
    *
    * Keyed by the [block hash, network name] pair.
    */
-  private blocks!: Dexie.Table<AnyEVMBlock, [string, string]>
+  private blocks!: Dexie.Table<AnyEVMBlock, [string, string]>;
 
   /*
    * Historic and pending chain transactions relevant to tracked accounts.
@@ -87,7 +87,7 @@ export class ChainDatabase extends Dexie {
    *
    * Keyed by the [transaction hash, network name] pair.
    */
-  private chainTransactions!: Dexie.Table<EVMTransaction, [string, string]>
+  private chainTransactions!: Dexie.Table<EVMTransaction, [string, string]>;
 
   /*
    * Historic and pending POKT chain transactions relevant to tracked accounts.
@@ -96,31 +96,31 @@ export class ChainDatabase extends Dexie {
    *
    * Keyed by the [transaction hash, network name] pair.
    */
-  private poktTransactions!: Dexie.Table<POKTTransaction, [string, string]>
+  private poktTransactions!: Dexie.Table<POKTTransaction, [string, string]>;
 
   /*
    * Partial block headers cached to track reorgs and network status.
    *
    * Keyed by the [block hash, network name] pair.
    */
-  private poktBlocks!: Dexie.Table<POKTBlock, [string, string]>
+  private poktBlocks!: Dexie.Table<POKTBlock, [string, string]>;
 
   /*
    * Partial block headers cached to track reorgs and network status.
    *
    * Keyed by the [block hash, network name] pair.
    */
-  private poktSkinnyBlocks!: Dexie.Table<POKTSkinnyBlock, [string, string]>
+  private poktSkinnyBlocks!: Dexie.Table<POKTSkinnyBlock, [string, string]>;
 
   /*
    * Historic account balances.
    */
-  private balances!: Dexie.Table<AccountBalance, number>
+  private balances!: Dexie.Table<AccountBalance, number>;
 
-  private migrations!: Dexie.Table<Migration, number>
+  private migrations!: Dexie.Table<Migration, number>;
 
   constructor() {
-    super("poktWallet/chain")
+    super("poktWallet/chain");
     this.version(2).stores({
       migrations: "++id,appliedAt",
       accountsToTrack:
@@ -141,7 +141,7 @@ export class ChainDatabase extends Dexie {
         "&[header.last_block_id.hash+network.name],[network.name+timestamp],header.last_block_id.hash,network.name,timestamp,header.height,[header.height+network.name]",
       poktSkinnyBlocks:
         "&[header.height+network.name],header.height,network.name,timestamp",
-    })
+    });
 
     this.chainTransactions.hook(
       "updating",
@@ -149,13 +149,13 @@ export class ChainDatabase extends Dexie {
         // Only these properties can be updated on a stored transaction.
         // NOTE: Currently we do NOT throw if another property modification is
         // attempted; instead, we just ignore it.
-        const allowedVariants = ["blockHeight", "blockHash", "firstSeen"]
+        const allowedVariants = ["blockHeight", "blockHash", "firstSeen"];
 
         const filteredModifications = Object.fromEntries(
           Object.entries(modifications).filter(([k]) =>
-            allowedVariants.includes(k)
-          )
-        )
+            allowedVariants.includes(k),
+          ),
+        );
 
         // If there is an attempt to modify `firstSeen`, prefer the earliest
         // first seen value between the update and the existing value.
@@ -164,14 +164,14 @@ export class ChainDatabase extends Dexie {
             ...filteredModifications,
             firstSeen: Math.min(
               chainTransaction.firstSeen,
-              filteredModifications.firstSeen
+              filteredModifications.firstSeen,
             ),
-          }
+          };
         }
 
-        return filteredModifications
-      }
-    )
+        return filteredModifications;
+      },
+    );
 
     this.poktTransactions.hook(
       "updating",
@@ -179,13 +179,13 @@ export class ChainDatabase extends Dexie {
         // Only these properties can be updated on a stored transaction.
         // NOTE: Currently we do NOT throw if another property modification is
         // attempted; instead, we just ignore it.
-        const allowedVariants = ["height", "firstSeen"]
+        const allowedVariants = ["height", "firstSeen"];
 
         const filteredModifications = Object.fromEntries(
           Object.entries(modifications).filter(([k]) =>
-            allowedVariants.includes(k)
-          )
-        )
+            allowedVariants.includes(k),
+          ),
+        );
 
         // If there is an attempt to modify `firstSeen`, prefer the earliest
         // first seen value between the update and the existing value.
@@ -194,14 +194,14 @@ export class ChainDatabase extends Dexie {
             ...filteredModifications,
             firstSeen: Math.min(
               poktTransaction.firstSeen,
-              filteredModifications.firstSeen
+              filteredModifications.firstSeen,
             ),
-          }
+          };
         }
 
-        return filteredModifications
-      }
-    )
+        return filteredModifications;
+      },
+    );
   }
 
   async getLatestBlock(network: Network): Promise<AnyEVMBlock | POKTBlock> {
@@ -212,7 +212,7 @@ export class ChainDatabase extends Dexie {
           .above([network.name, Date.now() - 60 * 60 * 24])
           .reverse()
           .sortBy("timestamp")
-      )[0]
+      )[0];
     }
 
     return (
@@ -221,12 +221,12 @@ export class ChainDatabase extends Dexie {
         .above([network.name, Date.now() - 60 * 60 * 24])
         .reverse()
         .sortBy("timestamp")
-    )[0]
+    )[0];
   }
 
   async getTransaction(
     network: Network,
-    txHash: string
+    txHash: string,
   ): Promise<AnyEVMTransaction | AnyPOKTTransaction | null> {
     if (network.family === "EVM") {
       return (
@@ -236,7 +236,7 @@ export class ChainDatabase extends Dexie {
             .equals([txHash, network.name])
             .toArray()
         )[0] || null
-      )
+      );
     }
     return (
       (
@@ -245,14 +245,14 @@ export class ChainDatabase extends Dexie {
           .equals([txHash, network.name])
           .toArray()
       )[0] || null
-    )
+    );
   }
 
   /**
    * Looks up and returns all pending transactions for the given network.
    */
   async getNetworkPendingTransactions(
-    network: Network
+    network: Network,
   ): Promise<
     | (AnyEVMTransaction & { firstSeen: UNIXTime })[]
     | (AnyPOKTTransaction & { firstSeen: UNIXTime })[]
@@ -264,22 +264,24 @@ export class ChainDatabase extends Dexie {
         .filter(
           (transaction) =>
             !("status" in transaction) &&
-            (transaction.blockHash === null || transaction.blockHeight === null)
+            (transaction.blockHash === null ||
+              transaction.blockHeight === null),
         )
-        .toArray()
+        .toArray();
     }
     return this.poktTransactions
       .where("network.name")
       .equals(network.name)
       .filter(
-        (transaction) => transaction.height === null || transaction.height === 0
+        (transaction) =>
+          transaction.height === null || transaction.height === 0,
       )
-      .toArray()
+      .toArray();
   }
 
   async getBlock(
     network: Network,
-    blockTag: string | number
+    blockTag: string | number,
   ): Promise<AnyEVMBlock | POKTSkinnyBlock | null> {
     if (network.family === "EVM") {
       return (
@@ -289,7 +291,7 @@ export class ChainDatabase extends Dexie {
             .equals([blockTag, network.name])
             .toArray()
         )[0] || null
-      )
+      );
     }
     if (network.family === "POKT") {
       return (
@@ -299,39 +301,39 @@ export class ChainDatabase extends Dexie {
             .equals([blockTag, network.name])
             .toArray()
         )[0] || null
-      )
+      );
     }
-    return null
+    return null;
   }
 
   async addOrUpdateTransaction(
     tx: AnyEVMTransaction | AnyPOKTTransaction,
-    dataSource: EVMTransaction["dataSource"]
+    dataSource: EVMTransaction["dataSource"],
   ): Promise<void> {
     if (tx.network.family === "EVM") {
       await this.transaction("rw", this.chainTransactions, () => {
-        const EVMTx = tx as AnyEVMTransaction
+        const EVMTx = tx as AnyEVMTransaction;
         return this.chainTransactions.put({
           ...EVMTx,
           firstSeen: Date.now(),
           dataSource,
-        })
-      })
+        });
+      });
     }
     await this.transaction("rw", this.poktTransactions, () => {
-      const POKTTx = tx as AnyPOKTTransaction
+      const POKTTx = tx as AnyPOKTTransaction;
       return this.poktTransactions.put({
         ...POKTTx,
         firstSeen: Date.now(),
         dataSource,
-      })
-    })
+      });
+    });
   }
 
   async getLatestAccountBalance(
     address: string,
     network: Network,
-    asset: FungibleAsset
+    asset: FungibleAsset,
   ): Promise<AccountBalance | null> {
     // TODO this needs to be tightened up, both for performance and specificity
     const balanceCandidates = await this.balances
@@ -341,154 +343,158 @@ export class ChainDatabase extends Dexie {
         (balance) =>
           balance.address === address &&
           balance.assetAmount.asset.symbol === asset.symbol &&
-          balance.network.name === network.name
+          balance.network.name === network.name,
       )
       .reverse()
-      .sortBy("retrievedAt")
-    return balanceCandidates.length > 0 ? balanceCandidates[0] : null
+      .sortBy("retrievedAt");
+    return balanceCandidates.length > 0 ? balanceCandidates[0] : null;
   }
 
   async addAccountToTrack(addressNetwork: AddressOnNetwork): Promise<void> {
-    await this.accountsToTrack.put(addressNetwork)
+    await this.accountsToTrack.put(addressNetwork);
   }
 
   async setAccountsToTrack(
-    addressesAndNetworks: Set<AddressOnNetwork>
+    addressesAndNetworks: Set<AddressOnNetwork>,
   ): Promise<void> {
     await this.transaction("rw", this.accountsToTrack, () => {
-      this.accountsToTrack.clear()
-      this.accountsToTrack.bulkAdd([...addressesAndNetworks])
-    })
+      this.accountsToTrack.clear();
+      this.accountsToTrack.bulkAdd([...addressesAndNetworks]);
+    });
   }
 
   async getOldestAccountAssetTransferLookup(
-    addressNetwork: AddressOnNetwork
+    addressNetwork: AddressOnNetwork,
   ): Promise<bigint | null> {
     // TODO this is inefficient, make proper use of indexing
     const lookups = await this.accountAssetTransferLookups
       .where("addressNetwork.address")
       .equals(addressNetwork.address)
-      .toArray()
+      .toArray();
     return lookups.reduce(
       (oldestBlock: bigint | null, lookup) =>
         oldestBlock === null || lookup.startBlock < oldestBlock
           ? lookup.startBlock
           : oldestBlock,
-      null
-    )
+      null,
+    );
   }
 
   async getNewestAccountAssetTransferLookup(
-    addressNetwork: AddressOnNetwork
+    addressNetwork: AddressOnNetwork,
   ): Promise<bigint | null> {
     // TODO this is inefficient, make proper use of indexing
     const lookups = await this.accountAssetTransferLookups
       .where("addressNetwork.address")
       .equals(addressNetwork.address)
-      .toArray()
+      .toArray();
     return lookups.reduce(
       (newestBlock: bigint | null, lookup) =>
         newestBlock === null || lookup.endBlock > newestBlock
           ? lookup.endBlock
           : newestBlock,
-      null
-    )
+      null,
+    );
   }
 
   async recordAccountAssetTransferLookup(
     addressNetwork: AddressOnNetwork,
     startBlock: bigint,
-    endBlock: bigint
+    endBlock: bigint,
   ): Promise<void> {
     await this.accountAssetTransferLookups.add({
       addressNetwork,
       startBlock,
       endBlock,
       retrievedAt: Date.now(),
-    })
+    });
   }
 
   async addBlock(
-    block: AnyEVMBlock | POKTBlock | POKTSkinnyBlock
+    block: AnyEVMBlock | POKTBlock | POKTSkinnyBlock,
   ): Promise<void> {
     // TODO Consider exposing whether the block was added or updated.
     // TODO Consider tracking history of block changes, e.g. in case of reorg.
 
     if (block.network.family === "EVM") {
-      await this.blocks.put(block as AnyEVMBlock)
+      await this.blocks.put(block as AnyEVMBlock);
     }
 
     if (block.network.family === "POKT") {
       if ((block as POKTBlock)?.header?.last_block_id) {
-        await this.poktBlocks.put(block as POKTBlock)
+        await this.poktBlocks.put(block as POKTBlock);
       } else {
-        await this.poktSkinnyBlocks.put(block as POKTSkinnyBlock)
+        await this.poktSkinnyBlocks.put(block as POKTSkinnyBlock);
       }
     }
   }
 
   async addBalance(accountBalance: AccountBalance): Promise<void> {
-    await this.balances.add(accountBalance)
+    await this.balances.add(accountBalance);
   }
 
   async getAccountsToTrack(): Promise<AddressOnNetwork[]> {
-    return this.accountsToTrack.toArray()
+    return this.accountsToTrack.toArray();
   }
 
   async queueTransactionRetrieval(tx: TransactionRetrieval): Promise<void> {
-    const { network, hash, firstSeen, txData } = tx
-    const queued = await this.queuedTransactionsToRetrieve.toArray()
-    const seen = new Set(queued.map((t) => t.network.name + t.hash))
+    const { network, hash, firstSeen, txData } = tx;
+    const queued = await this.queuedTransactionsToRetrieve.toArray();
+    const seen = new Set(queued.map((t) => t.network.name + t.hash));
     if (!seen.has(network.name + hash)) {
       await this.queuedTransactionsToRetrieve.add({
         network,
         hash,
         firstSeen,
         txData,
-      })
+      });
     }
   }
 
   async deQueueTransactionRetrieval(
-    count = 5
+    count = 5,
   ): Promise<TransactionRetrieval[]> {
     const all = (await this.queuedTransactionsToRetrieve.toArray())
       .sort((a, b) => {
         if (a.height && b.height) {
-          if (a.height < b.height) return -1
-          return 1
+          if (a.height < b.height) return -1;
+          return 1;
         }
-        return 0
+        return 0;
       })
       .sort((a, b) => {
-        if (a.firstSeen < b.firstSeen) return -1
-        if (a.firstSeen > b.firstSeen) return 1
-        return 0
-      })
-    const queued = all.slice(0, count)
-    const keys: any[] = queued.map((t) => [t.firstSeen, t.hash, t.network.name])
-    await this.queuedTransactionsToRetrieve.bulkDelete(keys)
-    return queued
+        if (a.firstSeen < b.firstSeen) return -1;
+        if (a.firstSeen > b.firstSeen) return 1;
+        return 0;
+      });
+    const queued = all.slice(0, count);
+    const keys: any[] = queued.map((t) => [
+      t.firstSeen,
+      t.hash,
+      t.network.name,
+    ]);
+    await this.queuedTransactionsToRetrieve.bulkDelete(keys);
+    return queued;
   }
 
   private async migrate() {
-    const numMigrations = await this.migrations.count()
+    const numMigrations = await this.migrations.count();
     if (numMigrations === 0) {
       await this.transaction("rw", this.migrations, async () => {
-        this.migrations.add({ id: 0, appliedAt: Date.now() })
+        this.migrations.add({ id: 0, appliedAt: Date.now() });
         // TODO decide migrations before the initial release
-      })
+      });
     }
   }
 }
 
 export async function getOrCreateDB(): Promise<ChainDatabase> {
-  const db = new ChainDatabase()
+  const db = new ChainDatabase();
 
   // Call known-private migrate function, effectively treating it as
   // file-private.
   // eslint-disable-next-line @typescript-eslint/dot-notation
-  await db["migrate"]()
+  await db["migrate"]();
 
-  return db
+  return db;
 }

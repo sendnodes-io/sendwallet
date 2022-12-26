@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react"
+import React, { ReactElement } from "react";
 
 export default function LedgerPanelContainer({
   indicatorImageSrc,
@@ -6,10 +6,10 @@ export default function LedgerPanelContainer({
   subHeading,
   children,
 }: {
-  indicatorImageSrc: string
-  heading?: React.ReactNode
-  subHeading?: React.ReactNode
-  children?: React.ReactNode
+  indicatorImageSrc: string;
+  heading?: React.ReactNode;
+  subHeading?: React.ReactNode;
+  children?: React.ReactNode;
 }): ReactElement {
   return (
     <div className="panel">
@@ -56,5 +56,5 @@ export default function LedgerPanelContainer({
         }
       `}</style>
     </div>
-  )
+  );
 }

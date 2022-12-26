@@ -1,12 +1,12 @@
-import React, { useState } from "react"
-import { Icon } from "@iconify/react"
-import { lockKeyrings } from "@sendnodes/pokt-wallet-background/redux-slices/keyrings"
-import { CgLock } from "react-icons/cg"
-import browser from "webextension-polyfill"
-import { useBackgroundDispatch } from "../../hooks"
+import React, { useState } from "react";
+import { Icon } from "@iconify/react";
+import { lockKeyrings } from "@sendnodes/pokt-wallet-background/redux-slices/keyrings";
+import { CgLock } from "react-icons/cg";
+import browser from "webextension-polyfill";
+import { useBackgroundDispatch } from "../../hooks";
 
 export default function () {
-  const dispatch = useBackgroundDispatch()
+  const dispatch = useBackgroundDispatch();
   return (
     <div className="wrap">
       <nav>
@@ -96,7 +96,7 @@ export default function () {
         }}
       >
         <span style={{ color: "var(--davys-gray)" }}>
-          Version: {browser.runtime.getManifest()?.version ?? `<unknown>`}
+          Version: {browser.runtime.getManifest()?.version ?? "<unknown>"}
         </span>
       </div>
 
@@ -107,8 +107,8 @@ export default function () {
             className="text_attention"
             title="Lock wallet"
             onClick={(e) => {
-              e.preventDefault()
-              dispatch(lockKeyrings())
+              e.preventDefault();
+              dispatch(lockKeyrings());
             }}
             style={{ display: "flex", gap: "1rem" }}
           >
@@ -187,5 +187,5 @@ export default function () {
         `}
       </style>
     </div>
-  )
+  );
 }

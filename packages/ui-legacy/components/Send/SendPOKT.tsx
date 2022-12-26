@@ -1,99 +1,99 @@
-import React, { ReactElement, useCallback, useState } from "react"
+import React, { ReactElement, useCallback, useState } from "react";
 import {
   selectCurrentAccount,
   selectCurrentAccountBalances,
   selectMainCurrencySymbol,
-} from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
+} from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
 import {
   NetworkFeeSettings,
   selectEstimatedFeesPerGas,
   setFeeType,
-} from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction"
+} from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction";
 import {
   FungibleAsset,
   isFungibleAssetAmount,
-} from "@sendnodes/pokt-wallet-background/assets"
-import { ETH, POKT } from "@sendnodes/pokt-wallet-background/constants"
+} from "@sendnodes/pokt-wallet-background/assets";
+import { ETH, POKT } from "@sendnodes/pokt-wallet-background/constants";
 import {
   convertFixedPointNumber,
   parseToFixedPointNumber,
-} from "@sendnodes/pokt-wallet-background/lib/fixed-point"
+} from "@sendnodes/pokt-wallet-background/lib/fixed-point";
 import {
   selectAssetPricePoint,
   transferAsset,
-} from "@sendnodes/pokt-wallet-background/redux-slices/assets"
-import { CompleteAssetAmount } from "@sendnodes/pokt-wallet-background/redux-slices/accounts"
-import { enrichAssetAmountWithMainCurrencyValues } from "@sendnodes/pokt-wallet-background/redux-slices/utils/asset-utils"
-import { useHistory, useLocation } from "react-router-dom"
-import { formatFixed } from "@ethersproject/bignumber"
-import SharedAssetInput from "../Shared/SharedAssetInput"
-import SharedButton from "../Shared/SharedButton"
+} from "@sendnodes/pokt-wallet-background/redux-slices/assets";
+import { CompleteAssetAmount } from "@sendnodes/pokt-wallet-background/redux-slices/accounts";
+import { enrichAssetAmountWithMainCurrencyValues } from "@sendnodes/pokt-wallet-background/redux-slices/utils/asset-utils";
+import { useHistory, useLocation } from "react-router-dom";
+import { formatFixed } from "@ethersproject/bignumber";
+import SharedAssetInput from "../Shared/SharedAssetInput";
+import SharedButton from "../Shared/SharedButton";
 import {
   useAddressOrNameValidation,
   useBackgroundDispatch,
   useBackgroundSelector,
   useAreKeyringsUnlocked,
-} from "../../hooks"
-import SharedInput from "../Shared/SharedInput"
-import SharedSplashScreen from "../Shared/SharedSplashScreen"
-import usePocketNetworkFee from "../../hooks/pocket-network/use-network-fee"
-import formatTokenAmount from "../../utils/formatTokenAmount"
-import SharedLoadingSpinner from "../Shared/SharedLoadingSpinner"
-import useRemoteConfig from "../../hooks/remote-config-hooks"
+} from "../../hooks";
+import SharedInput from "../Shared/SharedInput";
+import SharedSplashScreen from "../Shared/SharedSplashScreen";
+import usePocketNetworkFee from "../../hooks/pocket-network/use-network-fee";
+import formatTokenAmount from "../../utils/formatTokenAmount";
+import SharedLoadingSpinner from "../Shared/SharedLoadingSpinner";
+import useRemoteConfig from "../../hooks/remote-config-hooks";
 
 // TODO: v0.2.0 handle multiple assets
 export default function Send(): ReactElement {
-  const remoteConfig = useRemoteConfig()
-  const maxMemoLength = 75
-  const location = useLocation<FungibleAsset>()
+  const remoteConfig = useRemoteConfig();
+  const maxMemoLength = 75;
+  const location = useLocation<FungibleAsset>();
   const [selectedAsset, setSelectedAsset] = useState<FungibleAsset>(
-    location.state ?? POKT
-  )
+    location.state ?? POKT,
+  );
   const [destinationAddress, setDestinationAddress] = useState<
     string | undefined
-  >(undefined)
-  const [amount, setAmount] = useState("")
-  const [memo, setMemo] = useState("Sent with SendWallet.net")
-  const [memoError, setMemoError] = useState("")
-  const [gasLimit, setGasLimit] = useState<bigint | undefined>(undefined)
+  >(undefined);
+  const [amount, setAmount] = useState("");
+  const [memo, setMemo] = useState("Sent with SendWallet.net");
+  const [memoError, setMemoError] = useState("");
+  const [gasLimit, setGasLimit] = useState<bigint | undefined>(undefined);
   const [isSendingTransactionRequest, setIsSendingTransactionRequest] =
-    useState(false)
-  const [hasError, setHasError] = useState(false)
+    useState(false);
+  const [hasError, setHasError] = useState(false);
   const [networkSettingsModalOpen, setNetworkSettingsModalOpen] =
-    useState(false)
+    useState(false);
 
-  const history = useHistory()
+  const history = useHistory();
 
-  const dispatch = useBackgroundDispatch()
-  const estimatedFeesPerGas = useBackgroundSelector(selectEstimatedFeesPerGas)
-  const currentAccount = useBackgroundSelector(selectCurrentAccount)
-  const balanceData = useBackgroundSelector(selectCurrentAccountBalances)
-  const mainCurrencySymbol = useBackgroundSelector(selectMainCurrencySymbol)
+  const dispatch = useBackgroundDispatch();
+  const estimatedFeesPerGas = useBackgroundSelector(selectEstimatedFeesPerGas);
+  const currentAccount = useBackgroundSelector(selectCurrentAccount);
+  const balanceData = useBackgroundSelector(selectCurrentAccountBalances);
+  const mainCurrencySymbol = useBackgroundSelector(selectMainCurrencySymbol);
 
   const fungibleAssetAmounts =
     // Only look at fungible assets.
     balanceData?.assetAmounts?.filter(
       (assetAmount): assetAmount is CompleteAssetAmount<FungibleAsset> =>
-        isFungibleAssetAmount(assetAmount)
-    )
+        isFungibleAssetAmount(assetAmount),
+    );
   const assetPricePoint = useBackgroundSelector((state) =>
     selectAssetPricePoint(
       state.assets,
       selectedAsset.symbol,
-      mainCurrencySymbol
-    )
-  )
+      mainCurrencySymbol,
+    ),
+  );
 
   const assetAmountFromForm = () => {
-    const fixedPointAmount = parseToFixedPointNumber(amount.toString())
+    const fixedPointAmount = parseToFixedPointNumber(amount.toString());
     if (typeof fixedPointAmount === "undefined") {
-      return undefined
+      return undefined;
     }
 
     const decimalMatched = convertFixedPointNumber(
       fixedPointAmount,
-      selectedAsset.decimals
-    )
+      selectedAsset.decimals,
+    );
 
     return enrichAssetAmountWithMainCurrencyValues(
       {
@@ -102,12 +102,12 @@ export default function Send(): ReactElement {
         decimalAmount: decimalMatched.decimals,
       },
       assetPricePoint,
-      2
-    )
-  }
+      2,
+    );
+  };
 
-  const assetAmount = assetAmountFromForm()
-  const areKeyringsUnlocked = useAreKeyringsUnlocked(true)
+  const assetAmount = assetAmountFromForm();
+  const areKeyringsUnlocked = useAreKeyringsUnlocked(true);
 
   const sendTransactionRequest = useCallback(async () => {
     if (
@@ -115,10 +115,10 @@ export default function Send(): ReactElement {
       destinationAddress === undefined ||
       !areKeyringsUnlocked
     ) {
-      return
+      return;
     }
     try {
-      setIsSendingTransactionRequest(true)
+      setIsSendingTransactionRequest(true);
 
       await dispatch(
         transferAsset({
@@ -130,13 +130,13 @@ export default function Send(): ReactElement {
           assetAmount,
           gasLimit,
           memo,
-        })
-      )
+        }),
+      );
     } finally {
-      setIsSendingTransactionRequest(false)
+      setIsSendingTransactionRequest(false);
     }
 
-    history.push("/sign-transaction")
+    history.push("/sign-transaction");
   }, [
     assetAmount,
     currentAccount,
@@ -146,24 +146,24 @@ export default function Send(): ReactElement {
     history,
     areKeyringsUnlocked,
     memo,
-  ])
+  ]);
 
   const networkSettingsSaved = (networkSetting: NetworkFeeSettings) => {
-    setGasLimit(networkSetting.gasLimit)
-    dispatch(setFeeType(networkSetting.feeType))
-    setNetworkSettingsModalOpen(false)
-  }
+    setGasLimit(networkSetting.gasLimit);
+    dispatch(setFeeType(networkSetting.feeType));
+    setNetworkSettingsModalOpen(false);
+  };
 
-  const { networkFee } = usePocketNetworkFee()
+  const { networkFee } = usePocketNetworkFee();
 
   const {
     errorMessage: addressErrorMessage,
     isValidating: addressIsValidating,
     handleInputChange: handleAddressChange,
-  } = useAddressOrNameValidation(setDestinationAddress)
+  } = useAddressOrNameValidation(setDestinationAddress);
 
   if (!areKeyringsUnlocked) {
-    return <SharedSplashScreen />
+    return <SharedSplashScreen />;
   }
 
   return (
@@ -185,7 +185,7 @@ export default function Send(): ReactElement {
                 aria-label="close"
                 className="icon_close"
                 onClick={() => {
-                  history.push("/")
+                  history.push("/");
                 }}
               />
             </div>
@@ -201,13 +201,13 @@ export default function Send(): ReactElement {
             assetsAndAmounts={fungibleAssetAmounts}
             disableDropdown
             onAmountChange={(value, errorMessage) => {
-              setAmount(value)
+              setAmount(value);
               if (errorMessage) {
-                setHasError(true)
-                return
+                setHasError(true);
+                return;
               }
 
-              setHasError(false)
+              setHasError(false);
             }}
             selectedAsset={selectedAsset}
             amount={amount}
@@ -242,12 +242,12 @@ export default function Send(): ReactElement {
             errorMessage={memoError}
             value={memo}
             onChange={(val) => {
-              setMemoError("")
-              setMemo(val)
+              setMemoError("");
+              setMemo(val);
               if (val.length > maxMemoLength) {
                 setMemoError(
-                  `Memo cannot be longer than ${maxMemoLength} characters`
-                )
+                  `Memo cannot be longer than ${maxMemoLength} characters`,
+                );
               }
             }}
           />
@@ -264,7 +264,7 @@ export default function Send(): ReactElement {
             <small>
               TX Fees -{" "}
               {formatTokenAmount(
-                formatFixed(networkFee, selectedAsset.decimals)
+                formatFixed(networkFee, selectedAsset.decimals),
               )}{" "}
               POKT
             </small>
@@ -391,5 +391,5 @@ export default function Send(): ReactElement {
         `}
       </style>
     </div>
-  )
+  );
 }

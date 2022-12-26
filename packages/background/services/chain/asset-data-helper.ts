@@ -1,29 +1,29 @@
 import {
   AlchemyProvider,
   AlchemyWebSocketProvider,
-} from "@ethersproject/providers"
+} from "@ethersproject/providers";
 import {
   getAssetTransfers as getAlchemyAssetTransfers,
   getTokenBalances as getAlchemyTokenBalances,
   getTokenMetadata as getAlchemyTokenMetadata,
-} from "../../lib/alchemy"
-import SerialFallbackProvider from "./serial-fallback-provider"
-import PocketProvider from "./pocket-provider"
+} from "../../lib/alchemy";
+import SerialFallbackProvider from "./serial-fallback-provider";
+import PocketProvider from "./pocket-provider";
 import {
   AssetTransfer,
   SmartContractAmount,
   SmartContractFungibleAsset,
-} from "../../assets"
-import { AddressOnNetwork } from "../../accounts"
-import { HexString } from "../../types"
-import logger from "../../lib/logger"
-import { EVMNetwork, POKTNetwork, SmartContract } from "../../networks"
-import { getMetadata as getERC20Metadata } from "../../lib/erc20"
+} from "../../assets";
+import { AddressOnNetwork } from "../../accounts";
+import { HexString } from "../../types";
+import logger from "../../lib/logger";
+import { EVMNetwork, POKTNetwork, SmartContract } from "../../networks";
+import { getMetadata as getERC20Metadata } from "../../lib/erc20";
 
 interface ProviderManager {
   providerForNetwork(
-    network: EVMNetwork | POKTNetwork
-  ): SerialFallbackProvider | PocketProvider | undefined
+    network: EVMNetwork | POKTNetwork,
+  ): SerialFallbackProvider | PocketProvider | undefined;
 }
 
 /**
@@ -39,13 +39,13 @@ export default class AssetDataHelper {
 
   async getTokenBalances(
     addressOnNetwork: AddressOnNetwork,
-    smartContractAddresses?: HexString[]
+    smartContractAddresses?: HexString[],
   ): Promise<SmartContractAmount[]> {
     const provider = this.providerTracker.providerForNetwork(
-      addressOnNetwork.network
-    ) as SerialFallbackProvider
+      addressOnNetwork.network,
+    ) as SerialFallbackProvider;
     if (typeof provider === "undefined") {
-      return []
+      return [];
     }
 
     try {
@@ -57,27 +57,27 @@ export default class AssetDataHelper {
         return await getAlchemyTokenBalances(
           provider.currentProvider,
           addressOnNetwork,
-          smartContractAddresses
-        )
+          smartContractAddresses,
+        );
       }
     } catch (error) {
       logger.debug(
         "Problem resolving asset balances via Alchemy helper; network " +
           "may not support it.",
-        error
-      )
+        error,
+      );
     }
-    return []
+    return [];
   }
 
   async getTokenMetadata(
-    tokenSmartContract: SmartContract
+    tokenSmartContract: SmartContract,
   ): Promise<SmartContractFungibleAsset | undefined> {
     const provider = this.providerTracker.providerForNetwork(
-      tokenSmartContract.homeNetwork
-    ) as SerialFallbackProvider
+      tokenSmartContract.homeNetwork,
+    ) as SerialFallbackProvider;
     if (typeof provider === "undefined") {
-      return undefined
+      return undefined;
     }
 
     try {
@@ -87,18 +87,18 @@ export default class AssetDataHelper {
       ) {
         return await getAlchemyTokenMetadata(
           provider.currentProvider,
-          tokenSmartContract
-        )
+          tokenSmartContract,
+        );
       }
     } catch (error) {
       logger.debug(
         "Problem resolving asset metadata via Alchemy helper; network may " +
           "not support it. Falling back to standard lookup.",
-        error
-      )
+        error,
+      );
     }
 
-    return getERC20Metadata(provider, tokenSmartContract)
+    return getERC20Metadata(provider, tokenSmartContract);
   }
 
   /**
@@ -108,13 +108,13 @@ export default class AssetDataHelper {
   async getAssetTransfers(
     addressOnNetwork: AddressOnNetwork,
     startBlock: number,
-    endBlock?: number
+    endBlock?: number,
   ): Promise<AssetTransfer[]> {
     const provider = this.providerTracker.providerForNetwork(
-      addressOnNetwork.network
-    ) as SerialFallbackProvider
+      addressOnNetwork.network,
+    ) as SerialFallbackProvider;
     if (typeof provider === "undefined") {
-      return []
+      return [];
     }
 
     try {
@@ -126,8 +126,8 @@ export default class AssetDataHelper {
           provider.currentProvider,
           addressOnNetwork,
           startBlock,
-          endBlock
-        )
+          endBlock,
+        );
       }
     } catch (error) {
       logger.warn(
@@ -138,14 +138,14 @@ export default class AssetDataHelper {
           addressOnNetwork,
           startBlock,
           endBlock,
-        }
-      )
+        },
+      );
 
       // Rethrow as consumers like ChainService need the exception to manage
       // retries. Eventually we may want retries to be handled here.
-      throw error
+      throw error;
     }
 
-    return []
+    return [];
   }
 }

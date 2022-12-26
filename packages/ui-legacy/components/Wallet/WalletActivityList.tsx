@@ -1,18 +1,18 @@
-import React, { ReactElement } from "react"
+import React, { ReactElement } from "react";
 import {
   selectBlockExplorerForAddress,
   selectCurrentAccount,
-} from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
-import { ActivityItem } from "@sendnodes/pokt-wallet-background/redux-slices/activities"
-import css from "styled-jsx/css"
-import { useBackgroundSelector } from "../../hooks"
-import WalletActivityListItem from "./WalletActivityListItem"
-import useStakingAllTransactions from "../../hooks/staking-hooks/use-staking-all-transactions"
-import SharedSplashScreen from "../Shared/SharedSplashScreen"
+} from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
+import { ActivityItem } from "@sendnodes/pokt-wallet-background/redux-slices/activities";
+import css from "styled-jsx/css";
+import { useBackgroundSelector } from "../../hooks";
+import WalletActivityListItem from "./WalletActivityListItem";
+import useStakingAllTransactions from "../../hooks/staking-hooks/use-staking-all-transactions";
+import SharedSplashScreen from "../Shared/SharedSplashScreen";
 
 type Props = {
-  activities: ActivityItem[]
-}
+  activities: ActivityItem[];
+};
 
 const walletActivityCss = css`
   .wrap {
@@ -37,16 +37,16 @@ const walletActivityCss = css`
     justify-content: space-between;
     align-items: center;
   }
-`
+`;
 
 export default function WalletActivityList({
   activities,
 }: Props): ReactElement {
-  const { isLoading } = useStakingAllTransactions()
-  const currentAccount = useBackgroundSelector(selectCurrentAccount)
+  const { isLoading } = useStakingAllTransactions();
+  const currentAccount = useBackgroundSelector(selectCurrentAccount);
   const blockExplorerUrl = useBackgroundSelector((_) =>
-    selectBlockExplorerForAddress(currentAccount)
-  )
+    selectBlockExplorerForAddress(currentAccount),
+  );
 
   if (!activities || activities.length === 0)
     return (
@@ -137,7 +137,7 @@ export default function WalletActivityList({
           `}
         </style>
       </div>
-    )
+    );
 
   return (
     <>
@@ -171,9 +171,9 @@ export default function WalletActivityList({
                       activity={activityItem}
                       asAccount={currentAccount.address}
                     />
-                  )
+                  );
                 }
-                return <></>
+                return <></>;
               })}
             </ul>
           )}
@@ -225,5 +225,5 @@ export default function WalletActivityList({
         `}
       </style>
     </>
-  )
+  );
 }

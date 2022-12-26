@@ -1,12 +1,12 @@
-import { POKTWatchBlock } from "@sendnodes/pokt-wallet-background/services/chain/utils"
-import useSWR from "swr"
+import { POKTWatchBlock } from "@sendnodes/pokt-wallet-background/services/chain/utils";
+import useSWR from "swr";
 
 const fetcher = () =>
   fetch("https://api.pokt.watch/block?order=id.desc&limit=1", {
     headers: {
       accept: "application/json",
     },
-  }).then((res) => res.json())
+  }).then((res) => res.json());
 
 export const usePoktWatchLatestBlock = () => {
   const { data, error } = useSWR(
@@ -14,12 +14,12 @@ export const usePoktWatchLatestBlock = () => {
     fetcher,
     {
       refreshInterval: 60 * 1000,
-    }
-  )
+    },
+  );
 
   return {
     latestBlock: ((data ?? [])[0] as POKTWatchBlock) || undefined,
-    isLoading: !error && !data,
+    isLoading: !(error || data),
     isError: error,
-  }
-}
+  };
+};

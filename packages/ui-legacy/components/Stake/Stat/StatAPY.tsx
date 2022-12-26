@@ -1,19 +1,19 @@
-import React from "react"
-import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts"
-import { FungibleAsset } from "@sendnodes/pokt-wallet-background/assets"
-import { floor } from "lodash"
-import { useStakingUserData } from "../../../hooks/staking-hooks"
-import SharedLoadingSpinner from "../../Shared/SharedLoadingSpinner"
-import DisclaimerAPY from "../DisclaimerAPY"
+import React from "react";
+import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts";
+import { FungibleAsset } from "@sendnodes/pokt-wallet-background/assets";
+import { floor } from "lodash";
+import { useStakingUserData } from "../../../hooks/staking-hooks";
+import SharedLoadingSpinner from "../../Shared/SharedLoadingSpinner";
+import DisclaimerAPY from "../DisclaimerAPY";
 
 export default function StatAPY({
   aon,
   asset,
 }: {
-  aon: AddressOnNetwork
-  asset: FungibleAsset
+  aon: AddressOnNetwork;
+  asset: FungibleAsset;
 }) {
-  const { data, isLoading, isError } = useStakingUserData(aon)
+  const { data, isLoading, isError } = useStakingUserData(aon);
 
   return (
     <div className="relative border border-spanish-gray h-24 rounded-md col-span-2">
@@ -36,7 +36,7 @@ export default function StatAPY({
                         undefined,
                         {
                           maximumFractionDigits: 1,
-                        }
+                        },
                       )}%`
                     : "--"}
                 </span>
@@ -55,7 +55,7 @@ export default function StatAPY({
                   {data?.rewardsData?.apyNoCompounding1d
                     ? `${floor(
                         data?.rewardsData?.apyNoCompounding1d,
-                        1
+                        1,
                       ).toLocaleString(undefined, {
                         maximumFractionDigits: 1,
                       })}%`
@@ -67,5 +67,5 @@ export default function StatAPY({
         )}
       </div>
     </div>
-  )
+  );
 }

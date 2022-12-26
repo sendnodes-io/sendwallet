@@ -1,15 +1,15 @@
 /* This example requires Tailwind CSS v2.0+ */
-import React, { ReactElement, Fragment, useState } from "react"
-import { Dialog, Transition } from "@headlessui/react"
-import { CheckIcon } from "@heroicons/react/outline"
-import clsx from "clsx"
+import React, { ReactElement, Fragment, useState } from "react";
+import { Dialog, Transition } from "@headlessui/react";
+import { CheckIcon } from "@heroicons/react/outline";
+import clsx from "clsx";
 
 export type SharedModalProps = {
-  isOpen: boolean
-  onClose: () => void
-  children: ReactElement
-  className?: string
-}
+  isOpen: boolean;
+  onClose: () => void;
+  children: ReactElement;
+  className?: string;
+};
 
 export default function SharedModal({
   isOpen,
@@ -55,5 +55,5 @@ export default function SharedModal({
         </div>
       </Dialog>
     </Transition.Root>
-  )
+  );
 }

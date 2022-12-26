@@ -1,25 +1,25 @@
-import path from "path"
+import path from "path";
 import webpack, {
   Configuration,
   DefinePlugin,
   WebpackOptionsNormalized,
   WebpackPluginInstance,
-} from "webpack"
-import { merge as webpackMerge } from "webpack-merge"
-import Dotenv from "dotenv-webpack"
-import SizePlugin from "size-plugin"
-import TerserPlugin from "terser-webpack-plugin"
-import LiveReloadPlugin from "webpack-livereload-plugin"
-import CopyPlugin, { ObjectPattern } from "copy-webpack-plugin"
-import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin"
-import HtmlWebpackPlugin from "html-webpack-plugin"
-import WebExtension from "webpack-target-webextension"
-import MiniCssExtractPlugin from "mini-css-extract-plugin"
+} from "webpack";
+import { merge as webpackMerge } from "webpack-merge";
+import Dotenv from "dotenv-webpack";
+import SizePlugin from "size-plugin";
+import TerserPlugin from "terser-webpack-plugin";
+import LiveReloadPlugin from "webpack-livereload-plugin";
+import CopyPlugin, { ObjectPattern } from "copy-webpack-plugin";
+import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin";
+import HtmlWebpackPlugin from "html-webpack-plugin";
+import WebExtension from "webpack-target-webextension";
+import MiniCssExtractPlugin from "mini-css-extract-plugin";
 // import { CleanWebpackPlugin } from "clean-webpack-plugin"
-import childProcess from "child_process"
-import StatoscopeWebpackPlugin from "@statoscope/webpack-plugin"
-import CssMinimizerPlugin from "css-minimizer-webpack-plugin"
-import WebExtensionArchivePlugin from "./build-utils/web-extension-archive-webpack-plugin"
+import childProcess from "child_process";
+import StatoscopeWebpackPlugin from "@statoscope/webpack-plugin";
+import CssMinimizerPlugin from "css-minimizer-webpack-plugin";
+import WebExtensionArchivePlugin from "./build-utils/web-extension-archive-webpack-plugin";
 
 const supportedBrowsers = [
   // "brave",
@@ -27,10 +27,10 @@ const supportedBrowsers = [
   // "edge",
   "firefox",
   // "opera"
-]
+];
 
-const outputDir = path.resolve(process.env.WEBPACK_OUTPUT_DIR || __dirname)
-const uiRoot = path.resolve(__dirname, "..", "..", "packages", "ui")
+const outputDir = path.resolve(process.env.WEBPACK_OUTPUT_DIR || __dirname);
+const uiRoot = path.resolve(__dirname, "..", "..", "packages", "ui");
 
 // Replicated and adjusted for each target browser and the current build mode.
 const baseConfig: Configuration = {
@@ -241,11 +241,11 @@ const baseConfig: Configuration = {
       maxSize: 5e5,
     },
   },
-}
+};
 
 // Configuration adjustments for specific build modes, customized by browser.
 const modeConfigs: {
-  [mode: string]: (browser: string) => Partial<Configuration>
+  [mode: string]: (browser: string) => Partial<Configuration>;
 } = {
   development: () => ({
     entry:
@@ -287,12 +287,12 @@ const modeConfigs: {
     const revision = childProcess
       .execSync("git rev-parse --short HEAD")
       .toString()
-      .trim()
+      .trim();
     const branch = childProcess
       .execSync("git rev-parse --abbrev-ref HEAD")
       .toString()
-      .trim()
-    const date = new Date()
+      .trim();
+    const date = new Date();
     return {
       devtool: false,
       plugins: [
@@ -312,24 +312,24 @@ const modeConfigs: {
           }),
         ],
       },
-    }
+    };
   },
-}
+};
 
 // One config per supported browser, adjusted by mode.
 export default (
   _: unknown,
-  { mode }: WebpackOptionsNormalized
+  { mode }: WebpackOptionsNormalized,
 ): webpack.Configuration[] =>
   supportedBrowsers.map((browser) => {
-    const distPath = path.join(outputDir, "dist", browser)
+    const distPath = path.join(outputDir, "dist", browser);
     // Try to find a build mode config adjustment and call it with the browser.
     const modeSpecificAdjuster =
-      typeof mode !== "undefined" ? modeConfigs[mode] : undefined
+      typeof mode !== "undefined" ? modeConfigs[mode] : undefined;
     const modeSpecificAdjustment =
       typeof modeSpecificAdjuster !== "undefined"
         ? modeSpecificAdjuster(browser)
-        : {}
+        : {};
     const mergedConfig = webpackMerge(baseConfig, modeSpecificAdjustment, {
       name: browser,
       output: {
@@ -356,22 +356,22 @@ export default (
               from: `manifest/manifest(|.${mode}|.${browser}|.${browser}.${mode}).json`,
               to: "manifest.json",
               transformAll: (
-                assets: { data: Buffer; sourceFilename: string }[]
+                assets: { data: Buffer; sourceFilename: string }[],
               ) => {
                 const combinedManifest = webpackMerge(
                   {},
                   ...assets
                     .slice()
                     .sort((a, b) =>
-                      b.sourceFilename.localeCompare(a.sourceFilename)
+                      b.sourceFilename.localeCompare(a.sourceFilename),
                     )
                     .map((asset) => asset.data.toString("utf8"))
                     // JSON.parse chokes on empty strings
                     .filter((assetData) => assetData.trim().length > 0)
-                    .map((assetData) => JSON.parse(assetData))
-                )
+                    .map((assetData) => JSON.parse(assetData)),
+                );
                 // Add the browser-specific extension ID to the manifest.
-                return JSON.stringify(combinedManifest, null, 2)
+                return JSON.stringify(combinedManifest, null, 2);
               },
             } as unknown as ObjectPattern, // ObjectPattern doesn't include transformAll in current types
           ],
@@ -388,7 +388,7 @@ export default (
           hmrConfig: false,
         }),
       ],
-    })
+    });
     // console.log(
     //   "Building for browser: ",
     //   browser,
@@ -399,5 +399,5 @@ export default (
     //   " with config: ",
     //   mergedConfig
     // )
-    return mergedConfig
-  })
+    return mergedConfig;
+  });

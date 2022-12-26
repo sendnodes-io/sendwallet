@@ -1,4 +1,4 @@
-import React from "react"
+import React from "react";
 
 export default function PocketNetworkSvg() {
   return (
@@ -21,5 +21,5 @@ export default function PocketNetworkSvg() {
 	c3.52,0.25,7.06,0.42,10.64,0.42c82.84,0,150-67.16,150-150C299.99,82.34,255.18,25.16,193.62,6.47z"
       />
     </svg>
-  )
+  );
 }

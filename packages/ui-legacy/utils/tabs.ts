@@ -1,10 +1,10 @@
-import { HIDE_EARN_PAGE } from "@sendnodes/pokt-wallet-background/features/features"
+import { HIDE_EARN_PAGE } from "@sendnodes/pokt-wallet-background/features/features";
 
 const tabs: string[] = ["overview", "wallet", "menu"].filter((tab) => {
   if (tab === "earn" && HIDE_EARN_PAGE) {
-    return false
+    return false;
   }
-  return true
-})
+  return true;
+});
 
-export default tabs
+export default tabs;

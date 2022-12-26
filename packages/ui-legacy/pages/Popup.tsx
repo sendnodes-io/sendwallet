@@ -1,4 +1,4 @@
-import React, { ReactElement, useState, useEffect } from "react"
+import React, { ReactElement, useState, useEffect } from "react";
 import {
   MemoryRouter as Router,
   Switch,
@@ -6,131 +6,131 @@ import {
   useHistory,
   useLocation,
   Redirect,
-} from "react-router-dom"
-import { ErrorBoundary } from "react-error-boundary"
+} from "react-router-dom";
+import { ErrorBoundary } from "react-error-boundary";
 import {
   setRouteHistoryEntries,
   Location,
   trackPageView,
-} from "@sendnodes/pokt-wallet-background/redux-slices/ui"
+} from "@sendnodes/pokt-wallet-background/redux-slices/ui";
 
-import { Store } from "@0xbigboss/webext-redux"
-import { Provider } from "react-redux"
-import { TransitionGroup, CSSTransition } from "react-transition-group"
-import { isAllowedQueryParamPage } from "@sendnodes/provider-bridge-shared"
-import { PERSIST_UI_LOCATION } from "@sendnodes/pokt-wallet-background/features/features"
-import { runtime } from "webextension-polyfill"
-import { popupMonitorPortName } from "@sendnodes/pokt-wallet-background/main"
-import { selectKeyringStatus } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
-import { selectIsTransactionPendingSignature } from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction"
+import { Store } from "@0xbigboss/webext-redux";
+import { Provider } from "react-redux";
+import { TransitionGroup, CSSTransition } from "react-transition-group";
+import { isAllowedQueryParamPage } from "@sendnodes/provider-bridge-shared";
+import { PERSIST_UI_LOCATION } from "@sendnodes/pokt-wallet-background/features/features";
+import { runtime } from "webextension-polyfill";
+import { popupMonitorPortName } from "@sendnodes/pokt-wallet-background/main";
+import { selectKeyringStatus } from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
+import { selectIsTransactionPendingSignature } from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction";
 import {
   useIsDappPopup,
   useBackgroundDispatch,
   useBackgroundSelector,
-} from "../hooks"
+} from "../hooks";
 
 import {
   animationStyles,
   useAnimationConditions,
   AnimationConditions,
-} from "../utils/pageTransition"
+} from "../utils/pageTransition";
 
-import TabBar from "../components/TabBar/TabBar"
-import TopMenu from "../components/TopMenu/TopMenu"
-import CorePopupPage from "../components/Core/CorePopupPage"
-import ErrorFallback from "./ErrorFallback"
+import TabBar from "../components/TabBar/TabBar";
+import TopMenu from "../components/TopMenu/TopMenu";
+import CorePopupPage from "../components/Core/CorePopupPage";
+import ErrorFallback from "./ErrorFallback";
 
-import pageList from "../routes/routes"
-import SharedSplashScreen from "../components/Shared/SharedSplashScreen"
+import pageList from "../routes/routes";
+import SharedSplashScreen from "../components/Shared/SharedSplashScreen";
 
 const pagePreferences = Object.fromEntries(
   pageList.map(({ path, hasTabBar, hasTopBar, persistOnClose }) => [
     path,
     { hasTabBar, hasTopBar, persistOnClose },
-  ])
-)
+  ]),
+);
 
 function transformLocation(
   inputLocation: Location,
   isTransactionPendingSignature: boolean,
-  keyringStatus: "locked" | "unlocked" | "uninitialized"
+  keyringStatus: "locked" | "unlocked" | "uninitialized",
 ): Location {
   // The inputLocation is not populated with the actual query string — even though it should be
   // so I need to grab it from the window
-  const params = new URLSearchParams(window.location.search)
-  const maybePage = params.get("page")
+  const params = new URLSearchParams(window.location.search);
+  const maybePage = params.get("page");
 
-  let { pathname } = inputLocation
+  let { pathname } = inputLocation;
   if (
     isAllowedQueryParamPage(maybePage) &&
     !inputLocation.pathname.includes("/keyring/")
   ) {
-    pathname = maybePage
+    pathname = maybePage;
   }
 
   if (isTransactionPendingSignature) {
     pathname =
-      keyringStatus === "unlocked" ? "/sign-transaction" : "/keyring/unlock"
+      keyringStatus === "unlocked" ? "/sign-transaction" : "/keyring/unlock";
   }
 
   return {
     ...inputLocation,
     pathname,
-  }
+  };
 }
 
 function useConnectPopupMonitor() {
   useEffect(() => {
-    const port = runtime.connect(undefined, { name: popupMonitorPortName })
+    const port = runtime.connect(undefined, { name: popupMonitorPortName });
 
     return () => {
-      port.disconnect()
-    }
-  }, [])
+      port.disconnect();
+    };
+  }, []);
 }
 
 function RouteWrapper(props: {
   render: (
     animConditions: AnimationConditions & {
-      showTabBar: boolean
-      transformedLocation: Location
-      normalizedPathname: string
-    }
-  ) => ReactElement
+      showTabBar: boolean;
+      transformedLocation: Location;
+      normalizedPathname: string;
+    },
+  ) => ReactElement;
 }): ReactElement<Route> {
-  const dispatch = useBackgroundDispatch()
-  const location = useLocation()
+  const dispatch = useBackgroundDispatch();
+  const location = useLocation();
   const history = useHistory() as {
     entries?: {
       state: {
-        isBack: boolean
-      }
-      pathname: string
-    }[]
-  }
+        isBack: boolean;
+      };
+      pathname: string;
+    }[];
+  };
   const isTransactionPendingSignature = useBackgroundSelector(
-    selectIsTransactionPendingSignature
-  )
-  const keyringStatus = useBackgroundSelector(selectKeyringStatus)
+    selectIsTransactionPendingSignature,
+  );
+  const keyringStatus = useBackgroundSelector(selectKeyringStatus);
   const transformedLocation = transformLocation(
     location,
     isTransactionPendingSignature,
-    keyringStatus
-  )
+    keyringStatus,
+  );
 
   const normalizedPathname =
     transformedLocation.pathname !== "/wallet"
       ? transformedLocation.pathname
-      : "/"
+      : "/";
   const animationConditions = useAnimationConditions(
     {
       history,
       location,
     },
-    pagePreferences
-  )
+    pagePreferences,
+  );
 
-  const showTabBar = pagePreferences[normalizedPathname].hasTabBar
+  const showTabBar = pagePreferences[normalizedPathname].hasTabBar;
 
   useEffect(() => {
     const pageView = async () => {
@@ -139,49 +139,49 @@ function RouteWrapper(props: {
           doc_host: window.location.host,
           doc_page: normalizedPathname,
           doc_title: document.title,
-        })
-      )
-    }
-    pageView().catch(() => {})
-  }, [normalizedPathname])
+        }),
+      );
+    };
+    pageView().catch(() => {});
+  }, [normalizedPathname]);
 
   return props.render({
     ...animationConditions,
     showTabBar,
     transformedLocation,
     normalizedPathname,
-  })
+  });
 }
 
 export function Main(): ReactElement {
-  const dispatch = useBackgroundDispatch()
-  const isDappPopup = useIsDappPopup()
+  const dispatch = useBackgroundDispatch();
+  const isDappPopup = useIsDappPopup();
 
   const isUiStateLoaded = useBackgroundSelector((state) => {
-    return !!state.ui
-  })
+    return !!state.ui;
+  });
 
   const routeHistoryEntries = useBackgroundSelector((state) => {
-    return state.ui?.routeHistoryEntries
-  })
+    return state.ui?.routeHistoryEntries;
+  });
 
   // See comment above call of saveHistoryEntries
   function saveHistoryEntries(routeHistoryEntities: Location[] | undefined) {
     if (!routeHistoryEntities) {
-      return
+      return;
     }
     const entries = routeHistoryEntities
       .reduce((agg: Partial<Location>[], entity) => {
-        const { ...entityCopy } = entity as Partial<Location>
-        delete entityCopy.hash
-        delete entityCopy.key
-        agg.push(entityCopy)
-        return agg
+        const { ...entityCopy } = entity as Partial<Location>;
+        entityCopy.hash = undefined;
+        entityCopy.key = undefined;
+        agg.push(entityCopy);
+        return agg;
       }, [])
-      .reverse()
+      .reverse();
 
     if (JSON.stringify(routeHistoryEntries) !== JSON.stringify(entries)) {
-      dispatch(setRouteHistoryEntries(entries))
+      dispatch(setRouteHistoryEntries(entries));
     }
   }
 
@@ -189,7 +189,7 @@ export function Main(): ReactElement {
   // useConnectPopupMonitor()
 
   if (!isUiStateLoaded) {
-    return <SharedSplashScreen />
+    return <SharedSplashScreen />;
   }
 
   return (
@@ -212,14 +212,14 @@ export function Main(): ReactElement {
                 <Route
                   render={(routeProps) => {
                     // redirect to hash if set
-                    const path = window.location.hash.replace("#", "")
+                    const path = window.location.hash.replace("#", "");
                     if (
                       window.location.pathname.includes("popout.html") &&
                       path.length > 1 &&
                       pageList.find((p) => p.path === path)
                     ) {
-                      window.location.hash = ""
-                      return <Redirect to={path} />
+                      window.location.hash = "";
+                      return <Redirect to={path} />;
                     }
 
                     // `initialEntries` needs to be a reversed version of route history
@@ -234,7 +234,7 @@ export function Main(): ReactElement {
                       routeProps.history.action === "PUSH"
                     ) {
                       // @ts-expect-error TODO: fix the typing
-                      saveHistoryEntries(routeProps.history.entries)
+                      saveHistoryEntries(routeProps.history.entries);
                     }
 
                     return (
@@ -244,7 +244,7 @@ export function Main(): ReactElement {
                           classNames="page-transition"
                           key={
                             routeProps.location.pathname.includes(
-                              "onboarding"
+                              "onboarding",
                             ) ||
                             routeProps.location.pathname.includes("keyring")
                               ? ""
@@ -278,14 +278,14 @@ export function Main(): ReactElement {
                                         </ErrorBoundary>
                                       </CorePopupPage>
                                     </Route>
-                                  )
-                                }
+                                  );
+                                },
                               )}
                             </Switch>
                           </div>
                         </CSSTransition>
                       </TransitionGroup>
-                    )
+                    );
                   }}
                 />
                 {showTabBar && (
@@ -337,7 +337,7 @@ export function Main(): ReactElement {
                   `}
                 </style>
               </>
-            )
+            );
           }}
         />
       </Router>
@@ -351,7 +351,7 @@ export function Main(): ReactElement {
         </style>
       )}
     </>
-  )
+  );
 }
 
 export default function Popup({ store }: { store: Store }): ReactElement {
@@ -359,5 +359,5 @@ export default function Popup({ store }: { store: Store }): ReactElement {
     <Provider store={store}>
       <Main />
     </Provider>
-  )
+  );
 }

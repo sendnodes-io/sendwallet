@@ -1,22 +1,22 @@
-import React, { ReactElement } from "react"
-import LedgerContinueButton from "../../components/Ledger/LedgerContinueButton"
-import LedgerPanelContainer from "../../components/Ledger/LedgerPanelContainer"
+import React, { ReactElement } from "react";
+import LedgerContinueButton from "../../components/Ledger/LedgerContinueButton";
+import LedgerPanelContainer from "../../components/Ledger/LedgerPanelContainer";
 
 export default function LedgerPrepare({
   onContinue,
   initialScreen,
   deviceCount,
 }: {
-  onContinue: () => void
-  initialScreen: boolean
-  deviceCount: number
+  onContinue: () => void;
+  initialScreen: boolean;
+  deviceCount: number;
 }): ReactElement {
-  const buttonLabel = initialScreen ? "Continue" : "Try Again"
-  const subHeadingVerb = initialScreen ? "start" : "retry"
+  const buttonLabel = initialScreen ? "Continue" : "Try Again";
+  const subHeadingVerb = initialScreen ? "start" : "retry";
   const warningText =
     deviceCount === 0
       ? "No Ledger device is connected"
-      : "Multiple Ledgers are connected"
+      : "Multiple Ledgers are connected";
   return (
     <LedgerPanelContainer
       indicatorImageSrc="/images/connect_ledger_indicator_disconnected.svg"
@@ -108,5 +108,5 @@ export default function LedgerPrepare({
         }
       `}</style>
     </LedgerPanelContainer>
-  )
+  );
 }

@@ -1,10 +1,10 @@
-import React from "react"
-import { InformationCircleIcon } from "@heroicons/react/solid"
+import React from "react";
+import { InformationCircleIcon } from "@heroicons/react/solid";
 
 export default function DisclaimerAPY({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <div className="absolute flex items-center justify-center -top-6 left-0 right-0 whitespace-nowrap text-xs">
@@ -26,5 +26,5 @@ export default function DisclaimerAPY({
         </a>
       </div>
     </div>
-  )
+  );
 }

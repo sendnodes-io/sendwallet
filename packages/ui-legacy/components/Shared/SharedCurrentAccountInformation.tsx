@@ -1,12 +1,12 @@
-import React, { ReactElement } from "react"
-import classNames from "clsx"
+import React, { ReactElement } from "react";
+import classNames from "clsx";
 
 type Props = {
-  shortenedAddress: string
-  name: string | undefined
-  avatarURL: string | undefined
-  showHoverStyle: boolean
-}
+  shortenedAddress: string;
+  name: string | undefined;
+  avatarURL: string | undefined;
+  showHoverStyle: boolean;
+};
 
 export default function SharedCurrentAccountInformation({
   shortenedAddress,
@@ -42,9 +42,9 @@ export default function SharedCurrentAccountInformation({
         `}
       </style>
     </div>
-  )
+  );
 }
 
 SharedCurrentAccountInformation.defaultProps = {
   showHoverStyle: false,
-}
+};

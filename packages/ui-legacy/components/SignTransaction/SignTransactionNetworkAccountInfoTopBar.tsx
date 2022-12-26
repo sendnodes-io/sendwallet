@@ -1,19 +1,19 @@
-import React, { ReactElement } from "react"
-import { AccountTotal } from "@sendnodes/pokt-wallet-background/redux-slices/selectors"
-import SharedCurrentAccountInformation from "../Shared/SharedCurrentAccountInformation"
+import React, { ReactElement } from "react";
+import { AccountTotal } from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
+import SharedCurrentAccountInformation from "../Shared/SharedCurrentAccountInformation";
 
 type Props = {
-  accountTotal: AccountTotal
-}
+  accountTotal: AccountTotal;
+};
 
 export default function SignTransactionNetworkAccountInfoTopBar({
   accountTotal,
 }: Props): ReactElement {
   if (typeof accountTotal === "undefined") {
-    return <></>
+    return <></>;
   }
 
-  const { shortenedAddress, name, avatarURL } = accountTotal
+  const { shortenedAddress, name, avatarURL } = accountTotal;
 
   return (
     <div className="top_bar_wrap standard_width">
@@ -75,5 +75,5 @@ export default function SignTransactionNetworkAccountInfoTopBar({
         `}
       </style>
     </div>
-  )
+  );
 }
