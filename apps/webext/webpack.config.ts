@@ -258,7 +258,7 @@ const modeConfigs: {
 					filename: `SendWallet-${branch.replaceAll(/[./]/gi, "-")}-${
 						date.toISOString().split("T")[0]
 					}-${revision}-${browser}`,
-				}) as WebpackPluginInstance,
+				}) as unknown as WebpackPluginInstance, // fixes ci for some reason
 			],
 			optimization: {
 				minimizer: [
