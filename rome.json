@@ -19,7 +19,8 @@
       "jtd-validators.js",
       "webext-legacy",
       "ui-legacy",
-      "background"
+      "background",
+      "types"
     ]
   }
 }

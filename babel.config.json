@@ -25,8 +25,7 @@
   ],
   "babelrcRoots": [
     ".",
-    "apps/webext/*",
-    "packages/ui/*"
+    "packages/ui-legacy/*"
     // "../../packages/background/*",
     // "../../packages/provider-bridge/*",
   ]

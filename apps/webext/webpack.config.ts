@@ -19,7 +19,7 @@ import Dotenv from "dotenv-webpack";
 import CopyPlugin, { ObjectPattern } from "copy-webpack-plugin";
 import WebExtension from "webpack-target-webextension";
 import childProcess from "child_process";
-import WebExtensionArchivePlugin from "build-utils/web-extension-archive-webpack-plugin";
+import WebExtensionArchivePlugin from "build-utils/src/web-extension-archive-webpack-plugin";
 import type { Manifest } from "webextension-polyfill";
 const { ESBuildMinifyPlugin } = require("esbuild-loader");
 
@@ -258,7 +258,7 @@ const modeConfigs: {
 					filename: `SendWallet-${branch.replaceAll(/[./]/gi, "-")}-${
 						date.toISOString().split("T")[0]
 					}-${revision}-${browser}`,
-				}),
+				}) as WebpackPluginInstance,
 			],
 			optimization: {
 				minimizer: [

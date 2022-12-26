@@ -8,6 +8,11 @@
       "build-utils/*": ["./packages/build-utils/*"]
     }
   },
+  "references": [
+    { "path": "./packages/app" },
+    { "path": "./packages/ui" },
+    { "path": "./packages/build-utils" }
+  ],
   "extends": "./tsconfig.base",
   "ts-node": {
     "compilerOptions": {
