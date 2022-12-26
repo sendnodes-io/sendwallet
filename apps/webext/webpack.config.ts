@@ -198,11 +198,10 @@ const baseConfig: Configuration = {
 			"process.env.__DEV__": NODE_ENV === "development" ? "true" : "false",
 			"process.env.NODE_ENV": JSON.stringify(NODE_ENV),
 			"process.env.TAMAGUI_TARGET": JSON.stringify(target),
-			"process.env.DEBUG": JSON.stringify(process.env.DEBUG || "0"),
 		}),
 		new HtmlWebpackPlugin({
-			template: "./src/popup.html",
-			filename: "popup.html",
+			template: "./src/index.html",
+			filename: "index.html",
 			chunks: ["popup"],
 			inject: "body",
 			minify: {

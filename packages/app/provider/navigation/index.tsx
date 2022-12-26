@@ -6,7 +6,7 @@ import {
 import * as Linking from "expo-linking";
 import { useMemo } from "react";
 import { useTheme } from "../../../ui/src";
-import { useColorScheme } from "react-native";
+import { Platform, useColorScheme, View } from "react-native";
 
 const MyTheme = {
 	...DefaultTheme,
@@ -31,8 +31,8 @@ export function NavigationProvider({
 					config: {
 						initialRouteName: "home",
 						screens: {
-							home: "",
-							"user-detail": "user/:id",
+							home: "/index.html",
+							"user-detail": "/index.html?/user/:id",
 						},
 					},
 				}),

@@ -1,7 +1,7 @@
 {
   "name": "webext",
   "private": true,
-  "version": "1.0.0",
+  "version": "0.5.0",
   "scripts": {
     "compile": "tsc --noEmit",
     "watch": "webpack serve --mode development",
