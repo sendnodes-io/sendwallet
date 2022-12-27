@@ -1,0 +1,44 @@
+diff --git a/lib/commonjs/createMemoryHistory.js b/lib/commonjs/createMemoryHistory.js
+index 42b1a28d591bc749fcdc9d0643e49d3108f1bba9..01931b3d19bcb96fc5e16517c427df561a10457c 100644
+--- a/lib/commonjs/createMemoryHistory.js
++++ b/lib/commonjs/createMemoryHistory.js
+@@ -73,7 +73,7 @@ function createMemoryHistory() {
+       // - while not recommended, there could be non-serializable data in state
+       window.history.pushState({
+         id
+-      }, '', path);
++      }, '', decodeURIComponent(path));
+     },
+     replace(_ref3) {
+       var _window$history$state2;
+@@ -113,7 +113,7 @@ function createMemoryHistory() {
+       }
+       window.history.replaceState({
+         id
+-      }, '', pathWithHash);
++      }, '', decodeURIComponent(pathWithHash));
+     },
+     // `history.go(n)` is asynchronous, there are couple of things to keep in mind:
+     // - it won't do anything if we can't go `n` steps, the `popstate` event won't fire.
+diff --git a/lib/module/createMemoryHistory.js b/lib/module/createMemoryHistory.js
+index 16fdbef81dced156b475f3a026ff0448e8590232..8efb393fe4928a506204b4bfc9db390b1fee5202 100644
+--- a/lib/module/createMemoryHistory.js
++++ b/lib/module/createMemoryHistory.js
+@@ -67,7 +67,7 @@ export default function createMemoryHistory() {
+       // - while not recommended, there could be non-serializable data in state
+       window.history.pushState({
+         id
+-      }, '', path);
++      }, '', decodeURIComponent(path));
+     },
+     replace(_ref3) {
+       var _window$history$state2;
+@@ -107,7 +107,7 @@ export default function createMemoryHistory() {
+       }
+       window.history.replaceState({
+         id
+-      }, '', pathWithHash);
++      }, '', decodeURIComponent(pathWithHash));
+     },
+     // `history.go(n)` is asynchronous, there are couple of things to keep in mind:
+     // - it won't do anything if we can't go `n` steps, the `popstate` event won't fire.

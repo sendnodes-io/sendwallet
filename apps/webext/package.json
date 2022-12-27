@@ -4,7 +4,7 @@
   "version": "0.5.0",
   "scripts": {
     "compile": "tsc --noEmit",
-    "watch": "webpack serve --mode development",
+    "watch": "webpack serve --mode development --config-name chrome",
     "build": "NODE_ENV=production webpack build --mode production"
   },
   "devDependencies": {

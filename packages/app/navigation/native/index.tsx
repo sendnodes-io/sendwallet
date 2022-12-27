@@ -1,15 +1,15 @@
-import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-
 import { HomeScreen } from "../../features/home/screen";
 import { UserDetailScreen } from "../../features/user/detail-screen";
 
-const Stack = createNativeStackNavigator<{
+export type RootStackParamList = {
 	home: undefined;
 	"user-detail": {
 		id: string;
 	};
-}>();
+};
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export function NativeNavigation() {
 	return (

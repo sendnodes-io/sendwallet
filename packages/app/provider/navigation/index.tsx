@@ -21,7 +21,6 @@ export function NavigationProvider({
 	children: React.ReactNode;
 }) {
 	const scheme = useColorScheme();
-
 	return (
 		<NavigationContainer
 			theme={scheme === "dark" ? DarkTheme : DefaultTheme}
@@ -29,10 +28,9 @@ export function NavigationProvider({
 				() => ({
 					prefixes: [Linking.createURL("/")],
 					config: {
-						initialRouteName: "home",
 						screens: {
-							home: "/index.html",
 							"user-detail": "/index.html?/user/:id",
+							home: "/index.html",
 						},
 					},
 				}),

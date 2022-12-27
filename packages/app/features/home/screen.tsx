@@ -10,14 +10,14 @@ import {
 	YStack,
 } from "@my/ui";
 import { ChevronDown, ChevronUp } from "@tamagui/lucide-icons";
-import React, { useState } from "react";
-import { Link, NavigationProp, useLinkProps } from "@react-navigation/native";
+import { useState } from "react";
+
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { RootStackParamList } from "app/navigation/native";
 
 export function HomeScreen({
 	navigation,
-}: {
-	navigation: NavigationProp<Record<string, unknown>>;
-}) {
+}: NativeStackScreenProps<RootStackParamList, "home">) {
 	return (
 		<YStack f={1} jc="center" ai="center" p="$4" space>
 			<YStack space="$4" maw={600}>
@@ -53,7 +53,9 @@ export function HomeScreen({
 
 			<XStack>
 				<Button
-					onPress={() => navigation.navigate("user-detail", { id: "123" })}
+					onPress={() => {
+						navigation.navigate("user-detail", { id: "123" });
+					}}
 				>
 					Link to user
 				</Button>
