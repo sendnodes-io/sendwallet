@@ -22,7 +22,7 @@
   "scripts": {
     "webext:watch": "WEBPACK_OUTPUT_DIR=../.. yarn workspace webext run watch",
     "legacy:watch": "WEBPACK_OUTPUT_DIR=../.. yarn workspace webext-legacy run start",
-    "build": "WEBPACK_OUTPUT_DIR=../.. yarn workspaces foreach -pt run build",
+    "legacy:build": "WEBPACK_OUTPUT_DIR=../.. yarn workspace webext-legacy run build",
     "lint": "run-p 'lint:*'",
     "lint-fix": "run-p 'lint:*:fix'",
     "lint:config": "prettier -c '**/*.@(json|yaml|toml)'",
