@@ -11,138 +11,138 @@ import SignTransactionWrongLedgerConnected from "./SignTransactionWrongLedgerCon
 import { useSigningLedgerState } from "./useSigningLedgerState";
 
 export default function SignTransactionContainer({
-  signerAccountTotal,
-  title,
-  detailPanel,
-  reviewPanel,
-  extraPanel,
-  confirmButtonLabel,
-  rejectButtonLabel,
-  handleConfirm,
-  handleReject,
-  isTransactionSigning,
-  isArbitraryDataSigningRequired,
+	signerAccountTotal,
+	title,
+	detailPanel,
+	reviewPanel,
+	extraPanel,
+	confirmButtonLabel,
+	rejectButtonLabel,
+	handleConfirm,
+	handleReject,
+	isTransactionSigning,
+	isArbitraryDataSigningRequired,
 }: {
-  signerAccountTotal: AccountTotal;
-  title: ReactNode;
-  detailPanel: ReactNode;
-  reviewPanel: ReactNode;
-  extraPanel: ReactNode;
-  confirmButtonLabel: ReactNode;
-  rejectButtonLabel?: ReactNode;
-  handleConfirm: () => void;
-  handleReject: () => void;
-  isTransactionSigning: boolean;
-  isArbitraryDataSigningRequired: boolean;
+	signerAccountTotal: AccountTotal;
+	title: ReactNode;
+	detailPanel: ReactNode;
+	reviewPanel: ReactNode;
+	extraPanel: ReactNode;
+	confirmButtonLabel: ReactNode;
+	rejectButtonLabel?: ReactNode;
+	handleConfirm: () => void;
+	handleReject: () => void;
+	isTransactionSigning: boolean;
+	isArbitraryDataSigningRequired: boolean;
 }): ReactElement {
-  const { signingMethod } = signerAccountTotal;
-  const [isSlideUpOpen, setSlideUpOpen] = useState(false);
+	const { signingMethod } = signerAccountTotal;
+	const [isSlideUpOpen, setSlideUpOpen] = useState(false);
 
-  const signingLedgerState = useSigningLedgerState(signingMethod ?? null);
+	const signingLedgerState = useSigningLedgerState(signingMethod ?? null);
 
-  const isLedgerSigning = signingMethod?.type === "ledger";
-  const isWaitingForHardware = isLedgerSigning && isTransactionSigning;
+	const isLedgerSigning = signingMethod?.type === "ledger";
+	const isWaitingForHardware = isLedgerSigning && isTransactionSigning;
 
-  const isLedgerAvailable = signingLedgerState?.state === "available";
+	const isLedgerAvailable = signingLedgerState?.state === "available";
 
-  const mustEnableArbitraryDataSigning =
-    isLedgerAvailable &&
-    isArbitraryDataSigningRequired &&
-    !signingLedgerState.arbitraryDataEnabled;
+	const mustEnableArbitraryDataSigning =
+		isLedgerAvailable &&
+		isArbitraryDataSigningRequired &&
+		!signingLedgerState.arbitraryDataEnabled;
 
-  const canLedgerSign = isLedgerAvailable && !mustEnableArbitraryDataSigning;
+	const canLedgerSign = isLedgerAvailable && !mustEnableArbitraryDataSigning;
 
-  return (
-    <section>
-      <div className="top">
-        <h1 className="title">
-          {isWaitingForHardware ? "Awaiting hardware wallet signature" : title}
-        </h1>
-        <button
-          type="button"
-          aria-label="close"
-          className="icon_close"
-          onClick={handleReject}
-        />
-      </div>
-      <div className="full_width">
-        {isWaitingForHardware ? reviewPanel : detailPanel}
-      </div>
-      {isWaitingForHardware ? (
-        <div className="cannot_reject_warning">
-          <span className="block_icon" />
-          Tx can only be Rejected from Ledger
-        </div>
-      ) : (
-        <>
-          {extraPanel}
-          <div className="footer_actions">
-            <SharedButton
-              iconSize="large"
-              size="large"
-              type="secondary"
-              onClick={handleReject}
-            >
-              {rejectButtonLabel ?? "REJECT"}
-            </SharedButton>
-            {/* TODO: split into different components depending on signing method, to avoid convoluted logic below */}
-            {signerAccountTotal.signingMethod &&
-              (signerAccountTotal.signingMethod.type === "ledger" &&
-              !canLedgerSign ? (
-                <SharedButton
-                  type="primary"
-                  iconSize="large"
-                  size="large"
-                  onClick={() => {
-                    setSlideUpOpen(true);
-                  }}
-                >
-                  Check Ledger
-                </SharedButton>
-              ) : (
-                <SharedButton
-                  type="primary"
-                  iconSize="large"
-                  size="large"
-                  onClick={handleConfirm}
-                  showLoadingOnClick
-                  disableOnClick
-                >
-                  {confirmButtonLabel}
-                </SharedButton>
-              ))}
-            {!signerAccountTotal.signingMethod && (
-              <span className="no-signing">Read-only accounts cannot sign</span>
-            )}
-          </div>
-        </>
-      )}
-      <SharedSlideUpMenu
-        isOpen={isSlideUpOpen && !canLedgerSign}
-        close={() => {
-          setSlideUpOpen(false);
-        }}
-        alwaysRenderChildren
-        size="auto"
-      >
-        {signingLedgerState?.state === "no-ledger-connected" && (
-          <SignTransactionLedgerNotConnected />
-        )}
-        {signingLedgerState?.state === "wrong-ledger-connected" && (
-          <SignTransactionWrongLedgerConnected
-            signerAccountTotal={signerAccountTotal}
-          />
-        )}
-        {signingLedgerState?.state === "multiple-ledgers-connected" && (
-          <SignTransactionMultipleLedgersConnected />
-        )}
-        {mustEnableArbitraryDataSigning && (
-          <SignTransactionLedgerActivateBlindSigning />
-        )}
-        {signingLedgerState?.state === "busy" && <SignTransactionLedgerBusy />}
-      </SharedSlideUpMenu>
-      <style jsx>
-        {`
+	return (
+		<section>
+			<div className="top">
+				<h1 className="title">
+					{isWaitingForHardware ? "Awaiting hardware wallet signature" : title}
+				</h1>
+				<button
+					type="button"
+					aria-label="close"
+					className="icon_close"
+					onClick={handleReject}
+				/>
+			</div>
+			<div className="full_width">
+				{isWaitingForHardware ? reviewPanel : detailPanel}
+			</div>
+			{isWaitingForHardware ? (
+				<div className="cannot_reject_warning">
+					<span className="block_icon" />
+					Tx can only be Rejected from Ledger
+				</div>
+			) : (
+				<>
+					{extraPanel}
+					<div className="footer_actions">
+						<SharedButton
+							iconSize="large"
+							size="large"
+							type="secondary"
+							onClick={handleReject}
+						>
+							{rejectButtonLabel ?? "REJECT"}
+						</SharedButton>
+						{/* TODO: split into different components depending on signing method, to avoid convoluted logic below */}
+						{signerAccountTotal.signingMethod &&
+							(signerAccountTotal.signingMethod.type === "ledger" &&
+							!canLedgerSign ? (
+								<SharedButton
+									type="primary"
+									iconSize="large"
+									size="large"
+									onClick={() => {
+										setSlideUpOpen(true);
+									}}
+								>
+									Check Ledger
+								</SharedButton>
+							) : (
+								<SharedButton
+									type="primary"
+									iconSize="large"
+									size="large"
+									onClick={handleConfirm}
+									showLoadingOnClick
+									disableOnClick
+								>
+									{confirmButtonLabel}
+								</SharedButton>
+							))}
+						{!signerAccountTotal.signingMethod && (
+							<span className="no-signing">Read-only accounts cannot sign</span>
+						)}
+					</div>
+				</>
+			)}
+			<SharedSlideUpMenu
+				isOpen={isSlideUpOpen && !canLedgerSign}
+				close={() => {
+					setSlideUpOpen(false);
+				}}
+				alwaysRenderChildren
+				size="auto"
+			>
+				{signingLedgerState?.state === "no-ledger-connected" && (
+					<SignTransactionLedgerNotConnected />
+				)}
+				{signingLedgerState?.state === "wrong-ledger-connected" && (
+					<SignTransactionWrongLedgerConnected
+						signerAccountTotal={signerAccountTotal}
+					/>
+				)}
+				{signingLedgerState?.state === "multiple-ledgers-connected" && (
+					<SignTransactionMultipleLedgersConnected />
+				)}
+				{mustEnableArbitraryDataSigning && (
+					<SignTransactionLedgerActivateBlindSigning />
+				)}
+				{signingLedgerState?.state === "busy" && <SignTransactionLedgerBusy />}
+			</SharedSlideUpMenu>
+			<style jsx>
+				{`
           section {
             width: 100%;
             height: 100%;
@@ -222,7 +222,7 @@ export default function SignTransactionContainer({
               url("./images/block_icon@2x.png");
           }
         `}
-      </style>
-    </section>
-  );
+			</style>
+		</section>
+	);
 }

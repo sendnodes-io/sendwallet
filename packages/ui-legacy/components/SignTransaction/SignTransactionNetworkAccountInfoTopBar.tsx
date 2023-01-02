@@ -3,33 +3,33 @@ import { AccountTotal } from "@sendnodes/pokt-wallet-background/redux-slices/sel
 import SharedCurrentAccountInformation from "../Shared/SharedCurrentAccountInformation";
 
 type Props = {
-  accountTotal: AccountTotal;
+	accountTotal: AccountTotal;
 };
 
 export default function SignTransactionNetworkAccountInfoTopBar({
-  accountTotal,
+	accountTotal,
 }: Props): ReactElement {
-  if (typeof accountTotal === "undefined") {
-    return <></>;
-  }
+	if (typeof accountTotal === "undefined") {
+		return <></>;
+	}
 
-  const { shortenedAddress, name, avatarURL } = accountTotal;
+	const { shortenedAddress, name, avatarURL } = accountTotal;
 
-  return (
-    <div className="top_bar_wrap standard_width">
-      <div className="row_part">
-        <div className="network_icon" />
-        <span className="network_name">Arbitrum</span>
-      </div>
-      <div className="row_part">
-        <SharedCurrentAccountInformation
-          shortenedAddress={shortenedAddress}
-          name={name}
-          avatarURL={avatarURL}
-        />
-      </div>
-      <style jsx>
-        {`
+	return (
+		<div className="top_bar_wrap standard_width">
+			<div className="row_part">
+				<div className="network_icon" />
+				<span className="network_name">Arbitrum</span>
+			</div>
+			<div className="row_part">
+				<SharedCurrentAccountInformation
+					shortenedAddress={shortenedAddress}
+					name={name}
+					avatarURL={avatarURL}
+				/>
+			</div>
+			<style jsx>
+				{`
           .top_bar_wrap {
             margin: 0 auto;
             margin-top: 16px;
@@ -73,7 +73,7 @@ export default function SignTransactionNetworkAccountInfoTopBar({
             opacity: 0;
           }
         `}
-      </style>
-    </div>
-  );
+			</style>
+		</div>
+	);
 }

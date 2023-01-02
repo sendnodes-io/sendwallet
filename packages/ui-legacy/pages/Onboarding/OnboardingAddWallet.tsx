@@ -1,107 +1,107 @@
 import React, { ReactElement } from "react";
 import { Link, useHistory } from "react-router-dom";
 import {
-  useAreKeyringsUnlocked,
-  useBackgroundSelector,
-  useIsInTab,
+	useAreKeyringsUnlocked,
+	useBackgroundSelector,
+	useIsInTab,
 } from "../../hooks";
 import {
-  OnboardingImportKeyfileIcon,
-  OnboardingImportRecoveryPhraseIcon,
-  OnboardingNewAccountIcon,
+	OnboardingImportKeyfileIcon,
+	OnboardingImportRecoveryPhraseIcon,
+	OnboardingNewAccountIcon,
 } from "../../components/Onboarding/Icons";
 import styles from "../../components/Onboarding/styles";
 import SharedPopoutOpen from "../../components/Shared/SharedPopoutOpen";
 import SharedSplashScreen from "../../components/Shared/SharedSplashScreen";
 
 export default function OnboardingAddAccount(): ReactElement {
-  const history = useHistory();
+	const history = useHistory();
 
-  const hasAccounts = useBackgroundSelector(
-    (state) => Object.keys(state.account.accountsData).length > 0,
-  );
+	const hasAccounts = useBackgroundSelector(
+		(state) => Object.keys(state.account.accountsData).length > 0,
+	);
 
-  if (!useIsInTab("/onboarding/add-wallet")) {
-    return <SharedPopoutOpen />;
-  }
+	if (!useIsInTab("/onboarding/add-wallet")) {
+		return <SharedPopoutOpen />;
+	}
 
-  // ensure wallet password is set before accepting any accounts
-  if (!useAreKeyringsUnlocked(true)) {
-    return <SharedSplashScreen />;
-  }
+	// ensure wallet password is set before accepting any accounts
+	if (!useAreKeyringsUnlocked(true)) {
+		return <SharedSplashScreen />;
+	}
 
-  return (
-    <section className="start_wrap">
-      <div className="top">
-        <h1>
-          <b>Add / Import</b> Accounts
-        </h1>
+	return (
+		<section className="start_wrap">
+			<div className="top">
+				<h1>
+					<b>Add / Import</b> Accounts
+				</h1>
 
-        {hasAccounts && (
-          <button
-            type="button"
-            aria-label="close"
-            className="icon_close"
-            onClick={() => {
-              if (history.action !== "POP") history.goBack();
-              else history.push("/");
-            }}
-          />
-        )}
-      </div>
-      <div className="add_account_section">
-        <div className="add_account_row_wrap">
-          <div className="add_account_row">
-            <div className="add_account_icon">
-              <Link to="/onboarding/save-seed">
-                <OnboardingNewAccountIcon />
-              </Link>
-            </div>
-            <div className="add_account_text">
-              <Link to="/onboarding/save-seed">
-                <h2>+ New Account</h2>
-              </Link>
-              <p>Create a new account by generating a new recovery phrase</p>
-            </div>
-          </div>
-        </div>
-        <div className="add_account_row_wrap">
-          <div className="add_account_row">
-            <div className="add_account_icon">
-              <Link to="/onboarding/import-seed">
-                <OnboardingImportRecoveryPhraseIcon />
-              </Link>
-            </div>
-            <div className="add_account_text">
-              <Link to="/onboarding/import-seed">
-                <h2>Using Recovery Phrase</h2>
-              </Link>
-              <p>Recover an existing wallet by entering the recovery phrase</p>
-            </div>
-          </div>
-        </div>
-        <div className="add_account_row_wrap">
-          <div className="add_account_row">
-            <div className="add_account_icon">
-              <Link to="/onboarding/import-keyfile">
-                <OnboardingImportKeyfileIcon />
-              </Link>
-            </div>
-            <div className="add_account_text">
-              <Link to="/onboarding/import-keyfile">
-                <h2>Using Keyfile or Private Key</h2>
-              </Link>
-              <p>
-                Add a POKT keyfile wallet created on the official POKT network
-                or a private key.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <style jsx>{styles}</style>
-      <style jsx>
-        {`
+				{hasAccounts && (
+					<button
+						type="button"
+						aria-label="close"
+						className="icon_close"
+						onClick={() => {
+							if (history.action !== "POP") history.goBack();
+							else history.push("/");
+						}}
+					/>
+				)}
+			</div>
+			<div className="add_account_section">
+				<div className="add_account_row_wrap">
+					<div className="add_account_row">
+						<div className="add_account_icon">
+							<Link to="/onboarding/save-seed">
+								<OnboardingNewAccountIcon />
+							</Link>
+						</div>
+						<div className="add_account_text">
+							<Link to="/onboarding/save-seed">
+								<h2>+ New Account</h2>
+							</Link>
+							<p>Create a new account by generating a new recovery phrase</p>
+						</div>
+					</div>
+				</div>
+				<div className="add_account_row_wrap">
+					<div className="add_account_row">
+						<div className="add_account_icon">
+							<Link to="/onboarding/import-seed">
+								<OnboardingImportRecoveryPhraseIcon />
+							</Link>
+						</div>
+						<div className="add_account_text">
+							<Link to="/onboarding/import-seed">
+								<h2>Using Recovery Phrase</h2>
+							</Link>
+							<p>Recover an existing wallet by entering the recovery phrase</p>
+						</div>
+					</div>
+				</div>
+				<div className="add_account_row_wrap">
+					<div className="add_account_row">
+						<div className="add_account_icon">
+							<Link to="/onboarding/import-keyfile">
+								<OnboardingImportKeyfileIcon />
+							</Link>
+						</div>
+						<div className="add_account_text">
+							<Link to="/onboarding/import-keyfile">
+								<h2>Using Keyfile or Private Key</h2>
+							</Link>
+							<p>
+								Add a POKT keyfile wallet created on the official POKT network
+								or a private key.
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+			<style jsx>{styles}</style>
+			<style jsx>
+				{`
           .start_wrap {
             background-image: url(./images/textures/wallet_texture@2x.png);
             background-position: center 0;
@@ -194,7 +194,7 @@ export default function OnboardingAddAccount(): ReactElement {
             height: 2.75rem;
           }
         `}
-      </style>
-    </section>
-  );
+			</style>
+		</section>
+	);
 }

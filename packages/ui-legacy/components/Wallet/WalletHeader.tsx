@@ -1,9 +1,9 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { PermissionRequest } from "@sendnodes/provider-bridge-shared";
 import {
-  getCurrentAccountState,
-  selectAllowedPages,
-  selectActiveTab,
+	getCurrentAccountState,
+	selectAllowedPages,
+	selectActiveTab,
 } from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
 import { Icon } from "@iconify/react";
 import SharedSlideUpMenu from "../Shared/SharedSlideUpMenu";
@@ -15,26 +15,26 @@ import WalletConnectedDAppInfo from "./WalletConnectedDAppInfo";
 import NetworkSelector from "../NetworkSelector";
 
 function DappConnectivityButton(props: {
-  title: string;
-  onClick: () => void;
-  connected: boolean;
+	title: string;
+	onClick: () => void;
+	connected: boolean;
 }) {
-  return (
-    <>
-      <button
-        type="button"
-        aria-label="Current dApp connection status"
-        className="connection_button dashed_border_thin"
-        onClick={props.onClick}
-      >
-        <span
-          className={`connection_icon ${
-            props.connected ? "connected" : "disconnected"
-          }`}
-        />
-        <span className="connection_text">{props.title}</span>
-      </button>
-      <style jsx>{`
+	return (
+		<>
+			<button
+				type="button"
+				aria-label="Current dApp connection status"
+				className="connection_button dashed_border_thin"
+				onClick={props.onClick}
+			>
+				<span
+					className={`connection_icon ${
+						props.connected ? "connected" : "disconnected"
+					}`}
+				/>
+				<span className="connection_text">{props.title}</span>
+			</button>
+			<style jsx>{`
         .connection_button {
           border-radius: 16px;
           color: var(--white);
@@ -67,211 +67,216 @@ function DappConnectivityButton(props: {
           display: inline-block;
         }
       `}</style>
-    </>
-  );
+		</>
+	);
 }
 
 export default function WalletHeader() {
-  const [isWalletsOpen, setIsWalletsOpen] = useState(false);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [isNetworksOpen, setIsNetworksOpen] = useState(false);
-  const [isConnectedToDApp, setIsConnectedToDApp] = useState(false);
-  const [isActiveDAppConnectionInfoOpen, setIsActiveDAppConnectionInfoOpen] =
-    useState(false);
-  const showNewTabButton = !window.location.pathname.includes("tab.html");
-  const currentAccount = useBackgroundSelector(getCurrentAccountState);
-  const currentAddress =
-    !currentAccount || currentAccount === "loading"
-      ? null
-      : currentAccount.address;
-  const activeTab = useBackgroundSelector(selectActiveTab);
-  const allowedPages = useBackgroundSelector(selectAllowedPages);
-  const [currentPermission, setCurrentPermission] = useState<PermissionRequest>(
-    {} as PermissionRequest,
-  );
+	const [isWalletsOpen, setIsWalletsOpen] = useState(false);
+	const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+	const [isNetworksOpen, setIsNetworksOpen] = useState(false);
+	const [isConnectedToDApp, setIsConnectedToDApp] = useState(false);
+	const [isActiveDAppConnectionInfoOpen, setIsActiveDAppConnectionInfoOpen] =
+		useState(false);
+	const showNewTabButton = !window.location.pathname.includes("tab.html");
+	const currentAccount = useBackgroundSelector(getCurrentAccountState);
+	const currentAddress =
+		!currentAccount || currentAccount === "loading"
+			? null
+			: currentAccount.address;
+	const activeTab = useBackgroundSelector(selectActiveTab);
+	const allowedPages = useBackgroundSelector(selectAllowedPages);
+	const [currentPermission, setCurrentPermission] = useState<PermissionRequest>(
+		{} as PermissionRequest,
+	);
 
-  const initPermissionAndOrigin = useCallback(async () => {
-    if (!currentAddress) return;
-    if (!(activeTab?.url)) return;
-    const { origin } = new URL(activeTab.url);
-    const allowPermission = allowedPages[`${origin}_${currentAddress}`];
-    if (allowPermission) {
-      setCurrentPermission(allowPermission);
-      setIsConnectedToDApp(true);
-    } else {
-      setCurrentPermission({} as PermissionRequest);
-      setIsConnectedToDApp(false);
-    }
-  }, [allowedPages, setCurrentPermission, currentAddress, activeTab]);
+	const initPermissionAndOrigin = useCallback(async () => {
+		if (!currentAddress) return;
+		if (!activeTab?.url) return;
+		const { origin } = new URL(activeTab.url);
+		const allowPermission = allowedPages[`${origin}_${currentAddress}`];
+		if (allowPermission) {
+			setCurrentPermission(allowPermission);
+			setIsConnectedToDApp(true);
+		} else {
+			setCurrentPermission({} as PermissionRequest);
+			setIsConnectedToDApp(false);
+		}
+	}, [allowedPages, setCurrentPermission, currentAddress, activeTab]);
 
-  useEffect(() => {
-    initPermissionAndOrigin();
-  }, [initPermissionAndOrigin]);
-  return (
-    <div className="header ">
-      <div className="row">
-        <div className="start">
-          <a
-            href="#_"
-            title="Open manage wallets menu"
-            className="icon_button "
-            onClick={(e) => {
-              e.preventDefault();
-              setIsWalletsOpen(true);
-            }}
-          >
-            <span className="icon accounts_button"> </span>
-          </a>
-          {showNewTabButton ? (
-            <a
-              href="#_"
-              onClick={(e) => {
-                e.preventDefault();
-                openPoktWalletTab();
-                window.close();
-              }}
-              title="Expanded Wallet view"
-              className="icon_button"
-            >
-              <span className="icon icon_new_tab"> </span>
-            </a>
-          ) : null}
-        </div>
-        <div className="center">
-          <DappConnectivityButton
-            title={
-              currentAccount !== "loading" &&
-              currentAccount &&
-              currentAccount.name
-                ? currentAccount.name
-                : "Your Wallet"
-            }
-            onClick={() => {
-              setIsActiveDAppConnectionInfoOpen(
-                !isActiveDAppConnectionInfoOpen,
-              );
-            }}
-            connected={isConnectedToDApp}
-          />
-        </div>
-        <div className="end">
-          {
-            // TODO: v0.4.0 wPOKT bridge: re-enable network selector
-            process.env.NODE_ENV === "development" ? (
-              <a
-                href="#_"
-                title="Open network menu"
-                className="icon_button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setIsNetworksOpen(true);
-                }}
-              >
-                <Icon
-                  width="1.25rem"
-                  height="1.25rem"
-                  icon="fluent:database-switch-20-regular"
-                />
-              </a>
-            ) : undefined
-          }
-          <a
-            href="#_"
-            title="Open settings menu"
-            className="icon_button"
-            onClick={(e) => {
-              e.preventDefault();
-              setIsSettingsOpen(true);
-            }}
-          >
-            <span className="icon settings_button"> </span>
-          </a>
-        </div>
-        <SharedSlideUpMenu
-          title={
-            <DappConnectivityButton
-              title="Connected dApps"
-              onClick={() => {}}
-              connected={isConnectedToDApp}
-            />
-          }
-          size="full"
-          isOpen={isActiveDAppConnectionInfoOpen}
-          close={() => {
-            setIsActiveDAppConnectionInfoOpen(false);
-          }}
-        >
-          <WalletConnectedDAppInfo
-            currentPermission={currentPermission}
-            permissions={allowedPages}
-            close={() => {}}
-          />
-        </SharedSlideUpMenu>
+	useEffect(() => {
+		initPermissionAndOrigin();
+	}, [initPermissionAndOrigin]);
+	return (
+		<div className="header ">
+			<div className="row">
+				<div className="start">
+					{/* rome-ignore lint/a11y/useValidAnchor: <explanation> */}
+					<a
+						href="#_"
+						title="Open manage wallets menu"
+						className="icon_button "
+						onClick={(e) => {
+							e.preventDefault();
+							setIsWalletsOpen(true);
+						}}
+					>
+						<span className="icon accounts_button"> </span>
+					</a>
+					{showNewTabButton ? (
+						// rome-ignore lint/a11y/useValidAnchor: to lazy to fix
+						<a
+							href="#_"
+							onClick={(e) => {
+								e.preventDefault();
+								openPoktWalletTab();
+								window.close();
+							}}
+							title="Expanded Wallet view"
+							className="icon_button"
+						>
+							<span className="icon icon_new_tab"> </span>
+						</a>
+					) : null}
+				</div>
+				<div className="center">
+					<DappConnectivityButton
+						title={
+							currentAccount !== "loading" &&
+							currentAccount &&
+							currentAccount.name
+								? currentAccount.name
+								: "Your Wallet"
+						}
+						onClick={() => {
+							setIsActiveDAppConnectionInfoOpen(
+								!isActiveDAppConnectionInfoOpen,
+							);
+						}}
+						connected={isConnectedToDApp}
+					/>
+				</div>
+				<div className="end">
+					{
+						// TODO: v0.4.0 wPOKT bridge: re-enable network selector
+						process.env.NODE_ENV === "development" ? (
+							// rome-ignore lint/a11y/useValidAnchor: to lazy to fix
+							<a
+								href="#_"
+								title="Open network menu"
+								className="icon_button"
+								onClick={(e) => {
+									e.preventDefault();
+									setIsNetworksOpen(true);
+								}}
+							>
+								<Icon
+									width="1.25rem"
+									height="1.25rem"
+									icon="fluent:database-switch-20-regular"
+								/>
+							</a>
+						) : undefined
+					}
+					{/* rome-ignore lint/a11y/useValidAnchor: too lazy to fix */}
+					<a
+						href="#_"
+						title="Open settings menu"
+						className="icon_button"
+						onClick={(e) => {
+							e.preventDefault();
+							setIsSettingsOpen(true);
+						}}
+					>
+						<span className="icon settings_button"> </span>
+					</a>
+				</div>
+				<SharedSlideUpMenu
+					title={
+						<DappConnectivityButton
+							title="Connected dApps"
+							onClick={() => {}}
+							connected={isConnectedToDApp}
+						/>
+					}
+					size="full"
+					isOpen={isActiveDAppConnectionInfoOpen}
+					close={() => {
+						setIsActiveDAppConnectionInfoOpen(false);
+					}}
+				>
+					<WalletConnectedDAppInfo
+						currentPermission={currentPermission}
+						permissions={allowedPages}
+						close={() => {}}
+					/>
+				</SharedSlideUpMenu>
 
-        <SharedSlideUpMenu
-          title="Manage Wallets"
-          size="full"
-          isOpen={isWalletsOpen}
-          close={() => {
-            setIsWalletsOpen(false);
-          }}
-          closeOnClickOutside={!isNetworksOpen}
-          // TODO: v0.4.0 wPOKT bridge: re-enable network selector
-          leftButton={
-            process.env.NODE_ENV === "development" ? (
-              <a
-                href="#_"
-                title="Open network menu"
-                className="icon_button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setIsNetworksOpen(true);
-                }}
-              >
-                <Icon
-                  width="1.25rem"
-                  height="1.25rem"
-                  icon="fluent:database-switch-20-regular"
-                />
-              </a>
-            ) : undefined
-          }
-        >
-          <AccountsNotificationPanel
-            onCurrentAddressChange={() => setIsWalletsOpen(false)}
-          />
-        </SharedSlideUpMenu>
+				<SharedSlideUpMenu
+					title="Manage Wallets"
+					size="full"
+					isOpen={isWalletsOpen}
+					close={() => {
+						setIsWalletsOpen(false);
+					}}
+					closeOnClickOutside={!isNetworksOpen}
+					// TODO: v0.4.0 wPOKT bridge: re-enable network selector
+					leftButton={
+						process.env.NODE_ENV === "development" ? (
+							// rome-ignore lint/a11y/useValidAnchor: too lazy to fix
+							<a
+								href="#_"
+								title="Open network menu"
+								className="icon_button"
+								onClick={(e) => {
+									e.preventDefault();
+									setIsNetworksOpen(true);
+								}}
+							>
+								<Icon
+									width="1.25rem"
+									height="1.25rem"
+									icon="fluent:database-switch-20-regular"
+								/>
+							</a>
+						) : undefined
+					}
+				>
+					<AccountsNotificationPanel
+						onCurrentAddressChange={() => setIsWalletsOpen(false)}
+					/>
+				</SharedSlideUpMenu>
 
-        <SharedSlideUpMenu
-          isOpen={isSettingsOpen}
-          size="full"
-          title="Wallet Settings"
-          close={() => {
-            setIsSettingsOpen(false);
-          }}
-        >
-          <WalletSettings />
-        </SharedSlideUpMenu>
+				<SharedSlideUpMenu
+					isOpen={isSettingsOpen}
+					size="full"
+					title="Wallet Settings"
+					close={() => {
+						setIsSettingsOpen(false);
+					}}
+				>
+					<WalletSettings />
+				</SharedSlideUpMenu>
 
-        {
-          // TODO: v0.4.0 wPOKT bridge: re-enable network selector
-          process.env.NODE_ENV === "development" ? (
-            <SharedSlideUpMenu
-              isOpen={isNetworksOpen}
-              size="full"
-              title="Change Networks"
-              close={() => {
-                setIsNetworksOpen(false);
-              }}
-            >
-              <NetworkSelector
-                onAddressNetworkChange={() => setIsNetworksOpen(false)}
-              />
-            </SharedSlideUpMenu>
-          ) : null
-        }
-      </div>
-      <style jsx>{`
+				{
+					// TODO: v0.4.0 wPOKT bridge: re-enable network selector
+					process.env.NODE_ENV === "development" ? (
+						<SharedSlideUpMenu
+							isOpen={isNetworksOpen}
+							size="full"
+							title="Change Networks"
+							close={() => {
+								setIsNetworksOpen(false);
+							}}
+						>
+							<NetworkSelector
+								onAddressNetworkChange={() => setIsNetworksOpen(false)}
+							/>
+						</SharedSlideUpMenu>
+					) : null
+				}
+			</div>
+			<style jsx>{`
         .header {
           width: 100%;
           margin-bottom: 1rem;
@@ -342,6 +347,6 @@ export default function WalletHeader() {
           overflow: hidden;
         }
       `}</style>
-    </div>
-  );
+		</div>
+	);
 }

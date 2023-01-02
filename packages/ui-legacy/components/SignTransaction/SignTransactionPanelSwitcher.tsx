@@ -4,21 +4,21 @@ import SignTransactionDetailPanel from "./SignTransactionDetailPanel";
 import SignTransactionRawDataPanel from "./SignTransactionRawDataPanel";
 
 export default function SignTransactionPanelSwitcher(): ReactElement {
-  const [panelNumber, setPanelNumber] = useState(0);
+	const [panelNumber, setPanelNumber] = useState(0);
 
-  return (
-    <div className="wrap">
-      <SharedPanelSwitcher
-        setPanelNumber={setPanelNumber}
-        panelNumber={panelNumber}
-        panelNames={["Details", "Raw data"]}
-      />
-      <div className="panels">
-        {panelNumber === 0 ? <SignTransactionDetailPanel /> : null}
-        {panelNumber === 1 ? <SignTransactionRawDataPanel /> : null}
-      </div>
-      <style jsx>
-        {`
+	return (
+		<div className="wrap">
+			<SharedPanelSwitcher
+				setPanelNumber={setPanelNumber}
+				panelNumber={panelNumber}
+				panelNames={["Details", "Raw data"]}
+			/>
+			<div className="panels">
+				{panelNumber === 0 ? <SignTransactionDetailPanel /> : null}
+				{panelNumber === 1 ? <SignTransactionRawDataPanel /> : null}
+			</div>
+			<style jsx>
+				{`
           .wrap {
             width: 100%;
             display: flex;
@@ -33,7 +33,7 @@ export default function SignTransactionPanelSwitcher(): ReactElement {
             margin-bottom: 0.5rem;
           }
         `}
-      </style>
-    </div>
-  );
+			</style>
+		</div>
+	);
 }

@@ -25,34 +25,34 @@ export type BackgroundDispatch = Main["store"]["dispatch"];
  * with the current background store data.
  */
 export async function newProxyStore(
-  attempts = 0,
+	attempts = 0,
 ): Promise<ProxyStore<RootState, AnyAction>> {
-  if (attempts > 10) {
-    logger.error("Failed to create proxy store", { attempts });
-    throw new Error("Failed to create proxy store");
-  }
+	if (attempts > 10) {
+		logger.error("Failed to create proxy store", { attempts });
+		throw new Error("Failed to create proxy store");
+	}
 
-  try {
-    const proxyStore = new ProxyStore({
-      serializer: encodeJSON,
-      deserializer: decodeJSON,
-      maxReconnects: 10,
-    });
-    await proxyStore.ready();
+	try {
+		const proxyStore = new ProxyStore({
+			serializer: encodeJSON,
+			deserializer: decodeJSON,
+			maxReconnects: 10,
+		});
+		await proxyStore.ready();
 
-    return proxyStore;
-  } catch (e) {
-    logger.warn("Failed to create proxy store", { attempts, e });
-    return newProxyStore(attempts + 1);
-  }
+		return proxyStore;
+	} catch (e) {
+		logger.warn("Failed to create proxy store", { attempts, e });
+		return newProxyStore(attempts + 1);
+	}
 }
 
 /**
  * Starts the API subsystems, including all services.
  */
 export async function startApi(): Promise<Main> {
-  const mainService = await Main.create();
+	const mainService = await Main.create();
 
-  mainService.startService();
-  return mainService.started();
+	mainService.startService();
+	return mainService.started();
 }

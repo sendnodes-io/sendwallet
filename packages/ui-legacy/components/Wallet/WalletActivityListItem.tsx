@@ -2,8 +2,8 @@ import React, { ReactElement } from "react";
 import classNames, { clsx } from "clsx";
 import { ActivityItem } from "@sendnodes/pokt-wallet-background/redux-slices/activities";
 import {
-  isMaxUint256,
-  sameEVMAddress,
+	isMaxUint256,
+	sameEVMAddress,
 } from "@sendnodes/pokt-wallet-background/lib/utils";
 import { HexString } from "@sendnodes/pokt-wallet-background/types";
 import { getRecipient } from "@sendnodes/pokt-wallet-background/redux-slices/utils/activity-utils";
@@ -13,7 +13,7 @@ import { isEmpty, lowerCase } from "lodash";
 import SharedAssetIcon from "../Shared/SharedAssetIcon";
 import formatTokenAmount from "../../utils/formatTokenAmount";
 import getTransactionResult, {
-  TransactionStatus,
+	TransactionStatus,
 } from "../../helpers/get-transaction-result";
 import useStakingAllTransactions from "../../hooks/staking-hooks/use-staking-all-transactions";
 import StakeTransactionInfo from "../Stake/StakeTransactionInfo";
@@ -21,286 +21,286 @@ import TransactionDetailSlideUpMenuBody from "../TransactionDetail/TransactionDe
 import SharedSlideUpMenu from "../Shared/SharedSlideUpMenu";
 
 interface Props {
-  activity: ActivityItem;
-  asAccount: string;
+	activity: ActivityItem;
+	asAccount: string;
 }
 
 function isReceiveActivity(activity: ActivityItem, account: string): boolean {
-  return (
-    activity.annotation?.type === "asset-transfer" &&
-    sameEVMAddress(activity.annotation?.recipientAddress, account)
-  );
+	return (
+		activity.annotation?.type === "asset-transfer" &&
+		sameEVMAddress(activity.annotation?.recipientAddress, account)
+	);
 }
 
 function isSendActivity(activity: ActivityItem, account: string): boolean {
-  return activity.annotation?.type === "asset-transfer"
-    ? sameEVMAddress(activity.annotation?.senderAddress, account)
-    : true;
+	return activity.annotation?.type === "asset-transfer"
+		? sameEVMAddress(activity.annotation?.senderAddress, account)
+		: true;
 }
 
 type WalletActivityListRenderDetails = {
-  icon: (props: any) => JSX.Element;
-  label: string;
-  recipient:
-    | {
-        address: HexString | undefined;
-        name?: string | undefined;
-      }
-    | undefined;
-  assetLogoURL: string | undefined;
-  assetSymbol: string;
-  assetValue: string;
+	icon: (props: unknown) => JSX.Element;
+	label: string;
+	recipient:
+		| {
+				address: HexString | undefined;
+				name?: string | undefined;
+		  }
+		| undefined;
+	assetLogoURL: string | undefined;
+	assetSymbol: string;
+	assetValue: string;
 };
 
 function WalletActivityListIcon({
-  label,
-  iconClass,
+	label,
+	iconClass,
 }: {
-  label?: string;
-  iconClass?: string;
+	label?: string;
+	iconClass?: string;
 }) {
-  return (
-    <div title={label} className={classNames("activity_icon", iconClass)} />
-  );
+	return (
+		<div title={label} className={classNames("activity_icon", iconClass)} />
+	);
 }
 
 export function renderDetailsForActivity(
-  activity: ActivityItem,
-  asAddressOnNetwork: AddressOnNetwork,
+	activity: ActivityItem,
+	asAddressOnNetwork: AddressOnNetwork,
 ) {
-  const txResult = getTransactionResult(activity);
-  const { address: asAccount, network } = asAddressOnNetwork;
+	const txResult = getTransactionResult(activity);
+	const { address: asAccount, network } = asAddressOnNetwork;
 
-  const label =
-    activity.to === asAccount
-      ? txResult.status === "pending"
-        ? "Receiving"
-        : "Receive"
-      : txResult.status === "pending"
-      ? "Sending"
-      : "Send";
-  let renderDetails: WalletActivityListRenderDetails = {
-    icon: () => (
-      <WalletActivityListIcon
-        label={label}
-        iconClass={activity.to === asAccount ? "receive_icon" : "send_icon"}
-      />
-    ),
-    label,
-    recipient: getRecipient(activity),
-    assetLogoURL: undefined,
-    assetSymbol: activity.asset.symbol,
-    assetValue: activity.localizedDecimalValue,
-  };
+	const label =
+		activity.to === asAccount
+			? txResult.status === "pending"
+				? "Receiving"
+				: "Receive"
+			: txResult.status === "pending"
+			? "Sending"
+			: "Send";
+	let renderDetails: WalletActivityListRenderDetails = {
+		icon: () => (
+			<WalletActivityListIcon
+				label={label}
+				iconClass={activity.to === asAccount ? "receive_icon" : "send_icon"}
+			/>
+		),
+		label,
+		recipient: getRecipient(activity),
+		assetLogoURL: undefined,
+		assetSymbol: activity.asset.symbol,
+		assetValue: activity.localizedDecimalValue,
+	};
 
-  if (network.family === "EVM") {
-    switch (activity.annotation?.type) {
-      case "asset-transfer":
-        renderDetails = {
-          ...renderDetails,
-          icon: () => (
-            <WalletActivityListIcon
-              label={
-                isReceiveActivity(activity, asAccount) ? "Receive" : "Send"
-              }
-              iconClass={
-                isReceiveActivity(activity, asAccount)
-                  ? "receive_icon"
-                  : "send_icon"
-              }
-            />
-          ),
-          label: isReceiveActivity(activity, asAccount) ? "Receive" : "Send",
-          assetLogoURL: activity.annotation.transactionLogoURL,
-          assetSymbol: activity.annotation.assetAmount.asset.symbol,
-          assetValue: activity.annotation.assetAmount.localizedDecimalAmount,
-        };
-        break;
-      case "asset-approval":
-        renderDetails = {
-          label: "Token approval",
-          icon: () => (
-            <WalletActivityListIcon
-              label="Token approval"
-              iconClass="approve_icon"
-            />
-          ),
-          recipient: {
-            address: activity.annotation.spenderAddress,
-            name: activity.annotation.spenderName,
-          },
-          assetLogoURL: activity.annotation.transactionLogoURL,
-          assetSymbol: activity.annotation.assetAmount.asset.symbol,
-          assetValue: isMaxUint256(activity.annotation.assetAmount.amount)
-            ? "Infinite"
-            : activity.annotation.assetAmount.localizedDecimalAmount,
-        };
-        break;
-      case "asset-swap":
-        renderDetails = {
-          icon: () => (
-            <WalletActivityListIcon label="Swap" iconClass="swap_icon" />
-          ),
-          label: "Swap",
-          recipient: getRecipient(activity),
-          assetLogoURL: activity.annotation.transactionLogoURL,
-          assetSymbol: activity.asset.symbol,
-          assetValue: activity.localizedDecimalValue,
-        };
-        break;
-      case "contract-deployment":
-      case "contract-interaction":
-      default:
-        renderDetails = {
-          icon: () => (
-            <WalletActivityListIcon
-              label="Contract Interaction"
-              iconClass="contract_interaction_icon"
-            />
-          ),
-          label: "Contract Interaction",
-          recipient: getRecipient(activity),
-          // TODO fall back to the asset URL we have in metadata
-          assetLogoURL: activity.annotation?.transactionLogoURL,
-          assetSymbol: activity.asset.symbol,
-          assetValue: activity.localizedDecimalValue,
-        };
-    }
-  }
-  return renderDetails;
+	if (network.family === "EVM") {
+		switch (activity.annotation?.type) {
+			case "asset-transfer":
+				renderDetails = {
+					...renderDetails,
+					icon: () => (
+						<WalletActivityListIcon
+							label={
+								isReceiveActivity(activity, asAccount) ? "Receive" : "Send"
+							}
+							iconClass={
+								isReceiveActivity(activity, asAccount)
+									? "receive_icon"
+									: "send_icon"
+							}
+						/>
+					),
+					label: isReceiveActivity(activity, asAccount) ? "Receive" : "Send",
+					assetLogoURL: activity.annotation.transactionLogoURL,
+					assetSymbol: activity.annotation.assetAmount.asset.symbol,
+					assetValue: activity.annotation.assetAmount.localizedDecimalAmount,
+				};
+				break;
+			case "asset-approval":
+				renderDetails = {
+					label: "Token approval",
+					icon: () => (
+						<WalletActivityListIcon
+							label="Token approval"
+							iconClass="approve_icon"
+						/>
+					),
+					recipient: {
+						address: activity.annotation.spenderAddress,
+						name: activity.annotation.spenderName,
+					},
+					assetLogoURL: activity.annotation.transactionLogoURL,
+					assetSymbol: activity.annotation.assetAmount.asset.symbol,
+					assetValue: isMaxUint256(activity.annotation.assetAmount.amount)
+						? "Infinite"
+						: activity.annotation.assetAmount.localizedDecimalAmount,
+				};
+				break;
+			case "asset-swap":
+				renderDetails = {
+					icon: () => (
+						<WalletActivityListIcon label="Swap" iconClass="swap_icon" />
+					),
+					label: "Swap",
+					recipient: getRecipient(activity),
+					assetLogoURL: activity.annotation.transactionLogoURL,
+					assetSymbol: activity.asset.symbol,
+					assetValue: activity.localizedDecimalValue,
+				};
+				break;
+			case "contract-deployment":
+			case "contract-interaction":
+			default:
+				renderDetails = {
+					icon: () => (
+						<WalletActivityListIcon
+							label="Contract Interaction"
+							iconClass="contract_interaction_icon"
+						/>
+					),
+					label: "Contract Interaction",
+					recipient: getRecipient(activity),
+					// TODO fall back to the asset URL we have in metadata
+					assetLogoURL: activity.annotation?.transactionLogoURL,
+					assetSymbol: activity.asset.symbol,
+					assetValue: activity.localizedDecimalValue,
+				};
+		}
+	}
+	return renderDetails;
 }
 
 export default function WalletActivityListItem(props: Props): ReactElement {
-  const [isOpen, setIsOpen] = React.useState(false);
-  const { data: allStakingTransactions } = useStakingAllTransactions();
-  const { activity, asAccount } = props;
-  const { network } = activity;
+	const [isOpen, setIsOpen] = React.useState(false);
+	const { data: allStakingTransactions } = useStakingAllTransactions();
+	const { activity, asAccount } = props;
+	const { network } = activity;
 
-  let from;
-  if ("from" in activity) from = activity.from;
-  if ("txResult" in activity) from = activity.txResult?.signer;
-  const txResult = getTransactionResult(activity);
+	let from;
+	if ("from" in activity) from = activity.from;
+	if ("txResult" in activity) from = activity.txResult?.signer;
+	const txResult = getTransactionResult(activity);
 
-  const stakingTransaction = allStakingTransactions.find(
-    (tx) => tx.hash === activity.hash,
-  );
+	const stakingTransaction = allStakingTransactions.find(
+		(tx) => tx.hash === activity.hash,
+	);
 
-  const renderDetails = renderDetailsForActivity(activity, {
-    address: asAccount,
-    network,
-  });
+	const renderDetails = renderDetailsForActivity(activity, {
+		address: asAccount,
+		network,
+	});
 
-  return stakingTransaction ? (
-    <StakeTransactionInfo transaction={stakingTransaction}>
-      {(stakingTransaction) => (
-        <>
-          <WalletActivityListItemComponent
-            status={txResult.status}
-            onClick={() => setIsOpen(true)}
-            activity={activity}
-            renderDetails={{
-              ...renderDetails,
-              icon: () => (
-                <stakingTransaction.Icon
-                  pending={txResult.status === "pending"}
-                  className={clsx("h-5 w-5", stakingTransaction.color, {
-                    uncompound: stakingTransaction.isUncompound,
-                  })}
-                  aria-hidden="true"
-                />
-              ),
-              label: stakingTransaction.humanReadableAction,
-              assetValue: formatTokenAmount(
-                stakingTransaction.tokenValue,
-                6,
-                2,
-              ),
-            }}
-          />
+	return stakingTransaction ? (
+		<StakeTransactionInfo transaction={stakingTransaction}>
+			{(stakingTransaction) => (
+				<>
+					<WalletActivityListItemComponent
+						status={txResult.status}
+						onClick={() => setIsOpen(true)}
+						activity={activity}
+						renderDetails={{
+							...renderDetails,
+							icon: () => (
+								<stakingTransaction.Icon
+									pending={txResult.status === "pending"}
+									className={clsx("h-5 w-5", stakingTransaction.color, {
+										uncompound: stakingTransaction.isUncompound,
+									})}
+									aria-hidden="true"
+								/>
+							),
+							label: stakingTransaction.humanReadableAction,
+							assetValue: formatTokenAmount(
+								stakingTransaction.tokenValue,
+								6,
+								2,
+							),
+						}}
+					/>
 
-          <SharedSlideUpMenu
-            title={
-              stakingTransaction?.humanReadableAction ?? "Signed Transaction"
-            }
-            isOpen={isOpen}
-            close={() => setIsOpen(false)}
-            size="full"
-          >
-            <TransactionDetailSlideUpMenuBody activity={activity} />
-          </SharedSlideUpMenu>
-        </>
-      )}
-    </StakeTransactionInfo>
-  ) : (
-    <>
-      <WalletActivityListItemComponent
-        status={txResult.status}
-        renderDetails={renderDetails}
-        activity={activity}
-        onClick={() => setIsOpen(true)}
-      />
-      <SharedSlideUpMenu
-        title={renderDetails.label}
-        isOpen={isOpen}
-        close={() => setIsOpen(false)}
-        size="full"
-      >
-        <TransactionDetailSlideUpMenuBody activity={activity} />
-      </SharedSlideUpMenu>
-    </>
-  );
+					<SharedSlideUpMenu
+						title={
+							stakingTransaction?.humanReadableAction ?? "Signed Transaction"
+						}
+						isOpen={isOpen}
+						close={() => setIsOpen(false)}
+						size="full"
+					>
+						<TransactionDetailSlideUpMenuBody activity={activity} />
+					</SharedSlideUpMenu>
+				</>
+			)}
+		</StakeTransactionInfo>
+	) : (
+		<>
+			<WalletActivityListItemComponent
+				status={txResult.status}
+				renderDetails={renderDetails}
+				activity={activity}
+				onClick={() => setIsOpen(true)}
+			/>
+			<SharedSlideUpMenu
+				title={renderDetails.label}
+				isOpen={isOpen}
+				close={() => setIsOpen(false)}
+				size="full"
+			>
+				<TransactionDetailSlideUpMenuBody activity={activity} />
+			</SharedSlideUpMenu>
+		</>
+	);
 }
 
 type WalletActivityListItemComponentProps = {
-  status: TransactionStatus;
-  onClick: () => void;
-  renderDetails: WalletActivityListRenderDetails;
-  activity: ActivityItem;
+	status: TransactionStatus;
+	onClick: () => void;
+	renderDetails: WalletActivityListRenderDetails;
+	activity: ActivityItem;
 };
 
 function WalletActivityListItemComponent({
-  status,
-  onClick,
-  renderDetails,
-  activity,
+	status,
+	onClick,
+	renderDetails,
+	activity,
 }: WalletActivityListItemComponentProps): ReactElement {
-  return (
-    <li className={`${status}`}>
-      <button type="button" onClick={onClick}>
-        <div className="row">
-          <div className="left">
-            <div className="activity_icon_wrap">
-              <renderDetails.icon />
-            </div>
+	return (
+		<li className={`${status}`}>
+			<button type="button" onClick={onClick}>
+				<div className="row">
+					<div className="left">
+						<div className="activity_icon_wrap">
+							<renderDetails.icon />
+						</div>
 
-            <SharedAssetIcon
-              // TODO this should come from a connected component that knows
-              // about all of our asset metadata
-              logoURL={renderDetails.assetLogoURL}
-              symbol={renderDetails.assetSymbol}
-              size="small"
-            />
-            <div className="amount">{renderDetails.assetValue}</div>
-          </div>
-          <div className="right">
-            {isEmpty(renderDetails.label)
-              ? status
-              : lowerCase(renderDetails.label)}
-            {activity.timestamp ? (
-              <>
-                &nbsp;-&nbsp;
-                <span title={activity.unixTimestamp}>
-                  {activity.relativeTimestamp}
-                </span>
-              </>
-            ) : (
-              <></>
-            )}
-          </div>
-        </div>
-      </button>
-      <style jsx>
-        {`
+						<SharedAssetIcon
+							// TODO this should come from a connected component that knows
+							// about all of our asset metadata
+							logoURL={renderDetails.assetLogoURL}
+							symbol={renderDetails.assetSymbol}
+							size="small"
+						/>
+						<div className="amount">{renderDetails.assetValue}</div>
+					</div>
+					<div className="right">
+						{isEmpty(renderDetails.label)
+							? status
+							: lowerCase(renderDetails.label)}
+						{activity.timestamp ? (
+							<>
+								&nbsp;-&nbsp;
+								<span title={activity.unixTimestamp}>
+									{activity.relativeTimestamp}
+								</span>
+							</>
+						) : (
+							<></>
+						)}
+					</div>
+				</div>
+			</button>
+			<style jsx>
+				{`
           li {
             overflow: hidden;
             position: relative;
@@ -462,7 +462,7 @@ function WalletActivityListItemComponent({
             height: 12px;
           }
         `}
-      </style>
-    </li>
-  );
+			</style>
+		</li>
+	);
 }

@@ -2,12 +2,12 @@
  * An encrypted vault which can be safely serialized and stored.
  */
 export type EncryptedVault = {
-  // a base-64 encoded salt, required for decryption
-  salt: string;
-  // a base-64 encoded AES-GCM init vector, required for decryption
-  initializationVector: string;
-  // base-64 encoded ciphertext holding the vault contents
-  cipherText: string;
+	// a base-64 encoded salt, required for decryption
+	salt: string;
+	// a base-64 encoded AES-GCM init vector, required for decryption
+	initializationVector: string;
+	// base-64 encoded ciphertext holding the vault contents
+	cipherText: string;
 };
 
 /*
@@ -17,21 +17,21 @@ export type EncryptedVault = {
  * a plaintext password lying around.
  */
 export type SaltedKey = {
-  salt: string;
-  key: CryptoKey;
+	salt: string;
+	key: CryptoKey;
 };
 
 function bufferToBase64(array: Uint8Array): string {
-  return Buffer.from(array).toString("base64");
+	return Buffer.from(array).toString("base64");
 }
 
 function base64ToBuffer(s: string): Uint8Array {
-  return Buffer.from(s, "base64");
+	return Buffer.from(s, "base64");
 }
 
 async function generateSalt(): Promise<string> {
-  const saltBuffer = crypto.getRandomValues(new Uint8Array(64));
-  return bufferToBase64(saltBuffer);
+	const saltBuffer = crypto.getRandomValues(new Uint8Array(64));
+	return bufferToBase64(saltBuffer);
 }
 
 /**
@@ -39,13 +39,13 @@ async function generateSalt(): Promise<string> {
  * to polyfills.
  */
 function requireCryptoGlobal(message?: string) {
-  if (global.crypto === undefined) {
-    throw new Error(
-      `${
-        message || "SendWallet"
-      } requires WebCrypto API support — is this being run in a modern browser?`,
-    );
-  }
+	if (global.crypto === undefined) {
+		throw new Error(
+			`${
+				message || "SendWallet"
+			} requires WebCrypto API support — is this being run in a modern browser?`,
+		);
+	}
 }
 
 /**
@@ -65,40 +65,40 @@ function requireCryptoGlobal(message?: string) {
  *          the key again later.
  */
 export async function deriveSymmetricKeyFromPassword(
-  password: string,
-  existingSalt?: string,
+	password: string,
+	existingSalt?: string,
 ): Promise<SaltedKey> {
-  const { crypto } = global;
+	const { crypto } = global;
 
-  const salt = existingSalt || (await generateSalt());
+	const salt = existingSalt || (await generateSalt());
 
-  const encoder = new TextEncoder();
+	const encoder = new TextEncoder();
 
-  const derivationKey = await crypto.subtle.importKey(
-    "raw",
-    encoder.encode(password),
-    { name: "PBKDF2" },
-    false,
-    ["deriveKey"],
-  );
+	const derivationKey = await crypto.subtle.importKey(
+		"raw",
+		encoder.encode(password),
+		{ name: "PBKDF2" },
+		false,
+		["deriveKey"],
+	);
 
-  const key = await crypto.subtle.deriveKey(
-    {
-      name: "PBKDF2",
-      salt: encoder.encode(salt),
-      iterations: 1000000,
-      hash: "SHA-256",
-    },
-    derivationKey,
-    { name: "AES-GCM", length: 256 },
-    true, // needed for storing in session
-    ["encrypt", "decrypt"],
-  );
+	const key = await crypto.subtle.deriveKey(
+		{
+			name: "PBKDF2",
+			salt: encoder.encode(salt),
+			iterations: 1000000,
+			hash: "SHA-256",
+		},
+		derivationKey,
+		{ name: "AES-GCM", length: 256 },
+		true, // needed for storing in session
+		["encrypt", "decrypt"],
+	);
 
-  return {
-    key,
-    salt,
-  };
+	return {
+		key,
+		salt,
+	};
 }
 
 /**
@@ -112,36 +112,36 @@ export async function deriveSymmetricKeyFromPassword(
  *          decryption, including the salt and AES initialization vector.
  */
 export async function encryptVault<V>(
-  vault: V,
-  passwordOrSaltedKey: string | SaltedKey,
+	vault: V,
+	passwordOrSaltedKey: string | SaltedKey,
 ): Promise<EncryptedVault> {
-  requireCryptoGlobal("Encrypting a vault");
-  const { crypto } = global;
+	requireCryptoGlobal("Encrypting a vault");
+	const { crypto } = global;
 
-  const { key, salt } =
-    typeof passwordOrSaltedKey === "string"
-      ? await deriveSymmetricKeyFromPassword(passwordOrSaltedKey)
-      : passwordOrSaltedKey;
+	const { key, salt } =
+		typeof passwordOrSaltedKey === "string"
+			? await deriveSymmetricKeyFromPassword(passwordOrSaltedKey)
+			: passwordOrSaltedKey;
 
-  const encoder = new TextEncoder();
+	const encoder = new TextEncoder();
 
-  const initializationVector = crypto.getRandomValues(new Uint8Array(16));
+	const initializationVector = crypto.getRandomValues(new Uint8Array(16));
 
-  const encodedPlaintext = encoder.encode(JSON.stringify(vault));
+	const encodedPlaintext = encoder.encode(JSON.stringify(vault));
 
-  const cipherText = await crypto.subtle.encrypt(
-    // note we use GCM mode to get authentication guarantees / tamper
-    // resistance
-    { name: "AES-GCM", iv: initializationVector },
-    key,
-    encodedPlaintext,
-  );
+	const cipherText = await crypto.subtle.encrypt(
+		// note we use GCM mode to get authentication guarantees / tamper
+		// resistance
+		{ name: "AES-GCM", iv: initializationVector },
+		key,
+		encodedPlaintext,
+	);
 
-  return {
-    salt,
-    initializationVector: bufferToBase64(initializationVector),
-    cipherText: bufferToBase64(cipherText),
-  };
+	return {
+		salt,
+		initializationVector: bufferToBase64(initializationVector),
+		cipherText: bufferToBase64(cipherText),
+	};
 }
 
 /**
@@ -160,24 +160,24 @@ export async function encryptVault<V>(
  *          should deeply equal `o`.
  */
 export async function decryptVault<V>(
-  vault: EncryptedVault,
-  passwordOrSaltedKey: string | SaltedKey,
+	vault: EncryptedVault,
+	passwordOrSaltedKey: string | SaltedKey,
 ): Promise<V> {
-  requireCryptoGlobal("Decrypting a vault");
-  const { crypto } = global;
+	requireCryptoGlobal("Decrypting a vault");
+	const { crypto } = global;
 
-  const { initializationVector, salt, cipherText } = vault;
+	const { initializationVector, salt, cipherText } = vault;
 
-  const { key } =
-    typeof passwordOrSaltedKey === "string"
-      ? await deriveSymmetricKeyFromPassword(passwordOrSaltedKey, salt)
-      : passwordOrSaltedKey;
+	const { key } =
+		typeof passwordOrSaltedKey === "string"
+			? await deriveSymmetricKeyFromPassword(passwordOrSaltedKey, salt)
+			: passwordOrSaltedKey;
 
-  const plaintext = await crypto.subtle.decrypt(
-    { name: "AES-GCM", iv: base64ToBuffer(initializationVector) },
-    key,
-    base64ToBuffer(cipherText),
-  );
+	const plaintext = await crypto.subtle.decrypt(
+		{ name: "AES-GCM", iv: base64ToBuffer(initializationVector) },
+		key,
+		base64ToBuffer(cipherText),
+	);
 
-  return JSON.parse(new TextDecoder().decode(plaintext));
+	return JSON.parse(new TextDecoder().decode(plaintext));
 }

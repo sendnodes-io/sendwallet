@@ -13,27 +13,27 @@ import { JSONSchemaType } from "ajv";
 // Ajv v9 via
 // https://github.com/ajv-validator/ajv/commit/b4b806fd03a9906e9126ad86cef233fa405c9a3e
 export const coingeckoPriceSchema: JSONSchemaType<CoingeckoPriceData> = {
-  type: "object",
-  required: [],
-  additionalProperties: {
-    type: "object",
-    properties: {
-      last_updated_at: { type: "number" } as {
-        type: "number";
-        nullable: true;
-      },
-    },
-    required: ["last_updated_at"] as never[],
-    additionalProperties: { type: "number", nullable: true },
-    nullable: true,
-  },
+	type: "object",
+	required: [],
+	additionalProperties: {
+		type: "object",
+		properties: {
+			last_updated_at: { type: "number" } as {
+				type: "number";
+				nullable: true;
+			},
+		},
+		required: ["last_updated_at"] as never[],
+		additionalProperties: { type: "number", nullable: true },
+		nullable: true,
+	},
 };
 
 export type CoingeckoPriceData = {
-  [coinId: string]:
-    | {
-        last_updated_at: number;
-        [currencyId: string]: number | undefined;
-      }
-    | undefined;
+	[coinId: string]:
+		| {
+				last_updated_at: number;
+				[currencyId: string]: number | undefined;
+		  }
+		| undefined;
 };

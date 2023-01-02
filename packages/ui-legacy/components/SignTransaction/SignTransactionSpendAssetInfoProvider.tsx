@@ -1,11 +1,11 @@
 import {
-  ERC20_FUNCTIONS,
-  ERC20_INTERFACE,
+	ERC20_FUNCTIONS,
+	ERC20_INTERFACE,
 } from "@sendnodes/pokt-wallet-background/lib/erc20";
 import {
-  convertFixedPointNumber,
-  fixedPointNumberToString,
-  parseToFixedPointNumber,
+	convertFixedPointNumber,
+	fixedPointNumberToString,
+	parseToFixedPointNumber,
 } from "@sendnodes/pokt-wallet-background/lib/fixed-point";
 import { isMaxUint256 } from "@sendnodes/pokt-wallet-background/lib/utils";
 import { updateTransactionOptions } from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction";
@@ -25,203 +25,203 @@ import TransactionDetailAddressValue from "../TransactionDetail/TransactionDetai
 import TransactionDetailContainer from "../TransactionDetail/TransactionDetailContainer";
 import TransactionDetailItem from "../TransactionDetail/TransactionDetailItem";
 import SignTransactionBaseInfoProvider, {
-  SignTransactionInfoProviderProps,
+	SignTransactionInfoProviderProps,
 } from "./SignTransactionBaseInfoProvider";
 import SharedAddress from "../Shared/SharedAddress";
 
 export default function SignTransactionSpendAssetInfoProvider({
-  transactionDetails,
-  annotation,
-  inner,
+	transactionDetails,
+	annotation,
+	inner,
 }: SignTransactionInfoProviderProps<AssetApproval>): ReactElement {
-  const dispatch = useDispatch();
-  const {
-    assetAmount: { asset, amount: approvalLimit },
-    spenderAddress,
-  } = annotation;
-  // `null` means no limit
-  const approvalLimitString = isMaxUint256(approvalLimit)
-    ? null
-    : fixedPointNumberToString({
-        amount: approvalLimit,
-        decimals: asset.decimals,
-      });
+	const dispatch = useDispatch();
+	const {
+		assetAmount: { asset, amount: approvalLimit },
+		spenderAddress,
+	} = annotation;
+	// `null` means no limit
+	const approvalLimitString = isMaxUint256(approvalLimit)
+		? null
+		: fixedPointNumberToString({
+				amount: approvalLimit,
+				decimals: asset.decimals,
+		  });
 
-  const approvalLimitDisplayValue = `${
-    approvalLimitString ?? "Infinite"
-  } ${asset?.symbol.toUpperCase()}`;
+	const approvalLimitDisplayValue = `${
+		approvalLimitString ?? "Infinite"
+	} ${asset?.symbol.toUpperCase()}`;
 
-  const [approvalLimitInput, setApprovalLimitInput] = useState<string | null>(
-    null,
-  );
+	const [approvalLimitInput, setApprovalLimitInput] = useState<string | null>(
+		null,
+	);
 
-  const [hasError, setHasError] = useState(false);
+	const [hasError, setHasError] = useState(false);
 
-  const changing = approvalLimitInput !== null;
+	const changing = approvalLimitInput !== null;
 
-  const handleChangeClick = () => {
-    setApprovalLimitInput(approvalLimitString ?? "");
-  };
+	const handleChangeClick = () => {
+		setApprovalLimitInput(approvalLimitString ?? "");
+	};
 
-  const handleCancelClick = () => {
-    setApprovalLimitInput(null);
-  };
+	const handleCancelClick = () => {
+		setApprovalLimitInput(null);
+	};
 
-  const handleSaveClick = () => {
-    if (!changing) return;
+	const handleSaveClick = () => {
+		if (!changing) return;
 
-    if (
-      approvalLimitInput === "" ||
-      approvalLimitInput === approvalLimitString
-    ) {
-      return;
-    }
+		if (
+			approvalLimitInput === "" ||
+			approvalLimitInput === approvalLimitString
+		) {
+			return;
+		}
 
-    const decimalAmount = parseToFixedPointNumber(approvalLimitInput);
+		const decimalAmount = parseToFixedPointNumber(approvalLimitInput);
 
-    if (
-      decimalAmount === undefined ||
-      (decimalAmount !== null && decimalAmount.amount < 0n)
-    ) {
-      setHasError(true);
-      return;
-    }
+		if (
+			decimalAmount === undefined ||
+			(decimalAmount !== null && decimalAmount.amount < 0n)
+		) {
+			setHasError(true);
+			return;
+		}
 
-    const bigintAmount =
-      decimalAmount === null
-        ? ethers.constants.MaxUint256.toBigInt()
-        : convertFixedPointNumber(decimalAmount, asset.decimals).amount;
+		const bigintAmount =
+			decimalAmount === null
+				? ethers.constants.MaxUint256.toBigInt()
+				: convertFixedPointNumber(decimalAmount, asset.decimals).amount;
 
-    setApprovalLimitInput(null);
+		setApprovalLimitInput(null);
 
-    const updatedInput = ERC20_INTERFACE.encodeFunctionData(
-      ERC20_FUNCTIONS.approve,
-      [spenderAddress, hexlify(bigintAmount)],
-    );
-    dispatch(
-      updateTransactionOptions({
-        ...transactionDetails,
-        input: updatedInput,
-      }),
-    );
-  };
+		const updatedInput = ERC20_INTERFACE.encodeFunctionData(
+			ERC20_FUNCTIONS.approve,
+			[spenderAddress, hexlify(bigintAmount)],
+		);
+		dispatch(
+			updateTransactionOptions({
+				...transactionDetails,
+				input: updatedInput,
+			}),
+		);
+	};
 
-  return (
-    <SignTransactionBaseInfoProvider
-      title="Approve asset spend"
-      confirmButtonLabel="Approve"
-      infoBlock={
-        <>
-          <div className="spend_destination_icons">
-            <div className="site_icon" />
-            <div className="asset_icon_wrap">
-              <SharedAssetIcon
-                size="large"
-                symbol={asset.symbol}
-                logoURL={asset.metadata?.logoURL}
-              />
-            </div>
-          </div>
-          <span className="site">
-            Approve{" "}
-            <SharedAddress
-              address={spenderAddress}
-              name={annotation.spenderName}
-            />
-          </span>
-          <span className="spending_label">
-            {asset.symbol ? (
-              `Spend ${
-                asset.symbol ?? (
-                  <SharedAddress
-                    address={
-                      "to" in transactionDetails
-                        ? (transactionDetails.to as string)
-                        : ""
-                    }
-                  />
-                )
-              } tokens`
-            ) : (
-              <SharedSkeletonLoader />
-            )}
-          </span>
-          <form onSubmit={(event) => event.preventDefault()}>
-            <div className="spend_limit_header">
-              <span className="spend_limit_label">Spend limit</span>
-              <SharedTooltip width={250}>
-                <p className="spend_limit_tooltip">
-                  Spend limit is the amount of funds from a particular asset,
-                  that you allow a contract to spend.
-                </p>
-                <p className="spend_limit_tooltip">
-                  Infinite tx has the drawback that if the contract is
-                  mailicous, it can steal all your funds.
-                </p>
-              </SharedTooltip>
-            </div>
-            {changing ? (
-              <div>
-                <SharedInput
-                  label=""
-                  value={approvalLimitInput}
-                  placeholder={approvalLimitString ?? ""}
-                  onChange={(value) => {
-                    setApprovalLimitInput(value);
-                    setHasError(false);
-                  }}
-                  errorMessage={hasError ? "Invalid amount" : undefined}
-                  autoSelect
-                />
-                <div
-                  className={classNames("change_limit_actions", {
-                    has_error: hasError,
-                  })}
-                >
-                  <SharedButton
-                    size="small"
-                    type="tertiary"
-                    onClick={handleCancelClick}
-                  >
-                    Cancel
-                  </SharedButton>
-                  <SharedButton
-                    size="small"
-                    isFormSubmit
-                    type="tertiary"
-                    onClick={handleSaveClick}
-                    isDisabled={
-                      approvalLimitInput === "" ||
-                      approvalLimitInput === approvalLimitString
-                    }
-                  >
-                    Save
-                  </SharedButton>
-                </div>
-              </div>
-            ) : (
-              <>
-                <span
-                  className={classNames("spend_amount", {
-                    has_error: approvalLimitString === null,
-                  })}
-                >
-                  {approvalLimitDisplayValue}
-                </span>
-                <SharedButton
-                  size="small"
-                  isFormSubmit
-                  type="tertiary"
-                  onClick={handleChangeClick}
-                >
-                  Change limit
-                </SharedButton>
-              </>
-            )}
-          </form>
-          <div className="spacer" />
-          <style jsx>
-            {`
+	return (
+		<SignTransactionBaseInfoProvider
+			title="Approve asset spend"
+			confirmButtonLabel="Approve"
+			infoBlock={
+				<>
+					<div className="spend_destination_icons">
+						<div className="site_icon" />
+						<div className="asset_icon_wrap">
+							<SharedAssetIcon
+								size="large"
+								symbol={asset.symbol}
+								logoURL={asset.metadata?.logoURL}
+							/>
+						</div>
+					</div>
+					<span className="site">
+						Approve{" "}
+						<SharedAddress
+							address={spenderAddress}
+							name={annotation.spenderName}
+						/>
+					</span>
+					<span className="spending_label">
+						{asset.symbol ? (
+							`Spend ${
+								asset.symbol ?? (
+									<SharedAddress
+										address={
+											"to" in transactionDetails
+												? (transactionDetails.to as string)
+												: ""
+										}
+									/>
+								)
+							} tokens`
+						) : (
+							<SharedSkeletonLoader />
+						)}
+					</span>
+					<form onSubmit={(event) => event.preventDefault()}>
+						<div className="spend_limit_header">
+							<span className="spend_limit_label">Spend limit</span>
+							<SharedTooltip width={250}>
+								<p className="spend_limit_tooltip">
+									Spend limit is the amount of funds from a particular asset,
+									that you allow a contract to spend.
+								</p>
+								<p className="spend_limit_tooltip">
+									Infinite tx has the drawback that if the contract is
+									mailicous, it can steal all your funds.
+								</p>
+							</SharedTooltip>
+						</div>
+						{changing ? (
+							<div>
+								<SharedInput
+									label=""
+									value={approvalLimitInput}
+									placeholder={approvalLimitString ?? ""}
+									onChange={(value) => {
+										setApprovalLimitInput(value);
+										setHasError(false);
+									}}
+									errorMessage={hasError ? "Invalid amount" : undefined}
+									autoSelect
+								/>
+								<div
+									className={classNames("change_limit_actions", {
+										has_error: hasError,
+									})}
+								>
+									<SharedButton
+										size="small"
+										type="tertiary"
+										onClick={handleCancelClick}
+									>
+										Cancel
+									</SharedButton>
+									<SharedButton
+										size="small"
+										isFormSubmit
+										type="tertiary"
+										onClick={handleSaveClick}
+										isDisabled={
+											approvalLimitInput === "" ||
+											approvalLimitInput === approvalLimitString
+										}
+									>
+										Save
+									</SharedButton>
+								</div>
+							</div>
+						) : (
+							<>
+								<span
+									className={classNames("spend_amount", {
+										has_error: approvalLimitString === null,
+									})}
+								>
+									{approvalLimitDisplayValue}
+								</span>
+								<SharedButton
+									size="small"
+									isFormSubmit
+									type="tertiary"
+									onClick={handleChangeClick}
+								>
+									Change limit
+								</SharedButton>
+							</>
+						)}
+					</form>
+					<div className="spacer" />
+					<style jsx>
+						{`
               .site_icon {
                 background: url("./images/dapp_favicon_default@2x.png");
                 background-size: cover;
@@ -290,45 +290,45 @@ export default function SignTransactionSpendAssetInfoProvider({
                 margin-bottom: 18px;
               }
             `}
-          </style>
-        </>
-      }
-      textualInfoBlock={
-        <TransactionDetailContainer
-          footer={
-            <TransactionDetailItem
-              name="Estimated network fee"
-              value={<FeeSettingsText />}
-            />
-          }
-        >
-          <TransactionDetailItem name="Type" value="Approve asset spend" />
-          <TransactionDetailItem
-            name="Spend limit"
-            value={
-              asset?.symbol ? (
-                approvalLimitDisplayValue
-              ) : (
-                <SharedSkeletonLoader />
-              )
-            }
-          />
-          <TransactionDetailItem
-            name="Contract address"
-            value={
-              <TransactionDetailAddressValue
-                address={
-                  "to" in transactionDetails
-                    ? (transactionDetails.to as string)
-                    : ""
-                }
-              />
-            }
-          />
-          {/* TODO: Add "Interacting with" line (i.e., readable version of `transactionDetails.to`?) */}
-        </TransactionDetailContainer>
-      }
-      inner={inner}
-    />
-  );
+					</style>
+				</>
+			}
+			textualInfoBlock={
+				<TransactionDetailContainer
+					footer={
+						<TransactionDetailItem
+							name="Estimated network fee"
+							value={<FeeSettingsText />}
+						/>
+					}
+				>
+					<TransactionDetailItem name="Type" value="Approve asset spend" />
+					<TransactionDetailItem
+						name="Spend limit"
+						value={
+							asset?.symbol ? (
+								approvalLimitDisplayValue
+							) : (
+								<SharedSkeletonLoader />
+							)
+						}
+					/>
+					<TransactionDetailItem
+						name="Contract address"
+						value={
+							<TransactionDetailAddressValue
+								address={
+									"to" in transactionDetails
+										? (transactionDetails.to as string)
+										: ""
+								}
+							/>
+						}
+					/>
+					{/* TODO: Add "Interacting with" line (i.e., readable version of `transactionDetails.to`?) */}
+				</TransactionDetailContainer>
+			}
+			inner={inner}
+		/>
+	);
 }

@@ -17,9 +17,6 @@
       ".tamagui",
       "json-validators.js",
       "jtd-validators.js",
-      "webext-legacy",
-      "ui-legacy",
-      "background",
       "types"
     ]
   }

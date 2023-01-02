@@ -1,6 +1,6 @@
 import {
-  EIP4361Data,
-  SignDataMessageType,
+	EIP4361Data,
+	SignDataMessageType,
 } from "@sendnodes/pokt-wallet-background/utils/signing";
 import { selectSigningData } from "@sendnodes/pokt-wallet-background/redux-slices/signing";
 import React from "react";
@@ -8,36 +8,36 @@ import { EIP191Info, EIP4361Info } from "../components/SignData";
 import { useBackgroundSelector } from "../hooks";
 
 export default function PersonalSignDetailPanel(): JSX.Element {
-  const signingDataRequest = useBackgroundSelector(selectSigningData);
+	const signingDataRequest = useBackgroundSelector(selectSigningData);
 
-  if (signingDataRequest === undefined) return <></>;
+	if (signingDataRequest === undefined) return <></>;
 
-  return (
-    <div className="primary_info_card standard_width">
-      <div className="sign_block">
-        <div className="container">
-          {(() => {
-            switch (signingDataRequest.messageType) {
-              case SignDataMessageType.EIP4361:
-                return (
-                  <EIP4361Info
-                    signingData={signingDataRequest.signingData as EIP4361Data}
-                  />
-                );
-              case SignDataMessageType.EIP191:
-              default:
-                return (
-                  <EIP191Info
-                    account={signingDataRequest.account}
-                    internal={false}
-                    signingData={signingDataRequest.signingData}
-                  />
-                );
-            }
-          })()}
-        </div>
-      </div>
-      <style jsx>{`
+	return (
+		<div className="primary_info_card standard_width">
+			<div className="sign_block">
+				<div className="container">
+					{(() => {
+						switch (signingDataRequest.messageType) {
+							case SignDataMessageType.EIP4361:
+								return (
+									<EIP4361Info
+										signingData={signingDataRequest.signingData as EIP4361Data}
+									/>
+								);
+							case SignDataMessageType.EIP191:
+							default:
+								return (
+									<EIP191Info
+										account={signingDataRequest.account}
+										internal={false}
+										signingData={signingDataRequest.signingData}
+									/>
+								);
+						}
+					})()}
+				</div>
+			</div>
+			<style jsx>{`
         .primary_info_card {
           display: block;
           height: fit-content;
@@ -63,6 +63,6 @@ export default function PersonalSignDetailPanel(): JSX.Element {
           line-height: 24px;
         }
       `}</style>
-    </div>
-  );
+		</div>
+	);
 }

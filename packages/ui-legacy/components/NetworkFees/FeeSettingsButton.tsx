@@ -2,18 +2,18 @@ import React, { ReactElement } from "react";
 import FeeSettingsText from "./FeeSettingsText";
 
 interface FeeSettingsButtonProps {
-  onClick: () => void;
+	onClick: () => void;
 }
 
 export default function FeeSettingsButton({
-  onClick,
+	onClick,
 }: FeeSettingsButtonProps): ReactElement {
-  return (
-    <button className="settings" type="button" onClick={onClick}>
-      <FeeSettingsText />
-      <img className="settings_image" src="./images/cog@2x.png" alt="" />
-      <style jsx>
-        {`
+	return (
+		<button className="settings" type="button" onClick={onClick}>
+			<FeeSettingsText />
+			<img className="settings_image" src="./images/cog@2x.png" alt="" />
+			<style jsx>
+				{`
           .settings {
             height: 32px;
             display: flex;
@@ -39,7 +39,7 @@ export default function FeeSettingsButton({
             filter: brightness(1.5);
           }
         `}
-      </style>
-    </button>
-  );
+			</style>
+		</button>
+	);
 }

@@ -3,120 +3,120 @@ import classNames from "clsx";
 import { useParsedValidation, useRunOnFirstRender } from "../../hooks";
 
 interface Props<T> {
-  id?: string;
-  label: string;
-  focusedLabelBackgroundColor: string;
-  placeholder?: string;
-  type: "password" | "text" | "number" | "textarea";
-  value?: string | undefined;
-  onChange?: (value: T | undefined) => void;
-  onFocus?: () => void;
-  errorMessage?: string;
-  autoFocus?: boolean;
-  autoSelect?: boolean;
-  maxLength?: number;
-  disabled?: boolean;
-  parseAndValidate: (
-    value: string,
-  ) => { parsed: T | undefined } | { error: string };
+	id?: string;
+	label: string;
+	focusedLabelBackgroundColor: string;
+	placeholder?: string;
+	type: "password" | "text" | "number" | "textarea";
+	value?: string | undefined;
+	onChange?: (value: T | undefined) => void;
+	onFocus?: () => void;
+	errorMessage?: string;
+	autoFocus?: boolean;
+	autoSelect?: boolean;
+	maxLength?: number;
+	disabled?: boolean;
+	parseAndValidate: (
+		value: string,
+	) => { parsed: T | undefined } | { error: string };
 }
 
 export function SharedTypedInput<T = string>(props: Props<T>): ReactElement {
-  const {
-    id,
-    label,
-    placeholder,
-    focusedLabelBackgroundColor,
-    type,
-    onChange,
-    onFocus,
-    value: currentValue,
-    errorMessage,
-    autoFocus = false,
-    autoSelect = false,
-    parseAndValidate,
-    maxLength,
-    disabled = false,
-  } = props;
-  const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
-  const inputRef = useRef<HTMLInputElement | null>(null);
+	const {
+		id,
+		label,
+		placeholder,
+		focusedLabelBackgroundColor,
+		type,
+		onChange,
+		onFocus,
+		value: currentValue,
+		errorMessage,
+		autoFocus = false,
+		autoSelect = false,
+		parseAndValidate,
+		maxLength,
+		disabled = false,
+	} = props;
+	const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
+	const inputRef = useRef<HTMLInputElement | null>(null);
 
-  useEffect(() => {
-    if (autoFocus) textAreaRef.current?.focus();
-    if (autoFocus) inputRef.current?.focus();
-  }, [autoFocus]);
+	useEffect(() => {
+		if (autoFocus) textAreaRef.current?.focus();
+		if (autoFocus) inputRef.current?.focus();
+	}, [autoFocus]);
 
-  useEffect(() => {
-    if (autoSelect) textAreaRef.current?.select();
-    if (autoSelect) inputRef.current?.select();
-  }, [autoSelect]);
+	useEffect(() => {
+		if (autoSelect) textAreaRef.current?.select();
+		if (autoSelect) inputRef.current?.select();
+	}, [autoSelect]);
 
-  const {
-    rawValue: inputValue,
-    errorMessage: parserError,
-    handleInputChange,
-  } = useParsedValidation<T | undefined>(
-    onChange ?? (() => {}),
-    parseAndValidate,
-  );
+	const {
+		rawValue: inputValue,
+		errorMessage: parserError,
+		handleInputChange,
+	} = useParsedValidation<T | undefined>(
+		onChange ?? (() => {}),
+		parseAndValidate,
+	);
 
-  useRunOnFirstRender(() => {
-    if (currentValue && currentValue.trim() !== inputValue) {
-      handleInputChange(currentValue);
-    }
-  });
+	useRunOnFirstRender(() => {
+		if (currentValue && currentValue.trim() !== inputValue) {
+			handleInputChange(currentValue);
+		}
+	});
 
-  return (
-    <div className="wrap shared_input">
-      {type === "textarea" ? (
-        <textarea
-          id={id}
-          disabled={disabled}
-          maxLength={maxLength}
-          placeholder={
-            typeof placeholder === "undefined" || placeholder === ""
-              ? " "
-              : placeholder
-          }
-          value={inputValue}
-          spellCheck={false}
-          onInput={(event: ChangeEvent<HTMLTextAreaElement>) =>
-            handleInputChange(event.target.value)
-          }
-          onFocus={onFocus}
-          className={classNames("input", {
-            error: errorMessage,
-          })}
-          ref={textAreaRef}
-        />
-      ) : (
-        <input
-          id={id}
-          disabled={disabled}
-          type={type}
-          placeholder={
-            typeof placeholder === "undefined" || placeholder === ""
-              ? " "
-              : placeholder
-          }
-          value={inputValue}
-          spellCheck={false}
-          onInput={(event: ChangeEvent<HTMLInputElement>) =>
-            handleInputChange(event.target.value)
-          }
-          onFocus={onFocus}
-          className={classNames("input", {
-            error: errorMessage,
-          })}
-          ref={inputRef}
-        />
-      )}
-      <label htmlFor={id}>{label}</label>
+	return (
+		<div className="wrap shared_input">
+			{type === "textarea" ? (
+				<textarea
+					id={id}
+					disabled={disabled}
+					maxLength={maxLength}
+					placeholder={
+						typeof placeholder === "undefined" || placeholder === ""
+							? " "
+							: placeholder
+					}
+					value={inputValue}
+					spellCheck={false}
+					onInput={(event: ChangeEvent<HTMLTextAreaElement>) =>
+						handleInputChange(event.target.value)
+					}
+					onFocus={onFocus}
+					className={classNames("input", {
+						error: errorMessage,
+					})}
+					ref={textAreaRef}
+				/>
+			) : (
+				<input
+					id={id}
+					disabled={disabled}
+					type={type}
+					placeholder={
+						typeof placeholder === "undefined" || placeholder === ""
+							? " "
+							: placeholder
+					}
+					value={inputValue}
+					spellCheck={false}
+					onInput={(event: ChangeEvent<HTMLInputElement>) =>
+						handleInputChange(event.target.value)
+					}
+					onFocus={onFocus}
+					className={classNames("input", {
+						error: errorMessage,
+					})}
+					ref={inputRef}
+				/>
+			)}
+			<label htmlFor={id}>{label}</label>
 
-      {errorMessage && <div className="error_message">{errorMessage}</div>}
-      {parserError && <div className="error_message">{parserError}</div>}
-      <style jsx>
-        {`
+			{errorMessage && <div className="error_message">{errorMessage}</div>}
+			{parserError && <div className="error_message">{parserError}</div>}
+			<style jsx>
+				{`
           .wrap {
             position: relative;
             display: flex;
@@ -192,30 +192,30 @@ export function SharedTypedInput<T = string>(props: Props<T>): ReactElement {
             color: var(--error);
           }
         `}
-      </style>
-    </div>
-  );
+			</style>
+		</div>
+	);
 }
 
 SharedTypedInput.defaultProps = {
-  type: "text",
-  focusedLabelBackgroundColor: "var(--eerie-black-100)",
+	type: "text",
+	focusedLabelBackgroundColor: "var(--eerie-black-100)",
 };
 
 export default function SharedInput(
-  props: Omit<Props<string>, "onChange"> & { onChange?: (_: string) => void },
+	props: Omit<Props<string>, "onChange"> & { onChange?: (_: string) => void },
 ): ReactElement {
-  const onChangeWrapper = (newValue: string | undefined) => {
-    props.onChange?.(newValue ?? "");
-  };
+	const onChangeWrapper = (newValue: string | undefined) => {
+		props.onChange?.(newValue ?? "");
+	};
 
-  return SharedTypedInput({
-    ...props,
-    onChange: onChangeWrapper,
-  });
+	return SharedTypedInput({
+		...props,
+		onChange: onChangeWrapper,
+	});
 }
 
 SharedInput.defaultProps = {
-  ...SharedTypedInput.defaultProps,
-  parseAndValidate: (v: string) => ({ parsed: v }),
+	...SharedTypedInput.defaultProps,
+	parseAndValidate: (v: string) => ({ parsed: v }),
 };

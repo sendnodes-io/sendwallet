@@ -15,17 +15,17 @@ import signingReducer from "./signing";
 import earnReducer from "./earn";
 
 const mainReducer = combineReducers({
-  account: accountsReducer,
-  assets: assetsReducer,
-  activities: activitiesReducer,
-  keyrings: keyringsReducer,
-  networks: networksReducer,
-  transactionConstruction: transactionConstructionReducer,
-  ui: uiReducer,
-  dappPermission: dappPermissionReducer,
-  signing: signingReducer,
-  ledger: ledgerReducer,
-  ...(HIDE_EARN_PAGE ? {} : { earn: earnReducer }),
+	account: accountsReducer,
+	assets: assetsReducer,
+	activities: activitiesReducer,
+	keyrings: keyringsReducer,
+	networks: networksReducer,
+	transactionConstruction: transactionConstructionReducer,
+	ui: uiReducer,
+	dappPermission: dappPermissionReducer,
+	signing: signingReducer,
+	ledger: ledgerReducer,
+	...(HIDE_EARN_PAGE ? {} : { earn: earnReducer }),
 });
 
 export default mainReducer;

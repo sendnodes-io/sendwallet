@@ -1,7 +1,7 @@
 import React, { ReactElement } from "react";
 import {
-  selectBlockExplorerForAddress,
-  selectCurrentAccount,
+	selectBlockExplorerForAddress,
+	selectCurrentAccount,
 } from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
 import { ActivityItem } from "@sendnodes/pokt-wallet-background/redux-slices/activities";
 import css from "styled-jsx/css";
@@ -11,7 +11,7 @@ import useStakingAllTransactions from "../../hooks/staking-hooks/use-staking-all
 import SharedSplashScreen from "../Shared/SharedSplashScreen";
 
 type Props = {
-  activities: ActivityItem[];
+	activities: ActivityItem[];
 };
 
 const walletActivityCss = css`
@@ -40,63 +40,63 @@ const walletActivityCss = css`
 `;
 
 export default function WalletActivityList({
-  activities,
+	activities,
 }: Props): ReactElement {
-  const { isLoading } = useStakingAllTransactions();
-  const currentAccount = useBackgroundSelector(selectCurrentAccount);
-  const blockExplorerUrl = useBackgroundSelector((_) =>
-    selectBlockExplorerForAddress(currentAccount),
-  );
+	const { isLoading } = useStakingAllTransactions();
+	const currentAccount = useBackgroundSelector(selectCurrentAccount);
+	const blockExplorerUrl = useBackgroundSelector((_) =>
+		selectBlockExplorerForAddress(currentAccount),
+	);
 
-  if (!activities || activities.length === 0)
-    return (
-      <div className="wrap">
-        <div className="row">
-          <h2>
-            <small>YOUR ACTIVITY</small>
-            <br />
-            <span>
-              no activities
-              <br />
-              to show
-            </span>
-          </h2>
-        </div>
-        <div className="row">
-          <ul className="legend">
-            <li>
-              <div
-                className="legend_color"
-                style={{ backgroundColor: "var(--attention)" }}
-              />{" "}
-              - pending
-            </li>
-            <li>
-              <div
-                className="legend_color"
-                style={{ backgroundColor: "var(--success)" }}
-              />{" "}
-              - success
-            </li>
-            <li>
-              <div
-                className="legend_color"
-                style={{ backgroundColor: "var(--error)" }}
-              />{" "}
-              - failure
-            </li>
-          </ul>
-          <img
-            src="./images/calculator@2x.png"
-            alt="No activities to show"
-            width="121"
-            height="71"
-            style={{ width: "7.5625rem", height: "4.4375rem" }}
-          />
-        </div>
-        <style jsx>{walletActivityCss}</style>
-        <style jsx>
-          {`
+	if (!activities || activities.length === 0)
+		return (
+			<div className="wrap">
+				<div className="row">
+					<h2>
+						<small>YOUR ACTIVITY</small>
+						<br />
+						<span>
+							no activities
+							<br />
+							to show
+						</span>
+					</h2>
+				</div>
+				<div className="row">
+					<ul className="legend">
+						<li>
+							<div
+								className="legend_color"
+								style={{ backgroundColor: "var(--attention)" }}
+							/>{" "}
+							- pending
+						</li>
+						<li>
+							<div
+								className="legend_color"
+								style={{ backgroundColor: "var(--success)" }}
+							/>{" "}
+							- success
+						</li>
+						<li>
+							<div
+								className="legend_color"
+								style={{ backgroundColor: "var(--error)" }}
+							/>{" "}
+							- failure
+						</li>
+					</ul>
+					<img
+						src="./images/calculator@2x.png"
+						alt="No activities to show"
+						width="121"
+						height="71"
+						style={{ width: "7.5625rem", height: "4.4375rem" }}
+					/>
+				</div>
+				<style jsx>{walletActivityCss}</style>
+				<style jsx>
+					{`
             .wrap {
               display: flex;
               flex-direction: column;
@@ -135,54 +135,54 @@ export default function WalletActivityList({
               border-radius: 1rem;
             }
           `}
-        </style>
-      </div>
-    );
+				</style>
+			</div>
+		);
 
-  return (
-    <>
-      <div className="wrap">
-        <div className="row">
-          <h2>
-            <small>YOUR ACTIVITY</small>
-          </h2>
-          <a
-            href={blockExplorerUrl}
-            title="See All Activity"
-            target="_blank"
-            rel="noreferrer"
-          >
-            See All
-          </a>
-        </div>
-        <div className="row activites">
-          {isLoading && (
-            <div className="h-full flex relative w-full">
-              <SharedSplashScreen />
-            </div>
-          )}
-          {!isLoading && (
-            <ul>
-              {activities.map((activityItem) => {
-                if (activityItem) {
-                  return (
-                    <WalletActivityListItem
-                      key={activityItem?.hash}
-                      activity={activityItem}
-                      asAccount={currentAccount.address}
-                    />
-                  );
-                }
-                return <></>;
-              })}
-            </ul>
-          )}
-        </div>
-      </div>
+	return (
+		<>
+			<div className="wrap">
+				<div className="row">
+					<h2>
+						<small>YOUR ACTIVITY</small>
+					</h2>
+					<a
+						href={blockExplorerUrl}
+						title="See All Activity"
+						target="_blank"
+						rel="noreferrer"
+					>
+						See All
+					</a>
+				</div>
+				<div className="row activites">
+					{isLoading && (
+						<div className="h-full flex relative w-full">
+							<SharedSplashScreen />
+						</div>
+					)}
+					{!isLoading && (
+						<ul>
+							{activities.map((activityItem) => {
+								if (activityItem) {
+									return (
+										<WalletActivityListItem
+											key={activityItem?.hash}
+											activity={activityItem}
+											asAccount={currentAccount.address}
+										/>
+									);
+								}
+								return <></>;
+							})}
+						</ul>
+					)}
+				</div>
+			</div>
 
-      <style jsx>{walletActivityCss}</style>
-      <style jsx>
-        {`
+			<style jsx>{walletActivityCss}</style>
+			<style jsx>
+				{`
           .row {
             margin-bottom: 0.5rem;
             align-items: center;
@@ -223,7 +223,7 @@ export default function WalletActivityList({
             gap: 0.25rem;
           }
         `}
-      </style>
-    </>
-  );
+			</style>
+		</>
+	);
 }

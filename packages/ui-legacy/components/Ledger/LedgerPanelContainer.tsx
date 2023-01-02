@@ -1,29 +1,29 @@
 import React, { ReactElement } from "react";
 
 export default function LedgerPanelContainer({
-  indicatorImageSrc,
-  heading,
-  subHeading,
-  children,
+	indicatorImageSrc,
+	heading,
+	subHeading,
+	children,
 }: {
-  indicatorImageSrc: string;
-  heading?: React.ReactNode;
-  subHeading?: React.ReactNode;
-  children?: React.ReactNode;
+	indicatorImageSrc: string;
+	heading?: React.ReactNode;
+	subHeading?: React.ReactNode;
+	children?: React.ReactNode;
 }): ReactElement {
-  return (
-    <div className="panel">
-      <img
-        width="318"
-        height="84"
-        className="indicator"
-        src={indicatorImageSrc}
-        alt=""
-      />
-      {heading && <h1 className="heading">{heading}</h1>}
-      {subHeading && <p className="subheading">{subHeading}</p>}
-      {children}
-      <style jsx>{`
+	return (
+		<div className="panel">
+			<img
+				width="318"
+				height="84"
+				className="indicator"
+				src={indicatorImageSrc}
+				alt=""
+			/>
+			{heading && <h1 className="heading">{heading}</h1>}
+			{subHeading && <p className="subheading">{subHeading}</p>}
+			{children}
+			<style jsx>{`
         .panel {
           display: flex;
           flex-flow: column;
@@ -55,6 +55,6 @@ export default function LedgerPanelContainer({
           color: var(--spanish-gray);
         }
       `}</style>
-    </div>
-  );
+		</div>
+	);
 }

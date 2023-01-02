@@ -1,58 +1,58 @@
 import { BaseProvider } from "@ethersproject/providers";
 import { BigNumber, ethers } from "ethers";
 import {
-  EventFragment,
-  Fragment,
-  FunctionFragment,
-  TransactionDescription,
+	EventFragment,
+	Fragment,
+	FunctionFragment,
+	TransactionDescription,
 } from "ethers/lib/utils";
 import { SmartContractFungibleAsset } from "../assets";
 import { EVMLog, SmartContract } from "../networks";
 import { HexString } from "../types";
 
 export const ERC20_FUNCTIONS = {
-  allowance: FunctionFragment.from(
-    "allowance(address owner, address spender) view returns (uint256)",
-  ),
-  approve: FunctionFragment.from(
-    "approve(address spender, uint256 value) returns (bool)",
-  ),
-  balanceOf: FunctionFragment.from(
-    "balanceOf(address owner) view returns (uint256)",
-  ),
-  decimals: FunctionFragment.from("decimals() view returns (uint8)"),
-  name: FunctionFragment.from("name() view returns (string)"),
-  symbol: FunctionFragment.from("symbol() view returns (string)"),
-  totalSupply: FunctionFragment.from("totalSupply() view returns (uint256)"),
-  transfer: FunctionFragment.from(
-    "transfer(address to, uint amount) returns (bool)",
-  ),
-  transferFrom: FunctionFragment.from(
-    "transferFrom(address from, address to, uint amount) returns (bool)",
-  ),
+	allowance: FunctionFragment.from(
+		"allowance(address owner, address spender) view returns (uint256)",
+	),
+	approve: FunctionFragment.from(
+		"approve(address spender, uint256 value) returns (bool)",
+	),
+	balanceOf: FunctionFragment.from(
+		"balanceOf(address owner) view returns (uint256)",
+	),
+	decimals: FunctionFragment.from("decimals() view returns (uint8)"),
+	name: FunctionFragment.from("name() view returns (string)"),
+	symbol: FunctionFragment.from("symbol() view returns (string)"),
+	totalSupply: FunctionFragment.from("totalSupply() view returns (uint256)"),
+	transfer: FunctionFragment.from(
+		"transfer(address to, uint amount) returns (bool)",
+	),
+	transferFrom: FunctionFragment.from(
+		"transferFrom(address from, address to, uint amount) returns (bool)",
+	),
 };
 
 const ERC20_EVENTS = {
-  Transfer: EventFragment.from(
-    "Transfer(address indexed from, address indexed to, uint amount)",
-  ),
-  Approval: EventFragment.from(
-    "Approval(address indexed owner, address indexed spender, uint amount)",
-  ),
+	Transfer: EventFragment.from(
+		"Transfer(address indexed from, address indexed to, uint amount)",
+	),
+	Approval: EventFragment.from(
+		"Approval(address indexed owner, address indexed spender, uint amount)",
+	),
 };
 
 export const ERC20_ABI = Object.values<Fragment>(ERC20_FUNCTIONS).concat(
-  Object.values(ERC20_EVENTS),
+	Object.values(ERC20_EVENTS),
 );
 
 export const ERC20_INTERFACE = new ethers.utils.Interface(ERC20_ABI);
 
 export const ERC2612_FUNCTIONS = {
-  permit: FunctionFragment.from(
-    "permit(address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s)",
-  ),
-  nonces: FunctionFragment.from("nonces(address owner) view returns (uint256)"),
-  DOMAIN: FunctionFragment.from("DOMAIN_SEPARATOR() view returns (bytes32)"),
+	permit: FunctionFragment.from(
+		"permit(address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s)",
+	),
+	nonces: FunctionFragment.from("nonces(address owner) view returns (uint256)"),
+	DOMAIN: FunctionFragment.from("DOMAIN_SEPARATOR() view returns (bytes32)"),
 };
 
 export const ERC2612_ABI = ERC20_ABI.concat(Object.values(ERC2612_FUNCTIONS));
@@ -63,13 +63,13 @@ export const ERC2612_INTERFACE = new ethers.utils.Interface(ERC2612_ABI);
  * Get an account's balance from an ERC20-compliant contract.
  */
 export async function getBalance(
-  provider: BaseProvider,
-  tokenAddress: string,
-  account: string,
+	provider: BaseProvider,
+	tokenAddress: string,
+	account: string,
 ): Promise<BigInt> {
-  const token = new ethers.Contract(tokenAddress, ERC20_ABI, provider);
+	const token = new ethers.Contract(tokenAddress, ERC20_ABI, provider);
 
-  return BigInt((await token.balanceOf(account)).toString());
+	return BigInt((await token.balanceOf(account)).toString());
 }
 
 /**
@@ -77,29 +77,29 @@ export async function getBalance(
  * directly. Certain providers may support more efficient lookup strategies.
  */
 export async function getMetadata(
-  provider: BaseProvider,
-  tokenSmartContract: SmartContract,
+	provider: BaseProvider,
+	tokenSmartContract: SmartContract,
 ): Promise<SmartContractFungibleAsset> {
-  const token = new ethers.Contract(
-    tokenSmartContract.contractAddress,
-    ERC20_ABI,
-    provider,
-  );
+	const token = new ethers.Contract(
+		tokenSmartContract.contractAddress,
+		ERC20_ABI,
+		provider,
+	);
 
-  const [symbol, name, decimals] = await Promise.all(
-    [
-      ERC20_FUNCTIONS.symbol,
-      ERC20_FUNCTIONS.name,
-      ERC20_FUNCTIONS.decimals,
-    ].map(({ name: functionName }) => token.callStatic[functionName]()),
-  );
+	const [symbol, name, decimals] = await Promise.all(
+		[
+			ERC20_FUNCTIONS.symbol,
+			ERC20_FUNCTIONS.name,
+			ERC20_FUNCTIONS.decimals,
+		].map(({ name: functionName }) => token.callStatic[functionName]()),
+	);
 
-  return {
-    ...tokenSmartContract,
-    symbol,
-    name,
-    decimals,
-  };
+	return {
+		...tokenSmartContract,
+		symbol,
+		name,
+		decimals,
+	};
 }
 
 /**
@@ -107,25 +107,25 @@ export async function getMetadata(
  * Returns the parsed data if parsing succeeds, otherwise returns `undefined`.
  */
 export function parseERC20Tx(
-  input: string,
+	input: string,
 ): TransactionDescription | undefined {
-  try {
-    return ERC20_INTERFACE.parseTransaction({
-      data: input,
-    });
-  } catch (err) {
-    return undefined;
-  }
+	try {
+		return ERC20_INTERFACE.parseTransaction({
+			data: input,
+		});
+	} catch (err) {
+		return undefined;
+	}
 }
 
 /**
  * Information bundle from an ostensible ERC20 transfer log using SendWallet types.
  */
 export type ERC20TransferLog = {
-  contractAddress: string;
-  amount: bigint;
-  senderAddress: HexString;
-  recipientAddress: HexString;
+	contractAddress: string;
+	amount: bigint;
+	senderAddress: HexString;
+	recipientAddress: HexString;
 };
 
 /**
@@ -144,32 +144,32 @@ export type ERC20TransferLog = {
  *         `Transfer` events, simply that they can be parsed as such.
  */
 export function parseLogsForERC20Transfers(logs: EVMLog[]): ERC20TransferLog[] {
-  return logs
-    .map(({ contractAddress, data, topics }) => {
-      try {
-        const decoded = ERC20_INTERFACE.decodeEventLog(
-          ERC20_EVENTS.Transfer,
-          data,
-          topics,
-        );
+	return logs
+		.map(({ contractAddress, data, topics }) => {
+			try {
+				const decoded = ERC20_INTERFACE.decodeEventLog(
+					ERC20_EVENTS.Transfer,
+					data,
+					topics,
+				);
 
-        if (
-          typeof decoded.to === "undefined" ||
-          typeof decoded.from === "undefined" ||
-          typeof decoded.amount === "undefined"
-        ) {
-          return undefined;
-        }
+				if (
+					typeof decoded.to === "undefined" ||
+					typeof decoded.from === "undefined" ||
+					typeof decoded.amount === "undefined"
+				) {
+					return undefined;
+				}
 
-        return {
-          contractAddress,
-          amount: (decoded.amount as BigNumber).toBigInt(),
-          senderAddress: decoded.from,
-          recipientAddress: decoded.to,
-        };
-      } catch (_) {
-        return undefined;
-      }
-    })
-    .filter((info): info is ERC20TransferLog => typeof info !== "undefined");
+				return {
+					contractAddress,
+					amount: (decoded.amount as BigNumber).toBigInt(),
+					senderAddress: decoded.from,
+					recipientAddress: decoded.to,
+				};
+			} catch (_) {
+				return undefined;
+			}
+		})
+		.filter((info): info is ERC20TransferLog => typeof info !== "undefined");
 }

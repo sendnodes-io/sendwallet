@@ -2,17 +2,17 @@ import classNames from "clsx";
 import React, { ReactElement } from "react";
 
 interface RemoveAddressProps {
-  hoverable?: boolean;
+	hoverable?: boolean;
 }
 
 export default function RemoveAddressLabel({
-  hoverable,
+	hoverable,
 }: RemoveAddressProps): ReactElement {
-  return (
-    <div className={classNames("remove_address", { hover: hoverable })}>
-      <div className="icon_garbage" />
-      <span>Remove</span>
-      <style jsx>{`
+	return (
+		<div className={classNames("remove_address", { hover: hoverable })}>
+			<div className="icon_garbage" />
+			<span>Remove</span>
+			<style jsx>{`
           .icon_garbage {
             mask-image: url("./images/garbage@2x.png");
             mask-size: cover;
@@ -39,9 +39,9 @@ export default function RemoveAddressLabel({
             background-color: var(--error-80);
           }
         `}</style>
-    </div>
-  );
+		</div>
+	);
 }
 RemoveAddressLabel.defaultProps = {
-  hoverable: false,
+	hoverable: false,
 };

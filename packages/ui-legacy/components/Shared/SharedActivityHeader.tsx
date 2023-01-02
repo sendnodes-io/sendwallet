@@ -1,19 +1,19 @@
 import React, { ReactElement } from "react";
 
 interface Props {
-  label: string;
-  activity: string;
+	label: string;
+	activity: string;
 }
 
 export default function SharedActivityHeader(props: Props): ReactElement {
-  const { label, activity } = props;
+	const { label, activity } = props;
 
-  return (
-    <h1>
-      <span className="icon_activity" />
-      {label}
-      <style jsx>
-        {`
+	return (
+		<h1>
+			<span className="icon_activity" />
+			{label}
+			<style jsx>
+				{`
           h1 {
             display: flex;
             align-items: center;
@@ -33,7 +33,7 @@ export default function SharedActivityHeader(props: Props): ReactElement {
             margin-right: 8px;
           }
         `}
-      </style>
-    </h1>
-  );
+			</style>
+		</h1>
+	);
 }

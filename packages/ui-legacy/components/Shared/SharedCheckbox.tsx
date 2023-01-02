@@ -1,29 +1,29 @@
 import React, { ReactElement, ChangeEventHandler } from "react";
 
 interface Props {
-  id: string;
-  label: string;
-  onChange: ChangeEventHandler<HTMLInputElement>;
-  checked?: boolean;
+	id: string;
+	label: string;
+	onChange: ChangeEventHandler<HTMLInputElement>;
+	checked?: boolean;
 }
 
 export default function SharedCheckbox(props: Props): ReactElement {
-  const { label, checked, onChange, id = "checkbox" } = props;
+	const { label, checked, onChange, id = "checkbox" } = props;
 
-  return (
-    <div className="checkbox">
-      <label htmlFor={id} className="label flex flex-row">
-        <input
-          id={id}
-          defaultChecked={checked}
-          onChange={onChange}
-          type="checkbox"
-          className="inline-block"
-        />
-        <span className="checkmark " />
-        <span>{label}</span>
-      </label>
-      <style jsx>{`
+	return (
+		<div className="checkbox">
+			<label htmlFor={id} className="label flex flex-row">
+				<input
+					id={id}
+					defaultChecked={checked}
+					onChange={onChange}
+					type="checkbox"
+					className="inline-block"
+				/>
+				<span className="checkmark " />
+				<span>{label}</span>
+			</label>
+			<style jsx>{`
         .checkbox {
           display: flex;
           align-items: center;
@@ -75,6 +75,6 @@ export default function SharedCheckbox(props: Props): ReactElement {
           font-size: 1rem;
         }
       `}</style>
-    </div>
-  );
+		</div>
+	);
 }

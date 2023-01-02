@@ -3,8 +3,8 @@
  * internal account types, depending on how the UI chooses to display data.
  */
 export const enum AccountType {
-  ReadOnly = "read-only",
-  Imported = "imported",
-  Ledger = "ledger",
-  Internal = "internal",
+	ReadOnly = "read-only",
+	Imported = "imported",
+	Ledger = "ledger",
+	Internal = "internal",
 }

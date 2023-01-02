@@ -6,40 +6,40 @@ import SharedButton from "../Shared/SharedButton";
 import { useBackgroundSelector } from "../../hooks";
 
 export default function SignTransactionRawDataPanel(): ReactElement {
-  const dispatch = useDispatch();
-  const transactionDetails = useBackgroundSelector(selectTransactionData);
-  if (!transactionDetails) return <></>;
+	const dispatch = useDispatch();
+	const transactionDetails = useBackgroundSelector(selectTransactionData);
+	if (!transactionDetails) return <></>;
 
-  // TODO: v0.2.0 the TX should produce it's raw
-  let data: string | null = "";
-  if ("input" in transactionDetails) {
-    data = transactionDetails.input;
-  }
-  if ("txMsg" in transactionDetails) {
-    data = JSON.stringify(transactionDetails.txMsg, null, 2);
-  }
+	// TODO: v0.2.0 the TX should produce it's raw
+	let data: string | null = "";
+	if ("input" in transactionDetails) {
+		data = transactionDetails.input;
+	}
+	if ("txMsg" in transactionDetails) {
+		data = JSON.stringify(transactionDetails.txMsg, null, 2);
+	}
 
-  const copyData = () => {
-    navigator.clipboard.writeText(data ?? "");
-    dispatch(setSnackbarMessage("Raw data copied to clipboard"));
-  };
+	const copyData = () => {
+		navigator.clipboard.writeText(data ?? "");
+		dispatch(setSnackbarMessage("Raw data copied to clipboard"));
+	};
 
-  return (
-    <div className="width_full">
-      <div className="button_wrap">
-        <SharedButton
-          type="tertiary"
-          icon="copy"
-          size="small"
-          iconSize="secondaryMedium"
-          iconPosition="left"
-          onClick={copyData}
-        >
-          Copy
-        </SharedButton>
-      </div>
-      <pre className="raw_data_text">{data}</pre>
-      <style jsx>{`
+	return (
+		<div className="width_full">
+			<div className="button_wrap">
+				<SharedButton
+					type="tertiary"
+					icon="copy"
+					size="small"
+					iconSize="secondaryMedium"
+					iconPosition="left"
+					onClick={copyData}
+				>
+					Copy
+				</SharedButton>
+			</div>
+			<pre className="raw_data_text">{data}</pre>
+			<style jsx>{`
         .width_full {
           height: 100%;
         }
@@ -67,6 +67,6 @@ export default function SignTransactionRawDataPanel(): ReactElement {
           width: auto;
         }
       `}</style>
-    </div>
-  );
+		</div>
+	);
 }

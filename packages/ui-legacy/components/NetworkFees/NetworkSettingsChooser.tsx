@@ -1,8 +1,8 @@
 import {
-  EstimatedFeesPerGas,
-  NetworkFeeSettings,
-  selectDefaultNetworkFeeSettings,
-  setFeeType,
+	EstimatedFeesPerGas,
+	NetworkFeeSettings,
+	selectDefaultNetworkFeeSettings,
+	setFeeType,
 } from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction";
 import React, { ReactElement, useState } from "react";
 import { useBackgroundDispatch, useBackgroundSelector } from "../../hooks";
@@ -10,46 +10,46 @@ import SharedButton from "../Shared/SharedButton";
 import NetworkSettingsSelect from "./NetworkSettingsSelect";
 
 interface NetworkSettingsChooserProps {
-  estimatedFeesPerGas: EstimatedFeesPerGas | undefined;
-  onNetworkSettingsSave: (setting: NetworkFeeSettings) => void;
+	estimatedFeesPerGas: EstimatedFeesPerGas | undefined;
+	onNetworkSettingsSave: (setting: NetworkFeeSettings) => void;
 }
 
 export default function NetworkSettingsChooser({
-  estimatedFeesPerGas,
-  onNetworkSettingsSave,
+	estimatedFeesPerGas,
+	onNetworkSettingsSave,
 }: NetworkSettingsChooserProps): ReactElement {
-  const [networkSettings, setNetworkSettings] = useState(
-    useBackgroundSelector(selectDefaultNetworkFeeSettings),
-  );
-  const dispatch = useBackgroundDispatch();
+	const [networkSettings, setNetworkSettings] = useState(
+		useBackgroundSelector(selectDefaultNetworkFeeSettings),
+	);
+	const dispatch = useBackgroundDispatch();
 
-  const saveNetworkSettings = () => {
-    dispatch(setFeeType(networkSettings.feeType));
+	const saveNetworkSettings = () => {
+		dispatch(setFeeType(networkSettings.feeType));
 
-    onNetworkSettingsSave(networkSettings);
-  };
+		onNetworkSettingsSave(networkSettings);
+	};
 
-  return (
-    <>
-      <div className="wrapper">
-        <NetworkSettingsSelect
-          estimatedFeesPerGas={estimatedFeesPerGas}
-          networkSettings={networkSettings}
-          onNetworkSettingsChange={setNetworkSettings}
-        />
-        <div className="confirm">
-          <SharedButton
-            size="medium"
-            type="primary"
-            onClick={saveNetworkSettings}
-          >
-            Save
-          </SharedButton>
-        </div>
-      </div>
+	return (
+		<>
+			<div className="wrapper">
+				<NetworkSettingsSelect
+					estimatedFeesPerGas={estimatedFeesPerGas}
+					networkSettings={networkSettings}
+					onNetworkSettingsChange={setNetworkSettings}
+				/>
+				<div className="confirm">
+					<SharedButton
+						size="medium"
+						type="primary"
+						onClick={saveNetworkSettings}
+					>
+						Save
+					</SharedButton>
+				</div>
+			</div>
 
-      <style jsx>
-        {`
+			<style jsx>
+				{`
           .wrapper {
             height: 100%;
             display: flex;
@@ -111,7 +111,7 @@ export default function NetworkSettingsChooser({
             margin-bottom: 12px;
           }
         `}
-      </style>
-    </>
-  );
+			</style>
+		</>
+	);
 }

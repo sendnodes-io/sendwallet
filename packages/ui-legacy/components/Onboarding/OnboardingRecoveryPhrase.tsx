@@ -1,78 +1,79 @@
 import React, { ReactElement } from "react";
 
 export interface OnboardingRecoveryPhraseProps {
-  mnemonic?: string[];
-  verify?: number[];
-  selected?: number[];
-  onClick?: (word: number) => void;
-  importing?: boolean;
-  onInput?: (e: React.FormEvent, index: number) => void;
+	mnemonic?: string[];
+	verify?: number[];
+	selected?: number[];
+	onClick?: (word: number) => void;
+	importing?: boolean;
+	onInput?: (e: React.FormEvent, index: number) => void;
 }
 
 export default function OnboardingRecoveryPhrase(
-  props: OnboardingRecoveryPhraseProps,
+	props: OnboardingRecoveryPhraseProps,
 ) {
-  const {
-    mnemonic = [],
-    verify = [],
-    selected = [],
-    onClick,
-    importing = false,
-    onInput,
-  } = props;
-  const isImporting = importing;
-  const isVerifying = !isImporting && verify.length > 0;
-  return (
-    <>
-      <div className={`mnemonic ${isVerifying && "verifying"}`}>
-        {isImporting
-          ? Array.apply(null, Array(24)).map(function (_, idx) {
-              return (
-                <div
-                  key={`mnemonic-word-${idx + 1}`}
-                  style={{ "--word-index": idx + 1 } as React.CSSProperties}
-                  className="word"
-                >
-                  <span>
-                    {" "}
-                    <input
-                      type="password"
-                      onInput={(e) => onInput?.(e, idx)}
-                      onPaste={(e) => onInput?.(e, idx)}
-                    />
-                  </span>
-                </div>
-              );
-            })
-          : mnemonic.map((word, idx) => {
-              const verifiableIndex = verify.indexOf(idx);
-              const isVerifiable = verifiableIndex > -1;
-              const isSelected =
-                isVerifiable && selected[verifiableIndex] !== undefined;
-              const wordComponent = (
-                <span>
-                  {isVerifiable
-                    ? mnemonic[selected[verifiableIndex]] || <br />
-                    : word}
-                </span>
-              );
+	const {
+		mnemonic = [],
+		verify = [],
+		selected = [],
+		onClick,
+		importing = false,
+		onInput,
+	} = props;
+	const isImporting = importing;
+	const isVerifying = !isImporting && verify.length > 0;
+	return (
+		<>
+			<div className={`mnemonic ${isVerifying && "verifying"}`}>
+				{isImporting
+					? Array.apply(null, Array(24)).map(function (_, idx) {
+							return (
+								<div
+									key={`mnemonic-word-${idx + 1}`}
+									style={{ "--word-index": idx + 1 } as React.CSSProperties}
+									className="word"
+								>
+									<span>
+										{" "}
+										<input
+											type="password"
+											onInput={(e) => onInput?.(e, idx)}
+											onPaste={(e) => onInput?.(e, idx)}
+										/>
+									</span>
+								</div>
+							);
+					  })
+					: mnemonic.map((word, idx) => {
+							const verifiableIndex = verify.indexOf(idx);
+							const isVerifiable = verifiableIndex > -1;
+							const isSelected =
+								isVerifiable && selected[verifiableIndex] !== undefined;
+							const wordComponent = (
+								<span>
+									{isVerifiable
+										? mnemonic[selected[verifiableIndex]!] || <br />
+										: word}
+								</span>
+							);
 
-              return (
-                <div
-                  key={`mnemonic-word-${idx + 1}`}
-                  style={{ "--word-index": idx + 1 } as React.CSSProperties}
-                  className={`word ${isVerifiable && "selectable"} ${
-                    isSelected && "selected"
-                  }`}
-                  onClick={onClick?.bind(null, selected[verifiableIndex])}
-                >
-                  {wordComponent}
-                </div>
-              );
-            })}
-      </div>
-      <style jsx>
-        {`
+							return (
+								<div
+									key={`mnemonic-word-${idx + 1}`}
+									style={{ "--word-index": idx + 1 } as React.CSSProperties}
+									className={`word ${isVerifiable && "selectable"} ${
+										isSelected && "selected"
+									}`}
+									onClick={onClick?.bind(null, selected[verifiableIndex])}
+									onKeyPress={(e) => e.stopPropagation()}
+								>
+									{wordComponent}
+								</div>
+							);
+					  })}
+			</div>
+			<style jsx>
+				{`
           .mnemonic {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -155,7 +156,7 @@ export default function OnboardingRecoveryPhrase(
             color: var(--white);
           }
         `}
-      </style>
-    </>
-  );
+			</style>
+		</>
+	);
 }

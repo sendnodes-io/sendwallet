@@ -3,19 +3,19 @@ import React, { ReactElement } from "react";
 import { Icon } from "@iconify/react";
 
 interface ExportPrivateKeyProps {
-  hoverable?: boolean;
+	hoverable?: boolean;
 }
 
 export default function ExportPrivateKeyLabel({
-  hoverable,
+	hoverable,
 }: ExportPrivateKeyProps): ReactElement {
-  return (
-    <div className={classNames("export_pk", { hover: hoverable })}>
-      <div className="icon">
-        <Icon icon="akar-icons:key" width="1rem" height="1rem" />
-      </div>
-      <span>Export Private Key</span>
-      <style jsx>{`
+	return (
+		<div className={classNames("export_pk", { hover: hoverable })}>
+			<div className="icon">
+				<Icon icon="akar-icons:key" width="1rem" height="1rem" />
+			</div>
+			<span>Export Private Key</span>
+			<style jsx>{`
           .icon {
             width: 1rem;
             margin-right: 0.25rem;
@@ -35,9 +35,9 @@ export default function ExportPrivateKeyLabel({
             opacity: 0.75;
           }
         `}</style>
-    </div>
-  );
+		</div>
+	);
 }
 ExportPrivateKeyLabel.defaultProps = {
-  hoverable: false,
+	hoverable: false,
 };

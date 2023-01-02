@@ -1,13 +1,13 @@
 import {
-  AnyAssetAmount,
-  assetAmountToDesiredDecimals,
-  convertAssetAmountViaPricePoint,
-  unitPricePointForPricePoint,
-  isFungibleAssetAmount,
-  PricePoint,
-  FungibleAsset,
-  UnitPricePoint,
-  AnyAsset,
+	AnyAssetAmount,
+	assetAmountToDesiredDecimals,
+	convertAssetAmountViaPricePoint,
+	unitPricePointForPricePoint,
+	isFungibleAssetAmount,
+	PricePoint,
+	FungibleAsset,
+	UnitPricePoint,
+	AnyAsset,
 } from "../../assets";
 import { fromFixedPointNumber } from "../../lib/fixed-point";
 import { AnyNetwork } from "../../networks";
@@ -20,10 +20,10 @@ import { AnyNetwork } from "../../networks";
  * localized form.
  */
 export type AssetMainCurrencyAmount = {
-  mainCurrencyAmount?: number;
-  localizedMainCurrencyAmount?: string;
-  unitPrice?: number;
-  localizedUnitPrice?: string;
+	mainCurrencyAmount?: number;
+	localizedMainCurrencyAmount?: string;
+	unitPrice?: number;
+	localizedUnitPrice?: string;
 };
 
 /**
@@ -31,8 +31,8 @@ export type AssetMainCurrencyAmount = {
  * a conversion to a localized form of that representation.
  */
 export type AssetDecimalAmount = {
-  decimalAmount: number;
-  localizedDecimalAmount: string;
+	decimalAmount: number;
+	localizedDecimalAmount: string;
 };
 
 /**
@@ -46,15 +46,15 @@ export type AssetDecimalAmount = {
  * @return True if the passed asset is the base asset for the passed network.
  */
 export function isNetworkBaseAsset(
-  asset: AnyAsset,
-  network: AnyNetwork,
+	asset: AnyAsset,
+	network: AnyNetwork,
 ): boolean {
-  return (
-    !("homeNetwork" in asset) &&
-    "family" in network &&
-    (network.family === "EVM" || network.family === "POKT") &&
-    asset.symbol === network.baseAsset.symbol
-  );
+	return (
+		!("homeNetwork" in asset) &&
+		"family" in network &&
+		(network.family === "EVM" || network.family === "POKT") &&
+		asset.symbol === network.baseAsset.symbol
+	);
 }
 
 /**
@@ -71,16 +71,16 @@ export function isNetworkBaseAsset(
  *         currency symbol.
  */
 export function formatCurrencyAmount(
-  currencySymbol: string,
-  currencyAmount: number,
-  desiredDecimals: number,
+	currencySymbol: string,
+	currencyAmount: number,
+	desiredDecimals: number,
 ): string {
-  return new Intl.NumberFormat("default", {
-    style: "currency",
-    currency: currencySymbol,
-    minimumFractionDigits: desiredDecimals,
-    maximumFractionDigits: desiredDecimals,
-  }).format(currencyAmount);
+	return new Intl.NumberFormat("default", {
+		style: "currency",
+		currency: currencySymbol,
+		minimumFractionDigits: desiredDecimals,
+		maximumFractionDigits: desiredDecimals,
+	}).format(currencyAmount);
 }
 
 /**
@@ -110,53 +110,53 @@ export function formatCurrencyAmount(
  *         localized string based on the user's locale.
  */
 export function enrichAssetAmountWithMainCurrencyValues<
-  T extends AnyAssetAmount,
+	T extends AnyAssetAmount,
 >(
-  assetAmount: T,
-  assetPricePoint: PricePoint | undefined,
-  desiredDecimals: number,
+	assetAmount: T,
+	assetPricePoint: PricePoint | undefined,
+	desiredDecimals: number,
 ): T & AssetMainCurrencyAmount {
-  const convertedAssetAmount = convertAssetAmountViaPricePoint(
-    assetAmount,
-    assetPricePoint,
-  );
-  const { unitPrice } = unitPricePointForPricePoint(assetPricePoint) ?? {
-    unitPrice: undefined,
-  };
+	const convertedAssetAmount = convertAssetAmountViaPricePoint(
+		assetAmount,
+		assetPricePoint,
+	);
+	const { unitPrice } = unitPricePointForPricePoint(assetPricePoint) ?? {
+		unitPrice: undefined,
+	};
 
-  if (typeof convertedAssetAmount !== "undefined") {
-    const convertedDecimalValue = assetAmountToDesiredDecimals(
-      convertedAssetAmount,
-      desiredDecimals,
-    );
-    const unitPriceDecimalValue =
-      typeof unitPrice === "undefined"
-        ? undefined
-        : assetAmountToDesiredDecimals(unitPrice, desiredDecimals);
+	if (typeof convertedAssetAmount !== "undefined") {
+		const convertedDecimalValue = assetAmountToDesiredDecimals(
+			convertedAssetAmount,
+			desiredDecimals,
+		);
+		const unitPriceDecimalValue =
+			typeof unitPrice === "undefined"
+				? undefined
+				: assetAmountToDesiredDecimals(unitPrice, desiredDecimals);
 
-    return {
-      ...assetAmount,
-      mainCurrencyAmount: convertedDecimalValue,
-      localizedMainCurrencyAmount: formatCurrencyAmount(
-        convertedAssetAmount.asset.symbol,
-        convertedDecimalValue,
-        desiredDecimals,
-      ),
-      unitPrice: unitPriceDecimalValue,
-      localizedUnitPrice:
-        typeof unitPriceDecimalValue === "undefined"
-          ? undefined
-          : formatCurrencyAmount(
-              convertedAssetAmount.asset.symbol,
-              unitPriceDecimalValue,
-              desiredDecimals,
-            ),
-    };
-  }
+		return {
+			...assetAmount,
+			mainCurrencyAmount: convertedDecimalValue,
+			localizedMainCurrencyAmount: formatCurrencyAmount(
+				convertedAssetAmount.asset.symbol,
+				convertedDecimalValue,
+				desiredDecimals,
+			),
+			unitPrice: unitPriceDecimalValue,
+			localizedUnitPrice:
+				typeof unitPriceDecimalValue === "undefined"
+					? undefined
+					: formatCurrencyAmount(
+							convertedAssetAmount.asset.symbol,
+							unitPriceDecimalValue,
+							desiredDecimals,
+					  ),
+		};
+	}
 
-  return {
-    ...assetAmount,
-  };
+	return {
+		...assetAmount,
+	};
 }
 
 /**
@@ -164,25 +164,25 @@ export function enrichAssetAmountWithMainCurrencyValues<
  * including a localized version.
  */
 export function enrichAssetAmountWithDecimalValues<T extends AnyAssetAmount>(
-  assetAmount: T,
-  desiredDecimals: number,
+	assetAmount: T,
+	desiredDecimals: number,
 ): T & AssetDecimalAmount {
-  const decimalAmount = isFungibleAssetAmount(assetAmount)
-    ? assetAmountToDesiredDecimals(assetAmount, desiredDecimals)
-    : // If the asset is not fungible, the amount should have 0 decimals of
-      // precision.
-      assetAmountToDesiredDecimals(
-        { ...assetAmount, asset: { ...assetAmount.asset, decimals: 0 } },
-        desiredDecimals,
-      );
+	const decimalAmount = isFungibleAssetAmount(assetAmount)
+		? assetAmountToDesiredDecimals(assetAmount, desiredDecimals)
+		: // If the asset is not fungible, the amount should have 0 decimals of
+		  // precision.
+		  assetAmountToDesiredDecimals(
+				{ ...assetAmount, asset: { ...assetAmount.asset, decimals: 0 } },
+				desiredDecimals,
+		  );
 
-  return {
-    ...assetAmount,
-    decimalAmount,
-    localizedDecimalAmount: decimalAmount.toLocaleString(undefined, {
-      maximumFractionDigits: desiredDecimals,
-    }),
-  };
+	return {
+		...assetAmount,
+		decimalAmount,
+		localizedDecimalAmount: decimalAmount.toLocaleString(undefined, {
+			maximumFractionDigits: desiredDecimals,
+		}),
+	};
 }
 
 /**
@@ -204,25 +204,25 @@ export function enrichAssetAmountWithDecimalValues<T extends AnyAssetAmount>(
  * @param unitPrice The unit price as a decimal number.
  */
 export function heuristicDesiredDecimalsForUnitPrice(
-  minimumDesiredDecimals: number,
-  unitPrice: UnitPricePoint<FungibleAsset> | number | undefined,
+	minimumDesiredDecimals: number,
+	unitPrice: UnitPricePoint<FungibleAsset> | number | undefined,
 ): number {
-  const numericUnitPrice =
-    typeof unitPrice === "undefined" || typeof unitPrice === "number"
-      ? unitPrice
-      : fromFixedPointNumber(
-          {
-            amount: unitPrice.unitPrice.amount,
-            decimals: unitPrice.unitPrice.asset.decimals,
-          },
-          10,
-        );
+	const numericUnitPrice =
+		typeof unitPrice === "undefined" || typeof unitPrice === "number"
+			? unitPrice
+			: fromFixedPointNumber(
+					{
+						amount: unitPrice.unitPrice.amount,
+						decimals: unitPrice.unitPrice.asset.decimals,
+					},
+					10,
+			  );
 
-  return Math.max(
-    // If no unit price is provided, just assume 0, which will use the minimum
-    // desired decimals. Supporting this makes it easier for callers to
-    // special-case unit prices that could not be resolved.
-    Math.ceil(Math.log10(numericUnitPrice ?? 0)),
-    minimumDesiredDecimals,
-  );
+	return Math.max(
+		// If no unit price is provided, just assume 0, which will use the minimum
+		// desired decimals. Supporting this makes it easier for callers to
+		// special-case unit prices that could not be resolved.
+		Math.ceil(Math.log10(numericUnitPrice ?? 0)),
+		minimumDesiredDecimals,
+	);
 }

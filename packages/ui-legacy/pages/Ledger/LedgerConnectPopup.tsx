@@ -2,18 +2,18 @@ import React, { ReactElement } from "react";
 import LedgerPanelContainer from "../../components/Ledger/LedgerPanelContainer";
 
 export default function LedgerConnectPopup(): ReactElement {
-  return (
-    <>
-      <LedgerPanelContainer indicatorImageSrc="/images/connect_ledger_indicator_disconnected.svg" />
-      <div className="help select_device_help">
-        <div className="arrow upward_arrow" />
-        <div className="main">Select the device</div>
-      </div>
-      <div className="help click_connect_help">
-        <div className="arrow downward_arrow" />
-        <div className="main">Click connect</div>
-      </div>
-      <style jsx>{`
+	return (
+		<>
+			<LedgerPanelContainer indicatorImageSrc="/images/connect_ledger_indicator_disconnected.svg" />
+			<div className="help select_device_help">
+				<div className="arrow upward_arrow" />
+				<div className="main">Select the device</div>
+			</div>
+			<div className="help click_connect_help">
+				<div className="arrow downward_arrow" />
+				<div className="main">Click connect</div>
+			</div>
+			<style jsx>{`
         .help {
           position: fixed;
           left: 600px;
@@ -63,6 +63,6 @@ export default function LedgerConnectPopup(): ReactElement {
           color: var(--spanish-gray);
         }
       `}</style>
-    </>
-  );
+		</>
+	);
 }

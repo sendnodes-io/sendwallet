@@ -1,16 +1,16 @@
 import React from "react";
 
 const SignDataInfo: React.FC<{
-  label: string;
-  content: string;
+	label: string;
+	content: string;
 }> = ({ label, content }) => {
-  return (
-    <>
-      <div className="wrapper">
-        <div className="label">{label}:</div>
-        <div className="content">{content}</div>
-      </div>
-      <style jsx>{`
+	return (
+		<>
+			<div className="wrapper">
+				<div className="label">{label}:</div>
+				<div className="content">{content}</div>
+			</div>
+			<style jsx>{`
         .wrapper {
           display: flex;
           justify-content: space-between;
@@ -25,8 +25,8 @@ const SignDataInfo: React.FC<{
           color: var(--spanish-gray);
         }
       `}</style>
-    </>
-  );
+		</>
+	);
 };
 
 export default SignDataInfo;

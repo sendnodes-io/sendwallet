@@ -4,71 +4,71 @@ import { denyOrRevokePermission } from "@sendnodes/pokt-wallet-background/redux-
 import { useBackgroundDispatch } from "../../hooks";
 
 export default function (props: {
-  currentPermission: PermissionRequest;
-  permissions: { [k: string]: PermissionRequest };
-  close: () => void;
+	currentPermission: PermissionRequest;
+	permissions: { [k: string]: PermissionRequest };
+	close: () => void;
 }) {
-  const dispatch = useBackgroundDispatch();
-  const [permissions, setPermissions] = useState<PermissionRequest[]>([]);
+	const dispatch = useBackgroundDispatch();
+	const [permissions, setPermissions] = useState<PermissionRequest[]>([]);
 
-  const { permissions: unfiltered, currentPermission } = props;
-  const { key: pKey = "" } = currentPermission;
+	const { permissions: unfiltered, currentPermission } = props;
+	const { key: pKey = "" } = currentPermission;
 
-  useEffect(() => {
-    const filtered = Object.keys(unfiltered)
-      .filter((o) => o !== pKey)
-      .map((k) => unfiltered[k]);
-    const perms =
-      pKey && unfiltered[pKey] ? [currentPermission, ...filtered] : filtered;
-    setPermissions(perms);
-  }, [unfiltered, currentPermission]);
+	useEffect(() => {
+		const filtered = Object.keys(unfiltered)
+			.filter((o) => o !== pKey)
+			.map((k) => unfiltered[k]);
+		const perms =
+			pKey && unfiltered[pKey] ? [currentPermission, ...filtered] : filtered;
+		setPermissions(perms);
+	}, [unfiltered, currentPermission]);
 
-  return (
-    <div className="wrap">
-      <ul>
-        {permissions.map((p, i) => {
-          const {
-            key: k = "",
-            origin: o = "",
-            title: t = "",
-            faviconUrl: u = "",
-          } = p;
-          const bkgStyle: React.CSSProperties = {};
-          if (u) bkgStyle.backgroundImage = `url("${u}")`;
-          return (
-            <li
-              key={`${o}-${i}`}
-              className={`dApp ${
-                k === pKey ? "active" : "inactive dashed_border_thin"
-              }`}
-            >
-              <div className="left">
-                <div className="favicon" style={bkgStyle} />
-              </div>
-              <div className="center">
-                <h3 className="title">{t}</h3>
-                <p className="url">{o}</p>
-              </div>
-              <div className="right">
-                <button
-                  onClick={() => {
-                    dispatch(denyOrRevokePermission({ ...p, state: "deny" }));
-                  }}
-                >
-                  <div className="icon disconnect" />
-                </button>
-              </div>
-            </li>
-          );
-        })}
-      </ul>
-      {!permissions.length ? (
-        <p>You have not connected SendWallet to any dApps.</p>
-      ) : (
-        <></>
-      )}
-      <style jsx>
-        {`
+	return (
+		<div className="wrap">
+			<ul>
+				{permissions.map((p, i) => {
+					const {
+						key: k = "",
+						origin: o = "",
+						title: t = "",
+						faviconUrl: u = "",
+					} = p;
+					const bkgStyle: React.CSSProperties = {};
+					if (u) bkgStyle.backgroundImage = `url("${u}")`;
+					return (
+						<li
+							key={`${o}-${i}`}
+							className={`dApp ${
+								k === pKey ? "active" : "inactive dashed_border_thin"
+							}`}
+						>
+							<div className="left">
+								<div className="favicon" style={bkgStyle} />
+							</div>
+							<div className="center">
+								<h3 className="title">{t}</h3>
+								<p className="url">{o}</p>
+							</div>
+							<div className="right">
+								<button
+									onClick={() => {
+										dispatch(denyOrRevokePermission({ ...p, state: "deny" }));
+									}}
+								>
+									<div className="icon disconnect" />
+								</button>
+							</div>
+						</li>
+					);
+				})}
+			</ul>
+			{!permissions.length ? (
+				<p>You have not connected SendWallet to any dApps.</p>
+			) : (
+				<></>
+			)}
+			<style jsx>
+				{`
           .wrap {
             flex-grow: 1;
             height: 100%;
@@ -160,7 +160,7 @@ export default function (props: {
             background-image: url("./images/disconnect@2x.png");
           }
         `}
-      </style>
-    </div>
-  );
+			</style>
+		</div>
+	);
 }

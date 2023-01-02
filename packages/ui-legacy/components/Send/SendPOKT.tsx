@@ -1,26 +1,26 @@
 import React, { ReactElement, useCallback, useState } from "react";
 import {
-  selectCurrentAccount,
-  selectCurrentAccountBalances,
-  selectMainCurrencySymbol,
+	selectCurrentAccount,
+	selectCurrentAccountBalances,
+	selectMainCurrencySymbol,
 } from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
 import {
-  NetworkFeeSettings,
-  selectEstimatedFeesPerGas,
-  setFeeType,
+	NetworkFeeSettings,
+	selectEstimatedFeesPerGas,
+	setFeeType,
 } from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction";
 import {
-  FungibleAsset,
-  isFungibleAssetAmount,
+	FungibleAsset,
+	isFungibleAssetAmount,
 } from "@sendnodes/pokt-wallet-background/assets";
 import { ETH, POKT } from "@sendnodes/pokt-wallet-background/constants";
 import {
-  convertFixedPointNumber,
-  parseToFixedPointNumber,
+	convertFixedPointNumber,
+	parseToFixedPointNumber,
 } from "@sendnodes/pokt-wallet-background/lib/fixed-point";
 import {
-  selectAssetPricePoint,
-  transferAsset,
+	selectAssetPricePoint,
+	transferAsset,
 } from "@sendnodes/pokt-wallet-background/redux-slices/assets";
 import { CompleteAssetAmount } from "@sendnodes/pokt-wallet-background/redux-slices/accounts";
 import { enrichAssetAmountWithMainCurrencyValues } from "@sendnodes/pokt-wallet-background/redux-slices/utils/asset-utils";
@@ -29,10 +29,10 @@ import { formatFixed } from "@ethersproject/bignumber";
 import SharedAssetInput from "../Shared/SharedAssetInput";
 import SharedButton from "../Shared/SharedButton";
 import {
-  useAddressOrNameValidation,
-  useBackgroundDispatch,
-  useBackgroundSelector,
-  useAreKeyringsUnlocked,
+	useAddressOrNameValidation,
+	useBackgroundDispatch,
+	useBackgroundSelector,
+	useAreKeyringsUnlocked,
 } from "../../hooks";
 import SharedInput from "../Shared/SharedInput";
 import SharedSplashScreen from "../Shared/SharedSplashScreen";
@@ -43,254 +43,254 @@ import useRemoteConfig from "../../hooks/remote-config-hooks";
 
 // TODO: v0.2.0 handle multiple assets
 export default function Send(): ReactElement {
-  const remoteConfig = useRemoteConfig();
-  const maxMemoLength = 75;
-  const location = useLocation<FungibleAsset>();
-  const [selectedAsset, setSelectedAsset] = useState<FungibleAsset>(
-    location.state ?? POKT,
-  );
-  const [destinationAddress, setDestinationAddress] = useState<
-    string | undefined
-  >(undefined);
-  const [amount, setAmount] = useState("");
-  const [memo, setMemo] = useState("Sent with SendWallet.net");
-  const [memoError, setMemoError] = useState("");
-  const [gasLimit, setGasLimit] = useState<bigint | undefined>(undefined);
-  const [isSendingTransactionRequest, setIsSendingTransactionRequest] =
-    useState(false);
-  const [hasError, setHasError] = useState(false);
-  const [networkSettingsModalOpen, setNetworkSettingsModalOpen] =
-    useState(false);
+	const remoteConfig = useRemoteConfig();
+	const maxMemoLength = 75;
+	const location = useLocation<FungibleAsset>();
+	const [selectedAsset, setSelectedAsset] = useState<FungibleAsset>(
+		location.state ?? POKT,
+	);
+	const [destinationAddress, setDestinationAddress] = useState<
+		string | undefined
+	>(undefined);
+	const [amount, setAmount] = useState("");
+	const [memo, setMemo] = useState("Sent with SendWallet.net");
+	const [memoError, setMemoError] = useState("");
+	const [gasLimit, setGasLimit] = useState<bigint | undefined>(undefined);
+	const [isSendingTransactionRequest, setIsSendingTransactionRequest] =
+		useState(false);
+	const [hasError, setHasError] = useState(false);
+	const [networkSettingsModalOpen, setNetworkSettingsModalOpen] =
+		useState(false);
 
-  const history = useHistory();
+	const history = useHistory();
 
-  const dispatch = useBackgroundDispatch();
-  const estimatedFeesPerGas = useBackgroundSelector(selectEstimatedFeesPerGas);
-  const currentAccount = useBackgroundSelector(selectCurrentAccount);
-  const balanceData = useBackgroundSelector(selectCurrentAccountBalances);
-  const mainCurrencySymbol = useBackgroundSelector(selectMainCurrencySymbol);
+	const dispatch = useBackgroundDispatch();
+	const estimatedFeesPerGas = useBackgroundSelector(selectEstimatedFeesPerGas);
+	const currentAccount = useBackgroundSelector(selectCurrentAccount);
+	const balanceData = useBackgroundSelector(selectCurrentAccountBalances);
+	const mainCurrencySymbol = useBackgroundSelector(selectMainCurrencySymbol);
 
-  const fungibleAssetAmounts =
-    // Only look at fungible assets.
-    balanceData?.assetAmounts?.filter(
-      (assetAmount): assetAmount is CompleteAssetAmount<FungibleAsset> =>
-        isFungibleAssetAmount(assetAmount),
-    );
-  const assetPricePoint = useBackgroundSelector((state) =>
-    selectAssetPricePoint(
-      state.assets,
-      selectedAsset.symbol,
-      mainCurrencySymbol,
-    ),
-  );
+	const fungibleAssetAmounts =
+		// Only look at fungible assets.
+		balanceData?.assetAmounts?.filter(
+			(assetAmount): assetAmount is CompleteAssetAmount<FungibleAsset> =>
+				isFungibleAssetAmount(assetAmount),
+		);
+	const assetPricePoint = useBackgroundSelector((state) =>
+		selectAssetPricePoint(
+			state.assets,
+			selectedAsset.symbol,
+			mainCurrencySymbol,
+		),
+	);
 
-  const assetAmountFromForm = () => {
-    const fixedPointAmount = parseToFixedPointNumber(amount.toString());
-    if (typeof fixedPointAmount === "undefined") {
-      return undefined;
-    }
+	const assetAmountFromForm = () => {
+		const fixedPointAmount = parseToFixedPointNumber(amount.toString());
+		if (typeof fixedPointAmount === "undefined") {
+			return undefined;
+		}
 
-    const decimalMatched = convertFixedPointNumber(
-      fixedPointAmount,
-      selectedAsset.decimals,
-    );
+		const decimalMatched = convertFixedPointNumber(
+			fixedPointAmount,
+			selectedAsset.decimals,
+		);
 
-    return enrichAssetAmountWithMainCurrencyValues(
-      {
-        asset: selectedAsset,
-        amount: decimalMatched.amount,
-        decimalAmount: decimalMatched.decimals,
-      },
-      assetPricePoint,
-      2,
-    );
-  };
+		return enrichAssetAmountWithMainCurrencyValues(
+			{
+				asset: selectedAsset,
+				amount: decimalMatched.amount,
+				decimalAmount: decimalMatched.decimals,
+			},
+			assetPricePoint,
+			2,
+		);
+	};
 
-  const assetAmount = assetAmountFromForm();
-  const areKeyringsUnlocked = useAreKeyringsUnlocked(true);
+	const assetAmount = assetAmountFromForm();
+	const areKeyringsUnlocked = useAreKeyringsUnlocked(true);
 
-  const sendTransactionRequest = useCallback(async () => {
-    if (
-      assetAmount === undefined ||
-      destinationAddress === undefined ||
-      !areKeyringsUnlocked
-    ) {
-      return;
-    }
-    try {
-      setIsSendingTransactionRequest(true);
+	const sendTransactionRequest = useCallback(async () => {
+		if (
+			assetAmount === undefined ||
+			destinationAddress === undefined ||
+			!areKeyringsUnlocked
+		) {
+			return;
+		}
+		try {
+			setIsSendingTransactionRequest(true);
 
-      await dispatch(
-        transferAsset({
-          fromAddressNetwork: currentAccount,
-          toAddressNetwork: {
-            address: destinationAddress,
-            network: currentAccount.network,
-          },
-          assetAmount,
-          gasLimit,
-          memo,
-        }),
-      );
-    } finally {
-      setIsSendingTransactionRequest(false);
-    }
+			await dispatch(
+				transferAsset({
+					fromAddressNetwork: currentAccount,
+					toAddressNetwork: {
+						address: destinationAddress,
+						network: currentAccount.network,
+					},
+					assetAmount,
+					gasLimit,
+					memo,
+				}),
+			);
+		} finally {
+			setIsSendingTransactionRequest(false);
+		}
 
-    history.push("/sign-transaction");
-  }, [
-    assetAmount,
-    currentAccount,
-    destinationAddress,
-    dispatch,
-    gasLimit,
-    history,
-    areKeyringsUnlocked,
-    memo,
-  ]);
+		history.push("/sign-transaction");
+	}, [
+		assetAmount,
+		currentAccount,
+		destinationAddress,
+		dispatch,
+		gasLimit,
+		history,
+		areKeyringsUnlocked,
+		memo,
+	]);
 
-  const networkSettingsSaved = (networkSetting: NetworkFeeSettings) => {
-    setGasLimit(networkSetting.gasLimit);
-    dispatch(setFeeType(networkSetting.feeType));
-    setNetworkSettingsModalOpen(false);
-  };
+	const networkSettingsSaved = (networkSetting: NetworkFeeSettings) => {
+		setGasLimit(networkSetting.gasLimit);
+		dispatch(setFeeType(networkSetting.feeType));
+		setNetworkSettingsModalOpen(false);
+	};
 
-  const { networkFee } = usePocketNetworkFee();
+	const { networkFee } = usePocketNetworkFee();
 
-  const {
-    errorMessage: addressErrorMessage,
-    isValidating: addressIsValidating,
-    handleInputChange: handleAddressChange,
-  } = useAddressOrNameValidation(setDestinationAddress);
+	const {
+		errorMessage: addressErrorMessage,
+		isValidating: addressIsValidating,
+		handleInputChange: handleAddressChange,
+	} = useAddressOrNameValidation(setDestinationAddress);
 
-  if (!areKeyringsUnlocked) {
-    return <SharedSplashScreen />;
-  }
+	if (!areKeyringsUnlocked) {
+		return <SharedSplashScreen />;
+	}
 
-  return (
-    <div className="page_content">
-      <div className="section">
-        <div className="header ">
-          <div className="row">
-            <div className="start">
-              <div className="send_icon_wrap">
-                <div className="send_icon" />
-              </div>
-            </div>
-            <div className="center">
-              <h1>Send POKT</h1>
-            </div>
-            <div className="end">
-              <button
-                type="button"
-                aria-label="close"
-                className="icon_close"
-                onClick={() => {
-                  history.push("/");
-                }}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="section">
-        <div className="form_input mb-2">
-          <SharedAssetInput
-            autoFocus
-            label="ENTER AMOUNT"
-            onAssetSelect={setSelectedAsset}
-            assetsAndAmounts={fungibleAssetAmounts}
-            disableDropdown
-            onAmountChange={(value, errorMessage) => {
-              setAmount(value);
-              if (errorMessage) {
-                setHasError(true);
-                return;
-              }
+	return (
+		<div className="page_content">
+			<div className="section">
+				<div className="header ">
+					<div className="row">
+						<div className="start">
+							<div className="send_icon_wrap">
+								<div className="send_icon" />
+							</div>
+						</div>
+						<div className="center">
+							<h1>Send POKT</h1>
+						</div>
+						<div className="end">
+							<button
+								type="button"
+								aria-label="close"
+								className="icon_close"
+								onClick={() => {
+									history.push("/");
+								}}
+							/>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div className="section">
+				<div className="form_input mb-2">
+					<SharedAssetInput
+						autoFocus
+						label="ENTER AMOUNT"
+						onAssetSelect={setSelectedAsset}
+						assetsAndAmounts={fungibleAssetAmounts}
+						disableDropdown
+						onAmountChange={(value, errorMessage) => {
+							setAmount(value);
+							if (errorMessage) {
+								setHasError(true);
+								return;
+							}
 
-              setHasError(false);
-            }}
-            selectedAsset={selectedAsset}
-            amount={amount}
-            networkFee={networkFee.toString()}
-          />
-          <div className="value">
-            {assetAmount?.localizedMainCurrencyAmount ?? "-"}
-          </div>
-        </div>
-      </div>
-      <div className="section">
-        <div className="relative form_input address_form_input mb-10">
-          <SharedInput
-            label="ENTER ADDRESS"
-            errorMessage={addressErrorMessage}
-            onChange={(val) => handleAddressChange(val)}
-          />
-          {remoteConfig?.POKT?.features?.unstoppableDomains && (
-            <div className="absolute -bottom-6">
-              {addressIsValidating && <SharedLoadingSpinner size="small" />}
-              {!addressIsValidating && destinationAddress && (
-                <span>{destinationAddress}</span>
-              )}
-            </div>
-          )}
-        </div>
-        <div className="form_input mb-4">
-          <SharedInput
-            label="TX MEMO"
-            type="textarea"
-            maxLength={maxMemoLength}
-            errorMessage={memoError}
-            value={memo}
-            onChange={(val) => {
-              setMemoError("");
-              setMemo(val);
-              if (val.length > maxMemoLength) {
-                setMemoError(
-                  `Memo cannot be longer than ${maxMemoLength} characters`,
-                );
-              }
-            }}
-          />
-          <div className="memo_validation">
-            <small>
-              {memo.length} / {maxMemoLength}
-            </small>
-          </div>
-        </div>
-      </div>
-      <div className="section">
-        <div style={{ alignSelf: "flex-start", marginBottom: "1.5rem" }}>
-          <p>
-            <small>
-              TX Fees -{" "}
-              {formatTokenAmount(
-                formatFixed(networkFee, selectedAsset.decimals),
-              )}{" "}
-              POKT
-            </small>
-          </p>
-        </div>
-      </div>
-      <div className="section">
-        <SharedButton
-          type="primary"
-          size="large"
-          isDisabled={
-            isSendingTransactionRequest ||
-            Number(amount) === 0 ||
-            destinationAddress === undefined ||
-            memoError !== "" ||
-            hasError
-          }
-          onClick={sendTransactionRequest}
-          isFormSubmit
-          isLoading={isSendingTransactionRequest}
-        >
-          Send
-        </SharedButton>
-      </div>
-      <style jsx>
-        {`
+							setHasError(false);
+						}}
+						selectedAsset={selectedAsset}
+						amount={amount}
+						networkFee={networkFee.toString()}
+					/>
+					<div className="value">
+						{assetAmount?.localizedMainCurrencyAmount ?? "-"}
+					</div>
+				</div>
+			</div>
+			<div className="section">
+				<div className="relative form_input address_form_input mb-10">
+					<SharedInput
+						label="ENTER ADDRESS"
+						errorMessage={addressErrorMessage}
+						onChange={(val) => handleAddressChange(val)}
+					/>
+					{remoteConfig?.POKT?.features?.unstoppableDomains && (
+						<div className="absolute -bottom-6">
+							{addressIsValidating && <SharedLoadingSpinner size="small" />}
+							{!addressIsValidating && destinationAddress && (
+								<span>{destinationAddress}</span>
+							)}
+						</div>
+					)}
+				</div>
+				<div className="form_input mb-4">
+					<SharedInput
+						label="TX MEMO"
+						type="textarea"
+						maxLength={maxMemoLength}
+						errorMessage={memoError}
+						value={memo}
+						onChange={(val) => {
+							setMemoError("");
+							setMemo(val);
+							if (val.length > maxMemoLength) {
+								setMemoError(
+									`Memo cannot be longer than ${maxMemoLength} characters`,
+								);
+							}
+						}}
+					/>
+					<div className="memo_validation">
+						<small>
+							{memo.length} / {maxMemoLength}
+						</small>
+					</div>
+				</div>
+			</div>
+			<div className="section">
+				<div style={{ alignSelf: "flex-start", marginBottom: "1.5rem" }}>
+					<p>
+						<small>
+							TX Fees -{" "}
+							{formatTokenAmount(
+								formatFixed(networkFee, selectedAsset.decimals),
+							)}{" "}
+							POKT
+						</small>
+					</p>
+				</div>
+			</div>
+			<div className="section">
+				<SharedButton
+					type="primary"
+					size="large"
+					isDisabled={
+						isSendingTransactionRequest ||
+						Number(amount) === 0 ||
+						destinationAddress === undefined ||
+						memoError !== "" ||
+						hasError
+					}
+					onClick={sendTransactionRequest}
+					isFormSubmit
+					isLoading={isSendingTransactionRequest}
+				>
+					Send
+				</SharedButton>
+			</div>
+			<style jsx>
+				{`
           .section {
             width: calc(100% - 1rem);
           }
@@ -389,7 +389,7 @@ export default function Send(): ReactElement {
             justify-content: space-evenly;
           }
         `}
-      </style>
-    </div>
-  );
+			</style>
+		</div>
+	);
 }

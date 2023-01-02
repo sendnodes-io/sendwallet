@@ -2,18 +2,18 @@ import React, { ReactElement } from "react";
 import classNames from "clsx";
 
 interface OnboardingStepProps {
-  label: string;
-  isActive: boolean;
+	label: string;
+	isActive: boolean;
 }
 
 function OnboardingStep(props: OnboardingStepProps): ReactElement {
-  const { label, isActive } = props;
+	const { label, isActive } = props;
 
-  return (
-    <li className={classNames({ active: isActive })}>
-      {label}
-      <style jsx>
-        {`
+	return (
+		<li className={classNames({ active: isActive })}>
+			{label}
+			<style jsx>
+				{`
           li:before {
             content: " ";
             display: block;
@@ -42,36 +42,36 @@ function OnboardingStep(props: OnboardingStepProps): ReactElement {
             width: 16px;
           }
         `}
-      </style>
-    </li>
-  );
+			</style>
+		</li>
+	);
 }
 
 OnboardingStep.defaultProps = {
-  isActive: false,
+	isActive: false,
 };
 
 interface OnboardingStepsIndicatorProps {
-  activeStep: number;
+	activeStep: number;
 }
 
 export default function OnboardingStepsIndicator(
-  props: OnboardingStepsIndicatorProps,
+	props: OnboardingStepsIndicatorProps,
 ): ReactElement {
-  const { activeStep } = props;
+	const { activeStep } = props;
 
-  return (
-    <ul>
-      <OnboardingStep label="Create" isActive={activeStep === 0} />
-      <OnboardingStep label="Save" isActive={activeStep === 1} />
-      <OnboardingStep label="Verify" isActive={activeStep === 2} />
-      <style jsx>
-        {`
+	return (
+		<ul>
+			<OnboardingStep label="Create" isActive={activeStep === 0} />
+			<OnboardingStep label="Save" isActive={activeStep === 1} />
+			<OnboardingStep label="Verify" isActive={activeStep === 2} />
+			<style jsx>
+				{`
           ul {
             display: flex;
           }
         `}
-      </style>
-    </ul>
-  );
+			</style>
+		</ul>
+	);
 }

@@ -1,17 +1,17 @@
 import React, { ReactElement } from "react";
 
 type Props = {
-  onClick?: () => void;
+	onClick?: () => void;
 };
 
 export default function TopMenuProtocolSwitcher({
-  onClick,
+	onClick,
 }: Props): ReactElement {
-  return (
-    <button type="button" onClick={onClick}>
-      Pokt
-      <style jsx>
-        {`
+	return (
+		<button type="button" onClick={onClick}>
+			Pokt
+			<style jsx>
+				{`
           button {
             color: var(--spanish-gray);
             display: flex;
@@ -32,7 +32,7 @@ export default function TopMenuProtocolSwitcher({
             background-color: #fff;
           }
         `}
-      </style>
-    </button>
-  );
+			</style>
+		</button>
+	);
 }

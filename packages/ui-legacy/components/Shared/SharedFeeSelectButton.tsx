@@ -2,29 +2,29 @@ import React, { ReactElement } from "react";
 import classNames from "clsx";
 
 interface Props {
-  isActive: boolean;
-  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+	isActive: boolean;
+	onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 export default function SharedFeeSelectButton(props: Props): ReactElement {
-  const { isActive, onClick } = props;
+	const { isActive, onClick } = props;
 
-  return (
-    <button
-      type="button"
-      className={classNames({ active: isActive })}
-      onClick={onClick}
-    >
-      <div className="top">
-        Slow
-        <div className="time small">5h</div>
-      </div>
-      <div className="bottom">
-        0.00479 ETH
-        <div className="usd small">$20,99</div>
-      </div>
-      <style jsx>
-        {`
+	return (
+		<button
+			type="button"
+			className={classNames({ active: isActive })}
+			onClick={onClick}
+		>
+			<div className="top">
+				Slow
+				<div className="time small">5h</div>
+			</div>
+			<div className="bottom">
+				0.00479 ETH
+				<div className="usd small">$20,99</div>
+			</div>
+			<style jsx>
+				{`
           button {
             width: 106px;
             height: 72px;
@@ -79,11 +79,11 @@ export default function SharedFeeSelectButton(props: Props): ReactElement {
             text-align: right;
           }
         `}
-      </style>
-    </button>
-  );
+			</style>
+		</button>
+	);
 }
 
 SharedFeeSelectButton.defaultProps = {
-  isActive: false,
+	isActive: false,
 };

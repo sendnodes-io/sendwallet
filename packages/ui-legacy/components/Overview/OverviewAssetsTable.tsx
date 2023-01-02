@@ -4,81 +4,81 @@ import SharedAssetIcon from "../Shared/SharedAssetIcon";
 import SharedLoadingSpinner from "../Shared/SharedLoadingSpinner";
 
 interface Props {
-  assets: CompleteAssetAmount[];
-  initializationLoadingTimeExpired: boolean;
+	assets: CompleteAssetAmount[];
+	initializationLoadingTimeExpired: boolean;
 }
 
 export default function OverviewAssetsTable(props: Props): ReactElement {
-  const { assets, initializationLoadingTimeExpired } = props;
-  if (!assets) return <></>;
+	const { assets, initializationLoadingTimeExpired } = props;
+	if (!assets) return <></>;
 
-  function assetSortCompare(a: CompleteAssetAmount, b: CompleteAssetAmount) {
-    if (a.mainCurrencyAmount !== b.mainCurrencyAmount) {
-      // Any mismatched undefined is ranked below its defined counterpart.
-      if (a.mainCurrencyAmount === undefined) {
-        return 1;
-      }
-      if (b.mainCurrencyAmount === undefined) {
-        return -1;
-      }
+	function assetSortCompare(a: CompleteAssetAmount, b: CompleteAssetAmount) {
+		if (a.mainCurrencyAmount !== b.mainCurrencyAmount) {
+			// Any mismatched undefined is ranked below its defined counterpart.
+			if (a.mainCurrencyAmount === undefined) {
+				return 1;
+			}
+			if (b.mainCurrencyAmount === undefined) {
+				return -1;
+			}
 
-      return b.mainCurrencyAmount - a.mainCurrencyAmount;
-    }
+			return b.mainCurrencyAmount - a.mainCurrencyAmount;
+		}
 
-    // Fall back on symbol comparison.
-    return a.asset.symbol.localeCompare(b.asset.symbol);
-  }
+		// Fall back on symbol comparison.
+		return a.asset.symbol.localeCompare(b.asset.symbol);
+	}
 
-  return (
-    <table className="standard_width">
-      <thead>
-        <tr>
-          <th>Asset</th>
-          <th>Price</th>
-          <th>Balance</th>
-        </tr>
-      </thead>
-      <tbody>
-        {assets.sort(assetSortCompare).map((asset) => (
-          <tr key={asset.asset.metadata?.coinGeckoID || asset.asset.symbol}>
-            <td>
-              <div className="asset_descriptor">
-                <SharedAssetIcon
-                  size="small"
-                  logoURL={asset?.asset?.metadata?.logoURL}
-                  symbol={asset?.asset?.symbol}
-                />
-                <span className="asset_name">{asset.asset.symbol}</span>
-              </div>
-            </td>
-            <td>
-              {asset.localizedUnitPrice ? (
-                <div>
-                  <span className="lighter_color">$</span>
-                  {asset.localizedUnitPrice}
-                </div>
-              ) : (
-                <div className="loading_wrap">
-                  {initializationLoadingTimeExpired ? (
-                    <></>
-                  ) : (
-                    <SharedLoadingSpinner size="small" />
-                  )}
-                </div>
-              )}
-            </td>
-            <td>
-              {asset.localizedMainCurrencyAmount && (
-                <div>{asset.localizedMainCurrencyAmount}</div>
-              )}
-              <div className="balance_token_amount">
-                {asset.localizedDecimalAmount}
-              </div>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-      <style jsx>{`
+	return (
+		<table className="standard_width">
+			<thead>
+				<tr>
+					<th>Asset</th>
+					<th>Price</th>
+					<th>Balance</th>
+				</tr>
+			</thead>
+			<tbody>
+				{assets.sort(assetSortCompare).map((asset) => (
+					<tr key={asset.asset.metadata?.coinGeckoID || asset.asset.symbol}>
+						<td>
+							<div className="asset_descriptor">
+								<SharedAssetIcon
+									size="small"
+									logoURL={asset?.asset?.metadata?.logoURL}
+									symbol={asset?.asset?.symbol}
+								/>
+								<span className="asset_name">{asset.asset.symbol}</span>
+							</div>
+						</td>
+						<td>
+							{asset.localizedUnitPrice ? (
+								<div>
+									<span className="lighter_color">$</span>
+									{asset.localizedUnitPrice}
+								</div>
+							) : (
+								<div className="loading_wrap">
+									{initializationLoadingTimeExpired ? (
+										<></>
+									) : (
+										<SharedLoadingSpinner size="small" />
+									)}
+								</div>
+							)}
+						</td>
+						<td>
+							{asset.localizedMainCurrencyAmount && (
+								<div>{asset.localizedMainCurrencyAmount}</div>
+							)}
+							<div className="balance_token_amount">
+								{asset.localizedDecimalAmount}
+							</div>
+						</td>
+					</tr>
+				))}
+			</tbody>
+			<style jsx>{`
         tr {
           height: 55px;
         }
@@ -132,6 +132,6 @@ export default function OverviewAssetsTable(props: Props): ReactElement {
           justify-content: flex-end;
         }
       `}</style>
-    </table>
-  );
+		</table>
+	);
 }

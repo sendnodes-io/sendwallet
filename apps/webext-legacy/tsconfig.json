@@ -16,5 +16,14 @@
       "module": "CommonJS"
     }
   },
-  "exclude": ["packages/dev-utils"]
+  "include": [
+    "env.d.ts",
+    "src",
+    "webpack.config.ts",
+    "../../packages/ui-legacy",
+    "../../packages/background",
+    "../../packages/provider-bridge",
+    "../../packages/provider-bridge-shared",
+    "../../packages/window-provider"
+  ]
 }

@@ -2,18 +2,18 @@ import classNames from "clsx";
 import React, { ReactElement, ReactNode } from "react";
 
 export default function TransactionDetailContainer({
-  children,
-  footer,
+	children,
+	footer,
 }: {
-  children: ReactNode;
-  footer?: ReactNode;
+	children: ReactNode;
+	footer?: ReactNode;
 }): ReactElement {
-  return (
-    <div className={classNames("container", { has_footer: footer })}>
-      {children}
-      {footer && <div className="divider" />}
-      {footer}
-      <style jsx>{`
+	return (
+		<div className={classNames("container", { has_footer: footer })}>
+			{children}
+			{footer && <div className="divider" />}
+			{footer}
+			<style jsx>{`
         .container {
           align-self: stretch;
           display: flex;
@@ -31,6 +31,6 @@ export default function TransactionDetailContainer({
           margin: 0.5rem;
         }
       `}</style>
-    </div>
-  );
+		</div>
+	);
 }

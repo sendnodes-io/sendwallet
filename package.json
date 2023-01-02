@@ -21,6 +21,7 @@
   ],
   "scripts": {
     "webext:watch": "WEBPACK_OUTPUT_DIR=../.. yarn workspace webext run watch",
+    "legacy:watch": "WEBPACK_OUTPUT_DIR=../.. yarn workspace webext-legacy run start",
     "build": "WEBPACK_OUTPUT_DIR=../.. yarn workspaces foreach -pt run build",
     "lint": "run-p 'lint:*'",
     "lint-fix": "run-p 'lint:*:fix'",
@@ -40,7 +41,9 @@
   "devDependencies": {
     "@babel/core": "^7.20.7",
     "@babel/preset-env": "^7.20.2",
+    "@babel/preset-react": "^7.18.6",
     "@babel/preset-typescript": "^7.18.6",
+    "@babel/register": "^7.18.9",
     "@jest/globals": "^29.3.1",
     "@manypkg/cli": "^0.19.2",
     "husky": "^8.0.0",

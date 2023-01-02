@@ -3,33 +3,33 @@ import SharedAssetIcon from "../Shared/SharedAssetIcon";
 import TransactionDetailContainer from "../TransactionDetail/TransactionDetailContainer";
 import TransactionDetailItem from "../TransactionDetail/TransactionDetailItem";
 import SignTransactionBaseInfoProvider, {
-  SignTransactionInfoProviderProps,
+	SignTransactionInfoProviderProps,
 } from "./SignTransactionBaseInfoProvider";
 
 export default function SignTransactionSwapAssetInfoProvider({
-  inner,
+	inner,
 }: SignTransactionInfoProviderProps): ReactElement {
-  return (
-    <SignTransactionBaseInfoProvider
-      title="Swap assets"
-      infoBlock={
-        <>
-          <span className="site">Uniswap</span>
-          <span className="pre_post_label">Spend amount</span>
-          <span className="amount">0.347 ETH</span>
-          <span className="pre_post_label">$1413.11</span>
-          <div className="asset_items_wrap">
-            <div className="asset_item">
-              <SharedAssetIcon size="small" />
-              <span className="asset_name">ETH</span>
-            </div>
-            <div className="icon_switch" />
-            <div className="asset_item">
-              <span className="asset_name">ETH</span>
-              <SharedAssetIcon size="small" />
-            </div>
-          </div>
-          <style jsx>{`
+	return (
+		<SignTransactionBaseInfoProvider
+			title="Swap assets"
+			infoBlock={
+				<>
+					<span className="site">Uniswap</span>
+					<span className="pre_post_label">Spend amount</span>
+					<span className="amount">0.347 ETH</span>
+					<span className="pre_post_label">$1413.11</span>
+					<div className="asset_items_wrap">
+						<div className="asset_item">
+							<SharedAssetIcon size="small" />
+							<span className="asset_name">ETH</span>
+						</div>
+						<div className="icon_switch" />
+						<div className="asset_item">
+							<span className="asset_name">ETH</span>
+							<SharedAssetIcon size="small" />
+						</div>
+					</div>
+					<style jsx>{`
             .site {
               color: #fff;
               font-size: 16px;
@@ -98,17 +98,17 @@ export default function SignTransactionSwapAssetInfoProvider({
               align-items: center;
             }
           `}</style>
-        </>
-      }
-      textualInfoBlock={
-        <TransactionDetailContainer>
-          <TransactionDetailItem name="Type" value="Swap assets" />
-          <TransactionDetailItem name="Spend amount" value={<>TODO</>} />
-          {/* TODO */}
-        </TransactionDetailContainer>
-      }
-      confirmButtonLabel="Confirm"
-      inner={inner}
-    />
-  );
+				</>
+			}
+			textualInfoBlock={
+				<TransactionDetailContainer>
+					<TransactionDetailItem name="Type" value="Swap assets" />
+					<TransactionDetailItem name="Spend amount" value={<>TODO</>} />
+					{/* TODO */}
+				</TransactionDetailContainer>
+			}
+			confirmButtonLabel="Confirm"
+			inner={inner}
+		/>
+	);
 }

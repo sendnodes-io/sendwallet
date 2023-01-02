@@ -3,39 +3,39 @@ import { useHistory } from "react-router-dom";
 import styles from "./styles";
 
 export default function OnboardingAccountLayout(props: {
-  title: ReactElement;
-  body: ReactElement;
-  buttons: ReactElement;
-  icon: ReactElement;
-  showCloseButton?: boolean;
+	title: ReactElement;
+	body: ReactElement;
+	buttons: ReactElement;
+	icon: ReactElement;
+	showCloseButton?: boolean;
 }): ReactElement {
-  const history = useHistory();
+	const history = useHistory();
 
-  return (
-    <section>
-      <div className="icon">{props.icon}</div>
-      <div className="top">
-        {props.title}
-        {props.showCloseButton ? (
-          <button
-            type="button"
-            aria-label="close"
-            className="icon_close"
-            onClick={() => {
-              if (history.action !== "POP") history.goBack();
-              else history.push("/");
-            }}
-          />
-        ) : null}
-      </div>
+	return (
+		<section>
+			<div className="icon">{props.icon}</div>
+			<div className="top">
+				{props.title}
+				{props.showCloseButton ? (
+					<button
+						type="button"
+						aria-label="close"
+						className="icon_close"
+						onClick={() => {
+							if (history.action !== "POP") history.goBack();
+							else history.push("/");
+						}}
+					/>
+				) : null}
+			</div>
 
-      {props.body}
+			{props.body}
 
-      <div className="buttons">{props.buttons}</div>
+			<div className="buttons">{props.buttons}</div>
 
-      <style jsx>{styles}</style>
-      <style jsx>
-        {`
+			<style jsx>{styles}</style>
+			<style jsx>
+				{`
           :global(main.dashed_border) {
             padding: 0 !important;
           }
@@ -60,7 +60,7 @@ export default function OnboardingAccountLayout(props: {
             width: 20rem;
           }
         `}
-      </style>
-    </section>
-  );
+			</style>
+		</section>
+	);
 }

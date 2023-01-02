@@ -2,30 +2,30 @@ import React, { useState, ReactElement } from "react";
 import classNames from "clsx";
 
 interface SharedToggleButtonProps {
-  onChange: (toggleValue: boolean) => void;
-  value?: boolean | undefined;
+	onChange: (toggleValue: boolean) => void;
+	value?: boolean | undefined;
 }
 
 export default function SharedToggleButton({
-  onChange,
-  value,
+	onChange,
+	value,
 }: SharedToggleButtonProps): ReactElement {
-  const [isActive, setIsActive] = useState(value);
+	const [isActive, setIsActive] = useState(value);
 
-  const handleToggleAction = () => {
-    setIsActive(!isActive);
-    onChange(!isActive);
-  };
+	const handleToggleAction = () => {
+		setIsActive(!isActive);
+		onChange(!isActive);
+	};
 
-  return (
-    <button
-      type="button"
-      className={classNames("container", { is_active: isActive })}
-      onClick={handleToggleAction}
-    >
-      <div className="bulb" />
-      <style jsx>
-        {`
+	return (
+		<button
+			type="button"
+			className={classNames("container", { is_active: isActive })}
+			onClick={handleToggleAction}
+		>
+			<div className="bulb" />
+			<style jsx>
+				{`
           .container {
             width: 40px;
             height: 24px;
@@ -48,7 +48,7 @@ export default function SharedToggleButton({
             background-color: var(--aqua);
           }
         `}
-      </style>
-    </button>
-  );
+			</style>
+		</button>
+	);
 }

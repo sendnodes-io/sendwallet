@@ -1,76 +1,76 @@
 import React, {
-  ReactElement,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
+	ReactElement,
+	useCallback,
+	useEffect,
+	useRef,
+	useState,
 } from "react";
 import { AnyAsset, Asset } from "@sendnodes/pokt-wallet-background/assets";
 import { normalizeEVMAddress } from "@sendnodes/pokt-wallet-background/lib/utils";
 import {
-  convertFixedPointNumber,
-  fixedPointNumberToString,
-  parseToFixedPointNumber,
+	convertFixedPointNumber,
+	fixedPointNumberToString,
+	parseToFixedPointNumber,
 } from "@sendnodes/pokt-wallet-background/lib/fixed-point";
 import classNames from "clsx";
 import SharedButton from "./SharedButton";
 import SharedSlideUpMenu from "./SharedSlideUpMenu";
 import SharedAssetItem, {
-  AnyAssetWithOptionalAmount,
-  hasAmounts,
+	AnyAssetWithOptionalAmount,
+	hasAmounts,
 } from "./SharedAssetItem";
 import SharedAssetIcon from "./SharedAssetIcon";
 
 // List of symbols we want to display first.  Lower array index === higher priority.
 // For now we just prioritize somewhat popular assets that we are able to load an icon for.
 const SYMBOL_PRIORITY_LIST = [
-  "UST",
-  "KEEP",
-  "ENS",
-  "CRV",
-  "FTM",
-  "GRT",
-  "BAL",
-  "MATIC",
-  "NU",
-  "AMP",
-  "BNT",
-  "COMP",
-  "UMA",
-  "WLTC",
-  "CVC",
+	"UST",
+	"KEEP",
+	"ENS",
+	"CRV",
+	"FTM",
+	"GRT",
+	"BAL",
+	"MATIC",
+	"NU",
+	"AMP",
+	"BNT",
+	"COMP",
+	"UMA",
+	"WLTC",
+	"CVC",
 ];
 
 const symbolPriority = Object.fromEntries(
-  SYMBOL_PRIORITY_LIST.map((symbol, idx) => [
-    symbol,
-    SYMBOL_PRIORITY_LIST.length - idx,
-  ]),
+	SYMBOL_PRIORITY_LIST.map((symbol, idx) => [
+		symbol,
+		SYMBOL_PRIORITY_LIST.length - idx,
+	]),
 );
 interface SelectAssetMenuContentProps<AssetType extends AnyAsset> {
-  assets: AnyAssetWithOptionalAmount<AssetType>[];
-  setSelectedAssetAndClose: (
-    asset: AnyAssetWithOptionalAmount<AssetType>,
-  ) => void;
+	assets: AnyAssetWithOptionalAmount<AssetType>[];
+	setSelectedAssetAndClose: (
+		asset: AnyAssetWithOptionalAmount<AssetType>,
+	) => void;
 }
 
 // Sorts an AnyAssetWithOptionalAmount by symbol, alphabetically, according to
 // the current locale.  Symbols passed into the symbolList will take priority
 // over alphabetical sorting.
 function prioritizedAssetAlphabeticSorter<
-  AssetType extends AnyAsset,
-  T extends AnyAssetWithOptionalAmount<AssetType>,
+	AssetType extends AnyAsset,
+	T extends AnyAssetWithOptionalAmount<AssetType>,
 >({ asset: { symbol: symbol1 } }: T, { asset: { symbol: symbol2 } }: T) {
-  const firstSymbolPriority = symbolPriority[symbol1] ?? 0;
-  const secondSymbolPriority = symbolPriority[symbol2] ?? 0;
-  if (firstSymbolPriority > secondSymbolPriority) {
-    return -1;
-  }
-  if (firstSymbolPriority < secondSymbolPriority) {
-    return 1;
-  }
+	const firstSymbolPriority = symbolPriority[symbol1] ?? 0;
+	const secondSymbolPriority = symbolPriority[symbol2] ?? 0;
+	if (firstSymbolPriority > secondSymbolPriority) {
+		return -1;
+	}
+	if (firstSymbolPriority < secondSymbolPriority) {
+		return 1;
+	}
 
-  return symbol1.localeCompare(symbol2);
+	return symbol1.localeCompare(symbol2);
 }
 
 // Sorts an AnyAssetWithOptionalAmount by symbol, alphabetically, according to
@@ -85,107 +85,107 @@ function prioritizedAssetAlphabeticSorter<
 // purely used to sort start-anchored symbol matches in front of all other
 // assets.
 function assetAlphabeticSorterWithFilter<
-  AssetType extends AnyAsset,
-  T extends AnyAssetWithOptionalAmount<AssetType>,
+	AssetType extends AnyAsset,
+	T extends AnyAssetWithOptionalAmount<AssetType>,
 >(searchTerm: string): (asset1: T, asset2: T) => number {
-  const startingSearchTermRegExp = new RegExp(`^${searchTerm}.*$`, "i");
+	const startingSearchTermRegExp = new RegExp(`^${searchTerm}.*$`, "i");
 
-  return (
-    { asset: { symbol: symbol1 } }: T,
-    { asset: { symbol: symbol2 } }: T,
-  ) => {
-    const searchTermStartMatch1 = startingSearchTermRegExp.test(symbol1);
-    const searchTermStartMatch2 = startingSearchTermRegExp.test(symbol2);
+	return (
+		{ asset: { symbol: symbol1 } }: T,
+		{ asset: { symbol: symbol2 } }: T,
+	) => {
+		const searchTermStartMatch1 = startingSearchTermRegExp.test(symbol1);
+		const searchTermStartMatch2 = startingSearchTermRegExp.test(symbol2);
 
-    // If either search term matches at the start and the other doesn't, the
-    // one that matches at the start is greater.
-    if (searchTermStartMatch1 && !searchTermStartMatch2) {
-      return -1;
-    }
-    if (!searchTermStartMatch1 && searchTermStartMatch2) {
-      return 1;
-    }
+		// If either search term matches at the start and the other doesn't, the
+		// one that matches at the start is greater.
+		if (searchTermStartMatch1 && !searchTermStartMatch2) {
+			return -1;
+		}
+		if (!searchTermStartMatch1 && searchTermStartMatch2) {
+			return 1;
+		}
 
-    return symbol1.localeCompare(symbol2);
-  };
+		return symbol1.localeCompare(symbol2);
+	};
 }
 
 function SelectAssetMenuContent<T extends AnyAsset>(
-  props: SelectAssetMenuContentProps<T>,
+	props: SelectAssetMenuContentProps<T>,
 ): ReactElement {
-  const { setSelectedAssetAndClose, assets } = props;
-  const [searchTerm, setSearchTerm] = useState("");
-  const searchInput = useRef<HTMLInputElement | null>(null);
+	const { setSelectedAssetAndClose, assets } = props;
+	const [searchTerm, setSearchTerm] = useState("");
+	const searchInput = useRef<HTMLInputElement | null>(null);
 
-  const filteredAssets =
-    searchTerm.trim() === ""
-      ? assets
-      : assets.filter(({ asset }) => {
-          return (
-            asset.symbol.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            ("contractAddress" in asset &&
-              searchTerm.startsWith("0x") &&
-              normalizeEVMAddress(asset.contractAddress).includes(
-                // The replace handles `normalizeEVMAddress`'s
-                // octet alignment that prefixes a `0` to a partial address
-                // if it has an uneven number of digits.
-                normalizeEVMAddress(searchTerm).replace(/^0x0?/, "0x"),
-              ) &&
-              asset.contractAddress.length >= searchTerm.length)
-          );
-        });
+	const filteredAssets =
+		searchTerm.trim() === ""
+			? assets
+			: assets.filter(({ asset }) => {
+					return (
+						asset.symbol.toLowerCase().includes(searchTerm.toLowerCase()) ||
+						("contractAddress" in asset &&
+							searchTerm.startsWith("0x") &&
+							normalizeEVMAddress(asset.contractAddress).includes(
+								// The replace handles `normalizeEVMAddress`'s
+								// octet alignment that prefixes a `0` to a partial address
+								// if it has an uneven number of digits.
+								normalizeEVMAddress(searchTerm).replace(/^0x0?/, "0x"),
+							) &&
+							asset.contractAddress.length >= searchTerm.length)
+					);
+			  });
 
-  const sortedFilteredAssets = filteredAssets.sort(
-    searchTerm.trim() === ""
-      ? prioritizedAssetAlphabeticSorter
-      : assetAlphabeticSorterWithFilter(searchTerm.trim()),
-  );
+	const sortedFilteredAssets = filteredAssets.sort(
+		searchTerm.trim() === ""
+			? prioritizedAssetAlphabeticSorter
+			: assetAlphabeticSorterWithFilter(searchTerm.trim()),
+	);
 
-  useEffect(() => {
-    const timeoutId = window.setTimeout(() => {
-      searchInput.current?.focus();
-    }, 50);
+	useEffect(() => {
+		const timeoutId = window.setTimeout(() => {
+			searchInput.current?.focus();
+		}, 50);
 
-    return () => {
-      window.clearTimeout(timeoutId);
-    };
-  }, [searchInput]);
+		return () => {
+			window.clearTimeout(timeoutId);
+		};
+	}, [searchInput]);
 
-  return (
-    <>
-      <div className="standard_width_padded center_horizontal">
-        <div className="search_label">Select token</div>
-        <div className="search_wrap">
-          <input
-            type="text"
-            ref={searchInput}
-            className="search_input"
-            placeholder="Search by name or address"
-            spellCheck={false}
-            onChange={(event) => setSearchTerm(event.target.value)}
-          />
-          <span className="icon_search" />
-        </div>
-      </div>
-      <div className="divider" />
-      <ul className="assets_list">
-        {sortedFilteredAssets.map((assetWithOptionalAmount) => {
-          const { asset } = assetWithOptionalAmount;
-          return (
-            <SharedAssetItem
-              key={
-                asset.metadata?.coinGeckoID ??
-                asset.symbol +
-                  ("contractAddress" in asset ? asset.contractAddress : "")
-              }
-              assetAndAmount={assetWithOptionalAmount}
-              onClick={() => setSelectedAssetAndClose(assetWithOptionalAmount)}
-            />
-          );
-        })}
-      </ul>
-      <style jsx>
-        {`
+	return (
+		<>
+			<div className="standard_width_padded center_horizontal">
+				<div className="search_label">Select token</div>
+				<div className="search_wrap">
+					<input
+						type="text"
+						ref={searchInput}
+						className="search_input"
+						placeholder="Search by name or address"
+						spellCheck={false}
+						onChange={(event) => setSearchTerm(event.target.value)}
+					/>
+					<span className="icon_search" />
+				</div>
+			</div>
+			<div className="divider" />
+			<ul className="assets_list">
+				{sortedFilteredAssets.map((assetWithOptionalAmount) => {
+					const { asset } = assetWithOptionalAmount;
+					return (
+						<SharedAssetItem
+							key={
+								asset.metadata?.coinGeckoID ??
+								asset.symbol +
+									("contractAddress" in asset ? asset.contractAddress : "")
+							}
+							assetAndAmount={assetWithOptionalAmount}
+							onClick={() => setSelectedAssetAndClose(assetWithOptionalAmount)}
+						/>
+					);
+				})}
+			</ul>
+			<style jsx>
+				{`
           .search_label {
             height: 20px;
             color: var(--dim-gray);
@@ -232,31 +232,31 @@ function SelectAssetMenuContent<T extends AnyAsset>(
             width: 100%;
           }
         `}
-      </style>
-    </>
-  );
+			</style>
+		</>
+	);
 }
 
 interface SelectedAssetButtonProps {
-  asset: Asset;
-  isDisabled: boolean;
-  toggleIsAssetMenuOpen?: () => void;
+	asset: Asset;
+	isDisabled: boolean;
+	toggleIsAssetMenuOpen?: () => void;
 }
 
 function SelectedAssetButton(props: SelectedAssetButtonProps): ReactElement {
-  const { asset, isDisabled, toggleIsAssetMenuOpen } = props;
+	const { asset, isDisabled, toggleIsAssetMenuOpen } = props;
 
-  return (
-    <button type="button" disabled={isDisabled} onClick={toggleIsAssetMenuOpen}>
-      <div className="asset_icon_wrap">
-        <SharedAssetIcon
-          logoURL={asset?.metadata?.logoURL}
-          symbol={asset?.symbol}
-          size="large"
-        />
-      </div>
+	return (
+		<button type="button" disabled={isDisabled} onClick={toggleIsAssetMenuOpen}>
+			<div className="asset_icon_wrap">
+				<SharedAssetIcon
+					logoURL={asset?.metadata?.logoURL}
+					symbol={asset?.symbol}
+					size="large"
+				/>
+			</div>
 
-      <style jsx>{`
+			<style jsx>{`
         button {
           display: flex;
           align-items: center;
@@ -273,259 +273,259 @@ function SelectedAssetButton(props: SelectedAssetButtonProps): ReactElement {
           padding-right: 0.75rem;
         }
       `}</style>
-    </button>
-  );
+		</button>
+	);
 }
 
 SelectedAssetButton.defaultProps = {
-  toggleIsAssetMenuOpen: null,
+	toggleIsAssetMenuOpen: null,
 };
 
 interface SharedAssetInputProps<AssetType extends AnyAsset> {
-  autoFocus?: boolean;
-  assetsAndAmounts: AnyAssetWithOptionalAmount<AssetType>[];
-  label: string;
-  selectedAsset: AssetType | undefined;
-  amount: string;
-  isAssetOptionsLocked: boolean;
-  disableDropdown: boolean;
-  showMaxButton: boolean;
-  isDisabled?: boolean;
-  onAssetSelect?: (asset: AssetType) => void;
-  onAmountChange?: (value: string, errorMessage: string | undefined) => void;
-  /** Include a network fee in the max balance set */
-  networkFee?: string;
-  /** Validate amount before calling amount changed. Should throw an error if amount is invalid */
-  validateAmount?: (amount: bigint) => void;
+	autoFocus?: boolean;
+	assetsAndAmounts: AnyAssetWithOptionalAmount<AssetType>[];
+	label: string;
+	selectedAsset: AssetType | undefined;
+	amount: string;
+	isAssetOptionsLocked: boolean;
+	disableDropdown: boolean;
+	showMaxButton: boolean;
+	isDisabled?: boolean;
+	onAssetSelect?: (asset: AssetType) => void;
+	onAmountChange?: (value: string, errorMessage: string | undefined) => void;
+	/** Include a network fee in the max balance set */
+	networkFee?: string;
+	/** Validate amount before calling amount changed. Should throw an error if amount is invalid */
+	validateAmount?: (amount: bigint) => void;
 }
 
 function isSameAsset(asset1: Asset, asset2: Asset) {
-  return asset1.symbol === asset2.symbol; // FIXME Once asset similarity logic is extracted, reuse.
+	return asset1.symbol === asset2.symbol; // FIXME Once asset similarity logic is extracted, reuse.
 }
 
 function assetWithOptionalAmountFromAsset<T extends AnyAsset>(
-  asset: T,
-  assetsToSearch: AnyAssetWithOptionalAmount<T>[],
+	asset: T,
+	assetsToSearch: AnyAssetWithOptionalAmount<T>[],
 ) {
-  return assetsToSearch.find(({ asset: listAsset }) =>
-    isSameAsset(asset, listAsset),
-  );
+	return assetsToSearch.find(({ asset: listAsset }) =>
+		isSameAsset(asset, listAsset),
+	);
 }
 
 export default function SharedAssetInput<T extends AnyAsset>(
-  props: SharedAssetInputProps<T>,
+	props: SharedAssetInputProps<T>,
 ): ReactElement {
-  const {
-    assetsAndAmounts,
-    label,
-    selectedAsset,
-    amount,
-    isAssetOptionsLocked,
-    disableDropdown,
-    showMaxButton,
-    isDisabled,
-    onAssetSelect,
-    onAmountChange,
-    autoFocus = false,
-    networkFee,
-    validateAmount = () => {},
-  } = props;
+	const {
+		assetsAndAmounts,
+		label,
+		selectedAsset,
+		amount,
+		isAssetOptionsLocked,
+		disableDropdown,
+		showMaxButton,
+		isDisabled,
+		onAssetSelect,
+		onAmountChange,
+		autoFocus = false,
+		networkFee,
+		validateAmount = () => {},
+	} = props;
 
-  const [openAssetMenu, setOpenAssetMenu] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
+	const [openAssetMenu, setOpenAssetMenu] = useState(false);
+	const inputRef = useRef<HTMLInputElement>(null);
 
-  const toggleIsAssetMenuOpen = useCallback(() => {
-    if (!isAssetOptionsLocked) {
-      setOpenAssetMenu((currentlyOpen) => !currentlyOpen);
-    }
-  }, [isAssetOptionsLocked]);
+	const toggleIsAssetMenuOpen = useCallback(() => {
+		if (!isAssetOptionsLocked) {
+			setOpenAssetMenu((currentlyOpen) => !currentlyOpen);
+		}
+	}, [isAssetOptionsLocked]);
 
-  const selectedAssetAndAmount =
-    typeof selectedAsset !== "undefined"
-      ? assetWithOptionalAmountFromAsset<T>(selectedAsset, assetsAndAmounts)
-      : undefined;
+	const selectedAssetAndAmount =
+		typeof selectedAsset !== "undefined"
+			? assetWithOptionalAmountFromAsset<T>(selectedAsset, assetsAndAmounts)
+			: undefined;
 
-  const setSelectedAssetAndClose = useCallback(
-    (assetWithOptionalAmount: AnyAssetWithOptionalAmount<T>) => {
-      setOpenAssetMenu(false);
-      onAssetSelect?.(assetWithOptionalAmount.asset);
-    },
+	const setSelectedAssetAndClose = useCallback(
+		(assetWithOptionalAmount: AnyAssetWithOptionalAmount<T>) => {
+			setOpenAssetMenu(false);
+			onAssetSelect?.(assetWithOptionalAmount.asset);
+		},
 
-    [onAssetSelect],
-  );
+		[onAssetSelect],
+	);
 
-  const getErrorMessage = (givenAmount: string): string | undefined => {
-    if (
-      givenAmount.trim() === "" ||
-      typeof selectedAssetAndAmount === "undefined" ||
-      !hasAmounts(selectedAssetAndAmount) ||
-      !("decimals" in selectedAssetAndAmount.asset)
-    ) {
-      return undefined;
-    }
+	const getErrorMessage = (givenAmount: string): string | undefined => {
+		if (
+			givenAmount.trim() === "" ||
+			typeof selectedAssetAndAmount === "undefined" ||
+			!hasAmounts(selectedAssetAndAmount) ||
+			!("decimals" in selectedAssetAndAmount.asset)
+		) {
+			return undefined;
+		}
 
-    const parsedGivenAmount = parseToFixedPointNumber(givenAmount.trim());
-    if (typeof parsedGivenAmount === "undefined") {
-      return "Invalid amount";
-    }
+		const parsedGivenAmount = parseToFixedPointNumber(givenAmount.trim());
+		if (typeof parsedGivenAmount === "undefined") {
+			return "Invalid amount";
+		}
 
-    const decimalMatched = convertFixedPointNumber(
-      parsedGivenAmount,
-      selectedAssetAndAmount.asset.decimals,
-    );
+		const decimalMatched = convertFixedPointNumber(
+			parsedGivenAmount,
+			selectedAssetAndAmount.asset.decimals,
+		);
 
-    let selectedAmount = selectedAssetAndAmount.amount;
+		let selectedAmount = selectedAssetAndAmount.amount;
 
-    if (networkFee) {
-      selectedAmount -= BigInt(networkFee);
-    }
+		if (networkFee) {
+			selectedAmount -= BigInt(networkFee);
+		}
 
-    if (decimalMatched.amount > selectedAmount) {
-      return "Insufficient balance";
-    }
+		if (decimalMatched.amount > selectedAmount) {
+			return "Insufficient balance";
+		}
 
-    if (decimalMatched.amount < BigInt(0)) {
-      return "Amount must be positive";
-    }
+		if (decimalMatched.amount < BigInt(0)) {
+			return "Amount must be positive";
+		}
 
-    if (validateAmount) {
-      try {
-        validateAmount(decimalMatched.amount);
-      } catch (error) {
-        return (error as Error)?.message;
-      }
-    }
-    return undefined;
-  };
+		if (validateAmount) {
+			try {
+				validateAmount(decimalMatched.amount);
+			} catch (error) {
+				return (error as Error)?.message;
+			}
+		}
+		return undefined;
+	};
 
-  const setMaxBalance = () => {
-    if (
-      typeof selectedAssetAndAmount === "undefined" ||
-      !hasAmounts(selectedAssetAndAmount)
-    ) {
-      return;
-    }
+	const setMaxBalance = () => {
+		if (
+			typeof selectedAssetAndAmount === "undefined" ||
+			!hasAmounts(selectedAssetAndAmount)
+		) {
+			return;
+		}
 
-    let selectedAmount = selectedAssetAndAmount.amount;
+		let selectedAmount = selectedAssetAndAmount.amount;
 
-    if (networkFee) {
-      // leave enough for 10 more transactions
-      selectedAmount -= BigInt(networkFee) * 10n;
-    }
+		if (networkFee) {
+			// leave enough for 10 more transactions
+			selectedAmount -= BigInt(networkFee) * 10n;
+		}
 
-    const fixedPointAmount = {
-      amount: selectedAmount,
-      decimals:
-        "decimals" in selectedAssetAndAmount.asset
-          ? selectedAssetAndAmount.asset.decimals
-          : 0,
-    };
-    const fixedPointString = fixedPointNumberToString(fixedPointAmount);
+		const fixedPointAmount = {
+			amount: selectedAmount,
+			decimals:
+				"decimals" in selectedAssetAndAmount.asset
+					? selectedAssetAndAmount.asset.decimals
+					: 0,
+		};
+		const fixedPointString = fixedPointNumberToString(fixedPointAmount);
 
-    onAmountChange?.(fixedPointString, getErrorMessage(fixedPointString));
-  };
+		onAmountChange?.(fixedPointString, getErrorMessage(fixedPointString));
+	};
 
-  // auto focus input after some delay cuz browsers are slow
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      if (autoFocus && inputRef.current) inputRef.current.focus();
-    }, 200);
+	// auto focus input after some delay cuz browsers are slow
+	useEffect(() => {
+		const timeoutId = setTimeout(() => {
+			if (autoFocus && inputRef.current) inputRef.current.focus();
+		}, 200);
 
-    return () => clearTimeout(timeoutId);
-  }, []);
+		return () => clearTimeout(timeoutId);
+	}, []);
 
-  return (
-    <>
-      <label
-        className="label"
-        htmlFor={
-          typeof selectedAsset === "undefined"
-            ? "asset_selector"
-            : "asset_amount_input"
-        }
-      >
-        {label}
-      </label>
+	return (
+		<>
+			<label
+				className="label"
+				htmlFor={
+					typeof selectedAsset === "undefined"
+						? "asset_selector"
+						: "asset_amount_input"
+				}
+			>
+				{label}
+			</label>
 
-      {typeof selectedAssetAndAmount !== "undefined" &&
-      hasAmounts(selectedAssetAndAmount) ? (
-        <div className="amount_controls">
-          <span className="available">
-            Bal{" "}
-            <b style={{ color: "var(--white)" }}>
-              {selectedAssetAndAmount.localizedDecimalAmount}
-            </b>
-          </span>
-          {showMaxButton ? (
-            <button type="button" className="max" onClick={setMaxBalance}>
-              Max
-            </button>
-          ) : (
-            <></>
-          )}
-        </div>
-      ) : (
-        <></>
-      )}
+			{typeof selectedAssetAndAmount !== "undefined" &&
+			hasAmounts(selectedAssetAndAmount) ? (
+				<div className="amount_controls">
+					<span className="available">
+						Bal{" "}
+						<b style={{ color: "var(--white)" }}>
+							{selectedAssetAndAmount.localizedDecimalAmount}
+						</b>
+					</span>
+					{showMaxButton ? (
+						<button type="button" className="max" onClick={setMaxBalance}>
+							Max
+						</button>
+					) : (
+						<></>
+					)}
+				</div>
+			) : (
+				<></>
+			)}
 
-      <SharedSlideUpMenu
-        isOpen={openAssetMenu}
-        close={() => {
-          setOpenAssetMenu(false);
-        }}
-      >
-        {assetsAndAmounts && (
-          <SelectAssetMenuContent
-            assets={assetsAndAmounts}
-            setSelectedAssetAndClose={setSelectedAssetAndClose}
-          />
-        )}
-      </SharedSlideUpMenu>
-      <div className="asset_wrap">
-        <div>
-          {selectedAssetAndAmount?.asset.symbol ? (
-            <SelectedAssetButton
-              isDisabled={isDisabled || disableDropdown}
-              asset={selectedAssetAndAmount.asset}
-              toggleIsAssetMenuOpen={toggleIsAssetMenuOpen}
-            />
-          ) : (
-            <SharedButton
-              id="asset_selector"
-              type="secondary"
-              size="large"
-              isDisabled={isDisabled || disableDropdown}
-              onClick={toggleIsAssetMenuOpen}
-              icon="chevron"
-            >
-              Select token
-            </SharedButton>
-          )}
-        </div>
+			<SharedSlideUpMenu
+				isOpen={openAssetMenu}
+				close={() => {
+					setOpenAssetMenu(false);
+				}}
+			>
+				{assetsAndAmounts && (
+					<SelectAssetMenuContent
+						assets={assetsAndAmounts}
+						setSelectedAssetAndClose={setSelectedAssetAndClose}
+					/>
+				)}
+			</SharedSlideUpMenu>
+			<div className="asset_wrap">
+				<div>
+					{selectedAssetAndAmount?.asset.symbol ? (
+						<SelectedAssetButton
+							isDisabled={isDisabled || disableDropdown}
+							asset={selectedAssetAndAmount.asset}
+							toggleIsAssetMenuOpen={toggleIsAssetMenuOpen}
+						/>
+					) : (
+						<SharedButton
+							id="asset_selector"
+							type="secondary"
+							size="large"
+							isDisabled={isDisabled || disableDropdown}
+							onClick={toggleIsAssetMenuOpen}
+							icon="chevron"
+						>
+							Select token
+						</SharedButton>
+					)}
+				</div>
 
-        <input
-          ref={inputRef}
-          id="asset_amount_input"
-          className={classNames(
-            "input_amount focus:outline outline-1 outline-white px-1 rounded-sm",
-          )}
-          type="number"
-          step="any"
-          min="0"
-          disabled={isDisabled}
-          value={amount}
-          spellCheck={false}
-          onChange={(event) =>
-            onAmountChange?.(
-              event.target.value,
-              getErrorMessage(event.target.value),
-            )
-          }
-        />
-        <div className="error_message">{getErrorMessage(amount)}</div>
-      </div>
-      <style jsx>
-        {`
+				<input
+					ref={inputRef}
+					id="asset_amount_input"
+					className={classNames(
+						"input_amount focus:outline outline-1 outline-white px-1 rounded-sm",
+					)}
+					type="number"
+					step="any"
+					min="0"
+					disabled={isDisabled}
+					value={amount}
+					spellCheck={false}
+					onChange={(event) =>
+						onAmountChange?.(
+							event.target.value,
+							getErrorMessage(event.target.value),
+						)
+					}
+				/>
+				<div className="error_message">{getErrorMessage(amount)}</div>
+			</div>
+			<style jsx>
+				{`
           label,
           .amount_controls {
             font-weight: 300;
@@ -605,17 +605,17 @@ export default function SharedAssetInput<T extends AnyAsset>(
             right: 1rem;
           }
         `}
-      </style>
-    </>
-  );
+			</style>
+		</>
+	);
 }
 
 SharedAssetInput.defaultProps = {
-  isAssetOptionsLocked: false,
-  disableDropdown: false,
-  isDisabled: false,
-  showMaxButton: true,
-  assetsAndAmounts: [],
-  label: "",
-  amount: "0.0",
+	isAssetOptionsLocked: false,
+	disableDropdown: false,
+	isDisabled: false,
+	showMaxButton: true,
+	assetsAndAmounts: [],
+	label: "",
+	amount: "0.0",
 };

@@ -1,18 +1,18 @@
 import React, {
-  CSSProperties,
-  ReactElement,
-  useCallback,
-  useState,
+	CSSProperties,
+	ReactElement,
+	useCallback,
+	useState,
 } from "react";
 import classNames from "clsx";
 import { useDispatch } from "react-redux";
 import {
-  refreshBackgroundPage,
-  setSnackbarMessage,
+	refreshBackgroundPage,
+	setSnackbarMessage,
 } from "@sendnodes/pokt-wallet-background/redux-slices/ui";
 import {
-  selectCurrentAccountSigningMethod,
-  selectCurrentAccount,
+	selectCurrentAccountSigningMethod,
+	selectCurrentAccount,
 } from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
 import { CompleteAssetAmount } from "@sendnodes/pokt-wallet-background/redux-slices/accounts";
 import { POKT } from "@sendnodes/pokt-wallet-background/constants";
@@ -27,11 +27,11 @@ import SharedLoadingSpinner from "../Shared/SharedLoadingSpinner";
 import SharedAssetIcon from "../Shared/SharedAssetIcon";
 
 function ReadOnlyNotice(): ReactElement {
-  return (
-    <div className="notice_wrap">
-      <div className="icon_eye" />
-      {t("readOnlyNotice")}
-      <style jsx>{`
+	return (
+		<div className="notice_wrap">
+			<div className="icon_eye" />
+			{t("readOnlyNotice")}
+			<style jsx>{`
         .notice_wrap {
           width: 177px;
           height: 40px;
@@ -52,49 +52,49 @@ function ReadOnlyNotice(): ReactElement {
           margin: 0px 7px 0px 10px;
         }
       `}</style>
-    </div>
-  );
+		</div>
+	);
 }
 
 function BalanceReloader(): ReactElement {
-  const dispatch = useDispatch();
+	const dispatch = useDispatch();
 
-  const [isSpinning, setIsSpinning] = useState(false);
+	const [isSpinning, setIsSpinning] = useState(false);
 
-  // 0 = never
-  const [timeWhenLastReloaded, setTimeWhenLastReloaded] = useLocalStorage(
-    "timeWhenLastReloaded",
-    "0",
-  );
+	// 0 = never
+	const [timeWhenLastReloaded, setTimeWhenLastReloaded] = useLocalStorage(
+		"timeWhenLastReloaded",
+		"0",
+	);
 
-  const loadingTimeMs = 15000;
-  const timeGapBetweenRunningReloadMs = 60000 * 2;
+	const loadingTimeMs = 15000;
+	const timeGapBetweenRunningReloadMs = 60000 * 2;
 
-  return (
-    <button
-      type="button"
-      disabled={isSpinning}
-      className={classNames("reload", { spinning: isSpinning })}
-      onClick={() => {
-        const currentTime = new Date().getTime();
-        setIsSpinning(true);
+	return (
+		<button
+			type="button"
+			disabled={isSpinning}
+			className={classNames("reload", { spinning: isSpinning })}
+			onClick={() => {
+				const currentTime = new Date().getTime();
+				setIsSpinning(true);
 
-        // Appear to spin regardless if too recent. Only refresh
-        // background page if timeGapBetweenRunningReloadMs is met.
-        if (
-          Number(timeWhenLastReloaded) + timeGapBetweenRunningReloadMs <
-          currentTime
-        ) {
-          setTimeWhenLastReloaded(`${currentTime}`);
-          dispatch(refreshBackgroundPage());
-        }
-        setTimeout(() => {
-          setIsSpinning(false);
-          window.location.reload();
-        }, loadingTimeMs);
-      }}
-    >
-      <style jsx>{`
+				// Appear to spin regardless if too recent. Only refresh
+				// background page if timeGapBetweenRunningReloadMs is met.
+				if (
+					Number(timeWhenLastReloaded) + timeGapBetweenRunningReloadMs <
+					currentTime
+				) {
+					setTimeWhenLastReloaded(`${currentTime}`);
+					dispatch(refreshBackgroundPage());
+				}
+				setTimeout(() => {
+					setIsSpinning(false);
+					window.location.reload();
+				}, loadingTimeMs);
+			}}
+		>
+			<style jsx>{`
         .reload {
           mask-image: url("./images/reload@2x.png");
           mask-size: cover;
@@ -121,124 +121,124 @@ function BalanceReloader(): ReactElement {
           }
         }
       `}</style>
-    </button>
-  );
+		</button>
+	);
 }
 
 interface Props {
-  assets: CompleteAssetAmount[];
-  balance?: number;
-  initializationLoadingTimeExpired: boolean;
+	assets: CompleteAssetAmount[];
+	balance?: number;
+	initializationLoadingTimeExpired: boolean;
 }
 
 export default function WalletAccountBalanceControl(
-  props: Props,
+	props: Props,
 ): ReactElement {
-  const dispatch = useDispatch();
+	const dispatch = useDispatch();
 
-  const selectedAccount = useBackgroundSelector(selectCurrentAccount);
-  const { address: selectedAccountAddress, network } = selectedAccount;
-  const { assets, balance, initializationLoadingTimeExpired } = props;
-  const assetAmount = assets.find(
-    (a) => a.asset.symbol === network.baseAsset.symbol,
-  );
+	const selectedAccount = useBackgroundSelector(selectCurrentAccount);
+	const { address: selectedAccountAddress, network } = selectedAccount;
+	const { assets, balance, initializationLoadingTimeExpired } = props;
+	const assetAmount = assets.find(
+		(a) => a.asset.symbol === network.baseAsset.symbol,
+	);
 
-  const shouldIndicateLoading = typeof balance === "undefined";
+	const shouldIndicateLoading = typeof balance === "undefined";
 
-  const copyBalance = (bal: string | undefined) => () => {
-    navigator.clipboard.writeText(bal ?? "");
-    dispatch(setSnackbarMessage("Balance copied to clipboard"));
-  };
+	const copyBalance = (bal: string | undefined) => () => {
+		navigator.clipboard.writeText(bal ?? "");
+		dispatch(setSnackbarMessage("Balance copied to clipboard"));
+	};
 
-  return (
-    <>
-      <div className="wallet_summary">
-        {
-          // TODO: v0.4.0 wPOKT bridge: re-enable network selector
-          process.env.NODE_ENV === "development" ? (
-            <div
-              style={{
-                position: "absolute",
-                padding: "0.25rem",
-                margin: "auto",
-              }}
-            >
-              {network.name}
-            </div>
-          ) : undefined
-        }
+	return (
+		<>
+			<div className="wallet_summary">
+				{
+					// TODO: v0.4.0 wPOKT bridge: re-enable network selector
+					process.env.NODE_ENV === "development" ? (
+						<div
+							style={{
+								position: "absolute",
+								padding: "0.25rem",
+								margin: "auto",
+							}}
+						>
+							{network.name}
+						</div>
+					) : undefined
+				}
 
-        <div className="balance_summary">
-          {shouldIndicateLoading || assetAmount === undefined ? (
-            <>
-              <SharedLoadingSpinner size="large" />
-            </>
-          ) : (
-            <>
-              <button
-                onClick={copyBalance(assetAmount?.decimalAmount.toString())}
-                title="Copy balance to clipboard"
-                className="balance main_balance"
-              >
-                <SharedAssetIcon
-                  size="large"
-                  symbol={assetAmount.asset.symbol}
-                />
+				<div className="balance_summary">
+					{shouldIndicateLoading || assetAmount === undefined ? (
+						<>
+							<SharedLoadingSpinner size="large" />
+						</>
+					) : (
+						<>
+							<button
+								onClick={copyBalance(assetAmount?.decimalAmount.toString())}
+								title="Copy balance to clipboard"
+								className="balance main_balance"
+							>
+								<SharedAssetIcon
+									size="large"
+									symbol={assetAmount.asset.symbol}
+								/>
 
-                {formatTokenAmount(assetAmount?.decimalAmount, 7)}
-              </button>
-              <span className="balance" title={`$${balance}`}>
-                <span>
-                  <DollarSvg />
-                </span>
-                {formatTokenAmount(balance, 9, 2)}
-              </span>
-            </>
-          )}
-        </div>
-        <div className="wallet_control h-[3.5rem]">
-          <div className="address_wrap flex items-center">
-            <SharedAddress address={selectedAccountAddress} showAvatar />
-          </div>
+								{formatTokenAmount(assetAmount?.decimalAmount, 7)}
+							</button>
+							<span className="balance" title={`$${balance}`}>
+								<span>
+									<DollarSvg />
+								</span>
+								{formatTokenAmount(balance, 9, 2)}
+							</span>
+						</>
+					)}
+				</div>
+				<div className="wallet_control h-[3.5rem]">
+					<div className="address_wrap flex items-center">
+						<SharedAddress address={selectedAccountAddress} showAvatar />
+					</div>
 
-          <div className="flex items-center gap-x-4">
-            <div
-              className="w-24"
-              style={{ "--icon-color": "var(--cod-gray-100)" } as CSSProperties}
-            >
-              <SharedButton
-                icon="stake"
-                size="medium"
-                iconPosition="left"
-                type="primary"
-                onClick={() =>
-                  window.open(
-                    browser.runtime.getURL("stake.html"),
-                    "poktwallet_stake",
-                  )
-                }
-                title="Stake POKT"
-                className="stake_button"
-              >
-                STAKE
-              </SharedButton>
-            </div>
-            <div className="send_wrap ">
-              <SharedButton
-                icon="send"
-                size="medium"
-                type="tertiary"
-                linkTo="/send"
-                title="Send POKT"
-              >
-                {" "}
-              </SharedButton>
-            </div>
-          </div>
-        </div>
-      </div>
-      <style jsx>
-        {`
+					<div className="flex items-center gap-x-4">
+						<div
+							className="w-24"
+							style={{ "--icon-color": "var(--cod-gray-100)" } as CSSProperties}
+						>
+							<SharedButton
+								icon="stake"
+								size="medium"
+								iconPosition="left"
+								type="primary"
+								onClick={() =>
+									window.open(
+										browser.runtime.getURL("stake.html"),
+										"poktwallet_stake",
+									)
+								}
+								title="Stake POKT"
+								className="stake_button"
+							>
+								STAKE
+							</SharedButton>
+						</div>
+						<div className="send_wrap ">
+							<SharedButton
+								icon="send"
+								size="medium"
+								type="tertiary"
+								linkTo="/send"
+								title="Send POKT"
+							>
+								{" "}
+							</SharedButton>
+						</div>
+					</div>
+				</div>
+			</div>
+			<style jsx>
+				{`
           h1 {
             font-weight: 500;
           }
@@ -356,7 +356,7 @@ export default function WalletAccountBalanceControl(
             background-color: var(--white);
           }
         `}
-      </style>
-    </>
-  );
+			</style>
+		</>
+	);
 }
