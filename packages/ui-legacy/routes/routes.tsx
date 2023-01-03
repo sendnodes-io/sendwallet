@@ -144,7 +144,7 @@ const pageList: PageList[] = [
 	},
 	{
 		path: "/onboarding/verify-seed",
-		Component: OnboardingVerifySeed,
+		Component: OnboardingVerifySeed as (...args: unknown[]) => ReactElement,
 		hasTabBar: false,
 		hasTopBar: false,
 		persistOnClose: true,

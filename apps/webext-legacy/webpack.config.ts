@@ -56,7 +56,7 @@ const baseConfig: Configuration = {
 				exclude: /node_modules(?!\/@sendnodes)|webpack|packages\/ui-legacy/,
 				// exclude: /node_modules/,
 				use: [
-					// "thread-loader",
+					"thread-loader",
 					{
 						loader: "babel-loader",
 						options: {

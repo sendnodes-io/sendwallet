@@ -1,5 +1,5 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../apps/webext-legacy/tsconfig.json",
   "compilerOptions": {
     "lib": ["esnext", "DOM", "DOM.Iterable", "WebWorker"]
   },

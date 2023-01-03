@@ -39,7 +39,7 @@ function isSendActivity(activity: ActivityItem, account: string): boolean {
 }
 
 type WalletActivityListRenderDetails = {
-	icon: (props: unknown) => JSX.Element;
+	icon: (props: unknown[]) => JSX.Element;
 	label: string;
 	recipient:
 		| {
