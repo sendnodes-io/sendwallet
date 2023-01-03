@@ -20,9 +20,11 @@
     "dapp"
   ],
   "scripts": {
-    "webext:watch": "WEBPACK_OUTPUT_DIR=../.. yarn workspace webext run watch",
-    "legacy:watch": "WEBPACK_OUTPUT_DIR=../.. yarn workspace webext-legacy run start",
-    "legacy:build": "WEBPACK_OUTPUT_DIR=../.. yarn workspace webext-legacy run build",
+    "build": "run-p 'build:*'",
+    "watch:webext": "yarn workspace webext run watch",
+    "watch:legacy": "yarn workspace webext-legacy run start",
+    "build:webext": "yarn workspace webext run build",
+    "build:legacy": "yarn workspace webext-legacy run build",
     "lint": "run-p 'lint:*'",
     "lint-fix": "run-p 'lint:*:fix'",
     "lint:config": "prettier -c '**/*.@(json|yaml|toml)'",
