@@ -4,5 +4,6 @@
     "target": "esnext",
     "lib": ["esnext", "dom", "WebWorker"]
   },
+  "exclude": ["node_modules"],
   "include": ["./**/*.ts"]
 }

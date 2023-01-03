@@ -6,13 +6,16 @@
       "app/*": ["./packages/app/*"],
       "@my/ui/*": ["./packages/ui/*"],
       "build-utils/*": ["./packages/build-utils/*"]
-    }
+    },
+    "baseUrl": ".",
+    "rootDir": "."
   },
   "references": [
     { "path": "./packages/app" },
     { "path": "./packages/ui" },
     { "path": "./packages/build-utils" }
   ],
+  "exclude": ["node_modules"],
   "extends": "./tsconfig.base",
   "ts-node": {
     "compilerOptions": {
