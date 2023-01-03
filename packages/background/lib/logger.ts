@@ -117,7 +117,7 @@ function genericLogger(level: LogLevel, input: unknown[]) {
 	const [logDate, logTime] = new Date().toISOString().split(/T/);
 
 	console.group(
-		`%c ${styles[level].icon} sw-${globalThis.PROCESS_ID} [${logTime?.replace(
+		`%c ${styles[level].icon} sw-${self.PROCESS_ID} [${logTime?.replace(
 			/Z$/,
 			"",
 		)}] ${logLabel} %c [${logDate}]`,

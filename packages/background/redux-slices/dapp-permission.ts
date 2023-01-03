@@ -76,11 +76,15 @@ const dappPermissionSlice = createSlice({
 			.addCase(
 				grantPermission.fulfilled,
 				(state, { payload: permission }: { payload: PermissionRequest }) => {
-					const updatedPermissionRequests = { ...state.permissionRequests };
+					const updatedPermissionRequests = { ...state.permissionRequests } as {
+						[key: string]: PermissionRequest | undefined;
+					};
 					updatedPermissionRequests[permission.key] = undefined;
 
 					return {
-						permissionRequests: updatedPermissionRequests,
+						permissionRequests: updatedPermissionRequests as {
+							[key: string]: PermissionRequest;
+						},
 						allowedPages: {
 							...state.allowedPages,
 							[permission.key]: permission,
@@ -91,16 +95,24 @@ const dappPermissionSlice = createSlice({
 			.addCase(
 				denyOrRevokePermission.fulfilled,
 				(state, { payload: permission }: { payload: PermissionRequest }) => {
-					const updatedPermissionRequests = { ...state.permissionRequests };
+					const updatedPermissionRequests = { ...state.permissionRequests } as {
+						[key: string]: PermissionRequest | undefined;
+					};
 					updatedPermissionRequests[permission.key] = undefined;
 
 					// remove page from the allowedPages list
-					const updatedAllowedPages = { ...state.allowedPages };
+					const updatedAllowedPages = { ...state.allowedPages } as {
+						[key: string]: PermissionRequest | undefined;
+					};
 					updatedAllowedPages[permission.key] = undefined;
 
 					return {
-						permissionRequests: updatedPermissionRequests,
-						allowedPages: updatedAllowedPages,
+						permissionRequests: updatedPermissionRequests as {
+							[key: string]: PermissionRequest;
+						},
+						allowedPages: updatedAllowedPages as {
+							[key: string]: PermissionRequest;
+						},
 					};
 				},
 			);

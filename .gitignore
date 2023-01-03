@@ -22,3 +22,5 @@ stats.json
 !.yarn/versions
 
 *.tsbuildinfo
+
+.turbo

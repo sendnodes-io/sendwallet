@@ -39,7 +39,7 @@ function isSendActivity(activity: ActivityItem, account: string): boolean {
 }
 
 type WalletActivityListRenderDetails = {
-	icon: (props: unknown[]) => JSX.Element;
+	icon: React.FC<{ pending?: boolean }>;
 	label: string;
 	recipient:
 		| {

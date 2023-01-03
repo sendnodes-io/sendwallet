@@ -23,7 +23,7 @@ interface PageList {
 	// Tricky to handle all props components are
 	// accepting here.
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	Component: (...args: unknown[]) => ReactElement;
+	Component: React.FC<{ [key: string]: unknown }>;
 	hasTabBar: boolean;
 	hasTopBar: boolean;
 	persistOnClose: boolean;

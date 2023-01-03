@@ -1,0 +1,5 @@
+dist
+*.js
+*.jsx
+*.ts
+*.tsx

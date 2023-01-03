@@ -1,8 +1,8 @@
 {
   "extends": "../../tsconfig",
   "compilerOptions": {
-    "target": "es2020",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "target": "esnext",
+    "lib": ["esnext", "DOM", "DOM.Iterable", "WebWorker"],
     "baseUrl": ".",
     "paths": {
       "react-native": ["react-native-web"]
@@ -20,6 +20,17 @@
     "jsx": "react-jsx",
     "incremental": true
   },
-  "include": ["**/*.ts", "**/*.tsx", "webext-env.d.ts"],
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "webext-env.d.ts",
+    "webpack.config.ts",
+    "../../packages/ui",
+    "../../packages/background",
+    "../../packages/provider-bridge",
+    "../../packages/provider-bridge-shared",
+    "../../packages/window-provider",
+    "../../packages/app"
+  ],
   "exclude": ["node_modules"]
 }

@@ -45,7 +45,7 @@ export type SnActionIconProps = {
 };
 
 const snActionIcon: Record<SnAction, (props: unknown) => JSX.Element> = {
-	[SnAction.COMPOUND]: ({ className, pending }: SnActionIconProps) => {
+	[SnAction.COMPOUND]: (({ className, pending }: SnActionIconProps) => {
 		return className?.includes("uncompound") ? (
 			<UploadIcon
 				className={clsx(className, "h-8 w-8 text-opacity-75", {
@@ -57,36 +57,36 @@ const snActionIcon: Record<SnAction, (props: unknown) => JSX.Element> = {
 				className={clsx(className, "h-8 w-8", { "text-orange-500": pending })}
 			/>
 		);
-	},
-	[SnAction.STAKE]: ({ className, pending }: SnActionIconProps) => (
+	}) as (props: unknown) => JSX.Element,
+	[SnAction.STAKE]: (({ className, pending }: SnActionIconProps) => (
 		<div
 			className={clsx("stake_icon", className, { "bg-orange-500": pending })}
 		/>
-	),
-	[SnAction.UNSTAKE]: ({ className, pending }: SnActionIconProps) => (
+	)) as (props: unknown) => JSX.Element,
+	[SnAction.UNSTAKE]: (({ className, pending }: SnActionIconProps) => (
 		<div
 			className={clsx(className, "icon-mask", { "bg-orange-500": pending })}
 			css={`
         mask-image: url("../../public/images/unstake@2x.png");
       `}
 		/>
-	),
-	[SnAction.UNSTAKE_RECEIPT]: ({ className, pending }: SnActionIconProps) => (
+	)) as (props: unknown) => JSX.Element,
+	[SnAction.UNSTAKE_RECEIPT]: (({ className, pending }: SnActionIconProps) => (
 		<div
 			className={clsx(className, "icon-mask", { "bg-orange-500": pending })}
 			css={`
         mask-image: url("../../public/images/unstake@2x.png");
       `}
 		/>
-	),
-	[SnAction.REWARD]: ({ className, pending }: SnActionIconProps) => (
+	)) as (props: unknown) => JSX.Element,
+	[SnAction.REWARD]: (({ className, pending }: SnActionIconProps) => (
 		<div
 			className={clsx(className, "icon-mask", { "bg-orange-500": pending })}
 			css={`
         mask-image: url("../../public/images/rewards@2x.png");
       `}
 		/>
-	),
+	)) as (props: unknown) => JSX.Element,
 };
 
 export type StakeTransactionItemState = {
@@ -110,7 +110,7 @@ export type StakeTransactionItemState = {
 	timestamp: dayjs.Dayjs;
 	amount: BigNumber;
 	color: string;
-	Icon: (props: unknown) => JSX.Element;
+	Icon: React.FC<{ className?: string; pending?: boolean }>;
 	signer: string;
 	userWalletAddress: string;
 	height: string;

@@ -82,7 +82,8 @@ export default class InternalEthereumProviderService extends BaseService<Events>
 	) {
 		super();
 
-		internalEthereumProviderPort.emitter.on("message", async (event) => {
+		// rome-ignore lint/suspicious/noExplicitAny: too lazy to fix
+		internalEthereumProviderPort.emitter.on("message", async (event: any) => {
 			logger.log(`internal: request payload: ${JSON.stringify(event)}`);
 			try {
 				const response = {

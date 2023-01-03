@@ -5,12 +5,32 @@ import {
 	AsyncThunkOptions,
 	AsyncThunkPayloadCreator,
 	createAsyncThunk,
+	Dispatch,
 } from "@reduxjs/toolkit";
 import logger from "../lib/logger";
 // FIXME: this utility file should not depend on actual services.
 // Creating a properly typed version of `createBackgroundAsyncThunk`
 // elsewhere has proven quite hard, so we are hardwiring typing here.
 import type Main from "../main";
+
+type AsyncThunkConfig = {
+	/** return type for `thunkApi.getState` */
+	state?: unknown;
+	/** type for `thunkApi.dispatch` */
+	dispatch?: Dispatch;
+	/** type of the `extra` argument for the thunk middleware, which will be passed in as `thunkApi.extra` */
+	extra?: unknown;
+	/** type to be passed into `rejectWithValue`'s first argument that will end up on `rejectedAction.payload` */
+	rejectValue?: unknown;
+	/** return type of the `serializeError` option callback */
+	serializedErrorType?: unknown;
+	/** type to be returned from the `getPendingMeta` option callback & merged into `pendingAction.meta` */
+	pendingMeta?: unknown;
+	/** type to be passed into the second argument of `fulfillWithValue` to finally be merged into `fulfilledAction.meta` */
+	fulfilledMeta?: unknown;
+	/** type to be passed into the second argument of `rejectWithValue` to finally be merged into `rejectedAction.meta` */
+	rejectedMeta?: unknown;
+};
 
 // Below, we use `any` to deal with the fact that allAliases is a heterogeneous
 // collection of async thunk actions whose payload types have little in common
@@ -29,13 +49,7 @@ import type Main from "../main";
  *
  * @see {@link createBackgroundAsyncThunk} for an example use.
  */
-export const allAliases: Record<
-	string,
-	(action: {
-		type: string;
-		payload: unknown;
-	}) => AsyncThunkAction<unknown, unknown, Record<string, unknown>>
-> = {};
+export const allAliases: Record<string, unknown> = {};
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
 // All props of an AsyncThunk.
@@ -107,21 +121,14 @@ const asyncThunkProperties = (() => {
 export function createBackgroundAsyncThunk<
 	TypePrefix extends string,
 	Returned,
-	ThunkArg = void,
-	ThunkApiConfig = { extra: { main: Main } },
+	ThunkArg = unknown,
+	ThunkApiConfig extends AsyncThunkConfig = { extra: { main: Main } },
 >(
 	typePrefix: TypePrefix,
-	payloadCreator: AsyncThunkPayloadCreator<
-		Returned,
-		ThunkArg,
-		Record<string, unknown>
-	>,
-	options?: AsyncThunkOptions<ThunkArg, Record<string, unknown>>,
+	payloadCreator: AsyncThunkPayloadCreator<Returned, ThunkArg, ThunkApiConfig>,
+	options?: AsyncThunkOptions<ThunkArg, ThunkApiConfig>,
 ): ((payload: ThunkArg) => Action<TypePrefix> & { payload: ThunkArg }) &
-	Pick<
-		AsyncThunk<Returned, ThunkArg, Record<string, unknown>>,
-		AsyncThunkProps
-	> {
+	Pick<AsyncThunk<Returned, ThunkArg, ThunkApiConfig>, AsyncThunkProps> {
 	// Exit early if this type prefix is already aliased for handling in the
 	// background script.
 	if (allAliases[typePrefix]) {
@@ -151,10 +158,7 @@ export function createBackgroundAsyncThunk<
 		// Copy the utility props on the redux-tools version to our version.
 		Object.fromEntries(
 			asyncThunkProperties.map((prop) => [prop, baseThunkActionCreator[prop]]),
-		) as Pick<
-			AsyncThunk<Returned, ThunkArg, Record<string, unknown>>,
-			AsyncThunkProps
-		>,
+		) as Pick<AsyncThunk<Returned, ThunkArg, ThunkApiConfig>, AsyncThunkProps>,
 	);
 
 	// Register the alias to ensure it will always get proxied back to the

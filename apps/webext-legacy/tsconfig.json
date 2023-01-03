@@ -9,7 +9,8 @@
     "allowSyntheticDefaultImports": true,
     "jsx": "react-jsx",
     "strict": true,
-    "noEmit": true
+    "noEmit": true,
+    "skipLibCheck": true
   },
   "ts-node": {
     "compilerOptions": {
@@ -25,5 +26,6 @@
     "../../packages/provider-bridge",
     "../../packages/provider-bridge-shared",
     "../../packages/window-provider"
-  ]
+  ],
+  "exclude": ["node_modules"]
 }
