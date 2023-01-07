@@ -91,7 +91,7 @@ export async function getMetadata(
 			ERC20_FUNCTIONS.symbol,
 			ERC20_FUNCTIONS.name,
 			ERC20_FUNCTIONS.decimals,
-		].map(({ name: functionName }) => token.callStatic[functionName]()),
+		].map(({ name: functionName }) => token.callStatic[functionName]!()),
 	);
 
 	return {

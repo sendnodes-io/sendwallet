@@ -18,7 +18,11 @@
     "web3",
     "dapp"
   ],
+  "scripts": {
+    "lint": "tsc --noEmit"
+  },
   "dependencies": {
+    "@0xbigboss/webext-redux": "2.1.9",
     "@ethereumjs/common": "^2.4.0",
     "@ethereumjs/tx": "^3.3.0",
     "@ethersproject/abstract-provider": "^5.5.1",
@@ -33,9 +37,10 @@
     "@ledgerhq/hw-transport": "^6.20.0",
     "@ledgerhq/hw-transport-webusb": "^6.20.0",
     "@pokt-network/pocket-js": "git+ssh://git@github.com:sendnodes-io/pocket-js.git#afa252f33a1ab5e93c54c1eb140f21bc8365671a",
+    "@reduxjs/toolkit": "^1.9.1",
     "@sendnodes/hd-keyring": "0.1.0",
-    "@sendnodes/provider-bridge-shared": "0.0.1",
-    "@sendnodes/window-provider": "0.0.1",
+    "@sendnodes/provider-bridge-shared": "*",
+    "@sendnodes/window-provider": "*",
     "@types/w3c-web-usb": "^1.0.5",
     "@uniswap/token-lists": "^1.0.0-beta.25",
     "ajv": "^8.6.2",
@@ -48,20 +53,19 @@
     "ethers": "^5.5.1",
     "lodash": "^4.17.21",
     "node-fetch": "^2.6.1",
+    "react-redux": "^8.0.5",
     "siwe": "^1.1.0",
     "util": "^0.12.4",
     "webextension-polyfill": "^0.8.0"
   },
   "devDependencies": {
-    "@0xbigboss/webext-redux": "2.1.9",
-    "@reduxjs/toolkit": "^1.6.1",
     "@types/chrome": "^0.0.190",
     "@types/webextension-polyfill": "^0.9.0",
     "crypto-browserify": "^3.12.0",
     "mockzilla": "^0.14.0",
     "mockzilla-webextension": "^0.15.0",
-    "redux": "^4.1.1",
     "remote-redux-devtools": "^0.5.16",
-    "ts-node": "^10.9.1"
+    "ts-node": "^10.9.1",
+    "typescript": "^4.6.4"
   }
 }

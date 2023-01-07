@@ -280,7 +280,7 @@ export default class LedgerService extends BaseService<Events> {
 		}
 
 		if (usbDeviceArray.length === 1) {
-			await this.onConnection(usbDeviceArray[0].productId);
+			await this.onConnection(usbDeviceArray[0]!.productId);
 		}
 
 		return this.#currentLedgerId;

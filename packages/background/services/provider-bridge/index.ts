@@ -49,7 +49,7 @@ type Events = ServiceLifecycleEvents & {
  */
 export default class ProviderBridgeService extends BaseService<Events> {
 	#pendingPermissionsRequests: {
-		[origin: string]: (value: unknown) => void;
+		[origin: string]: ((value: unknown) => void) | undefined;
 	} = {};
 
 	openPorts: Array<Runtime.Port> = [];
@@ -277,7 +277,7 @@ export default class ProviderBridgeService extends BaseService<Events> {
 		await this.db.setPermission(permission);
 
 		if (this.#pendingPermissionsRequests[permission.origin]) {
-			this.#pendingPermissionsRequests[permission.origin](permission);
+			this.#pendingPermissionsRequests[permission.origin]!(permission);
 			this.#pendingPermissionsRequests[permission.origin] = undefined;
 		}
 	}
@@ -292,7 +292,7 @@ export default class ProviderBridgeService extends BaseService<Events> {
 		await this.db.deletePermission(permission.origin, address);
 
 		if (this.#pendingPermissionsRequests[permission.origin]) {
-			this.#pendingPermissionsRequests[permission.origin]("Time to move on");
+			this.#pendingPermissionsRequests[permission.origin]!("Time to move on");
 			this.#pendingPermissionsRequests[permission.origin] = undefined;
 		}
 

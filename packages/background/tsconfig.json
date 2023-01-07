@@ -1,8 +1,8 @@
 {
-  "extends": "../../apps/webext-legacy/tsconfig.json",
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "lib": ["esnext", "DOM", "DOM.Iterable", "WebWorker"]
-  },
-  "exclude": ["node_modules"],
-  "include": ["./**/*.ts"]
+    "target": "esnext",
+    "lib": ["esnext", "dom", "DOM.Iterable", "WebWorker"],
+    "jsx": "preserve"
+  }
 }

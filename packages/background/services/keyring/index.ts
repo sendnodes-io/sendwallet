@@ -82,7 +82,7 @@ interface Events extends ServiceLifecycleEvents {
 	[KeyringEvents.KEYRINGS]: {
 		keyrings: ExtensionKeyring[];
 		keyringMetadata: {
-			[keyringId: string]: KeyringMetadata;
+			[keyringId: string]: KeyringMetadata | undefined;
 		};
 	};
 	[KeyringEvents.ADDRESS]: { address: string; keyType: KeyType };
@@ -120,9 +120,9 @@ export default class KeyringService extends BaseService<Events> {
 
 	#keyrings: Keyring<SerializedKeyring>[] = [];
 
-	#keyringMetadata: { [keyringId: string]: KeyringMetadata } = {};
+	#keyringMetadata: { [keyringId: string]: KeyringMetadata | undefined } = {};
 
-	#hiddenAccounts: { [address: HexString]: boolean } = {};
+	#hiddenAccounts: { [address: HexString]: boolean | undefined } = {};
 
 	/**
 	 * The last time a keyring took an action that required the service to be
@@ -422,7 +422,7 @@ export default class KeyringService extends BaseService<Events> {
 			const keyringMetadata = {
 				...(this.#keyringMetadata[kr.fingerprint] ?? {}),
 				seedId,
-			};
+			} as KeyringMetadata;
 
 			// track it privately
 			this.#keyrings.push(keyring);
@@ -654,6 +654,10 @@ export default class KeyringService extends BaseService<Events> {
 			throw new Error("Keyring has too many addresses");
 		}
 
+		if (!newAddress) {
+			throw new Error("Keyring could not derive address");
+		}
+
 		this.#hiddenAccounts[newAddress] = false;
 
 		await this.persistKeyrings();
@@ -746,7 +750,7 @@ export default class KeyringService extends BaseService<Events> {
 	async signTransaction(
 		addressOnNetwork: AddressOnNetwork,
 		txRequest:
-			| (EIP1559TransactionRequest & { nonce: number })
+			| (EIP1559TransactionRequest & { nonce: number | undefined })
 			| POKTTransactionRequest,
 	): Promise<SignedEVMTransaction | SignedPOKTTransaction> {
 		this.requireUnlocked();
@@ -923,6 +927,10 @@ export default class KeyringService extends BaseService<Events> {
 		const addresses = keyring.getAddressesSync();
 		const [address] =
 			addresses.length > 0 ? addresses : keyring.addAddressesSync(1);
+
+		if (!address) {
+			throw new Error("Failed to add address to keyring");
+		}
 
 		// ensure not hidden in case of a previsouly added account
 		this.#hiddenAccounts[address] = false;

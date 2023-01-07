@@ -4961,23 +4961,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@reduxjs/toolkit@npm:^1.6.0, @reduxjs/toolkit@npm:^1.6.1":
-  version: 1.6.1
-  resolution: "@reduxjs/toolkit@npm:1.6.1"
+"@reduxjs/toolkit@npm:^1.9.1":
+  version: 1.9.1
+  resolution: "@reduxjs/toolkit@npm:1.9.1"
   dependencies:
-    immer: ^9.0.1
-    redux: ^4.1.0
-    redux-thunk: ^2.3.0
-    reselect: ^4.0.0
+    immer: ^9.0.16
+    redux: ^4.2.0
+    redux-thunk: ^2.4.2
+    reselect: ^4.1.7
   peerDependencies:
-    react: ^16.14.0 || ^17.0.0
-    react-redux: ^7.2.1
+    react: ^16.9.0 || ^17.0.0 || ^18
+    react-redux: ^7.2.1 || ^8.0.2
   peerDependenciesMeta:
     react:
       optional: true
     react-redux:
       optional: true
-  checksum: 487e34003671b4bf3fbb983dd4d6e23ddeea0170aaefee765e38a7942b317895c8fae91a82dd698489a072c4ca8be9d317749a329ad9fb0129c3ed96f6142c18
+  checksum: e6700a0d45198ab525c96ff0425fa0125fbdc37ce514f0c77c30225837113279ceec9190ac3da35cb20e77553e56342021788bbf17465819068c4db34cb3d87f
   languageName: node
   linkType: hard
 
@@ -5079,7 +5079,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sendnodes/pokt-wallet-background@0.0.1, @sendnodes/pokt-wallet-background@workspace:packages/background":
+"@sendnodes/pokt-wallet-background@*, @sendnodes/pokt-wallet-background@0.0.1, @sendnodes/pokt-wallet-background@workspace:packages/background":
   version: 0.0.0-use.local
   resolution: "@sendnodes/pokt-wallet-background@workspace:packages/background"
   dependencies:
@@ -5098,10 +5098,10 @@ __metadata:
     "@ledgerhq/hw-transport": ^6.20.0
     "@ledgerhq/hw-transport-webusb": ^6.20.0
     "@pokt-network/pocket-js": "git+ssh://git@github.com:sendnodes-io/pocket-js.git#afa252f33a1ab5e93c54c1eb140f21bc8365671a"
-    "@reduxjs/toolkit": ^1.6.1
+    "@reduxjs/toolkit": ^1.9.1
     "@sendnodes/hd-keyring": 0.1.0
-    "@sendnodes/provider-bridge-shared": 0.0.1
-    "@sendnodes/window-provider": 0.0.1
+    "@sendnodes/provider-bridge-shared": "*"
+    "@sendnodes/window-provider": "*"
     "@types/chrome": ^0.0.190
     "@types/w3c-web-usb": ^1.0.5
     "@types/webextension-polyfill": ^0.9.0
@@ -5119,16 +5119,17 @@ __metadata:
     mockzilla: ^0.14.0
     mockzilla-webextension: ^0.15.0
     node-fetch: ^2.6.1
-    redux: ^4.1.1
+    react-redux: ^8.0.5
     remote-redux-devtools: ^0.5.16
     siwe: ^1.1.0
     ts-node: ^10.9.1
+    typescript: ^4.6.4
     util: ^0.12.4
     webextension-polyfill: ^0.8.0
   languageName: unknown
   linkType: soft
 
-"@sendnodes/pokt-wallet-ui@0.0.1, @sendnodes/pokt-wallet-ui@workspace:packages/ui-legacy":
+"@sendnodes/pokt-wallet-ui@*, @sendnodes/pokt-wallet-ui@workspace:packages/ui-legacy":
   version: 0.0.0-use.local
   resolution: "@sendnodes/pokt-wallet-ui@workspace:packages/ui-legacy"
   dependencies:
@@ -5145,7 +5146,7 @@ __metadata:
     "@ledgerhq/devices": ^6.20.0
     "@lottiefiles/react-lottie-player": ^3.5.0
     "@pokt-network/pocket-js": "git+ssh://git@github.com:sendnodes-io/pocket-js.git#afa252f33a1ab5e93c54c1eb140f21bc8365671a"
-    "@reduxjs/toolkit": ^1.6.0
+    "@reduxjs/toolkit": ^1.9.1
     "@sendnodes/pokt-wallet-background": 0.0.1
     "@sendnodes/provider-bridge-shared": 0.0.1
     "@types/lodash": ^4.14.182
@@ -5168,23 +5169,24 @@ __metadata:
     react-error-boundary: ^3.1.4
     react-icons: ^4.3.1
     react-qr-code: ^2.0.0
-    react-redux: ^7.2.4
+    react-redux: ^8.0.5
     react-router-dom: ^5.3.0
     react-transition-group: ^4.4.2
     redux: ^4.1.0
     styled-jsx: ^3.4.4
     swr: ^1.3.0
+    typescript: ^4.6.4
     webextension-polyfill: ^0.10.0
   languageName: unknown
   linkType: soft
 
-"@sendnodes/provider-bridge-shared@0.0.1, @sendnodes/provider-bridge-shared@workspace:packages/provider-bridge-shared":
+"@sendnodes/provider-bridge-shared@*, @sendnodes/provider-bridge-shared@0.0.1, @sendnodes/provider-bridge-shared@workspace:packages/provider-bridge-shared":
   version: 0.0.0-use.local
   resolution: "@sendnodes/provider-bridge-shared@workspace:packages/provider-bridge-shared"
   languageName: unknown
   linkType: soft
 
-"@sendnodes/provider-bridge@*, @sendnodes/provider-bridge@0.0.1, @sendnodes/provider-bridge@workspace:packages/provider-bridge":
+"@sendnodes/provider-bridge@*, @sendnodes/provider-bridge@workspace:packages/provider-bridge":
   version: 0.0.0-use.local
   resolution: "@sendnodes/provider-bridge@workspace:packages/provider-bridge"
   dependencies:
@@ -5212,11 +5214,11 @@ __metadata:
     prettier: ^2.8.1
     rome: ^11.0.0
     turbo: ^1.6.3
-    typescript: ^4.9.4
+    typescript: ^4.6.4
   languageName: unknown
   linkType: soft
 
-"@sendnodes/window-provider@0.0.1, @sendnodes/window-provider@workspace:packages/window-provider":
+"@sendnodes/window-provider@*, @sendnodes/window-provider@workspace:packages/window-provider":
   version: 0.0.0-use.local
   resolution: "@sendnodes/window-provider@workspace:packages/window-provider"
   dependencies:
@@ -6761,7 +6763,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/hoist-non-react-statics@npm:^3.3.0":
+"@types/hoist-non-react-statics@npm:^3.3.1":
   version: 3.3.1
   resolution: "@types/hoist-non-react-statics@npm:3.3.1"
   dependencies:
@@ -6991,18 +6993,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-redux@npm:^7.1.16":
-  version: 7.1.18
-  resolution: "@types/react-redux@npm:7.1.18"
-  dependencies:
-    "@types/hoist-non-react-statics": ^3.3.0
-    "@types/react": "*"
-    hoist-non-react-statics: ^3.3.0
-    redux: ^4.0.0
-  checksum: 8aa24c15df711e2a20f903843f42491316094c3a49a90dcae86dcafa8fdb2318fdfaa983e23d67840986f11131b9b8856a5d6971288d68fa8aa592adc348a942
-  languageName: node
-  linkType: hard
-
 "@types/react-router-dom@npm:^5.3.1":
   version: 5.3.1
   resolution: "@types/react-router-dom@npm:5.3.1"
@@ -7172,6 +7162,13 @@ __metadata:
   dependencies:
     source-map: ^0.6.1
   checksum: def36fd2c698a33d8f67f5e21aab926eb9bda2d7951eab544941e1feb1231f020ff1c210d840dcc0fc9f07b5d22ef8b566887ddec9753b8b9f7223cceaa70993
+  languageName: node
+  linkType: hard
+
+"@types/use-sync-external-store@npm:^0.0.3":
+  version: 0.0.3
+  resolution: "@types/use-sync-external-store@npm:0.0.3"
+  checksum: 161ddb8eec5dbe7279ac971531217e9af6b99f7783213566d2b502e2e2378ea19cf5e5ea4595039d730aa79d3d35c6567d48599f69773a02ffcff1776ec2a44e
   languageName: node
   linkType: hard
 
@@ -9630,7 +9627,7 @@ __metadata:
   dependencies:
     "@types/archiver": ^5.1.0
     archiver: ^5.3.0
-    typescript: ^4.9.4
+    typescript: ^4.6.4
     webpack: ^5.72.1
   languageName: unknown
   linkType: soft
@@ -14801,10 +14798,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"immer@npm:^9.0.1":
-  version: 9.0.6
-  resolution: "immer@npm:9.0.6"
-  checksum: 75da22f3b32f3f14604eb389b4f50e84a14f2e42f306f0cbe4d2969aed54ec7fda9a7e9ca42ebae2ba73ec9bb6ec1001fafbac535accaf03860054ab0f7e8388
+"immer@npm:^9.0.16":
+  version: 9.0.17
+  resolution: "immer@npm:9.0.17"
+  checksum: 046d562b74f050632d2861042dbcad49a5e86ffe5bb9b8bff6e699b1c7d8478019d9a3be61e72117cecc29826d2caa4fa927a7e10262381144dd33c735b9531c
   languageName: node
   linkType: hard
 
@@ -21192,7 +21189,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-is@npm:^16.13.0, react-is@npm:^16.13.1, react-is@npm:^16.6.0, react-is@npm:^16.7.0, react-is@npm:^16.8.1":
+"react-is@npm:^16.13.0, react-is@npm:^16.6.0, react-is@npm:^16.7.0, react-is@npm:^16.8.1":
   version: 16.13.1
   resolution: "react-is@npm:16.13.1"
   checksum: f7a19ac3496de32ca9ae12aa030f00f14a3d45374f1ceca0af707c831b2a6098ef0d6bdae51bd437b0a306d7f01d4677fcc8de7c0d331eb47ad0f46130e53c5f
@@ -21304,24 +21301,35 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-redux@npm:^7.2.4":
-  version: 7.2.4
-  resolution: "react-redux@npm:7.2.4"
+"react-redux@npm:^8.0.5":
+  version: 8.0.5
+  resolution: "react-redux@npm:8.0.5"
   dependencies:
     "@babel/runtime": ^7.12.1
-    "@types/react-redux": ^7.1.16
+    "@types/hoist-non-react-statics": ^3.3.1
+    "@types/use-sync-external-store": ^0.0.3
     hoist-non-react-statics: ^3.3.2
-    loose-envify: ^1.4.0
-    prop-types: ^15.7.2
-    react-is: ^16.13.1
+    react-is: ^18.0.0
+    use-sync-external-store: ^1.0.0
   peerDependencies:
-    react: ^16.8.3 || ^17
+    "@types/react": ^16.8 || ^17.0 || ^18.0
+    "@types/react-dom": ^16.8 || ^17.0 || ^18.0
+    react: ^16.8 || ^17.0 || ^18.0
+    react-dom: ^16.8 || ^17.0 || ^18.0
+    react-native: ">=0.59"
+    redux: ^4
   peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    "@types/react-dom":
+      optional: true
     react-dom:
       optional: true
     react-native:
       optional: true
-  checksum: 214fa1a4811f95090b77d96ec7114c322adf388b6d086ebebf50cdaf03549758037283f953d2b920cf6ee2f6ffad8f35e92f1ab959b3f2c957f5075d00e16d0a
+    redux:
+      optional: true
+  checksum: a108f4f7ead6ac005e656d46051474a2bbdb31ede481bbbb3d8d779c1a35e1940b8655577cc5021313411864d305f67fc719aa48d6e5ed8288cf9cbe8b7042e4
   languageName: node
   linkType: hard
 
@@ -21599,19 +21607,30 @@ __metadata:
   languageName: node
   linkType: hard
 
-"redux-thunk@npm:^2.3.0":
-  version: 2.3.0
-  resolution: "redux-thunk@npm:2.3.0"
-  checksum: d13f442ffc91249b534bf14884c33feff582894be2562169637dc9d4d70aec6423bfe6d66f88c46ac027ac1c0cd07d6c2dd4a61cf7695b8e43491de679df9bcf
+"redux-thunk@npm:^2.4.2":
+  version: 2.4.2
+  resolution: "redux-thunk@npm:2.4.2"
+  peerDependencies:
+    redux: ^4
+  checksum: c7f757f6c383b8ec26152c113e20087818d18ed3edf438aaad43539e9a6b77b427ade755c9595c4a163b6ad3063adf3497e5fe6a36c68884eb1f1cfb6f049a5c
   languageName: node
   linkType: hard
 
-"redux@npm:^4.0.0, redux@npm:^4.1.0, redux@npm:^4.1.1":
+"redux@npm:^4.0.0, redux@npm:^4.1.0":
   version: 4.1.1
   resolution: "redux@npm:4.1.1"
   dependencies:
     "@babel/runtime": ^7.9.2
   checksum: 99519438a5d20b69404ad3816307ccc189f16df04b64c50d82c415ec488ea68b656d7a2fc81b6345e8d90f095344dfea68246500f72613d76464986660bc0485
+  languageName: node
+  linkType: hard
+
+"redux@npm:^4.2.0":
+  version: 4.2.0
+  resolution: "redux@npm:4.2.0"
+  dependencies:
+    "@babel/runtime": ^7.9.2
+  checksum: 75f3955c89b3f18edf5411e5fb482aa2e4f41a416183e8802a6bf6472c4fc3d47675b8b321d147f8af8e0f616436ac507bf5a25f1c4d6180e797b549c7db2c1d
   languageName: node
   linkType: hard
 
@@ -21927,6 +21946,13 @@ __metadata:
   version: 4.0.0
   resolution: "reselect@npm:4.0.0"
   checksum: ac7dfc9ef2cdb42b6fc87a856f3ce904c2e4363a2bc1e6fb7eea5f78902a6f506e4388e6509752984877c6dbfe501100c076671d334799eb5a1bfe9936cb2c12
+  languageName: node
+  linkType: hard
+
+"reselect@npm:^4.1.7":
+  version: 4.1.7
+  resolution: "reselect@npm:4.1.7"
+  checksum: 738d8e2b8f0dca154ad29de6a209c9fbca2d70ae6788fd85df87f2c74b95a65bbf2d16d43a9e2faff39de34d17a29d706ba08a6b2ee5660c09589edbd19af7e1
   languageName: node
   linkType: hard
 
@@ -24848,7 +24874,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^4.7.4, typescript@npm:^4.9.4":
+"typescript@npm:^4.6.4, typescript@npm:^4.7.4":
   version: 4.9.4
   resolution: "typescript@npm:4.9.4"
   bin:
@@ -24858,7 +24884,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^4.7.4#~builtin<compat/typescript>, typescript@patch:typescript@^4.9.4#~builtin<compat/typescript>":
+"typescript@patch:typescript@^4.6.4#~builtin<compat/typescript>, typescript@patch:typescript@^4.7.4#~builtin<compat/typescript>":
   version: 4.9.4
   resolution: "typescript@patch:typescript@npm%3A4.9.4#~builtin<compat/typescript>::version=4.9.4&hash=d73830"
   bin:
@@ -25283,6 +25309,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"use-sync-external-store@npm:^1.0.0":
+  version: 1.2.0
+  resolution: "use-sync-external-store@npm:1.2.0"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+  checksum: 5c639e0f8da3521d605f59ce5be9e094ca772bd44a4ce7322b055a6f58eeed8dda3c94cabd90c7a41fb6fa852210092008afe48f7038792fd47501f33299116a
+  languageName: node
+  linkType: hard
+
 "use@npm:^3.1.0":
   version: 3.1.1
   resolution: "use@npm:3.1.1"
@@ -25603,11 +25638,11 @@ __metadata:
     "@ethersproject/providers": 5.5.3
     "@fortawesome/fontawesome-free": ^5.15.2
     "@jest/types": ^28.1.1
-    "@sendnodes/pokt-wallet-background": 0.0.1
-    "@sendnodes/pokt-wallet-ui": 0.0.1
-    "@sendnodes/provider-bridge": 0.0.1
-    "@sendnodes/provider-bridge-shared": 0.0.1
-    "@sendnodes/window-provider": 0.0.1
+    "@sendnodes/pokt-wallet-background": "*"
+    "@sendnodes/pokt-wallet-ui": "*"
+    "@sendnodes/provider-bridge": "*"
+    "@sendnodes/provider-bridge-shared": "*"
+    "@sendnodes/window-provider": "*"
     "@statoscope/webpack-plugin": ^5.20.1
     "@types/archiver": ^5.1.0
     "@types/copy-webpack-plugin": ^8.0.0
@@ -25658,7 +25693,7 @@ __metadata:
     terser-webpack-plugin: ^5.3.1
     thread-loader: ^3.0.4
     ts-loader: ^9.3.0
-    typescript: ^4.9.4
+    typescript: ^4.6.4
     webext-options-sync: ^2.0.1
     webextension-polyfill: ^0.10.0
     webpack: ^5.72.1
@@ -25708,7 +25743,7 @@ __metadata:
     rome: ^11.0.0
     tamagui-loader: ^1.0.2
     ts-node: ^10.9.1
-    typescript: ^4.9.4
+    typescript: ^4.6.4
     url-loader: ^4.1.1
     webextension-polyfill: ^0.10.0
     webpack: ^5.75.0

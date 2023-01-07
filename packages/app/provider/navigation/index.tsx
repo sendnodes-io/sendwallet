@@ -5,7 +5,7 @@ import {
 } from "@react-navigation/native";
 import * as Linking from "expo-linking";
 import { useMemo } from "react";
-import { useTheme } from "../../../ui/src";
+import { useTheme } from "@my/ui";
 import { Platform, useColorScheme, View } from "react-native";
 
 const MyTheme = {

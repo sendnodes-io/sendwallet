@@ -1,9 +1,10 @@
 {
-  "extends": "../../apps/webext-legacy/tsconfig.json",
+  "extends": "../../tsconfig",
   "compilerOptions": {
+    "composite": true,
+    "esModuleInterop": true,
     "target": "esnext",
-    "lib": ["esnext", "dom", "WebWorker"]
-  },
-  "exclude": ["node_modules"],
-  "include": ["./**/*.ts"]
+    "lib": ["esnext", "dom", "DOM.Iterable"],
+    "jsx": "preserve"
+  }
 }

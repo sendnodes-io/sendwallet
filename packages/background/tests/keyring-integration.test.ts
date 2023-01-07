@@ -45,8 +45,12 @@ const validMnemonics = {
 	],
 };
 
+enum TransactionRequestTypes {
+	simple = "simple",
+}
+
 const validTransactionRequests: {
-	[key: string]: {
+	[e in TransactionRequestTypes]: {
 		ETHEREUM: EIP1559TransactionRequest & { nonce: number };
 		POCKET: POKTTransactionRequest;
 	};
@@ -126,7 +130,7 @@ describe("KeyringService when uninitialized", () => {
 	describe("and locked", () => {
 		it("won't import or create accounts", async () => {
 			await expect(
-				service.importKeyring(validMnemonics.metamask[0], "import"),
+				service.importKeyring(validMnemonics.metamask[0]!, "import"),
 			).rejects.toThrow("KeyringService must be unlocked.");
 
 			await Promise.all(
@@ -232,24 +236,23 @@ describe("KeyringService when initialized", () => {
 	});
 
 	it("will derive a new address", async () => {
-		const [
-			{
-				fingerprint: id,
-				addresses: [originalAddress],
-			},
-		] = service.getKeyrings();
+		let keyrings = service.getKeyrings()!;
+		const {
+			fingerprint: id,
+			addresses: [originalAddress],
+		} = keyrings[0]!;
 
 		const newAddress = id ? await service.deriveAddress(id) : "";
 		expect(newAddress).toEqual(
-			expect.not.stringMatching(new RegExp(originalAddress, "i")),
+			expect.not.stringMatching(new RegExp(originalAddress!, "i")),
 		);
 
-		const keyrings = service.getKeyrings();
+		keyrings = service.getKeyrings();
 		expect(keyrings).toHaveLength(1);
 		expect(keyrings[0]).toMatchObject({
 			fingerprint: expect.anything(),
 			addresses: expect.arrayContaining([
-				expect.stringMatching(new RegExp(originalAddress, "i")),
+				expect.stringMatching(new RegExp(originalAddress!, "i")),
 				expect.stringMatching(new RegExp(newAddress, "i")),
 			]),
 		});
@@ -499,7 +502,7 @@ describe("Keyring service when autolocking", () => {
 		{
 			action: "importing a keyring",
 			call: async () => {
-				await service.importKeyring(validMnemonics.metamask[0], "import");
+				await service.importKeyring(validMnemonics.metamask[0]!, "import");
 			},
 		},
 		{

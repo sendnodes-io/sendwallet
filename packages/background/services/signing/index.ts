@@ -119,7 +119,7 @@ export default class SigningService extends BaseService<Events> {
 	private async _signTransaction(
 		network: EVMNetwork | POKTNetwork,
 		transactionWithNonce:
-			| (EIP1559TransactionRequest & { nonce: number })
+			| (EIP1559TransactionRequest & { nonce: number | undefined })
 			| POKTTransactionRequest,
 		signingMethod: SigningMethod,
 	): Promise<SignedEVMTransaction | SignedPOKTTransaction> {
@@ -194,7 +194,7 @@ export default class SigningService extends BaseService<Events> {
 		if (network.family === "EVM") {
 			const txReq = transactionRequest as EIP1559TransactionRequest;
 			const transactionWithNonce =
-				await this.chainService.populateEVMTransactionNonce(txReq);
+				await this.chainService.populateEVMTransactionNonce(txReq)!;
 
 			try {
 				const signedTx = await this._signTransaction(

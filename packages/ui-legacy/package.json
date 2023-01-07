@@ -3,22 +3,17 @@
   "version": "0.0.1",
   "description": "SendWallet: UI package.",
   "main": "index.ts",
-  "repository": "git@github.com:sendnodes/pokt-wallet.git",
+  "private": true,
   "authors": [
     "Dire <dire@sendnodes.io>",
     "BigBoss <bigboss@sendnodes.io>"
   ],
   "license": "GPL-3.0",
-  "keywords": [
-    "ethereum",
-    "bitcoin",
-    "pokt",
-    "cryptocurrency",
-    "wallet",
-    "web3",
-    "dapp"
-  ],
+  "scripts": {
+    "lint": "tsc"
+  },
   "dependencies": {
+    "@0xbigboss/webext-redux": "2.1.9",
     "@ethersproject/abstract-provider": "^5.5.1",
     "@ethersproject/address": "^5.5.0",
     "@ethersproject/bignumber": "^5.7.0",
@@ -28,7 +23,7 @@
     "@ledgerhq/devices": "^6.20.0",
     "@lottiefiles/react-lottie-player": "^3.5.0",
     "@pokt-network/pocket-js": "git+ssh://git@github.com:sendnodes-io/pocket-js.git#afa252f33a1ab5e93c54c1eb140f21bc8365671a",
-    "@reduxjs/toolkit": "^1.6.0",
+    "@reduxjs/toolkit": "^1.9.1",
     "@sendnodes/pokt-wallet-background": "0.0.1",
     "@sendnodes/provider-bridge-shared": "0.0.1",
     "@types/webextension-polyfill": "^0.9.0",
@@ -47,7 +42,7 @@
     "react-error-boundary": "^3.1.4",
     "react-icons": "^4.3.1",
     "react-qr-code": "^2.0.0",
-    "react-redux": "^7.2.4",
+    "react-redux": "^8.0.5",
     "react-router-dom": "^5.3.0",
     "react-transition-group": "^4.4.2",
     "redux": "^4.1.0",
@@ -55,7 +50,6 @@
     "webextension-polyfill": "^0.10.0"
   },
   "devDependencies": {
-    "@0xbigboss/webext-redux": "2.1.9",
     "@headlessui/react": "^1.6.6",
     "@heroicons/react": "^1.0.6",
     "@iconify/react": "^3.2.2",
@@ -63,6 +57,7 @@
     "@types/react-dom": "^17.0.9",
     "@types/react-transition-group": "^4.4.4",
     "clsx": "^1.2.1",
-    "styled-jsx": "^3.4.4"
+    "styled-jsx": "^3.4.4",
+    "typescript": "^4.6.4"
   }
 }

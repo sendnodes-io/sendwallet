@@ -5,16 +5,18 @@
     "paths": {
       "app/*": ["./packages/app/*"],
       "@my/ui/*": ["./packages/ui/*"],
-      "build-utils/*": ["./packages/build-utils/*"]
+      "build-utils/*": ["./packages/build-utils/*"],
+      "@sendnodes/pokt-wallet-ui/*": ["./packages/ui-legacy/*"],
+      "@sendnodes/pokt-wallet-background/*": ["./packages/background/*"],
+      "@sendnodes/provider-bridge-shared/*": [
+        "./packages/provider-bridge-shared/*"
+      ],
+      "@sendnodes/provider-bridge/*": ["./packages/provider-bridge/*"],
+      "@sendnodes/window-provider/*": ["./packages/window-provider/*"]
     },
     "baseUrl": ".",
     "rootDir": "."
   },
-  "references": [
-    { "path": "./packages/app" },
-    { "path": "./packages/ui" },
-    { "path": "./packages/build-utils" }
-  ],
   "exclude": ["node_modules"],
   "extends": "./tsconfig.base",
   "ts-node": {

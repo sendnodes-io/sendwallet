@@ -474,9 +474,9 @@ export default class ChainService extends BaseService<Events> {
 	releaseEVMTransactionNonce(
 		transactionRequest:
 			| (EIP1559TransactionRequest & {
-					nonce: number;
+					nonce: number | undefined;
 			  })
-			| (LegacyEVMTransactionRequest & { nonce: number })
+			| (LegacyEVMTransactionRequest & { nonce: number | undefined })
 			| SignedEVMTransaction,
 	): void {
 		const { nonce } = transactionRequest;
@@ -500,7 +500,7 @@ export default class ChainService extends BaseService<Events> {
 			this.evmChainLastSeenNoncesByNormalizedAddress[chainID]![
 				normalizedAddress
 			] -= 1;
-		} else if (nonce < lastSeenNonce!) {
+		} else if (nonce && nonce < lastSeenNonce!) {
 			// If the nonce we're releasing is below the latest allocated nonce,
 			// release all intervening nonces. This risks transaction replacement
 			// issues, but ensures that we don't start allocating nonces that will

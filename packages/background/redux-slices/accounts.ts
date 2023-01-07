@@ -124,7 +124,7 @@ function newAccountData(
 						(existingAccountsCount % availableDefaultAvatars.length),
 				),
 		);
-	const defaultAccountAvatar = availableDefaultAvatars[defaultAvatarIndex];
+	const defaultAccountAvatar = availableDefaultAvatars[defaultAvatarIndex]!;
 
 	// Move used default Avatars to the start so they can be skipped above.
 	availableDefaultAvatars.splice(defaultAvatarIndex, 1);
@@ -210,7 +210,7 @@ export const removeAccount = createBackgroundAsyncThunk(
 			const keyringMetadata = selectKeyringMetadataForAddress(
 				state,
 				addressOnNetwork.address,
-			);
+			)!;
 			const siblingKeyrings = selectSiblingKeyrings(
 				state,
 				keyringMetadata.seedId,
@@ -356,7 +356,7 @@ const accountSlice = createSlice({
 			}
 
 			const baseAccountData = getOrCreateAccountData(
-				immerState.accountsData[accountKey],
+				immerState.accountsData[accountKey]!,
 				accountKey,
 				addressNetworkName.network,
 				Object.keys(immerState.accountsData).filter((key) => key !== accountKey)
@@ -384,7 +384,7 @@ const accountSlice = createSlice({
 			}
 
 			const baseAccountData = getOrCreateAccountData(
-				immerState.accountsData[accountKey],
+				immerState.accountsData[accountKey]!,
 				accountKey,
 				addressNetworkName.network,
 				Object.keys(immerState.accountsData).filter((key) => key !== accountKey)
@@ -410,7 +410,7 @@ const accountSlice = createSlice({
 			}
 
 			const baseAccountData = getOrCreateAccountData(
-				immerState.accountsData[accountKey],
+				immerState.accountsData[accountKey]!,
 				accountKey,
 				addressNetworkAvatar.network,
 				Object.keys(immerState.accountsData).filter((key) => key !== accountKey)

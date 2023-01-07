@@ -189,7 +189,7 @@ export type AccountTotal = AddressOnMaybeNetwork & {
 	shortenedAddress: string;
 	accountType: AccountType;
 	keyringId: string | null;
-	keyringType: KeyringType;
+	keyringType: KeyringType | undefined;
 	signingMethod: SigningMethod | null;
 	name?: string;
 	defaultName?: string;
@@ -212,7 +212,7 @@ const signingMethodTypeToAccountType: Record<
 
 const getAccountType = (
 	address: string,
-	signingMethod: SigningMethod,
+	signingMethod: SigningMethod | null,
 	addressSources: {
 		[address: string]: "import" | "internal";
 	},
@@ -255,7 +255,7 @@ export const selectAccountTotalsByCategory = createSelector(
 			.map(([address, accountData]): AccountTotal => {
 				const shortenedAddress = truncateAddress(address);
 				const signingMethod = signingAccounts[address] ?? null;
-				const keyringId = keyringsByAddresses[address]?.fingerprint;
+				const keyringId = keyringsByAddresses[address]?.fingerprint ?? null;
 				const keyringType = keyringsByAddresses[address]?.keyringType;
 				const accountType = getAccountType(
 					address,
@@ -304,7 +304,7 @@ export const selectAccountTotalsByCategory = createSelector(
 					.reduce((total, assetBalance) => total + assetBalance, 0);
 
 				const networkTokenAssetAmount =
-					accountData.balances[currentAccount.network.baseAsset.symbol]
+					accountData.balances[currentAccount.network.baseAsset.symbol]!
 						.assetAmount;
 				const networkTokenAmount = enrichAssetAmountWithDecimalValues(
 					networkTokenAssetAmount,
@@ -352,7 +352,10 @@ export const getAccountTotal = (
 	state: RootState,
 	accountAddress: string,
 ): AccountTotal | undefined =>
-	findAccountTotal(selectAccountTotalsByCategory(state), accountAddress);
+	findAccountTotal(
+		selectAccountTotalsByCategory(state as unknown as never),
+		accountAddress,
+	);
 
 export const selectCurrentAccountTotal = createSelector(
 	selectAccountTotalsByCategory,

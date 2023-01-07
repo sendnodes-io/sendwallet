@@ -55,7 +55,7 @@ export async function enrichEIP2612SignTypedDataRequest(
 
 	return {
 		type: "EIP-2612",
-		source: ENRICHABLE_CONTRACT_NAMES[spender],
+		source: ENRICHABLE_CONTRACT_NAMES[spender]!,
 		displayFields: {
 			owner: ownerName ?? owner,
 			spender: spenderName ?? spender,

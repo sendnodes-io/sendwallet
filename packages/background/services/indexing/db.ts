@@ -97,10 +97,10 @@ function normalizePricePoint(pricePoint: PricePoint): IndexedPricePoint {
 
 function numberArrayCompare(arr1: number[], arr2: number[]) {
 	for (let i = 0; i < arr1.length; i += 1) {
-		if (arr1[i] > arr2[i]) {
+		if (arr1[i]! > arr2[i]!) {
 			return 1;
 		}
-		if (arr1[i] < arr2[i]) {
+		if (arr1[i]! < arr2[i]!) {
 			return -1;
 		}
 	}
@@ -180,7 +180,7 @@ export class IndexingDatabase extends Dexie {
 			)
 			.reverse()
 			.sortBy("retrievedAt");
-		return balanceCandidates.length > 0 ? balanceCandidates[0] : null;
+		return balanceCandidates.length > 0 ? balanceCandidates[0]! : null;
 	}
 
 	async addAssetToTrack(asset: SmartContractFungibleAsset): Promise<void> {
@@ -227,7 +227,7 @@ export class IndexingDatabase extends Dexie {
 			.reverse()
 			.sortBy("retrievedAt");
 		if (candidateLists.length > 0) {
-			return candidateLists[0];
+			return candidateLists[0]!;
 		}
 		return null;
 	}
@@ -257,9 +257,9 @@ export class IndexingDatabase extends Dexie {
 				} else {
 					const orig = acc[cachedList.url];
 					const origV = [
-						orig.version.major,
-						orig.version.minor,
-						orig.version.patch,
+						orig!.version.major,
+						orig!.version.minor,
+						orig!.version.patch,
 					];
 					const cachedV = [
 						cachedList.list.version.major,

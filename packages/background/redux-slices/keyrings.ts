@@ -10,7 +10,7 @@ import {
 import { emitteryDebugLogger } from "../utils/emittery";
 import logger from "../lib/logger";
 
-type KeyringsState = {
+export type KeyringsState = {
 	keyrings: Keyring[];
 	keyringMetadata: { [keyringId: string]: KeyringMetadata };
 	importing: false | "pending" | "done" | "failed";
@@ -157,7 +157,7 @@ const keyringsSlice = createSlice({
 			}: {
 				payload: {
 					keyrings: Keyring[];
-					keyringMetadata: { [keyringId: string]: KeyringMetadata };
+					keyringMetadata: { [keyringId: string]: KeyringMetadata | undefined };
 				};
 			},
 		) => {

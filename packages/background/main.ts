@@ -1,6 +1,15 @@
 import browser, { runtime } from "webextension-polyfill";
 import { alias, wrapStore } from "@0xbigboss/webext-redux";
-import { configureStore, isPlain, Middleware } from "@reduxjs/toolkit";
+import {
+	AnyAction,
+	configureStore,
+	Dispatch,
+	EmptyObject,
+	isPlain,
+	Middleware,
+	MiddlewareArray,
+	ThunkMiddleware,
+} from "@reduxjs/toolkit";
 import devToolsEnhancer from "remote-redux-devtools";
 import { PermissionRequest } from "@sendnodes/provider-bridge-shared";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
@@ -45,7 +54,7 @@ import {
 	NameOnNetwork,
 } from "./accounts";
 
-import rootReducer from "./redux-slices";
+import rootReducer, { RootState } from "./redux-slices";
 import {
 	loadAccount,
 	updateAccountBalance,
@@ -290,11 +299,12 @@ const reduxCache: Middleware = (store) => (next) => (action) => {
 
 // Declared out here so ReduxStoreType can be used in Main.store type
 // declaration.
-const initializeStore = (preloadedState = {}, main: Main) =>
+const initializeStore = (preloadedState: RootState, main: Main) =>
 	configureStore({
 		preloadedState,
 		reducer: rootReducer,
-		middleware: (getDefaultMiddleware) => {
+		// rome-ignore lint/suspicious/noExplicitAny: <explanation>
+		middleware: (getDefaultMiddleware: any) => {
 			const middleware = getDefaultMiddleware({
 				serializableCheck: {
 					isSerializable: (value: unknown) =>
@@ -303,25 +313,15 @@ const initializeStore = (preloadedState = {}, main: Main) =>
 				thunk: { extraArgument: { main } },
 			});
 
-			// It might be tempting to use an array with `...` destructuring, but
-			// unfortunately this fails to preserve important type information from
-			// `getDefaultMiddleware`. `push` and `pull` preserve the type
-			// information in `getDefaultMiddleware`, including adjustments to the
-			// dispatch function type, but as a tradeoff nothing added this way can
-			// further modify the type signature. For now, that's fine, as these
-			// middlewares don't change acceptable dispatch types.
-			//
 			// Process aliases before all other middleware, and cache the redux store
 			// after all middleware gets a chance to run.
-			middleware.unshift(alias(allAliases));
-			middleware.push(reduxCache);
 
-			return middleware;
+			return [alias(allAliases), ...middleware, reduxCache];
 		},
 		devTools: false,
 		enhancers:
 			process.env.NODE_ENV === "development"
-				? [
+				? ([
 						devToolsEnhancer({
 							hostname: "localhost",
 							port: 8000,
@@ -329,7 +329,8 @@ const initializeStore = (preloadedState = {}, main: Main) =>
 							actionSanitizer: devToolsSanitizer,
 							stateSanitizer: devToolsSanitizer,
 						}),
-				  ]
+						// rome-ignore lint/suspicious/noExplicitAny: <explanation>
+				  ] as any)
 				: [],
 	});
 
@@ -384,7 +385,7 @@ export default class Main extends BaseService<never> {
 			chainService,
 		);
 
-		let savedReduxState = {};
+		let savedReduxState  = {} as <typeof ReduxStoreType.state>;
 		const { state, version } = await browser.storage.local.get([
 			"state",
 			"version",
@@ -493,7 +494,8 @@ export default class Main extends BaseService<never> {
 		super({});
 
 		// Start up the redux store and set it up for proxying.
-		this.store = initializeStore(savedReduxState, this);
+		// rome-ignore lint/suspicious/noExplicitAny: <explanation>
+		this.store = initializeStore(savedReduxState as any, this);
 		logger.debug("initializing store", { state: this.store.getState() });
 		wrapStore(this.store, {
 			serializer: encodeJSON,

@@ -1,7 +1,8 @@
 {
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
     "target": "esnext",
-    "lib": ["esnext", "DOM", "WebWorker"],
+    "lib": ["esnext", "DOM", "DOM.Iterable", "WebWorker"],
     "declaration": false,
     "module": "esnext",
     "moduleResolution": "node",
@@ -9,14 +10,14 @@
     "allowSyntheticDefaultImports": true,
     "jsx": "react-jsx",
     "strict": true,
-    "noEmit": true,
-    "skipLibCheck": true
+    "noEmit": true
   },
   "ts-node": {
     "compilerOptions": {
       "module": "CommonJS"
     }
   },
+  "references": [],
   "include": [
     "env.d.ts",
     "src",

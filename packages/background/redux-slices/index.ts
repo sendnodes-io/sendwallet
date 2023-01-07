@@ -2,16 +2,18 @@ import { combineReducers } from "redux";
 
 import { HIDE_EARN_PAGE } from "../features/features";
 
-import accountsReducer from "./accounts";
-import assetsReducer from "./assets";
-import activitiesReducer from "./activities";
-import keyringsReducer from "./keyrings";
-import networksReducer from "./networks";
-import transactionConstructionReducer from "./transaction-construction";
-import uiReducer from "./ui";
-import dappPermissionReducer from "./dapp-permission";
-import ledgerReducer from "./ledger";
-import signingReducer from "./signing";
+import accountsReducer, { AccountState } from "./accounts";
+import assetsReducer, { AssetsState } from "./assets";
+import activitiesReducer, { ActivitiesState } from "./activities";
+import keyringsReducer, { KeyringsState } from "./keyrings";
+import networksReducer, { NetworksState } from "./networks";
+import transactionConstructionReducer, {
+	TransactionConstruction,
+} from "./transaction-construction";
+import uiReducer, { UIState } from "./ui";
+import dappPermissionReducer, { DAppPermissionState } from "./dapp-permission";
+import ledgerReducer, { LedgerState } from "./ledger";
+import signingReducer, { SigningState } from "./signing";
 import earnReducer from "./earn";
 
 const mainReducer = combineReducers({
@@ -25,9 +27,19 @@ const mainReducer = combineReducers({
 	dappPermission: dappPermissionReducer,
 	signing: signingReducer,
 	ledger: ledgerReducer,
-	...(HIDE_EARN_PAGE ? {} : { earn: earnReducer }),
 });
 
 export default mainReducer;
 
-export type RootState = ReturnType<typeof mainReducer>;
+export type RootState = {
+	account: AccountState;
+	assets: AssetsState;
+	activities: ActivitiesState;
+	keyrings: KeyringsState;
+	networks: NetworksState;
+	transactionConstruction: TransactionConstruction;
+	ui: UIState;
+	dappPermission: DAppPermissionState;
+	signing: SigningState;
+	ledger: LedgerState;
+};

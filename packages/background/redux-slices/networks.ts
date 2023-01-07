@@ -54,11 +54,13 @@ const networksSlice = createSlice({
 					};
 				} else if (
 					block.blockHeight >
-					(immerState.evm[block.network.chainID].blockHeight || 0)
+					(immerState.evm[block.network.chainID]!.blockHeight || 0)
 				) {
-					immerState.evm[block.network.chainID].blockHeight = block.blockHeight;
+					immerState.evm[block.network.chainID]!.blockHeight =
+						block.blockHeight;
 				}
-				immerState.evm[block.network.chainID].blocks[block.blockHeight] = block;
+				immerState.evm[block.network.chainID]!.blocks[block.blockHeight] =
+					block;
 			}
 			if (blockPayload.network.family === "POKT") {
 				const block = blockPayload as POKTBlock;
@@ -69,12 +71,12 @@ const networksSlice = createSlice({
 					};
 				} else if (
 					block.header.height >
-					(immerState.pokt[block.network.chainID].blockHeight || 0)
+					(immerState.pokt[block.network.chainID]!.blockHeight || 0)
 				) {
-					immerState.pokt[block.network.chainID].blockHeight =
+					immerState.pokt[block.network.chainID]!.blockHeight =
 						block.header.height;
 				}
-				immerState.pokt[block.network.chainID].blocks[block.header.height] =
+				immerState.pokt[block.network.chainID]!.blocks[block.header.height] =
 					block;
 			}
 		},

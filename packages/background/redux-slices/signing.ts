@@ -34,7 +34,7 @@ type Events = {
 
 export const signingSliceEmitter = new Emittery<Events>();
 
-type SigningState = {
+export type SigningState = {
 	signedTypedData: string | undefined;
 	typedDataRequest: EnrichedSignTypedDataRequest | undefined;
 

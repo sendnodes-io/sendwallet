@@ -121,13 +121,13 @@ const asyncThunkProperties = (() => {
 export function createBackgroundAsyncThunk<
 	TypePrefix extends string,
 	Returned,
-	ThunkArg = unknown,
+	ThunkArg = unknown | undefined,
 	ThunkApiConfig extends AsyncThunkConfig = { extra: { main: Main } },
 >(
 	typePrefix: TypePrefix,
 	payloadCreator: AsyncThunkPayloadCreator<Returned, ThunkArg, ThunkApiConfig>,
 	options?: AsyncThunkOptions<ThunkArg, ThunkApiConfig>,
-): ((payload: ThunkArg) => Action<TypePrefix> & { payload: ThunkArg }) &
+): ((payload?: ThunkArg) => Action<TypePrefix> & { payload?: ThunkArg }) &
 	Pick<AsyncThunk<Returned, ThunkArg, ThunkApiConfig>, AsyncThunkProps> {
 	// Exit early if this type prefix is already aliased for handling in the
 	// background script.
@@ -151,7 +151,7 @@ export function createBackgroundAsyncThunk<
 
 	// Wrap the top-level action creator to make it compatible with webext-redux.
 	const webextActionCreator = Object.assign(
-		(payload: ThunkArg) => ({
+		(payload?: ThunkArg) => ({
 			type: typePrefix,
 			payload,
 		}),
@@ -164,8 +164,10 @@ export function createBackgroundAsyncThunk<
 	// Register the alias to ensure it will always get proxied back to the
 	// background script, where we will run our proxy action creator to fire off
 	// the thunk correctly.
-	allAliases[typePrefix] = (action: { type: string; payload: ThunkArg }) =>
-		baseThunkActionCreator(action.payload);
+	allAliases[typePrefix] = (action: {
+		type: string;
+		payload: ThunkArg;
+	}) => baseThunkActionCreator(action.payload);
 
 	return webextActionCreator;
 }
