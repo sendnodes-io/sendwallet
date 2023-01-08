@@ -30,11 +30,11 @@ export function truncateDecimalAmount(
 ): string {
 	const valueString = value.toString();
 	if (decimalLength === 0) {
-		return valueString.split(".")[0];
+		return valueString.split(".")[0]!;
 	}
 	if (valueString.includes(".")) {
 		const [integers, decimals] = valueString.split(".");
-		return `${integers}.${decimals.substring(0, decimalLength)}`;
+		return `${integers}.${decimals!.substring(0, decimalLength)}`;
 	}
 	return valueString;
 }
@@ -176,7 +176,7 @@ export function isValidPoktAddress(pokt_address: string) {
 		return false;
 	}
 	for (let i = 0; i < pokt_address.length; i++) {
-		if (valid_characters.includes(pokt_address[i].toLowerCase())) {
+		if (valid_characters.includes(pokt_address[i]!.toLowerCase())) {
 		} else {
 			return false;
 		}

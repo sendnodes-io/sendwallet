@@ -125,7 +125,7 @@ export async function getEthereumTokenPrices(
 		// TODO parse this as a fixed decimal rather than a number. Will require
 		// custom JSON deserialization
 		const price: number = Number.parseFloat(
-			priceDetails[fiatSymbol.toLowerCase()],
+			priceDetails[fiatSymbol.toLowerCase()]!,
 		);
 		prices[address] = {
 			unitPrice: {

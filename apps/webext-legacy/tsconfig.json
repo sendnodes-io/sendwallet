@@ -1,6 +1,8 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "baseUrl": "../..",
+    "rootDir": "../..",
     "target": "esnext",
     "lib": ["esnext", "DOM", "DOM.Iterable", "WebWorker"],
     "declaration": false,
@@ -8,7 +10,7 @@
     "moduleResolution": "node",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "jsx": "react-jsx",
+    "jsx": "preserve",
     "strict": true,
     "noEmit": true
   },
@@ -28,5 +30,5 @@
     "../../packages/provider-bridge-shared",
     "../../packages/window-provider"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "../../node_modules"]
 }

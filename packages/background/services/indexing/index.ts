@@ -294,7 +294,7 @@ export default class IndexingService extends BaseService<Events> {
 				);
 
 				if (existingAddressOnNetworkIndex !== -1) {
-					lookups[existingAddressOnNetworkIndex][1].push(asset);
+					lookups[existingAddressOnNetworkIndex]![1].push(asset);
 				} else {
 					lookups.push([{ address, network }, [asset]]);
 				}

@@ -88,22 +88,22 @@ export function mergeAssets<T extends FungibleAsset>(
 		const similarityKeys = prioritizedAssetSimilarityKeys(asset);
 
 		// For now, only use the highest-priority similarity key with no fallback.
-		const referenceKey = similarityKeys[0];
+		const referenceKey = similarityKeys[0]!;
 		// Initialize if needed.
 		updatedSeenAssetsBySimilarityKey[referenceKey] ??= [];
 
 		// For each key, determine where a close asset match exists.
 		const matchingAssetIndex = findClosestAssetIndex(
 			asset,
-			updatedSeenAssetsBySimilarityKey[referenceKey],
+			updatedSeenAssetsBySimilarityKey[referenceKey]!,
 		);
 
 		if (typeof matchingAssetIndex !== "undefined") {
 			// Merge the matching asset with this new one.
 			const matchingAsset =
-				updatedSeenAssetsBySimilarityKey[referenceKey][matchingAssetIndex];
+				updatedSeenAssetsBySimilarityKey[referenceKey]![matchingAssetIndex]!;
 
-			updatedSeenAssetsBySimilarityKey[referenceKey][matchingAssetIndex] = {
+			updatedSeenAssetsBySimilarityKey[referenceKey]![matchingAssetIndex] = {
 				...matchingAsset,
 				metadata: {
 					...matchingAsset.metadata,
@@ -115,7 +115,7 @@ export function mergeAssets<T extends FungibleAsset>(
 				},
 			};
 		} else {
-			updatedSeenAssetsBySimilarityKey[referenceKey].push(asset);
+			updatedSeenAssetsBySimilarityKey[referenceKey]!.push(asset);
 		}
 
 		return updatedSeenAssetsBySimilarityKey;

@@ -197,7 +197,7 @@ export default function Send(): ReactElement {
 					<SharedAssetInput
 						autoFocus
 						label="ENTER AMOUNT"
-						onAssetSelect={setSelectedAsset}
+						onAssetSelect={(asset) => setSelectedAsset(asset)}
 						assetsAndAmounts={fungibleAssetAmounts}
 						disableDropdown
 						onAmountChange={(value, errorMessage) => {

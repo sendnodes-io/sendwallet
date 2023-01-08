@@ -64,14 +64,14 @@ const gasOptionFromEstimate = (
 
 	return {
 		confidence: `${confidence}`,
-		type: feeOptionData[confidence],
+		type: feeOptionData[confidence]!,
 		estimatedGwei: weiToGwei(
-			(baseFeePerGas * ESTIMATED_FEE_MULTIPLIERS[confidence]) / 10n,
-		).split(".")[0],
-		maxGwei: weiToGwei(maxFeePerGas).split(".")[0],
+			(baseFeePerGas * ESTIMATED_FEE_MULTIPLIERS[confidence]!) / 10n,
+		).split(".")[0]!,
+		maxGwei: weiToGwei(maxFeePerGas).split(".")[0]!,
 		dollarValue: dollarValue ? `${dollarValue}` : "-",
 		estimatedFeePerGas:
-			(baseFeePerGas * ESTIMATED_FEE_MULTIPLIERS[confidence]) / 10n,
+			(baseFeePerGas * ESTIMATED_FEE_MULTIPLIERS[confidence]!) / 10n,
 		price,
 		maxFeePerGas,
 		maxPriorityFeePerGas,
@@ -126,10 +126,11 @@ export default function NetworkSettingsSelect({
 	useEffect(() => {
 		if (gasOptions.length > 0) {
 			onNetworkSettingsChange({
-				feeType: gasOptions[activeFeeIndex].type,
+				feeType: gasOptions[activeFeeIndex]!.type,
 				values: {
-					maxFeePerGas: gasOptions[activeFeeIndex].maxFeePerGas,
-					maxPriorityFeePerGas: gasOptions[activeFeeIndex].maxPriorityFeePerGas,
+					maxFeePerGas: gasOptions[activeFeeIndex]!.maxFeePerGas,
+					maxPriorityFeePerGas:
+						gasOptions[activeFeeIndex]!.maxPriorityFeePerGas,
 				},
 				gasLimit: networkSettings.gasLimit,
 				suggestedGasLimit: networkSettings.suggestedGasLimit,
@@ -145,12 +146,12 @@ export default function NetworkSettingsSelect({
 
 	const handleSelectGasOption = (index: number) => {
 		setActiveFeeIndex(index);
-		setCurrentlySelectedType(gasOptions[index].type);
+		setCurrentlySelectedType(gasOptions[index]!.type);
 		onNetworkSettingsChange({
-			feeType: gasOptions[index].type,
+			feeType: gasOptions[index]!.type,
 			values: {
-				maxFeePerGas: gasOptions[index].maxFeePerGas,
-				maxPriorityFeePerGas: gasOptions[index].maxPriorityFeePerGas,
+				maxFeePerGas: gasOptions[index]!.maxFeePerGas,
+				maxPriorityFeePerGas: gasOptions[index]!.maxPriorityFeePerGas,
 			},
 			gasLimit: networkSettings.gasLimit,
 			suggestedGasLimit: networkSettings.suggestedGasLimit,

@@ -26,7 +26,7 @@ export function useSigningLedgerState(
 		if (state.ledger.usbDeviceCount > 1)
 			return { state: "multiple-ledgers-connected" };
 
-		const device = state.ledger.devices[deviceID];
+		const device = state.ledger.devices[deviceID]!;
 
 		switch (device.status) {
 			case "available":

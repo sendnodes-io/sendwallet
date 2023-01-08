@@ -84,11 +84,13 @@ function backgroundMonitor(component: ComponentType<{ store: Store }>) {
 			invokeServiceWorkerUpdateFlow(component);
 		}, 15_000);
 
-		let resp = null;
+		// rome-ignore lint/suspicious/noExplicitAny: <explanation>
+		let resp: any = null;
 		try {
-			resp = await browser.runtime.sendMessage(browser.runtime.id, {
+			resp = (await browser.runtime.sendMessage(browser.runtime.id, {
 				type: "HEARTBEAT",
-			});
+				// rome-ignore lint/suspicious/noExplicitAny: <explanation>
+			})) as any;
 
 			if (!resp) {
 				logger.error("heartbeat error", browser.runtime.lastError);
@@ -100,13 +102,13 @@ function backgroundMonitor(component: ComponentType<{ store: Store }>) {
 			logger.error("heartbeat error", { msgId, e });
 		}
 
-		if (lastServiceWorkerId !== resp.processId) {
+		if (resp && "processId" in resp && lastServiceWorkerId !== resp.processId) {
 			logger.debug("service worker update detected", {
 				msgId,
 				lastServiceWorkerId,
 				resp,
 			});
-			lastServiceWorkerId = resp.processId;
+			lastServiceWorkerId = resp["processId"];
 		}
 
 		checking = false;

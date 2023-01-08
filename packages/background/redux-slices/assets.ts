@@ -96,7 +96,7 @@ const assetsSlice = createSlice({
 				}
 				// if an asset is already in state, assume unique checks have been done
 				// no need to check network, contract address, etc
-				mappedAssets[asset.symbol].push(asset);
+				mappedAssets[asset.symbol]!.push(asset);
 			});
 			// merge in new assets
 			newAssets.forEach((asset) => {
@@ -105,7 +105,7 @@ const assetsSlice = createSlice({
 						{ ...asset, prices: [], recentPrices: {} },
 					];
 				} else {
-					const duplicates = mappedAssets[asset.symbol].filter(
+					const duplicates = mappedAssets[asset.symbol]!.filter(
 						(a) =>
 							("homeNetwork" in asset &&
 								"contractAddress" in asset &&
@@ -118,7 +118,7 @@ const assetsSlice = createSlice({
 					);
 					// if there aren't duplicates, add the asset
 					if (duplicates.length === 0) {
-						mappedAssets[asset.symbol].push({
+						mappedAssets[asset.symbol]!.push({
 							...asset,
 							prices: [],
 							recentPrices: {},
@@ -146,10 +146,13 @@ const assetsSlice = createSlice({
 				);
 				if (typeof index !== "undefined") {
 					// append to longer-running prices
-					const prices = prunePrices([...immerState[index].prices, pricePoint]);
-					immerState[index].prices = prices;
+					const prices = prunePrices([
+						...immerState[index]!.prices,
+						pricePoint,
+					]);
+					immerState[index]!.prices = prices;
 					// update recent prices for easy checks by symbol
-					immerState[index].recentPrices = recentPricesFromArray(
+					immerState[index]!.recentPrices = recentPricesFromArray(
 						pricedAsset,
 						prices,
 					);
@@ -221,7 +224,7 @@ export const transferAsset = createBackgroundAsyncThunk(
 					signer,
 				);
 
-				const transactionDetails = await token.populateTransaction.transfer(
+				const transactionDetails = await token.populateTransaction.transfer!(
 					toAddress,
 					assetAmount.amount,
 				);
@@ -280,14 +283,14 @@ export const selectAssetPricePoint = createSelector(
 			(asset) =>
 				asset.symbol === assetSymbol &&
 				pairedAssetSymbol in asset.recentPrices &&
-				asset.recentPrices[pairedAssetSymbol].pair
-					.map(({ symbol }) => symbol)
-					.includes(assetSymbol),
+				asset.recentPrices[pairedAssetSymbol]!.pair.map(
+					({ symbol }) => symbol,
+				).includes(assetSymbol),
 		);
 
 		if (pricedAsset) {
 			const pricePoint = pricedAsset.recentPrices[pairedAssetSymbol];
-			const { pair, amounts, time } = pricePoint;
+			const { pair, amounts, time } = pricePoint!;
 
 			if (pair[0].symbol === assetSymbol) {
 				return pricePoint;

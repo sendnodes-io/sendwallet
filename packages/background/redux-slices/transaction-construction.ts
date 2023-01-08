@@ -198,19 +198,19 @@ const transactionSlice = createSlice({
 			{ payload: estimatedFeesPerGas }: { payload: BlockPrices },
 		) => {
 			const instanceMaxFeePerGas =
-				(estimatedFeesPerGas.baseFeePerGas * MAX_FEE_MULTIPLIER[INSTANT]) /
+				(estimatedFeesPerGas.baseFeePerGas * MAX_FEE_MULTIPLIER[INSTANT]!) /
 					10n +
 				(estimatedFeesPerGas.estimatedPrices.find(
 					(el) => el.confidence === INSTANT,
 				)?.maxPriorityFeePerGas ?? 0n);
 			const expressMaxFeePerGas =
-				(estimatedFeesPerGas.baseFeePerGas * MAX_FEE_MULTIPLIER[EXPRESS]) /
+				(estimatedFeesPerGas.baseFeePerGas * MAX_FEE_MULTIPLIER[EXPRESS]!) /
 					10n +
 				(estimatedFeesPerGas.estimatedPrices.find(
 					(el) => el.confidence === EXPRESS,
 				)?.maxPriorityFeePerGas ?? 0n);
 			const regularMaxFeePerGas =
-				(estimatedFeesPerGas.baseFeePerGas * MAX_FEE_MULTIPLIER[REGULAR]) /
+				(estimatedFeesPerGas.baseFeePerGas * MAX_FEE_MULTIPLIER[REGULAR]!) /
 					10n +
 				(estimatedFeesPerGas.estimatedPrices.find(
 					(el) => el.confidence === REGULAR,

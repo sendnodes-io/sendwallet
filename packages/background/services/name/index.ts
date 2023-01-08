@@ -194,7 +194,7 @@ export default class NameService extends BaseService<Events> {
 		if (checkCache && address in this.cachedResolvedNames) {
 			const {
 				resolved: { name, expiresAt },
-			} = this.cachedResolvedNames[address];
+			} = this.cachedResolvedNames[address]!;
 
 			if (expiresAt >= Date.now()) {
 				return name;

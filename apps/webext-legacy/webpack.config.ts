@@ -15,7 +15,6 @@ import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import WebExtension from "webpack-target-webextension";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
-// import { CleanWebpackPlugin } from "clean-webpack-plugin"
 import childProcess from "child_process";
 import StatoscopeWebpackPlugin from "@statoscope/webpack-plugin";
 import CssMinimizerPlugin from "css-minimizer-webpack-plugin";
@@ -154,7 +153,7 @@ const baseConfig: Configuration = {
 		}),
 		new ForkTsCheckerWebpackPlugin({
 			typescript: {
-				configFile: path.resolve(__dirname, "tsconfig.json"),
+				configFile: path.resolve(__dirname, "..", "..", "tsconfig.json"),
 				diagnosticOptions: {
 					semantic: true,
 					syntactic: true,

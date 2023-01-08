@@ -196,7 +196,7 @@ export const trackEvent = createBackgroundAsyncThunk(
 );
 
 export const selectUI = createSelector(
-	(state: { ui: UIState }): UIState | undefined => state.ui,
+	(state: { ui: UIState }): UIState => state.ui,
 	(uiState) => uiState,
 );
 

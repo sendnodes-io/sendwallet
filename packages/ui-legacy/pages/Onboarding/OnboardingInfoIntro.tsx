@@ -140,7 +140,7 @@ export default function OnboardingInfoIntro(): ReactElement {
 					<div className="illustration" />
 				</div>
 				<div className="bottom_part">
-					<div className="bottom_content">{steps[activeStep - 1].content}</div>
+					<div className="bottom_content">{steps[activeStep - 1]!.content}</div>
 				</div>
 			</div>
 			<div className="buttons">
@@ -155,7 +155,7 @@ export default function OnboardingInfoIntro(): ReactElement {
 						}
 					}}
 				>
-					{steps[activeStep - 1].buttonCopy}
+					{steps[activeStep - 1]!.buttonCopy}
 				</SharedButton>
 				<div className="spacing" />
 				<SharedProgressIndicator

@@ -157,7 +157,7 @@ const keyringsSlice = createSlice({
 			}: {
 				payload: {
 					keyrings: Keyring[];
-					keyringMetadata: { [keyringId: string]: KeyringMetadata | undefined };
+					keyringMetadata: { [keyringId: string]: KeyringMetadata };
 				};
 			},
 		) => {

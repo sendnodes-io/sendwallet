@@ -124,9 +124,9 @@ export default function SignTransaction(): ReactElement {
 							url: "chrome-extension://*/stake.html",
 						});
 						if (tab.length > 0) {
-							await browser.tabs.update(tab[0].id, { active: true });
-							if (tab[0].windowId)
-								await browser.windows.update(tab[0].windowId, {
+							await browser.tabs.update(tab[0]!.id, { active: true });
+							if (tab[0]!.windowId)
+								await browser.windows.update(tab[0]!.windowId, {
 									focused: true,
 								});
 						} else {

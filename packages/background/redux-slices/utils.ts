@@ -49,7 +49,15 @@ type AsyncThunkConfig = {
  *
  * @see {@link createBackgroundAsyncThunk} for an example use.
  */
-export const allAliases: Record<string, unknown> = {};
+export const allAliases: Record<
+	string,
+	(action: {
+		type: string;
+		// rome-ignore lint/suspicious/noExplicitAny: <explanation>
+		payload: any;
+		// rome-ignore lint/suspicious/noExplicitAny: <explanation>
+	}) => AsyncThunkAction<unknown, unknown, any>
+> = {};
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
 // All props of an AsyncThunk.
@@ -121,13 +129,13 @@ const asyncThunkProperties = (() => {
 export function createBackgroundAsyncThunk<
 	TypePrefix extends string,
 	Returned,
-	ThunkArg = unknown | undefined,
+	ThunkArg = void,
 	ThunkApiConfig extends AsyncThunkConfig = { extra: { main: Main } },
 >(
 	typePrefix: TypePrefix,
 	payloadCreator: AsyncThunkPayloadCreator<Returned, ThunkArg, ThunkApiConfig>,
 	options?: AsyncThunkOptions<ThunkArg, ThunkApiConfig>,
-): ((payload?: ThunkArg) => Action<TypePrefix> & { payload?: ThunkArg }) &
+): ((payload: ThunkArg) => Action<TypePrefix> & { payload: ThunkArg }) &
 	Pick<AsyncThunk<Returned, ThunkArg, ThunkApiConfig>, AsyncThunkProps> {
 	// Exit early if this type prefix is already aliased for handling in the
 	// background script.
@@ -151,7 +159,7 @@ export function createBackgroundAsyncThunk<
 
 	// Wrap the top-level action creator to make it compatible with webext-redux.
 	const webextActionCreator = Object.assign(
-		(payload?: ThunkArg) => ({
+		(payload: ThunkArg) => ({
 			type: typePrefix,
 			payload,
 		}),

@@ -79,18 +79,17 @@ export const vaultDeposit = createBackgroundAsyncThunk(
 
 		const vaultContract = await getContract(vaultContractAddress, VAULT_ABI);
 
-		const depositTransactionData =
-			await vaultContract.populateTransaction.depositWithApprovalTarget(
-				amount,
-				signerAddress,
-				signerAddress,
-				amount,
-				(await provider.getBlock(provider.getBlockNumber())).timestamp +
-					3 * HOUR,
-				earn.signature.r,
-				earn.signature.s,
-				earn.signature.v,
-			);
+		const depositTransactionData = await vaultContract.populateTransaction
+			.depositWithApprovalTarget!(
+			amount,
+			signerAddress,
+			signerAddress,
+			amount,
+			(await provider.getBlock(provider.getBlockNumber())).timestamp + 3 * HOUR,
+			earn.signature.r,
+			earn.signature.s,
+			earn.signature.v,
+		);
 		signer.sendTransaction(depositTransactionData);
 	},
 );
@@ -113,7 +112,7 @@ export const vaultWithdraw = createBackgroundAsyncThunk(
 			signer,
 		);
 		const signedWithdrawTransaction = await signer.signTransaction(
-			await vaultContract.functions["withdraw(uint256)"](amount),
+			await vaultContract.functions["withdraw(uint256)"]!(amount),
 		);
 
 		provider.sendTransaction(signedWithdrawTransaction);
@@ -132,7 +131,7 @@ export const getRewards = createBackgroundAsyncThunk(
 			signer,
 		);
 		const signedGetRewardsTx = await signer.signTransaction(
-			await vaultContract.functions.getReward(),
+			await vaultContract.functions.getReward!(),
 		);
 
 		provider.sendTransaction(signedGetRewardsTx);
@@ -183,11 +182,8 @@ export const approveApprovalTarget = createBackgroundAsyncThunk(
 
 		const assetContract = await getContract(tokenContractAddress, ERC20_ABI);
 
-		const approvalTransactionData =
-			await assetContract.populateTransaction.approve(
-				APPROVAL_TARGET_CONTRACT_ADDRESS,
-				ethers.constants.MaxUint256,
-			);
+		const approvalTransactionData = await assetContract.populateTransaction
+			.approve!(APPROVAL_TARGET_CONTRACT_ADDRESS, ethers.constants.MaxUint256);
 		try {
 			const tx = await signer.sendTransaction(approvalTransactionData);
 			await tx.wait();
@@ -221,7 +217,7 @@ export const checkApprovalTargetApproval = createBackgroundAsyncThunk(
 		);
 		if (knownAllowanceIndex === -1) {
 			try {
-				const allowance: BigNumber = await assetContract.functions.allowance(
+				const allowance: BigNumber = await assetContract.functions.allowance!(
 					signerAddress,
 					APPROVAL_TARGET_CONTRACT_ADDRESS,
 				);

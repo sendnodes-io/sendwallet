@@ -1,9 +1,0 @@
-{
-  "extends": "../../tsconfig.json",
-  "compilerOptions": {
-    "composite": true,
-    "esModuleInterop": true,
-    "lib": ["esnext", "dom", "WebWorker"]
-  },
-  "include": ["./**/*.ts"]
-}

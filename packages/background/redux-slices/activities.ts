@@ -105,7 +105,7 @@ const activitiesSlice = createSlice({
 							activityItem,
 						);
 					} else {
-						activitiesAdapter.upsertOne(immerState[address], activityItem);
+						activitiesAdapter.upsertOne(immerState[address]!, activityItem);
 					}
 				});
 			}
@@ -138,7 +138,7 @@ const activitiesSlice = createSlice({
 							activityItem,
 						);
 					} else {
-						activitiesAdapter.upsertOne(immerState[address], activityItem);
+						activitiesAdapter.upsertOne(immerState[address]!, activityItem);
 					}
 				});
 			}

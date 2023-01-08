@@ -153,7 +153,7 @@ export function parseToFixedPointNumber(
 		return undefined;
 	}
 
-	const noThousandsSeparatorWhole = whole.replace(",", "");
+	const noThousandsSeparatorWhole = (whole ?? "").replace(",", "");
 	const setDecimals = decimals ?? "";
 
 	try {

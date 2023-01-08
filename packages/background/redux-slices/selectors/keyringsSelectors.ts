@@ -14,13 +14,7 @@ export const selectKeyrings = (state: RootState) => state.keyrings.keyrings;
 export const selectKeyringMetadata = (state: RootState) =>
 	state.keyrings.keyringMetadata;
 
-export const selectKeyringByAddress = (
-	address: string,
-): OutputSelector<
-	RootState,
-	Keyring | undefined,
-	(res: Keyring[]) => Keyring | undefined
-> =>
+export const selectKeyringByAddress = (address: string) =>
 	createSelector(
 		[(state: RootState) => state.keyrings.keyrings],
 		(keyrings) => {
@@ -57,7 +51,7 @@ export const selectMetadataByAddress = createSelector(
 				.flatMap((keyring) =>
 					keyring.addresses.map((address) => [
 						address,
-						keyringMetadata[keyring.fingerprint!],
+						keyringMetadata[keyring.fingerprint!]!,
 					]),
 				),
 		),
@@ -77,7 +71,7 @@ export const selectKeyringMetadataForAddress = createSelector(
 export const selectSiblingKeyrings = createSelector(
 	selectKeyrings,
 	selectKeyringMetadata,
-	(_: RootState, seedId: number | undefined) => seedId,
+	(_: RootState, seedId: number) => seedId,
 	(keyrings, metadata, seedId) => {
 		const fingerprints = Object.entries(metadata)
 			.filter(([_, metadatum]) => metadatum.seedId === seedId)
@@ -104,7 +98,7 @@ export const selectSourcesByAddress = createSelector(
 						address,
 						// Guaranteed to exist by the filter above
 						// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-						keyringMetadata[keyring.fingerprint!]?.source,
+						keyringMetadata[keyring.fingerprint!]?.source!,
 					]),
 				),
 		),

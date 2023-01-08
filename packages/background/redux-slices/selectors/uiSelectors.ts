@@ -30,8 +30,8 @@ export const selectCurrentAddressNetwork = createSelector(
 );
 
 export const selectMainCurrencySymbol = createSelector(
-	() => null,
-	() => hardcodedMainCurrencySymbol,
+	(_: RootState) => null,
+	(_) => hardcodedMainCurrencySymbol,
 );
 
 export const selectMainCurrency = createSelector(

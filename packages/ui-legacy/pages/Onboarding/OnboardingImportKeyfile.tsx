@@ -250,7 +250,7 @@ export default function OnboardingImportKeyfile() {
 		ev.preventDefault();
 		if (ev.dataTransfer) {
 			// validate JSON here
-			const file = ev.dataTransfer.files[0];
+			const file = ev.dataTransfer.files[0]!;
 			setImportKeyfile(file);
 		}
 	};
@@ -422,7 +422,8 @@ export default function OnboardingImportKeyfile() {
 											id="keyfile"
 											accept="application/JSON"
 											onChange={(e) =>
-												e.target.files && setImportKeyfile(e.target.files[0])
+												e.target.files?.[0] &&
+												setImportKeyfile(e.target.files[0])
 											}
 										/>
 									</label>

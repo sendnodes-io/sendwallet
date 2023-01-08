@@ -65,7 +65,7 @@ export default function FeeSettingsText(): ReactElement {
 			? truncateDecimalAmount(
 					weiToGwei(
 						(estimatedFeesPerGas?.baseFeePerGas *
-							ESTIMATED_FEE_MULTIPLIERS_BY_TYPE[selectedFeeType]) /
+							ESTIMATED_FEE_MULTIPLIERS_BY_TYPE[selectedFeeType]!) /
 							10n,
 					),
 					0,

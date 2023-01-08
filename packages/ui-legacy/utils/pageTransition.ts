@@ -29,22 +29,23 @@ export function useAnimationConditions(
 	},
 ): AnimationConditions {
 	const { entries } = routeProps.history;
-	const locationName = routeProps.location.pathname.split("/")[1];
+	const locationName = routeProps.location.pathname.split("/")[1]!;
 	const prevLocationName =
 		(entries?.[entries.length - 2] &&
-			entries[entries.length - 2].pathname.split("/")[1]) ||
+			entries[entries.length - 2]!.pathname.split("/")[1]) ||
 		"";
 
 	return useMemo((): AnimationConditions => {
 		let shouldDisplayDecoy = false;
 		let isDirectionRight = false;
 
-		const isDecoyNeeded =
+		const isDecoyNeeded = Boolean(
 			pagePreferences[
 				`/${prevLocationName === "wallet" ? "" : prevLocationName}`
 			]?.hasTopBar &&
-			pagePreferences[`/${locationName === "wallet" ? "" : locationName}`]
-				?.hasTopBar;
+				pagePreferences[`/${locationName === "wallet" ? "" : locationName}`]
+					?.hasTopBar,
+		);
 		// setShouldDisplayDecoy(isDecoyNeeded)
 		shouldDisplayDecoy = isDecoyNeeded;
 
@@ -105,17 +106,18 @@ export default function setAnimationConditions(
 	setIsDirectionRight: (choice: boolean) => void,
 ): void {
 	const { entries } = routeProps.history;
-	const locationName = routeProps.location.pathname.split("/")[1];
+	const locationName = routeProps.location.pathname.split("/")[1]!;
 	const prevLocationName =
 		(entries?.[entries.length - 2] &&
-			entries[entries.length - 2].pathname.split("/")[1]) ||
+			entries[entries.length - 2]!.pathname.split("/")[1]) ||
 		"";
 
-	const isDecoyNeeded =
+	const isDecoyNeeded = Boolean(
 		pagePreferences[`/${prevLocationName === "wallet" ? "" : prevLocationName}`]
 			?.hasTopBar &&
-		pagePreferences[`/${locationName === "wallet" ? "" : locationName}`]
-			?.hasTopBar;
+			pagePreferences[`/${locationName === "wallet" ? "" : locationName}`]
+				?.hasTopBar,
+	);
 	setShouldDisplayDecoy(isDecoyNeeded);
 
 	const isGoingBetweenTabs =

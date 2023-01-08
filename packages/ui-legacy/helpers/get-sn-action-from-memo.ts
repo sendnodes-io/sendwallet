@@ -12,8 +12,8 @@ export default function getSnActionFromMemo(memo?: string): SnAction | null {
 		return null;
 	}
 	const [snAction] = memo.toString().split(":");
-	if (snAction in MEMO_TO_SNACTION) {
-		return MEMO_TO_SNACTION[snAction];
+	if (snAction && snAction in MEMO_TO_SNACTION) {
+		return MEMO_TO_SNACTION[snAction]!;
 	}
 	return null;
 }

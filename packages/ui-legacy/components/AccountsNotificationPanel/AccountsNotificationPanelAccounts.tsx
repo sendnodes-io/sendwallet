@@ -206,7 +206,7 @@ export default function AccountsNotificationPanelAccounts({
 									acc[accountTypeTotal.keyringId] ??= [];
 									// Known-non-null due to above ??=
 									// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-									acc[accountTypeTotal.keyringId].push(accountTypeTotal);
+									acc[accountTypeTotal.keyringId]!.push(accountTypeTotal);
 								} else {
 									acc.readOnly ??= [];
 									acc.readOnly.push(accountTypeTotal);
@@ -230,13 +230,13 @@ export default function AccountsNotificationPanelAccounts({
 												accountTotalsByKeyringId.length < 10
 													? () => {
 															if (
-																accountTotalsByKeyringId[0].keyringId &&
+																accountTotalsByKeyringId[0]!.keyringId &&
 																(!deriveAddressImporting ||
 																	deriveAddressImporting === "done")
 															) {
 																dispatch(
 																	deriveAddress(
-																		accountTotalsByKeyringId[0].keyringId,
+																		accountTotalsByKeyringId[0]!.keyringId,
 																	),
 																);
 															}

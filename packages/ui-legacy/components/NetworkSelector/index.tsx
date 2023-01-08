@@ -61,7 +61,7 @@ export default function NetworkSelector({
 		useBackgroundSelector(selectCurrentAddressNetwork);
 	const { seedId } = useBackgroundSelector((state: RootState) =>
 		selectKeyringMetadataForAddress(state, currentAddress),
-	);
+	)!;
 	// use sibling keyrings of seed to allow for seemless switching between networks
 	const siblingKeyrings = useBackgroundSelector((state) =>
 		selectSiblingKeyrings(state, seedId),

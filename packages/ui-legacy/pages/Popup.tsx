@@ -130,7 +130,7 @@ function RouteWrapper(props: {
 		pagePreferences,
 	);
 
-	const showTabBar = pagePreferences[normalizedPathname].hasTabBar;
+	const showTabBar = pagePreferences[normalizedPathname]!.hasTabBar;
 
 	useEffect(() => {
 		const pageView = async () => {
@@ -230,7 +230,7 @@ export function Main(): ReactElement {
 										// history.goBack(). This case is not yet accounted for.
 										if (
 											PERSIST_UI_LOCATION &&
-											pagePreferences[normalizedPathname].persistOnClose &&
+											pagePreferences[normalizedPathname]!.persistOnClose &&
 											routeProps.history.action === "PUSH"
 										) {
 											// @ts-expect-error TODO: fix the typing

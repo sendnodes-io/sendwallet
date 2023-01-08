@@ -17,7 +17,7 @@ export default function (props: {
 	useEffect(() => {
 		const filtered = Object.keys(unfiltered)
 			.filter((o) => o !== pKey)
-			.map((k) => unfiltered[k]);
+			.map((k) => unfiltered[k]!);
 		const perms =
 			pKey && unfiltered[pKey] ? [currentPermission, ...filtered] : filtered;
 		setPermissions(perms);

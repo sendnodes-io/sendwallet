@@ -85,7 +85,7 @@ export default function OnboardingImportSeed() {
 					?.forEach((word, idx) => {
 						if (importMnemonic[wordIndex + idx] !== undefined) {
 							importMnemonic[wordIndex + idx] = word;
-							inputs[wordIndex + idx].value = word;
+							inputs[wordIndex + idx]!.value = word;
 						}
 					});
 				return importMnemonic;

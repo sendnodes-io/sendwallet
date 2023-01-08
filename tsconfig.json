@@ -3,16 +3,26 @@
     "strictNullChecks": true,
     "noUncheckedIndexedAccess": true,
     "paths": {
+      "app": ["./packages/app"],
       "app/*": ["./packages/app/*"],
+      "@my/ui": ["./packages/ui"],
       "@my/ui/*": ["./packages/ui/*"],
+      "build-utils": ["./packages/build-utils"],
       "build-utils/*": ["./packages/build-utils/*"],
+      "@sendnodes/pokt-wallet-ui": ["./packages/ui-legacy"],
       "@sendnodes/pokt-wallet-ui/*": ["./packages/ui-legacy/*"],
+      "@sendnodes/pokt-wallet-background": ["./packages/background"],
       "@sendnodes/pokt-wallet-background/*": ["./packages/background/*"],
       "@sendnodes/provider-bridge-shared/*": [
         "./packages/provider-bridge-shared/*"
       ],
+      "@sendnodes/provider-bridge-shared": [
+        "./packages/provider-bridge-shared"
+      ],
       "@sendnodes/provider-bridge/*": ["./packages/provider-bridge/*"],
-      "@sendnodes/window-provider/*": ["./packages/window-provider/*"]
+      "@sendnodes/provider-bridge": ["./packages/provider-bridg*"],
+      "@sendnodes/window-provider/*": ["./packages/window-provider/*"],
+      "@sendnodes/window-provider": ["./packages/window-provid/*"]
     },
     "baseUrl": ".",
     "rootDir": "."

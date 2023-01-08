@@ -64,7 +64,7 @@ export default function OnboardingRecoveryPhrase(
 									className={`word ${isVerifiable && "selectable"} ${
 										isSelected && "selected"
 									}`}
-									onClick={onClick?.bind(null, selected[verifiableIndex])}
+									onClick={onClick?.bind(null, selected[verifiableIndex]!)}
 									onKeyPress={(e) => e.stopPropagation()}
 								>
 									{wordComponent}

@@ -250,7 +250,7 @@ export default function SendUnstake(): ReactElement {
 					<SharedAssetInput
 						autoFocus
 						label="ENTER AMOUNT"
-						onAssetSelect={setSelectedAsset}
+						onAssetSelect={(asset) => setSelectedAsset(asset)}
 						assetsAndAmounts={[fungibleAssetAmount]}
 						validateAmount={(amount) => {
 							const unstakeAmount = BigNumber.from(amount);
