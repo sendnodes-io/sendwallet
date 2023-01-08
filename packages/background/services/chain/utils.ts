@@ -12,7 +12,7 @@ import {
 	Transaction as PoktTransaction,
 	MsgProtoSend as PoktMsgSend,
 	Block as PoktBlock,
-} from "@pokt-network/pocket-js/dist/index";
+} from "@sendnodes/pocket-js/dist/index";
 import { Transaction as PoktHDKeyringTransactionRequest } from "@sendnodes/hd-keyring/dist/wallet";
 import { normalizeAddress } from "../../lib/utils";
 import {

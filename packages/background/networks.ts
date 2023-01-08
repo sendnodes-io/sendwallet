@@ -3,7 +3,7 @@ import {
 	Fee as POKTFee,
 	Signature as POKTSignature,
 	Hex,
-} from "@pokt-network/pocket-js/dist/index";
+} from "@sendnodes/pocket-js/dist/index";
 import { HexString, UNIXTime } from "./types";
 
 export enum NetworkBlockExplorerUrl {

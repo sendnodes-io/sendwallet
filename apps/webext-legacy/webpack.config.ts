@@ -18,7 +18,7 @@ import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import childProcess from "child_process";
 import StatoscopeWebpackPlugin from "@statoscope/webpack-plugin";
 import CssMinimizerPlugin from "css-minimizer-webpack-plugin";
-import WebExtensionArchivePlugin from "./build-utils/web-extension-archive-webpack-plugin";
+import WebExtensionArchivePlugin from "build-utils/src/web-extension-archive-webpack-plugin";
 
 const supportedBrowsers = [
 	// "brave",
@@ -153,7 +153,7 @@ const baseConfig: Configuration = {
 		}),
 		new ForkTsCheckerWebpackPlugin({
 			typescript: {
-				configFile: path.resolve(__dirname, "..", "..", "tsconfig.json"),
+				configFile: path.resolve(__dirname, "tsconfig.json"),
 				diagnosticOptions: {
 					semantic: true,
 					syntactic: true,
@@ -302,7 +302,7 @@ const modeConfigs: {
 					filename: `SendWallet-${branch.replaceAll(/[./]/gi, "-")}-${
 						date.toISOString().split("T")[0]
 					}-${revision}-${browser}`,
-				}),
+				}) as unknown as WebpackPluginInstance,
 			],
 			optimization: {
 				minimizer: [

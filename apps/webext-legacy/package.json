@@ -69,6 +69,7 @@
     "astroturf": "^1.0.1",
     "autoprefixer": "^10.4.7",
     "babel-loader": "^9.1.0",
+    "build-utils": "*",
     "clean-webpack-plugin": "^4.0.0",
     "copy-webpack-plugin": "^9.0.0",
     "css-loader": "^6.7.1",

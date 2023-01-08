@@ -9,7 +9,7 @@ import React, {
 import {
 	InMemoryKVStore as PocketInMemoryKVStore,
 	Keybase as PocketKeybase,
-} from "@pokt-network/pocket-js/dist/index";
+} from "@sendnodes/pocket-js/dist/index";
 
 import {
 	clearImporting,

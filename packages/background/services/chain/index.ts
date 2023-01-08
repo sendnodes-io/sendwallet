@@ -7,7 +7,7 @@ import {
 	JsonRpcProvider,
 	WebSocketProvider,
 } from "@ethersproject/providers";
-import { Transaction as PoktJSTransaction } from "@pokt-network/pocket-js/dist/index";
+import { Transaction as PoktJSTransaction } from "@sendnodes/pocket-js/dist/index";
 import { utils } from "ethers";
 import { Logger } from "ethers/lib/utils";
 import _ from "lodash";

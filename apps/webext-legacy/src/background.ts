@@ -1,3 +1,5 @@
+/// <reference lib="webworker" />
+
 (async () => {
 	const browser = await import("webextension-polyfill");
 	self.PROCESS_ID = `background-${Math.random()}.${new Date().getTime()}`;

@@ -19,7 +19,7 @@ import {
 	EnrichedPOKTTransaction,
 } from "../services/enrichment";
 
-export { ActivityItem, POKTActivityItem, EVMActivityItem };
+export type { ActivityItem, POKTActivityItem, EVMActivityItem };
 
 const desiredDecimals = 2; /* TODO Make desired decimals configurable? */
 

@@ -1,4 +1,4 @@
-import { QueryHeightResponse } from "@pokt-network/pocket-js";
+import { QueryHeightResponse } from "@sendnodes/pocket-js";
 import { POCKET } from "@sendnodes/pokt-wallet-background/constants";
 import useSWR from "swr";
 

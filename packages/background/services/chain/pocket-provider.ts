@@ -11,7 +11,7 @@ import {
 	Transaction,
 	Block,
 	RawTxResponse,
-} from "@pokt-network/pocket-js/dist/index";
+} from "@sendnodes/pocket-js/dist/index";
 import { poll } from "@ethersproject/web";
 import { Event } from "@ethersproject/providers/lib/base-provider";
 import { EventType, Listener } from "@ethersproject/abstract-provider";

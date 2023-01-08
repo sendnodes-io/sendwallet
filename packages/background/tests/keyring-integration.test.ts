@@ -4,7 +4,7 @@ import { webcrypto } from "crypto";
 import { Browser } from "webextension-polyfill";
 import { MockzillaDeep } from "mockzilla";
 import { KeyringType, KeyType } from "@sendnodes/hd-keyring";
-import { CoinDenom as POKTCoinDenom } from "@pokt-network/pocket-js/dist/transactions/models/coin-denom";
+import { CoinDenom as POKTCoinDenom } from "@sendnodes/pocket-js/dist/transactions/models/coin-denom";
 import KeyringService, {
 	ExtensionKeyring,
 	KeyringEvents,

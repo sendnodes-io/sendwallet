@@ -10,11 +10,6 @@
     "types",
     "dist"
   ],
-  "scripts": {
-    "build": "tsc",
-    "watch": "build",
-    "lint": "tsc --noEmit"
-  },
   "devDependencies": {
     "@types/archiver": "^5.1.0",
     "archiver": "^5.3.0",
