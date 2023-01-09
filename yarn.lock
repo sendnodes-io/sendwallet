@@ -5,16 +5,17 @@ __metadata:
   version: 6
   cacheKey: 8
 
-"@0xbigboss/webext-redux@portal:/Users/allen/sendnodes/webext-redux::locator=%40sendnodes%2Fsendwallet-monorepo%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@0xbigboss/webext-redux@portal:/Users/allen/sendnodes/webext-redux::locator=%40sendnodes%2Fsendwallet-monorepo%40workspace%3A."
+"@0xbigboss/webext-redux@npm:2.1.9":
+  version: 2.1.9
+  resolution: "@0xbigboss/webext-redux@npm:2.1.9"
   dependencies:
     lodash.assignin: ^4.2.0
     lodash.clonedeep: ^4.5.0
   peerDependencies:
     redux: ">= 3 <= 4"
+  checksum: 9861f8bc4111bede358c5d42853a71de4146cb8fcfc8af5d7058108ca874ae826ba1f8dd3feda1f3a2ac8a514a21a8c0f3ab76e41e896beb5c979e03325041b9
   languageName: node
-  linkType: soft
+  linkType: hard
 
 "@ampproject/remapping@npm:^2.1.0":
   version: 2.2.0
