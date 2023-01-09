@@ -58,7 +58,6 @@
   "resolutions": {
     "jsan@^3.1.13": "patch:jsan@npm%3A3.1.13#./.yarn/patches/jsan-npm-3.1.13-376d4a9e3f.patch",
     "jsan@^3.1.3": "patch:jsan@npm%3A3.1.13#./.yarn/patches/jsan-npm-3.1.13-376d4a9e3f.patch",
-    "@react-navigation/native": "patch:@react-navigation/native@npm%3A6.1.1#./.yarn/patches/@react-navigation-native-npm-6.1.1-dff59abc78.patch",
-    "@0xbigboss/webext-redux": "portal:/Users/allen/sendnodes/webext-redux"
+    "@react-navigation/native": "patch:@react-navigation/native@npm%3A6.1.1#./.yarn/patches/@react-navigation-native-npm-6.1.1-dff59abc78.patch"
   }
 }
