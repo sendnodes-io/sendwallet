@@ -20,7 +20,8 @@
       // A package's `test` script depends on that package's
       // own `build` script being completed first.
       "dependsOn": [
-        "build"
+        "build",
+        "lint"
       ],
       "outputs": [],
       // A package's `test` script should only be rerun when
@@ -33,6 +34,9 @@
       ]
     },
     "lint": {
+      "dependsOn": [
+        "build"
+      ],
       // A package's `lint` script has no dependencies and
       // can be run whenever. It also has no filesystem outputs.
       "outputs": []

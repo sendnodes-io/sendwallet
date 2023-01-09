@@ -36,7 +36,7 @@
     "@ledgerhq/hw-app-eth": "^6.23.0",
     "@ledgerhq/hw-transport": "^6.20.0",
     "@ledgerhq/hw-transport-webusb": "^6.20.0",
-    "@reduxjs/toolkit": "^1.9.1",
+    "@reduxjs/toolkit": "^1.6.1",
     "@sendnodes/hd-keyring": "0.1.0",
     "@sendnodes/pocket-js": "0.8.0-rc",
     "@sendnodes/provider-bridge-shared": "*",
@@ -53,7 +53,7 @@
     "ethers": "^5.5.1",
     "lodash": "^4.17.21",
     "node-fetch": "^2.6.1",
-    "react-redux": "^8.0.5",
+    "react-redux": "^7.2.4",
     "siwe": "^1.1.0",
     "util": "^0.12.4",
     "webextension-polyfill": "^0.8.0"

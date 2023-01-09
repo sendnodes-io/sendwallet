@@ -30,8 +30,7 @@
     "lint-fix": "run-p 'lint:*:fix'",
     "lint:config": "prettier -c '**/*.@(json|yaml|toml)'",
     "lint:config:fix": "prettier -w '**/*.@(json|yaml|toml)'",
-    "lint:ts": "tsc --noEmit",
-    "test": "jest"
+    "lint:ts": "tsc --noEmit"
   },
   "dependencies": {
     "@ethersproject/providers": "5.5.3",

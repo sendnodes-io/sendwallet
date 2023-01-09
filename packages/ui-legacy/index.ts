@@ -3,7 +3,7 @@ import { setActiveTab } from "@sendnodes/pokt-wallet-background/redux-slices/ui"
 import browser from "webextension-polyfill";
 import React, { ComponentType } from "react";
 import ReactDOM from "react-dom";
-import { Store } from "@0xbigboss/webext-redux";
+import type { Store } from "@0xbigboss/webext-redux";
 import logger from "@sendnodes/pokt-wallet-background/lib/logger";
 import Popup from "./pages/Popup";
 import Tab from "./pages/Tab";
