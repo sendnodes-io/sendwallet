@@ -17,7 +17,7 @@ export const POCKET: POKTNetwork = {
 	blockExplorerUrl: NetworkBlockExplorerUrl.POKTWATCH,
 	rcpUrl:
 		process.env.POKT_MAINNET_RPC_URL ||
-		"https://mainnet-1.nodes.pokt.network:4201",
+		"https://mainnet.gateway.pokt.network/v1/lb/62ab7d95123e6f00396eb267",
 };
 
 export const FIAGNET: POKTNetwork = {
