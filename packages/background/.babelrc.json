@@ -22,11 +22,5 @@
     // Because babel is used by Webpack to load the Webpack config, which is
     // TS.
     "@babel/typescript"
-  ],
-  "babelrcRoots": [
-    ".",
-    "packages/ui-legacy/*",
-    "packages/background/*"
-    // "../../packages/provider-bridge/*",
   ]
 }

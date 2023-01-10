@@ -32,5 +32,10 @@
     "../../packages/window-provider",
     "../../packages/app"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "../../packages/background/jest*",
+    "../../packages/background/tests"
+  ]
 }

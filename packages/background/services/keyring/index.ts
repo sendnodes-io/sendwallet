@@ -45,7 +45,6 @@ import {
 import { USE_MAINNET_FORK } from "../../features/features";
 import { AddressOnNetwork } from "../../accounts";
 import logger from "../../lib/logger";
-import { compact } from "lodash";
 
 export const MAX_KEYRING_IDLE_TIME = 30 * MINUTE;
 export const MAX_OUTSIDE_IDLE_TIME = 30 * MINUTE;

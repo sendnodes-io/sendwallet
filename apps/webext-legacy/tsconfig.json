@@ -29,5 +29,6 @@
     "../../packages/provider-bridge",
     "../../packages/provider-bridge-shared",
     "../../packages/window-provider"
-  ]
+  ],
+  "exclude": ["node_modules", "dist", "../../packages/background/tests"]
 }
