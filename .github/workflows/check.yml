@@ -17,5 +17,9 @@ jobs:
           git config --global url."https://github.com/".insteadOf git@github.com:
           git config --global url."https://".insteadOf git://
           yarn install
+      - name: lint
+        run: yarn run lint
+      - name: build
+        run: yarn run build
       - name: test
         run: yarn run test

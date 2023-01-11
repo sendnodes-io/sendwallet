@@ -3,6 +3,8 @@
   "pipeline": {
     "build": {
       "dependsOn": [
+        "^//#lint:rome",
+        "^lint",
         "^build"
       ],
       "outputs": [
@@ -25,8 +27,12 @@
     },
     "lint": {
       "dependsOn": [
-        "build"
+        "^//#lint:rome",
+        "^@my/ui#build"
       ],
+      "outputs": []
+    },
+    "//#lint:rome": {
       "outputs": []
     },
     "dev": {

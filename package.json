@@ -26,6 +26,9 @@
     "build:webext": "turbo run build --filter=webext",
     "build:legacy": "turbo run build --filter=webext-legacy",
     "test": "turbo run test",
+    "lint:rome": "yarn run rome ci .",
+    "lint:rome:fix": "rome check . --apply",
+    "format:rome": "rome format . --write",
     "lint": "turbo run lint",
     "postinstall": "is-ci || husky install"
   },
