@@ -21,8 +21,8 @@
   ],
   "scripts": {
     "build": "turbo run build",
-    "watch:webext": "turbo run watch --filter=webext",
-    "watch:legacy": "turbo run start --filter=webext-legacy",
+    "dev:webext": "turbo run dev --filter=webext",
+    "dev:legacy": "turbo run dev --filter=webext-legacy",
     "build:webext": "turbo run build --filter=webext",
     "build:legacy": "turbo run build --filter=webext-legacy",
     "test": "turbo run test",

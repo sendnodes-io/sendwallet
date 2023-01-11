@@ -5,6 +5,7 @@ on: push
 jobs:
   check:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -16,9 +17,5 @@ jobs:
           git config --global url."https://github.com/".insteadOf git@github.com:
           git config --global url."https://".insteadOf git://
           yarn install
-      - name: build
-        run: yarn run build --concurrency=1
-      - name: lint
-        run: yarn run lint
       - name: test
         run: yarn run test

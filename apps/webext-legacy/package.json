@@ -20,10 +20,10 @@
     "dapp"
   ],
   "scripts": {
-    "start": "run-p devtools \"dev {@}\" --",
+    "dev": "run-p devtools \"dev:webpack {@}\" --",
     "generate:validators": "ts-node background/generate-validators.ts",
     "build": "webpack --mode=production",
-    "dev": "webpack --mode=development --watch",
+    "dev:webpack": "webpack --mode=development --watch",
     "devtools": "remotedev --hostname=localhost --port=8000",
     "devChrome": "ENABLE_REACT_DEVTOOLS=true run-p devtools \"dev {@}\" -- --config-name chrome",
     "lint": "run-p 'lint:*'",

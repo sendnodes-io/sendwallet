@@ -14,7 +14,8 @@
   ],
   "scripts": {
     "build": "tamagui-build",
-    "watch": "tamagui-build --watch"
+    "watch": "tamagui-build --watch",
+    "dev": "tamagui-build --watch --dev"
   },
   "dependencies": {
     "@tamagui/animations-react-native": "^1.0.2",
