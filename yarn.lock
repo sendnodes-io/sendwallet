@@ -24634,6 +24634,7 @@ __metadata:
     dotenv-webpack: ^8.0.1
     esbuild-loader: ^2.20.0
     expo: ^47.0.9
+    expo-linear-gradient: ^12.0.1
     html-webpack-plugin: ^5.5.0
     mini-css-extract-plugin: ^2.7.2
     npm-run-all: ^4.1.5
