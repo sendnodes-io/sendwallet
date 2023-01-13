@@ -10,6 +10,7 @@ import RemoveAddressLabel from "./AccountItemRemoveAddressLabel";
 import EditWalletNameLabel from "./AccountItemEditWalletNameLabel";
 import ExportPrivateKeyLabel from "./AccountItemExportPrivateKeyLabel";
 import AccountItemExportPrivateKeyConfirm from "./AccountItemExportPrivateKeyConfirm";
+import { AccountType } from "@sendnodes/pokt-wallet-background/redux-slices/AccountType";
 
 type AccountItemOptionsMenuProps = {
 	accountTotal: AccountTotal;
@@ -108,19 +109,21 @@ export default function AccountItemOptionsMenu({
 								<RemoveAddressLabel hoverable />
 							</button>
 						</li>
-						<li className="option">
-							<button
-								className="export_pk_button"
-								type="button"
-								onClick={(e) => {
-									e.stopPropagation();
-									setShowOptionsMenu(false);
-									setShowExportPrivateKeyConfirm(true);
-								}}
-							>
-								<ExportPrivateKeyLabel hoverable />
-							</button>
-						</li>
+						{accountTotal.accountType !== AccountType.ReadOnly && (
+							<li className="option">
+								<button
+									className="export_pk_button"
+									type="button"
+									onClick={(e) => {
+										e.stopPropagation();
+										setShowOptionsMenu(false);
+										setShowExportPrivateKeyConfirm(true);
+									}}
+								>
+									<ExportPrivateKeyLabel hoverable />
+								</button>
+							</li>
+						)}
 					</ul>
 				)}
 			</div>

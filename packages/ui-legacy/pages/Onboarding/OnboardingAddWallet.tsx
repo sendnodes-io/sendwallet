@@ -268,6 +268,8 @@ function HelpModal({
 			isAddingAccount,
 		});
 
+		if (!isMounted) return;
+
 		if (accountData && accountData !== "loading") {
 			if (isAddingAccount === "fulfilled") {
 				dispatch(clearAddingAddressNetwork()); // clear the state
@@ -283,13 +285,22 @@ function HelpModal({
 				dispatch(setSnackbarMessage("Something went wrong. Please try again."));
 			}
 		}
-	}, [currentAccount, isAddingAccount, accountData, address, history]);
+	}, [
+		currentAccount,
+		isAddingAccount,
+		accountData,
+		address,
+		history,
+		isMounted,
+	]);
 
 	// needs to run last
 	useEffect(() => {
-		// start fresh
-		dispatch(clearAddingAddressNetwork());
-		setIsMounted(true);
+		if (!isMounted) {
+			// start fresh
+			dispatch(clearAddingAddressNetwork());
+			setIsMounted(true);
+		}
 	}, [dispatch, isAddingAccount]);
 
 	return (
@@ -298,7 +309,7 @@ function HelpModal({
 				<p>
 					Please visit our{" "}
 					<a
-						href="https://docs.pokt.network/docs/faq"
+						href="https://docs.sendnodes.net/start-here/overview"
 						target="_blank"
 						rel="noopener noreferrer"
 					>
@@ -306,7 +317,7 @@ function HelpModal({
 					</a>{" "}
 					or{" "}
 					<a
-						href="https://discord.gg/8Y4mY4"
+						href="https://discord.gg/Gh76tPkjTn"
 						target="_blank"
 						rel="noopener noreferrer"
 					>
