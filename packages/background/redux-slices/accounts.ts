@@ -72,6 +72,7 @@ export type AccountState = {
 	accountsData: { [address: string]: AccountData | "loading" };
 	combinedData: CombinedAccountData;
 	removingAccount: false | "pending" | "fulfilled" | "rejected";
+	addingAddressNetwork: false | "pending" | "fulfilled" | "rejected";
 };
 
 export type CombinedAccountData = {
@@ -102,6 +103,7 @@ export const initialState = {
 		assets: [],
 	},
 	removingAccount: false,
+	addingAddressNetwork: false,
 } as AccountState;
 
 function newAccountData(
@@ -241,6 +243,12 @@ const accountSlice = createSlice({
 			return {
 				...state,
 				removingAccount: false,
+			};
+		},
+		clearAddingAddressNetwork: (state) => {
+			return {
+				...state,
+				addingAddressNetwork: false,
 			};
 		},
 		loadAccount: (
@@ -441,6 +449,24 @@ const accountSlice = createSlice({
 					...state,
 					removingAccount: "rejected",
 				};
+			})
+			.addCase(addAddressNetwork.pending, (state) => {
+				return {
+					...state,
+					addingAddressNetwork: "pending",
+				};
+			})
+			.addCase(addAddressNetwork.fulfilled, (state) => {
+				return {
+					...state,
+					addingAddressNetwork: "fulfilled",
+				};
+			})
+			.addCase(addAddressNetwork.rejected, (state) => {
+				return {
+					...state,
+					addingAddressNetwork: "rejected",
+				};
 			});
 	},
 });
@@ -452,6 +478,7 @@ export const {
 	updateName,
 	updateENSAvatar,
 	clearRemovingAccount,
+	clearAddingAddressNetwork,
 } = accountSlice.actions;
 
 export default accountSlice.reducer;

@@ -13,6 +13,7 @@ import {
 	signTransaction,
 } from "@sendnodes/pokt-wallet-background/redux-slices/transaction-construction";
 import {
+	AccountTotal,
 	getAccountTotal,
 	selectCurrentAccount,
 } from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
@@ -46,6 +47,7 @@ import formatTokenAmount from "../../utils/formatTokenAmount";
 import useStakingPoktParams from "../../hooks/staking-hooks/use-staking-pokt-params";
 import useAssetInMainCurrency from "../../hooks/assets/use-asset-in-main-currency";
 import type { RootState } from "@sendnodes/pokt-wallet-background";
+import { AccountType } from "@sendnodes/pokt-wallet-background/redux-slices/AccountType";
 
 dayjs.extend(utc.default);
 dayjs.extend(localizedFormat.default);
@@ -71,7 +73,7 @@ export default function StakeSignTransaction(): ReactElement {
 			return getAccountTotal(state, transactionDetails.from);
 		}
 		return undefined;
-	}, isEqual);
+	}, isEqual) as AccountTotal | undefined;
 
 	const { isLoading: isStakingPoktParamsLoading } = useStakingPoktParams();
 
@@ -424,12 +426,20 @@ export default function StakeSignTransaction(): ReactElement {
 					{formatFixed(networkFee, currentAccount.network.baseAsset.decimals)}{" "}
 					{currentAccount.network.baseAsset.symbol}
 				</small>
+				{signerAccountTotal.accountType === AccountType.ReadOnly && (
+					<p className="mb-2">
+						Unable to sign transactions with a read-only account.{" "}
+					</p>
+				)}
 				<SharedButton
 					size="medium"
 					type="primary"
 					onClick={handleConfirm}
 					className="w-full"
-					isDisabled={isTransactionSigning}
+					isDisabled={
+						isTransactionSigning ||
+						signerAccountTotal.accountType === AccountType.ReadOnly
+					}
 					isLoading={isTransactionSigning}
 				>
 					CONFIRM

@@ -59,12 +59,13 @@ export default function NetworkSelector({
 	const dispatch = useBackgroundDispatch();
 	const { address: currentAddress, network: currentNetwork } =
 		useBackgroundSelector(selectCurrentAddressNetwork);
-	const { seedId } = useBackgroundSelector((state: RootState) =>
+	const keyringMetadata = useBackgroundSelector((state: RootState) =>
 		selectKeyringMetadataForAddress(state, currentAddress),
-	)!;
+	);
+	const seedId = keyringMetadata?.seedId;
 	// use sibling keyrings of seed to allow for seemless switching between networks
-	const siblingKeyrings = useBackgroundSelector((state) =>
-		selectSiblingKeyrings(state, seedId),
+	const siblingKeyrings = useBackgroundSelector(
+		(state) => (seedId && selectSiblingKeyrings(state, seedId)) || [],
 	);
 	// use other keyrings as well
 	const allKeyrings = useBackgroundSelector(selectKeyrings);

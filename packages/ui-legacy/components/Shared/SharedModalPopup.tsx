@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 import classNames from "clsx";
 import { useOnClickOutside } from "../../hooks";
 
-interface SharedModalProps {
+export interface SharedModalProps {
 	children: ReactNode;
 	header: string;
 	onClose: () => void;

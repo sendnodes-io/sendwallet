@@ -1,7 +1,8 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement, useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import {
 	useAreKeyringsUnlocked,
+	useBackgroundDispatch,
 	useBackgroundSelector,
 	useIsInTab,
 } from "../../hooks";
@@ -13,9 +14,30 @@ import {
 import styles from "../../components/Onboarding/styles";
 import SharedPopoutOpen from "../../components/Shared/SharedPopoutOpen";
 import SharedSplashScreen from "../../components/Shared/SharedSplashScreen";
+import { InformationCircleIcon } from "@heroicons/react/outline";
+import SharedModalPopup from "@sendnodes/pokt-wallet-ui/components/Shared/SharedModalPopup";
+import SharedModal, {
+	SharedModalProps,
+} from "@sendnodes/pokt-wallet-ui/components/Shared/SharedModal";
+import SharedAddressInput from "@sendnodes/pokt-wallet-ui/components/Shared/SharedAddressInput";
+import { POCKET } from "@sendnodes/pokt-wallet-background/constants";
+import {
+	addAddressNetwork,
+	clearAddingAddressNetwork,
+} from "@sendnodes/pokt-wallet-background/redux-slices/accounts";
+import SharedButton from "@sendnodes/pokt-wallet-ui/components/Shared/SharedButton";
+import {
+	selectCurrentAccount,
+	getAccountData,
+} from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
+import {
+	setNewSelectedAccount,
+	setSnackbarMessage,
+} from "@sendnodes/pokt-wallet-background/redux-slices/ui";
 
 export default function OnboardingAddAccount(): ReactElement {
 	const history = useHistory();
+	const [helpModalOpen, setHelpModalOpen] = useState(false);
 
 	const hasAccounts = useBackgroundSelector(
 		(state) => Object.keys(state.account.accountsData).length > 0,
@@ -33,6 +55,23 @@ export default function OnboardingAddAccount(): ReactElement {
 	return (
 		<section className="start_wrap">
 			<div className="top">
+				<div className="absolute left-3 top-3">
+					<button
+						type="button"
+						aria-label="help"
+						className="group hover:text-white"
+						title={"Need Help?"}
+						onClick={() => {
+							setHelpModalOpen(true);
+						}}
+					>
+						<InformationCircleIcon className="h-4 w-5 inline-flex" />
+						<span className="w-0 opacity-0 group-hover:w-auto group-hover:opacity-100 transition duration-300">
+							Need Help?
+						</span>
+					</button>
+				</div>
+
 				<h1>
 					<b>Add / Import</b> Accounts
 				</h1>
@@ -99,6 +138,12 @@ export default function OnboardingAddAccount(): ReactElement {
 					</div>
 				</div>
 			</div>
+			{helpModalOpen && (
+				<HelpModal
+					onClose={() => setHelpModalOpen(false)}
+					isOpen={helpModalOpen}
+				/>
+			)}
 			<style jsx>{styles}</style>
 			<style jsx>
 				{`
@@ -196,5 +241,122 @@ export default function OnboardingAddAccount(): ReactElement {
         `}
 			</style>
 		</section>
+	);
+}
+
+function HelpModal({
+	isOpen,
+	onClose,
+}: Pick<SharedModalProps, "isOpen" | "onClose">) {
+	const [isMounted, setIsMounted] = useState(false);
+	const dispatch = useBackgroundDispatch();
+	const history = useHistory();
+	const [address, setAddress] = useState<string>("");
+
+	const accountData = useBackgroundSelector((state) =>
+		getAccountData(state, address),
+	);
+	const currentAccount = useBackgroundSelector(selectCurrentAccount);
+	const isAddingAccount = useBackgroundSelector(
+		(state) => state.account.addingAddressNetwork,
+	);
+
+	useEffect(() => {
+		console.debug("accountData", {
+			accountData,
+			currentAccount,
+			isAddingAccount,
+		});
+
+		if (accountData && accountData !== "loading") {
+			if (isAddingAccount === "fulfilled") {
+				dispatch(clearAddingAddressNetwork()); // clear the state
+				dispatch(
+					setNewSelectedAccount({
+						address: accountData.address,
+						network: accountData.network,
+					}),
+				);
+				history.replace("/");
+			} else if (isAddingAccount === "rejected") {
+				dispatch(clearAddingAddressNetwork()); // clear the state
+				dispatch(setSnackbarMessage("Something went wrong. Please try again."));
+			}
+		}
+	}, [currentAccount, isAddingAccount, accountData, address, history]);
+
+	// needs to run last
+	useEffect(() => {
+		// start fresh
+		dispatch(clearAddingAddressNetwork());
+		setIsMounted(true);
+	}, [dispatch, isAddingAccount]);
+
+	return (
+		<SharedModalPopup header="Need Help? 🙋‍♀️" isOpen={isOpen} onClose={onClose}>
+			<div>
+				<p>
+					Please visit our{" "}
+					<a
+						href="https://docs.pokt.network/docs/faq"
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						FAQ
+					</a>{" "}
+					or{" "}
+					<a
+						href="https://discord.gg/8Y4mY4"
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						join our Discord
+					</a>{" "}
+					for support.
+				</p>
+
+				<form
+					className="mt-2 py-4"
+					onSubmit={(e) => {
+						e.preventDefault();
+
+						if (isAddingAccount === "pending") {
+							return;
+						}
+
+						dispatch(
+							addAddressNetwork({
+								address,
+								network: POCKET,
+							}),
+						);
+					}}
+				>
+					<p className="mb-4">
+						Try SendWallet by entering your public POKT Address below:
+					</p>
+					<SharedAddressInput
+						label="Address"
+						onAddressChange={(value) => {
+							if (value) {
+								setAddress(value);
+							}
+						}}
+					/>
+					<SharedButton
+						isFormSubmit={true}
+						type="primary"
+						className="mt-2"
+						isDisabled={
+							!address || address.length === 0 || isAddingAccount === "pending"
+						}
+						isLoading={isAddingAccount === "pending"}
+						size={"medium"}
+					>
+						Submit
+					</SharedButton>
+				</form>
+			</div>
+		</SharedModalPopup>
 	);
 }
