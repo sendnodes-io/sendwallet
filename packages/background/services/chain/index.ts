@@ -227,7 +227,7 @@ export default class ChainService extends BaseService<Events> {
 			recentAssetTransferAlarm: {
 				runAtStart: true,
 				schedule: {
-					periodInMinutes: 5, // Pocket block times are 15min so no need for short period
+					periodInMinutes: 1, // Pocket block times are 15min so no need for short period
 				},
 				handler: () => {
 					this.handleRecentAssetTransferAlarm();
@@ -1521,6 +1521,9 @@ export default class ChainService extends BaseService<Events> {
 		}
 
 		if (addressNetwork.network && addressNetwork.address) {
+			this.loadRecentAssetTransfers(addressNetwork).then(() =>
+				this.handleQueuedTransactionAlarm(),
+			);
 			this.subscribeToAccountTransactions(addressNetwork);
 			this.getLatestBaseAccountBalance(addressNetwork);
 			this.db
