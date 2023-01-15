@@ -40,6 +40,7 @@ import usePocketNetworkFee from "../../hooks/pocket-network/use-network-fee";
 import formatTokenAmount from "../../utils/formatTokenAmount";
 import SharedLoadingSpinner from "../Shared/SharedLoadingSpinner";
 import useRemoteConfig from "../../hooks/remote-config-hooks";
+import SharedAddressInput from "../Shared/SharedAddressInput";
 
 // TODO: v0.2.0 handle multiple assets
 export default function Send(): ReactElement {
@@ -229,7 +230,13 @@ export default function Send(): ReactElement {
 						<div className="absolute -bottom-6">
 							{addressIsValidating && <SharedLoadingSpinner size="small" />}
 							{!addressIsValidating && destinationAddress && (
-								<span>{destinationAddress}</span>
+								<a
+									href={`https://pokt.watch/address/${destinationAddress}`}
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									{destinationAddress}
+								</a>
 							)}
 						</div>
 					)}

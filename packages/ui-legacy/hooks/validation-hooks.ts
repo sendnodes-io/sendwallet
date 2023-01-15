@@ -7,7 +7,8 @@ import {
 import { selectCurrentAccount } from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
 import { HexString } from "@sendnodes/pokt-wallet-background/types";
 import { useRef, useState } from "react";
-import Resolution from "@unstoppabledomains/resolution";
+
+import { resolution } from "../services/unstoppabledomains";
 import { useBackgroundSelector } from "./redux-hooks";
 import useRemoteConfig from "./remote-config-hooks";
 
@@ -170,7 +171,6 @@ export const useAddressOrNameValidation: AsyncValidationHook<
 				setIsValidating(true);
 				validatingValue.current = trimmed;
 
-				const resolution = new Resolution();
 				const resolved = (await resolution
 					.addr(trimmed, "ETH")
 					.catch(() => "")) as unknown as string;
@@ -203,22 +203,6 @@ export const useAddressOrNameValidation: AsyncValidationHook<
 			} else if (remoteConfig?.POKT?.features?.unstoppableDomains) {
 				setIsValidating(true);
 				validatingValue.current = trimmed;
-				const resolution = new Resolution({
-					sourceConfig: {
-						uns: {
-							locations: {
-								Layer1: {
-									url: process.env.ETH_MAINNET_RPC_URL,
-									network: "mainnet",
-								},
-								Layer2: {
-									url: process.env.POLYGON_MAINNET_RPC_URL,
-									network: "polygon-mainnet",
-								},
-							},
-						},
-					},
-				});
 
 				const resolved = await resolution
 					.addr(trimmed, "POKT")

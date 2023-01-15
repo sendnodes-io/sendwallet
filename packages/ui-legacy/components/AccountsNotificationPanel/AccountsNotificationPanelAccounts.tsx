@@ -1,16 +1,13 @@
-import React, { ReactElement, useEffect, useState } from "react";
+import React, { ReactElement, useCallback, useEffect, useState } from "react";
 import { setNewSelectedAccount } from "@sendnodes/pokt-wallet-background/redux-slices/ui";
 import { deriveAddress } from "@sendnodes/pokt-wallet-background/redux-slices/keyrings";
 import {
 	AccountTotal,
 	selectAccountTotalsByCategory,
 	selectCurrentAccount,
+	CategorizedAccountTotals,
 } from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
 import { Link, useHistory } from "react-router-dom";
-import {
-	ETHEREUM,
-	POCKET,
-} from "@sendnodes/pokt-wallet-background/constants/networks";
 import { AccountType } from "@sendnodes/pokt-wallet-background/redux-slices/AccountType";
 import {
 	normalizeAddress,
@@ -27,6 +24,8 @@ import {
 } from "../../hooks";
 import SharedAccountItemSummary from "../Shared/SharedAccountItemSummary";
 import AccountItemOptionsMenu from "../AccountItem/AccountItemOptionsMenu";
+import { isEqual } from "lodash";
+import { AddressOnNetwork } from "@sendnodes/pokt-wallet-background/accounts";
 
 type WalletTypeInfo = {
 	title: string;
@@ -148,20 +147,25 @@ type Props = {
 };
 
 export default function AccountsNotificationPanelAccounts({
-	showEasterEgg = true,
 	onCurrentAddressChange,
 }: Props): ReactElement {
 	const dispatch = useBackgroundDispatch();
 
-	const accountTotals = useBackgroundSelector(selectAccountTotalsByCategory);
+	const accountTotals = useBackgroundSelector(
+		selectAccountTotalsByCategory,
+		isEqual,
+	) as CategorizedAccountTotals;
 
 	const [pendingSelectedAddress, setPendingSelectedAddress] = useState("");
 
-	const selectedAccount = useBackgroundSelector(selectCurrentAccount);
+	const selectedAccount = useBackgroundSelector(
+		selectCurrentAccount,
+		isEqual,
+	) as AddressOnNetwork;
 	const { address: selectedAccountAddress, network: selectedNetwork } =
 		selectedAccount;
 
-	const updateCurrentAccount = (address: string) => {
+	const updateCurrentAccount = useCallback((address: string) => {
 		setPendingSelectedAddress(address);
 		dispatch(
 			setNewSelectedAccount({
@@ -169,11 +173,12 @@ export default function AccountsNotificationPanelAccounts({
 				network: selectedNetwork,
 			}),
 		);
-	};
+	}, []);
 
 	const deriveAddressImporting = useBackgroundSelector(
 		(state) => state.keyrings.deriving,
-	);
+		isEqual,
+	) as false | "pending" | "done";
 
 	useEffect(() => {
 		if (
