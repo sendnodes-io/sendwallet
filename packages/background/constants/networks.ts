@@ -8,6 +8,8 @@ import {
 import { BTC, ETH, MATIC, POKT } from "./currencies";
 
 // TODO integrate this with /api/networks
+const DEFAULT_POCKET_RPC_URL =
+	process.env.POKT_MAINNET_RPC_URL || "https://rpc-4cdf39.nodes.sendnodes.io/";
 
 export const POCKET: POKTNetwork = {
 	name: "Pocket",
@@ -15,9 +17,7 @@ export const POCKET: POKTNetwork = {
 	chainID: "mainnet",
 	family: NetworkFamily.POKT,
 	blockExplorerUrl: NetworkBlockExplorerUrl.POKTWATCH,
-	rcpUrl:
-		process.env.POKT_MAINNET_RPC_URL ||
-		"https://mainnet.gateway.pokt.network/v1/lb/62ab7d95123e6f00396eb267",
+	rcpUrl: DEFAULT_POCKET_RPC_URL,
 };
 
 export const FIAGNET: POKTNetwork = {
