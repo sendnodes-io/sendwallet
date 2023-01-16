@@ -239,19 +239,8 @@ export default class ChainService extends BaseService<Events> {
 					delayInMinutes: 1,
 					periodInMinutes: 1,
 				},
-				handler: async () => {
-					const response = await fetch(
-						`${process.env.SENDWALLET_IO}api/remote-config`,
-					).catch((e) => {
-						logger.warn("Failed to fetch remote config", e);
-						return {} as Response;
-					});
-					if (response.status === 200) {
-						const body: RemoteConfig = await response.json();
-						if (body) {
-							this.remoteConfig = body;
-						}
-					}
+				handler: () => {
+					this.fetchRemoteConfig();
 				},
 			},
 			// TODO: v0.4.0 wPOKT bridge: re-enable EVM support
@@ -304,6 +293,22 @@ export default class ChainService extends BaseService<Events> {
 			PreferencesEventNames.SELECTED_ACCOUNT_CHANGED,
 			this.connectToAddressNetwork.bind(this),
 		);
+	}
+
+	async fetchRemoteConfig(): Promise<void> {
+		const response = await fetch(
+			`${process.env.SENDWALLET_IO}api/remote-config`,
+		).catch((e) => {
+			logger.warn("Failed to fetch remote config", e);
+			return {} as Response;
+		});
+		if (response.status === 200) {
+			const body: RemoteConfig = await response.json();
+			logger.debug("Fetched remote config", body);
+			if (body) {
+				this.remoteConfig = body;
+			}
+		}
 	}
 
 	/**
@@ -1085,7 +1090,7 @@ export default class ChainService extends BaseService<Events> {
 		await Promise.allSettled(
 			accountsToTrack.map((an) => {
 				// dont load EVM txs for now
-				if (an.network.family === "POKT") {
+				if (an.network.family === "POKT" && this.remoteConfig) {
 					return this.loadRecentAssetTransfers(an);
 				}
 			}),
@@ -1452,8 +1457,11 @@ export default class ChainService extends BaseService<Events> {
 		if (network.family === "EVM") {
 			this.ethereumNetwork = network;
 		} else if (network.family === "POKT") {
-			this.pocketNetwork = network;
 			// if mainnet, allow for remote config
+			logger.debug("Attempting to configure with remote config", {
+				chainID: network.chainID,
+				remoteConfig: this.remoteConfig,
+			});
 			if (network.chainID === "mainnet" && this.remoteConfig) {
 				try {
 					const pocketRPC = new URL(
@@ -1473,6 +1481,8 @@ export default class ChainService extends BaseService<Events> {
 				} catch (e) {
 					// ignored
 				}
+			} else {
+				this.pocketNetwork = network;
 			}
 		}
 
@@ -1513,6 +1523,11 @@ export default class ChainService extends BaseService<Events> {
 	 */
 	private async connectToAddressNetwork(addressNetwork: AddressOnNetwork) {
 		logger.debug("connecting to address network", addressNetwork);
+
+		if (!this.remoteConfig) {
+			await this.fetchRemoteConfig();
+		}
+
 		this.providers = this.configureProviders(addressNetwork);
 
 		// POKT provider needs a kick to get going, restart it here
