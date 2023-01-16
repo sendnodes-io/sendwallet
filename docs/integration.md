@@ -15,7 +15,7 @@ First, determine if the user has SendWallet installed, by checking if the `windo
 ```js
 if (window.pocketNetwork === undefined) {
   // uh oh no SendWallet found, request that the user install it first.
-  alert("SendWallet not found! Please visit https://sendwallet.net to install")
+  alert("SendWallet not found! Please visit https://sendwallet.net to install");
 } else {
   // we're ready to go!
 }
@@ -34,13 +34,13 @@ selected SendWallet.
 let address = await window.pocketNetwork
   .send("pokt_requestAccounts")
   .then(([address]) => {
-    console.log("Success!", address)
-    return address
+    console.log("Success!", address);
+    return address;
   })
   .catch((e) => {
-    console.error("Failed!", e)
-    return null
-  })
+    console.error("Failed!", e);
+    return null;
+  });
 ```
 
 After executing that code, the wallet will show a popup requesting the user to approve your site to connect. The user should only have to approve your site domain once. You must execute `pokt_requestAccounts` on every site domain you wish integrate with SendWallet.
@@ -64,13 +64,13 @@ let balance = await window.pocketNetwork
     console.log("Success!", {
       balanceInUpokt: balance,
       balanceInPokt: balance / 1e6,
-    })
-    return balance
+    });
+    return balance;
   })
   .catch((e) => {
-    console.error("Failed!", e)
-    return null
-  })
+    console.error("Failed!", e);
+    return null;
+  });
 ```
 
 ### Requesting a Send POKT Transaction Signature
@@ -92,13 +92,13 @@ let hash = await window.pocketNetwork
   .then(({ hash }) => {
     console.log("Success!", {
       txHash: hash,
-    })
-    return hash
+    });
+    return hash;
   })
   .catch((e) => {
-    console.error("Failed!", e)
-    return null
-  })
+    console.error("Failed!", e);
+    return null;
+  });
 ```
 
 <img src="./img/integration-sign-transaction.png" height=500 style="margin: 0 auto; display: block;">
@@ -109,14 +109,14 @@ These API calls are useful for requesting information about the current and past
 
 ```js
 // Get Transaction
-let tx = await window.pocketNetwork.send("pokt_tx", [{ hash: hash }])
+let tx = await window.pocketNetwork.send("pokt_tx", [{ hash: hash }]);
 
 // Get Block Height
-let { height } = await window.pocketNetwork.send("pokt_height")
+let { height } = await window.pocketNetwork.send("pokt_height");
 
 // Get Block
 // NOTE: careful with this request since Pocket Network blocks are YUUUUGGGE and will use a lot of the user's PC resources (CPU/Network/etc.
 let { block, block_id } = await window.pocketNetwork.send("pokt_block", [
   { height },
-])
+]);
 ```

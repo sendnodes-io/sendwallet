@@ -7,5 +7,20 @@ app/extension-scripts/api/playground/
 .env
 *.rest
 .DS_Store
-.vscode
+.vscode/*
+!.vscode/extensions.json
 stats.json
+.idea
+
+# not using Zero-Installs
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+*.tsbuildinfo
+
+.turbo

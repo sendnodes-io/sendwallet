@@ -1,0 +1,73 @@
+{
+  "name": "@sendnodes/pokt-wallet-background",
+  "version": "0.0.1",
+  "description": "SendWallet: api implementation.",
+  "main": "index.ts",
+  "repository": "git@github.com:sendnodes/pokt-wallet.git",
+  "authors": [
+    "Dire <dire@sendnodes.io>",
+    "BigBoss <bigboss@sendnodes.io>"
+  ],
+  "license": "GPL-3.0",
+  "keywords": [
+    "ethereum",
+    "bitcoin",
+    "pokt",
+    "cryptocurrency",
+    "wallet",
+    "web3",
+    "dapp"
+  ],
+  "scripts": {
+    "test": "jest"
+  },
+  "dependencies": {
+    "@0xbigboss/webext-redux": "2.1.9",
+    "@ethereumjs/common": "^2.4.0",
+    "@ethereumjs/tx": "^3.3.0",
+    "@ethersproject/abstract-provider": "^5.5.1",
+    "@ethersproject/abstract-signer": "^5.5.0",
+    "@ethersproject/networks": "^5.5.1",
+    "@ethersproject/providers": "^5.5.3",
+    "@ethersproject/transactions": "^5.5.0",
+    "@ethersproject/web": "^5.5.1",
+    "@ledgerhq/devices": "^6.20.0",
+    "@ledgerhq/errors": "^6.10.0",
+    "@ledgerhq/hw-app-eth": "^6.23.0",
+    "@ledgerhq/hw-transport": "^6.20.0",
+    "@ledgerhq/hw-transport-webusb": "^6.20.0",
+    "@reduxjs/toolkit": "^1.6.1",
+    "@sendnodes/hd-keyring": "0.1.0",
+    "@sendnodes/pocket-js": "0.8.0-rc",
+    "@sendnodes/provider-bridge-shared": "*",
+    "@sendnodes/window-provider": "*",
+    "@types/w3c-web-usb": "^1.0.5",
+    "@uniswap/token-lists": "^1.0.0-beta.25",
+    "ajv": "^8.6.2",
+    "ajv-formats": "^2.1.0",
+    "assert": "^2.0.0",
+    "bnc-sdk": "^3.4.1",
+    "dayjs": "^1.10.7",
+    "dexie": "^3.0.3",
+    "emittery": "^0.9.2",
+    "ethers": "^5.5.1",
+    "lodash": "^4.17.21",
+    "node-fetch": "^2.6.1",
+    "react-redux": "^7.2.4",
+    "siwe": "^1.1.0",
+    "util": "^0.12.4",
+    "webextension-polyfill": "^0.8.0"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.190",
+    "@types/webextension-polyfill": "^0.9.0",
+    "crypto-browserify": "^3.12.0",
+    "jest": "^29.3.1",
+    "jest-chrome": "^0.8.0",
+    "mockzilla": "^0.14.0",
+    "mockzilla-webextension": "^0.15.0",
+    "remote-redux-devtools": "^0.5.16",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.6.4"
+  }
+}

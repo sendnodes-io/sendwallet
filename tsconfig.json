@@ -1,26 +1,37 @@
 {
   "compilerOptions": {
-    "target": "esnext",
-    "lib": [
-      "esnext",
-      "DOM",
-      "WebWorker"
-    ],
-    "declaration": false,
-    "module": "esnext",
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "jsx": "react-jsx",
-    "strict": true,
-    "noEmit": true
+    "strictNullChecks": true,
+    "noUncheckedIndexedAccess": true,
+    "paths": {
+      "app": ["./packages/app"],
+      "app/*": ["./packages/app/*"],
+      "@my/ui": ["./packages/ui"],
+      "@my/ui/*": ["./packages/ui/*"],
+      "build-utils": ["./packages/build-utils"],
+      "build-utils/*": ["./packages/build-utils/*"],
+      "@sendnodes/pokt-wallet-ui": ["./packages/ui-legacy"],
+      "@sendnodes/pokt-wallet-ui/*": ["./packages/ui-legacy/*"],
+      "@sendnodes/pokt-wallet-background": ["./packages/background"],
+      "@sendnodes/pokt-wallet-background/*": ["./packages/background/*"],
+      "@sendnodes/provider-bridge-shared/*": [
+        "./packages/provider-bridge-shared/*"
+      ],
+      "@sendnodes/provider-bridge-shared": [
+        "./packages/provider-bridge-shared"
+      ],
+      "@sendnodes/provider-bridge/*": ["./packages/provider-bridge/*"],
+      "@sendnodes/provider-bridge": ["./packages/provider-bridg*"],
+      "@sendnodes/window-provider/*": ["./packages/window-provider/*"],
+      "@sendnodes/window-provider": ["./packages/window-provid/*"]
+    },
+    "baseUrl": ".",
+    "rootDir": "."
   },
+  "exclude": ["node_modules"],
+  "extends": "./tsconfig.base",
   "ts-node": {
     "compilerOptions": {
       "module": "CommonJS"
     }
-  },
-  "exclude": [
-    "dev-utils"
-  ],
+  }
 }
