@@ -601,7 +601,7 @@ export default class PocketProvider extends BaseService<ServiceLifecycleEvents> 
 		return poll(
 			async () => {
 				// use POKT Watch to get a skinny block since mainnet blocks are too fat
-				if (this.provider.baseURL.hostname.includes("mainnet")) {
+				if (this.network.chainID === "mainnet") {
 					try {
 						const result = await fetch(
 							`https://api.pokt.watch/block?height=eq.${blockNumber}`,

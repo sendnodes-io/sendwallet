@@ -73,7 +73,7 @@ const ALCHEMY_KEY = process.env.ALCHEMY_KEY; // eslint-disable-line prefer-destr
 // How many queued transactions should be retrieved on every tx alarm, per
 // network. To get frequency, divide by the alarm period. 5 tx / 5 minutes →
 // max 1 tx/min.
-const MAX_CONCURRENT_TRANSACTION_REQUESTS = 20;
+const MAX_CONCURRENT_TRANSACTION_REQUESTS = 100;
 
 // The number of blocks to query at a time for historic asset transfers.
 // Unfortunately there's no "right" answer here that works well across different
@@ -162,8 +162,6 @@ export type RemoteConfig = {
 export default class ChainService extends BaseService<Events> {
 	providers?: NetworkProviders;
 
-	remoteConfig?: RemoteConfig;
-
 	subscribedAccounts: {
 		account: string;
 		provider: SerialFallbackProvider;
@@ -225,7 +223,6 @@ export default class ChainService extends BaseService<Events> {
 				},
 			},
 			recentAssetTransferAlarm: {
-				runAtStart: true,
 				schedule: {
 					periodInMinutes: 1, // Pocket block times are 15min so no need for short period
 				},
@@ -284,6 +281,8 @@ export default class ChainService extends BaseService<Events> {
 	async internalStartService(): Promise<void> {
 		await super.internalStartService();
 
+		await this.fetchRemoteConfig();
+
 		await this.connectToAddressNetwork(
 			await this.preferenceService.getSelectedAccount(),
 		);
@@ -295,20 +294,33 @@ export default class ChainService extends BaseService<Events> {
 		);
 	}
 
+	remoteConfigFetchPromise?: Promise<void>;
+	remoteConfig?: RemoteConfig;
+
 	async fetchRemoteConfig(): Promise<void> {
-		const response = await fetch(
-			`${process.env.SENDWALLET_IO}api/remote-config`,
-		).catch((e) => {
-			logger.warn("Failed to fetch remote config", e);
-			return {} as Response;
-		});
-		if (response.status === 200) {
-			const body: RemoteConfig = await response.json();
-			logger.debug("Fetched remote config", body);
-			if (body) {
-				this.remoteConfig = body;
-			}
+		if (this.remoteConfigFetchPromise) {
+			return this.remoteConfigFetchPromise;
 		}
+
+		this.remoteConfigFetchPromise = (async () => {
+			const response = await fetch(
+				`${process.env.SENDWALLET_IO}api/remote-config`,
+			).catch((e) => {
+				logger.warn("Failed to fetch remote config", e);
+				return {} as Response;
+			});
+			if (response.status === 200) {
+				const body: RemoteConfig = await response.json();
+				logger.debug("Fetched remote config", body);
+				if (body) {
+					this.remoteConfig = body;
+				}
+			}
+		})().then(() => {
+			this.remoteConfigFetchPromise = undefined;
+		});
+
+		return this.remoteConfigFetchPromise;
 	}
 
 	/**
@@ -556,10 +568,10 @@ export default class ChainService extends BaseService<Events> {
 
 		this.emitter.emit("newAccountToTrack", addressNetwork);
 		this.getLatestBaseAccountBalance(addressNetwork);
-		this.subscribeToAccountTransactions(addressNetwork);
 		this.loadRecentAssetTransfers(addressNetwork).then(() =>
 			this.handleQueuedTransactionAlarm(),
 		);
+		this.subscribeToAccountTransactions(addressNetwork);
 	}
 
 	async removeAccountToTrack(address: HexString): Promise<void> {
@@ -857,6 +869,7 @@ export default class ChainService extends BaseService<Events> {
 	private async loadRecentAssetTransfers(
 		addressNetwork: AddressOnNetwork,
 	): Promise<void> {
+		logger.debug("Loading recent assets", addressNetwork);
 		if (addressNetwork.network.family === "EVM") {
 			const blockHeight =
 				(await this.getBlockHeight(addressNetwork.network)) -
@@ -933,6 +946,13 @@ export default class ChainService extends BaseService<Events> {
 						BigInt(height),
 					);
 				}
+
+				// load 100 historical asset transfers or last day of txs
+				return await this.loadAssetTransfers(
+					addressNetwork,
+					BigInt(height - 96),
+					BigInt(height),
+				);
 			} catch (err) {
 				logger.error(
 					"Failure loading recent assets for account",
@@ -1045,7 +1065,7 @@ export default class ChainService extends BaseService<Events> {
 			const txsToRecord: PoktJSTransaction[] = [];
 			for (const tx of allTxs) {
 				if (txsToRecord.length >= MAX_HISTORIC_ASSET_TRANSFERS_POCKET) break;
-				if (startBlock && tx.height <= startBlock) break;
+				if (startBlock && tx.height <= startBlock) continue;
 				if (tx.txResult.messageType !== "send") continue;
 				txsToRecord.push(tx);
 			}
@@ -1086,15 +1106,22 @@ export default class ChainService extends BaseService<Events> {
 	}
 
 	private async handleRecentAssetTransferAlarm(): Promise<void> {
-		const accountsToTrack = await this.getAccountsToTrack();
-		await Promise.allSettled(
-			accountsToTrack.map((an) => {
-				// dont load EVM txs for now
-				if (an.network.family === "POKT" && this.remoteConfig) {
-					return this.loadRecentAssetTransfers(an);
-				}
-			}),
-		);
+		// FIXME: causes super lag, so we're disabling it for now
+		// const accountsToTrack = await this.getAccountsToTrack();
+		// await Promise.allSettled(
+		// 	accountsToTrack.map((an) => {
+		// 		// dont load EVM txs for now
+		// 		if (an.network.family === "POKT" && this.remoteConfig) {
+		// 			return this.loadRecentAssetTransfers(an);
+		// 		}
+		// 	}),
+		// );
+
+		// only load current account
+		const currentAccount = await this.preferenceService.getSelectedAccount();
+		if (currentAccount) {
+			await this.loadRecentAssetTransfers(currentAccount);
+		}
 	}
 
 	// private async handleHistoricEVMAssetTransferAlarm(): Promise<void> {
@@ -1319,7 +1346,14 @@ export default class ChainService extends BaseService<Events> {
 				const blockResult = await this.poktProvider.getSkinnyBlock(n);
 				const block = blockFromPoktBlock(network, blockResult);
 				await this.db.addBlock(block);
+				// don't think anyone is listening anymore 🤣
 				this.emitter.emit("block", block);
+				const accounts = await this.getAccountsToTrack();
+				for (const account of _.shuffle([
+					...accounts.filter((a) => a.network.family === network.family),
+				])) {
+					await this.getLatestBaseAccountBalance(account);
+				}
 			});
 		}
 	}
@@ -1449,7 +1483,7 @@ export default class ChainService extends BaseService<Events> {
 		}
 	}
 
-	private configureProviders(addressNetwork: AddressOnNetwork) {
+	private async configureProviders(addressNetwork: AddressOnNetwork) {
 		const { network } = addressNetwork;
 		// always default to mainnets
 		this.ethereumNetwork = ETHEREUM;
@@ -1458,10 +1492,9 @@ export default class ChainService extends BaseService<Events> {
 			this.ethereumNetwork = network;
 		} else if (network.family === "POKT") {
 			// if mainnet, allow for remote config
-			logger.debug("Attempting to configure with remote config", {
-				chainID: network.chainID,
-				remoteConfig: this.remoteConfig,
-			});
+			if (!this.remoteConfig) {
+				await this.fetchRemoteConfig();
+			}
 			if (network.chainID === "mainnet" && this.remoteConfig) {
 				try {
 					const pocketRPC = new URL(
@@ -1490,6 +1523,13 @@ export default class ChainService extends BaseService<Events> {
 			this.cleanupProvider(this.providers[network.family]);
 		}
 
+		const poktProvider = new PocketProvider(this.pocketNetwork?.rcpUrl);
+
+		// needs to be started before we can use it
+		await poktProvider.startService().catch((e) => {
+			logger.error("Failed to start Pocket service", e);
+		});
+
 		return {
 			[NetworkFamily.EVM]:
 				process.env.NODE_ENV === "development" &&
@@ -1514,7 +1554,7 @@ export default class ChainService extends BaseService<Events> {
 								),
 					  ),
 
-			[NetworkFamily.POKT]: new PocketProvider(this.pocketNetwork?.rcpUrl),
+			[NetworkFamily.POKT]: poktProvider,
 		};
 	}
 
@@ -1524,16 +1564,7 @@ export default class ChainService extends BaseService<Events> {
 	private async connectToAddressNetwork(addressNetwork: AddressOnNetwork) {
 		logger.debug("connecting to address network", addressNetwork);
 
-		if (!this.remoteConfig) {
-			await this.fetchRemoteConfig();
-		}
-
-		this.providers = this.configureProviders(addressNetwork);
-
-		// POKT provider needs a kick to get going, restart it here
-		if (addressNetwork.network.family === "POKT") {
-			this.poktProvider.startService();
-		}
+		this.providers = await this.configureProviders(addressNetwork);
 
 		if (addressNetwork.network && addressNetwork.address) {
 			this.loadRecentAssetTransfers(addressNetwork).then(() =>
@@ -1608,7 +1639,7 @@ export default class ChainService extends BaseService<Events> {
 	}
 
 	private cleanupProvider(provider: SerialFallbackProvider | PocketProvider) {
-		provider.removeAllListeners();
+		if (provider) provider.removeAllListeners();
 		// FIXME: only remove subscribers to provider
 		this.subscribedAccounts = [];
 		this.subscribedNetworks = [];

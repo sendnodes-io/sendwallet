@@ -105,17 +105,18 @@ export default class EnrichmentService extends BaseService<Events> {
 			},
 		);
 
-		this.chainService.emitter.on("block", async (block) => {
-			// update all balances of base account on new blocks
-			// TODO: refetch all token balances
-			this.chainService.getAccountsToTrack().then(async (accounts) => {
-				for (const account of accounts.filter((a) =>
-					sameNetwork(a.network, block.network),
-				)) {
-					await this.chainService.getLatestBaseAccountBalance(account);
-				}
-			});
-		});
+		// FIXME: caused really bad performance issues
+		// this.chainService.emitter.on("block", async (block) => {
+		// 	// update all balances of base account on new blocks
+		// 	// TODO: refetch all token balances
+		// 	this.chainService.getAccountsToTrack().then(async (accounts) => {
+		// 		for (const account of accounts.filter((a) =>
+		// 			sameNetwork(a.network, block.network),
+		// 		)) {
+		// 			await this.chainService.getLatestBaseAccountBalance(account);
+		// 		}
+		// 	});
+		// });
 	}
 
 	async resolveTransactionAnnotation(

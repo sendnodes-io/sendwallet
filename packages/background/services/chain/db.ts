@@ -1,4 +1,8 @@
-import Dexie, { IndexableTypeArray, IndexableTypeArrayReadonly } from "dexie";
+import Dexie, {
+	IndexableTypeArray,
+	IndexableTypeArrayReadonly,
+	IndexableTypePart,
+} from "dexie";
 
 import { UNIXTime } from "../../types";
 import { AccountBalance, AddressOnNetwork } from "../../accounts";
@@ -470,8 +474,9 @@ export class ChainDatabase extends Dexie {
 				return 0;
 			});
 		const queued = all.slice(0, count);
-		const keys = queued.flatMap((t) => [t.firstSeen, t.hash, t.network.name]);
-		await this.queuedTransactionsToRetrieve.bulkDelete(keys);
+		const keys = queued.map((t) => [t.firstSeen, t.hash, t.network.name]);
+		// rome-ignore lint/suspicious/noExplicitAny: dexie types are bad
+		await this.queuedTransactionsToRetrieve.bulkDelete(keys as unknown as any);
 		return queued;
 	}
 
