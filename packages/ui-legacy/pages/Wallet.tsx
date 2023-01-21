@@ -8,6 +8,7 @@ import { useBackgroundSelector, useAreKeyringsUnlocked } from "../hooks";
 import WalletActivityList from "../components/Wallet/WalletActivityList";
 import WalletAccountBalanceControl from "../components/Wallet/WalletAccountBalanceControl";
 import WalletHeader from "../components/Wallet/WalletHeader";
+import { isEqual } from "lodash";
 
 export default function Wallet(): ReactElement {
 	const isKeyringUnlocked = useAreKeyringsUnlocked(false);
@@ -15,7 +16,10 @@ export default function Wallet(): ReactElement {
 		(state) => Object.keys(state.account.accountsData).length > 0,
 	);
 	//  accountLoading, hasWalletErrorCode
-	const accountData = useBackgroundSelector(selectCurrentAccountBalances);
+	const accountData = useBackgroundSelector(
+		selectCurrentAccountBalances,
+		isEqual,
+	);
 
 	const { assetAmounts, totalMainCurrencyValue } = accountData ?? {
 		assetAmounts: [],
@@ -24,6 +28,7 @@ export default function Wallet(): ReactElement {
 
 	const currentAccountActivities = useBackgroundSelector(
 		selectCurrentAccountActivitiesWithTimestamps,
+		isEqual,
 	);
 
 	const initializationLoadingTimeExpired = useBackgroundSelector(

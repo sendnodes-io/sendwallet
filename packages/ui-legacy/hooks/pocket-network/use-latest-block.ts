@@ -32,7 +32,7 @@ function getPocketRPCUrl() {
 				) ?? POCKET.rcpUrl,
 			);
 			pocketRpcUrl = pocketRPC.toString();
-			logger.debug("Attempting to configure with remote config", {
+			logger.debug("Configuring with remote config", {
 				remoteConfig,
 				pocketRpcUrl,
 				POCKET,

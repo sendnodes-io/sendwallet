@@ -26,6 +26,7 @@ import { getOrCreateDB, IndexingDatabase } from "./db";
 import BaseService from "../base";
 import { EnrichedEVMTransaction } from "../enrichment/types";
 import { sameEVMAddress } from "../../lib/utils";
+import _ from "lodash";
 
 // Transactions seen within this many blocks of the chain tip will schedule a
 // token refresh sooner than the standard rate.
@@ -380,12 +381,13 @@ export default class IndexingService extends BaseService<Events> {
 					"status" in transaction &&
 					(transaction.status === 1 || transaction.status === 0)
 				) {
-					forAccounts.forEach((accountAddress) => {
-						this.chainService.getLatestBaseAccountBalance({
-							address: accountAddress,
-							network: transaction.network,
-						});
-					});
+					// FIXME: caused really bad performance issues
+					// for (const account of _.shuffle([...forAccounts])) {
+					// 	this.chainService.getLatestBaseAccountBalance({
+					// 		address: account,
+					// 		network: transaction.network,
+					// 	});
+					// }
 				}
 			},
 		);
