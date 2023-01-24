@@ -1,6 +1,8 @@
 import React from "react";
 
-export default function SharedSplashScreen() {
+export default function SharedSplashScreen({
+	children,
+}: { children?: React.ReactNode }) {
 	return (
 		<div className="">
 			<img
@@ -55,6 +57,9 @@ export default function SharedSplashScreen() {
 				width="100"
 				height="100"
 			/>
+			<div className="absolute top-1/2 left-0 right-0 mx-auto mt-[100px]">
+				{children}
+			</div>
 			<style jsx>
 				{`
           @keyframes fadeIn {

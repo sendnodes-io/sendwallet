@@ -22,7 +22,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@0xbigboss/webext-redux": "2.1.9",
+    "@0xbigboss/webext-redux": "2.2.0",
     "@ethereumjs/common": "^2.4.0",
     "@ethereumjs/tx": "^3.3.0",
     "@ethersproject/abstract-provider": "^5.5.1",

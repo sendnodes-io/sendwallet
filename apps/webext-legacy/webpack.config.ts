@@ -20,6 +20,15 @@ import StatoscopeWebpackPlugin from "@statoscope/webpack-plugin";
 import CssMinimizerPlugin from "css-minimizer-webpack-plugin";
 import WebExtensionArchivePlugin from "build-utils/src/web-extension-archive-webpack-plugin";
 
+const revision = childProcess
+	.execSync("git rev-parse --short HEAD")
+	.toString()
+	.trim();
+const branch = childProcess
+	.execSync("git rev-parse --abbrev-ref HEAD")
+	.toString()
+	.trim();
+
 const supportedBrowsers = [
 	// "brave",
 	"chrome",
@@ -193,6 +202,8 @@ const baseConfig: Configuration = {
 		}) as unknown as WebpackPluginInstance,
 		new DefinePlugin({
 			"process.env.APP_NAME": JSON.stringify(process.env.npm_package_name),
+			"process.env.GIT_BRANCH": JSON.stringify(branch),
+			"process.env.GIT_COMMIT": JSON.stringify(revision),
 		}),
 		new HtmlWebpackPlugin({
 			template: path.resolve(uiRoot, "pages", "base.html"),
@@ -286,14 +297,6 @@ const modeConfigs: {
 		},
 	}),
 	production: (browser) => {
-		const revision = childProcess
-			.execSync("git rev-parse --short HEAD")
-			.toString()
-			.trim();
-		const branch = childProcess
-			.execSync("git rev-parse --abbrev-ref HEAD")
-			.toString()
-			.trim();
 		const date = new Date();
 		return {
 			devtool: false,

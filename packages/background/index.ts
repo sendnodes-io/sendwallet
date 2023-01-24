@@ -36,14 +36,22 @@ export async function newProxyStore(
 		const proxyStore = new ProxyStore({
 			serializer: encodeJSON,
 			deserializer: decodeJSON,
-			maxReconnects: 10,
 		});
+
 		await proxyStore.ready();
 
-		return proxyStore;
+		if (proxyStore.getState().ui) {
+			return proxyStore;
+		} else {
+			throw "Proxy store not hydrated";
+		}
 	} catch (e) {
 		logger.warn("Failed to create proxy store", { attempts, e });
-		return newProxyStore(attempts + 1);
+		return await new Promise((resolve) => {
+			setTimeout(() => {
+				resolve(newProxyStore(attempts + 1));
+			}, 1000);
+		});
 	}
 }
 
