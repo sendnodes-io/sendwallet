@@ -10,7 +10,7 @@
   ],
   "license": "GPL-3.0",
   "dependencies": {
-    "@0xbigboss/webext-redux": "2.1.9",
+    "@0xbigboss/webext-redux": "2.2.0",
     "@ethersproject/abstract-provider": "^5.5.1",
     "@ethersproject/address": "^5.5.0",
     "@ethersproject/bignumber": "^5.7.0",

@@ -5,15 +5,15 @@ __metadata:
   version: 6
   cacheKey: 8
 
-"@0xbigboss/webext-redux@npm:2.1.9":
-  version: 2.1.9
-  resolution: "@0xbigboss/webext-redux@npm:2.1.9"
+"@0xbigboss/webext-redux@npm:2.2.0":
+  version: 2.2.0
+  resolution: "@0xbigboss/webext-redux@npm:2.2.0"
   dependencies:
     lodash.assignin: ^4.2.0
     lodash.clonedeep: ^4.5.0
   peerDependencies:
     redux: ">= 3 <= 4"
-  checksum: 9861f8bc4111bede358c5d42853a71de4146cb8fcfc8af5d7058108ca874ae826ba1f8dd3feda1f3a2ac8a514a21a8c0f3ab76e41e896beb5c979e03325041b9
+  checksum: a9a6b91a9f7d9cd5b781fb144e4ebea356f60690e855a341a157e605a988a1247345efab0beccc51fb4246e42e75364d8fc3f310a6cbeac85e6b62de9262b84e
   languageName: node
   linkType: hard
 
@@ -4887,7 +4887,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@sendnodes/pokt-wallet-background@workspace:packages/background"
   dependencies:
-    "@0xbigboss/webext-redux": 2.1.9
+    "@0xbigboss/webext-redux": 2.2.0
     "@ethereumjs/common": ^2.4.0
     "@ethereumjs/tx": ^3.3.0
     "@ethersproject/abstract-provider": ^5.5.1
@@ -4939,7 +4939,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@sendnodes/pokt-wallet-ui@workspace:packages/ui-legacy"
   dependencies:
-    "@0xbigboss/webext-redux": 2.1.9
+    "@0xbigboss/webext-redux": 2.2.0
     "@ethersproject/abstract-provider": ^5.5.1
     "@ethersproject/address": ^5.5.0
     "@ethersproject/bignumber": ^5.7.0
@@ -5015,6 +5015,7 @@ __metadata:
     is-ci: ^3.0.1
     pre-commit: ^1.2.2
     prettier: ^2.8.1
+    rimraf: ^4.1.1
     rome: ^11.0.0
     turbo: ^1.6.3
     typescript: ^4.6.4
@@ -21201,6 +21202,15 @@ __metadata:
   bin:
     rimraf: bin.js
   checksum: 87f4164e396f0171b0a3386cc1877a817f572148ee13a7e113b238e48e8a9f2f31d009a92ec38a591ff1567d9662c6b67fd8818a2dbbaed74bc26a87a2a4a9a0
+  languageName: node
+  linkType: hard
+
+"rimraf@npm:^4.1.1":
+  version: 4.1.1
+  resolution: "rimraf@npm:4.1.1"
+  bin:
+    rimraf: dist/cjs/src/bin.js
+  checksum: f52d46f59c1a532b3d0f73cb5228ff8f7df4ee87b9df95cf655788ea186c935b5c6ab4c45b66f8de5ed1e3690f58ff83f9a5b0ba1ae2e76a9bf36415f37732f7
   languageName: node
   linkType: hard
 
