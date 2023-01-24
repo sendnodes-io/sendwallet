@@ -4,3 +4,4 @@ dist
 *.ts
 *.tsx
 size-plugin.json
+*.json
