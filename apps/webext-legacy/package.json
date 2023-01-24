@@ -20,6 +20,7 @@
     "dapp"
   ],
   "scripts": {
+    "clean": "rimraf dist",
     "dev": "run-p devtools \"dev:webpack {@}\" --",
     "generate:validators": "ts-node background/generate-validators.ts",
     "build": "webpack --mode=production",

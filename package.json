@@ -21,6 +21,8 @@
   ],
   "scripts": {
     "build": "turbo run build",
+    "clean": "turbo run clean",
+    "clean:turbo": "rimraf ./node_modules/.cache",
     "dev:webext": "turbo run dev --filter=webext",
     "dev:legacy": "turbo run dev --filter=webext-legacy",
     "build:webext": "turbo run build --filter=webext",
@@ -47,6 +49,7 @@
     "is-ci": "^3.0.1",
     "pre-commit": "^1.2.2",
     "prettier": "^2.8.1",
+    "rimraf": "^4.1.1",
     "rome": "^11.0.0",
     "turbo": "^1.6.3",
     "typescript": "^4.6.4"
