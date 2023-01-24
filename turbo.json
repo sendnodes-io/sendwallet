@@ -39,12 +39,14 @@
       "outputs": []
     },
     "clean": {
+      "cache": false,
       "outputs": [],
       "dependsOn": [
         "^//#clean:turbo"
       ]
     },
     "//#clean:turbo": {
+      "cache": false,
       "outputs": []
     }
   }
