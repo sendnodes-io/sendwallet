@@ -12,7 +12,8 @@ import type {
 } from "webpack";
 import type { Configuration as WebpackDevServerConfiguration } from "webpack-dev-server";
 import HtmlWebpackPlugin from "html-webpack-plugin";
-import type { TamaguiOptions } from "@tamagui/helpers-node";
+// import type { TamaguiOptions } from "@tamagui/helpers-node";
+import { TamaguiPlugin } from "tamagui-loader";
 import MiniCSSExtractPlugin from "mini-css-extract-plugin";
 import { merge as webpackMerge } from "webpack-merge";
 import Dotenv from "dotenv-webpack";
@@ -42,7 +43,7 @@ const isProduction = NODE_ENV === "production";
 const uiRoot = path.resolve(__dirname, "..", "..", "packages", "ui-legacy");
 const outputDir = path.resolve(process.env.WEBPACK_OUTPUT_DIR || __dirname);
 
-const tamaguiOptions: TamaguiOptions = {
+const tamaguiOptions = {
 	config: "./tamagui.config.ts",
 	components: ["tamagui", "app", "@my/ui"],
 	importsWhitelist: [],
@@ -58,10 +59,11 @@ const baseConfig: Configuration = {
 		static: {
 			directory: path.join(__dirname, "dist"),
 		},
+		hot: true,
 		compress: true,
 		port: 9000,
 	},
-	stats: "errors-only",
+	stats: "normal", // 'detailed'
 	entry: {
 		popup: "./src/popup.tsx",
 		// "tab-ui": "./src/tab-ui.ts",
@@ -76,33 +78,35 @@ const baseConfig: Configuration = {
 			{
 				oneOf: [
 					{
-						test: /.*\.[tj]s$/,
+						test: /\.(ts|js)x?$/,
 						use: [
-							"thread-loader",
+							// "thread-loader",
 							{
 								loader: "esbuild-loader",
 								options: {
+									target: "es2020",
 									loader: "tsx",
+									minify: false,
 								},
 							},
 						],
 					},
-					{
-						test: /.*\.[tj]sx$/,
-						use: [
-							"thread-loader",
-							{
-								loader: "esbuild-loader",
-								options: {
-									loader: "tsx",
-								},
-							},
-							{
-								loader: "tamagui-loader",
-								options: tamaguiOptions,
-							},
-						],
-					},
+					// {
+					// 	test: /.*\.[tj]sx$/,
+					// 	use: [
+					// 		"thread-loader",
+					// 		{
+					// 			loader: "esbuild-loader",
+					// 			options: {
+					// 				loader: "tsx",
+					// 			},
+					// 		},
+					// 		{
+					// 			loader: "tamagui-loader",
+					// 			options: tamaguiOptions,
+					// 		},
+					// 	],
+					// },
 
 					{
 						test: /\.css$/,
@@ -130,6 +134,8 @@ const baseConfig: Configuration = {
 		environment: { dynamicImport: true },
 	},
 	resolve: {
+		mainFields: ["module:jsx", "browser", "module", "main"],
+
 		extensions: [
 			".web.tsx",
 			".web.ts",
@@ -150,11 +156,14 @@ const baseConfig: Configuration = {
 			http: require.resolve("stream-http"),
 		},
 		alias: {
+			"react-native": require.resolve("react-native-web"),
 			"react-native$": require.resolve("react-native-web"),
 			"react-native-svg": require.resolve("@tamagui/react-native-svg"),
 		},
 	},
 	plugins: [
+		new TamaguiPlugin(tamaguiOptions) as unknown as WebpackPluginInstance,
+
 		new MiniCSSExtractPlugin({
 			filename: "static/css/[name].[contenthash].css",
 			ignoreOrder: true,
