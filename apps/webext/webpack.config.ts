@@ -19,7 +19,7 @@ import { merge as webpackMerge } from "webpack-merge";
 import Dotenv from "dotenv-webpack";
 import CopyPlugin, { ObjectPattern } from "copy-webpack-plugin";
 import WebExtension from "webpack-target-webextension";
-import childProcess from "child_process";
+import { getBranch, getRevision } from "build-utils/src/index";
 import WebExtensionArchivePlugin from "build-utils/src/web-extension-archive-webpack-plugin";
 import type { Manifest } from "webextension-polyfill";
 const { ESBuildMinifyPlugin } = require("esbuild-loader");
@@ -249,14 +249,8 @@ const modeConfigs: {
 		},
 	}),
 	production: (browser) => {
-		const revision = childProcess
-			.execSync("git rev-parse --short HEAD")
-			.toString()
-			.trim();
-		const branch = childProcess
-			.execSync("git rev-parse --abbrev-ref HEAD")
-			.toString()
-			.trim();
+		const branch = getBranch();
+		const revision = getRevision();
 		const date = new Date();
 		return {
 			devtool: false,

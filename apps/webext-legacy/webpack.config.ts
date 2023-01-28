@@ -15,19 +15,13 @@ import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import WebExtension from "webpack-target-webextension";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
-import childProcess from "child_process";
 import StatoscopeWebpackPlugin from "@statoscope/webpack-plugin";
 import CssMinimizerPlugin from "css-minimizer-webpack-plugin";
+import { getBranch, getRevision } from "build-utils/src/index";
 import WebExtensionArchivePlugin from "build-utils/src/web-extension-archive-webpack-plugin";
 
-const revision = childProcess
-	.execSync("git rev-parse --short HEAD")
-	.toString()
-	.trim();
-const branch = childProcess
-	.execSync("git rev-parse --abbrev-ref HEAD")
-	.toString()
-	.trim();
+const branch = getBranch();
+const revision = getRevision();
 
 const supportedBrowsers = [
 	// "brave",
