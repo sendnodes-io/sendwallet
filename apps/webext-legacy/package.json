@@ -104,5 +104,10 @@
   },
   "engines": {
     "node": "16"
+  },
+  "workspaces": {
+    "installConfig": {
+      "hoistingLimits": "dependencies"
+    }
   }
 }
