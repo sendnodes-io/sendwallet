@@ -34,10 +34,10 @@ You'll need a few tools to get started.
 - Yarn
 
 ```sh
-yarn start --config-name chrome # or firefox
+yarn build:legacy --  --config-name chrome # or firefox
 ```
 
-Once that finishes, please find the built files in the `./dist` directory. Then, visit <a href="chrome://extensions">chrome://extensions</a> load the `./dist/chrome` directory as an unpacked extension.
+Once that finishes, please find the built files in the `./apps/webext-legacy/dist` directory. Then, visit <a href="chrome://extensions">chrome://extensions</a> load the `./apps/webext-legacy/dist/chrome` directory as an unpacked extension.
 
 Prepare safari build
 
