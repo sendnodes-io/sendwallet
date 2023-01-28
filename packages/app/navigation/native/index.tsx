@@ -21,6 +21,21 @@ export function NativeNavigation() {
 					title: "Home",
 				}}
 			/>
+			{/* TODO for wallet:
+					- Onboarding
+						- Create
+						- Restore
+					- Accounts
+						- Send
+						- Receive
+						- Transactions
+						- Notifications
+						- Staking
+						- Performance
+					- Analytics
+					- Settings
+					- About
+			*/}
 			<Stack.Screen
 				name="user-detail"
 				component={UserDetailScreen}
