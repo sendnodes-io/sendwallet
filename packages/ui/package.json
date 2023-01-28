@@ -28,5 +28,10 @@
   },
   "devDependencies": {
     "@tamagui/build": "1.1.7"
+  },
+  "workspaces": {
+    "installConfig": {
+      "hoistingLimits": "dependencies"
+    }
   }
 }

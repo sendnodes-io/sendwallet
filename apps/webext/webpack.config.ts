@@ -86,7 +86,6 @@ const baseConfig: Configuration = {
 								options: {
 									target: "es2020",
 									loader: "tsx",
-									minify: false,
 								},
 							},
 						],
