@@ -24,9 +24,12 @@
     "@tamagui/react-native-media-driver": "1.1.7",
     "@tamagui/shorthands": "1.1.7",
     "@tamagui/theme-base": "1.1.7",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "tamagui": "1.1.7"
   },
   "devDependencies": {
+    "@0xbigboss/webext-redux": "^2.2.0",
     "@tamagui/build": "1.1.7"
   },
   "workspaces": {

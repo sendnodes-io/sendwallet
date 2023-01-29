@@ -22,7 +22,7 @@ export function NavigationProvider({
 					prefixes: [Linking.createURL("/")],
 					config: {
 						screens: {
-							"user-detail": "/index.html?userid=:id",
+							"user-detail": "/user-details.html",
 							home: "/index.html",
 						},
 					},

@@ -15,6 +15,8 @@ import { useState } from "react";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "app/navigation/native";
 
+import { Sandbox } from "@my/ui/src/components/Sandbox";
+
 export function HomeScreen({
 	navigation,
 }: NativeStackScreenProps<RootStackParamList, "home">) {
@@ -49,7 +51,10 @@ export function HomeScreen({
 						give it a ⭐️
 					</Anchor>
 				</Paragraph>
+
 			</YStack>
+
+			<Sandbox />
 
 			<XStack>
 				<Button

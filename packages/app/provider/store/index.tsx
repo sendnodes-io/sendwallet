@@ -2,16 +2,14 @@ import { Store } from "@0xbigboss/webext-redux";
 import { browser, newProxyStore } from "@sendnodes/pokt-wallet-background";
 import { setActiveTab } from "@sendnodes/pokt-wallet-background/redux-slices/ui";
 import React, {
-	ComponentType,
 	CSSProperties,
 	useEffect,
 	useState,
 } from "react";
-import SharedSplashScreen from "../Shared/SharedSplashScreen";
 
-export default function CoreStartStore({
-	Component,
-}: { Component: React.FC<{ store: Store }> }) {
+export default function StoreProvider({
+	children,
+}) {
 	const [store, setStore] = useState<Store | null>(null);
 
 	async function init() {
@@ -39,10 +37,10 @@ export default function CoreStartStore({
 				className="flex flex-col items-center justify-center h-full dashed_border"
 				style={{ "--main-margin": 0 } as CSSProperties}
 			>
-				<SharedSplashScreen />
+				loading...
 			</div>
 		);
 	} else {
-		return <Component store={store} />;
+		return <>{children}</>;
 	}
 }

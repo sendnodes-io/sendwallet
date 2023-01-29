@@ -78,7 +78,7 @@ const baseConfig: Configuration = {
 			{
 				oneOf: [
 					{
-						test: /\.(ts|js)x?$/,
+						test: /\.(ts|js)$/,
 						use: [
 							// "thread-loader",
 							{
@@ -90,22 +90,23 @@ const baseConfig: Configuration = {
 							},
 						],
 					},
-					// {
-					// 	test: /.*\.[tj]sx$/,
-					// 	use: [
-					// 		"thread-loader",
-					// 		{
-					// 			loader: "esbuild-loader",
-					// 			options: {
-					// 				loader: "tsx",
-					// 			},
-					// 		},
-					// 		{
-					// 			loader: "tamagui-loader",
-					// 			options: tamaguiOptions,
-					// 		},
-					// 	],
-					// },
+					{
+						test: /.*\.[tj]sx$/,
+						use: [
+							// "thread-loader",
+							{
+								loader: "esbuild-loader",
+								options: {
+									target: "es2020",
+									loader: "tsx",
+								},
+							},
+							{
+								loader: "tamagui-loader",
+								options: tamaguiOptions,
+							},
+						],
+					},
 
 					{
 						test: /\.css$/,
@@ -161,8 +162,6 @@ const baseConfig: Configuration = {
 		},
 	},
 	plugins: [
-		new TamaguiPlugin(tamaguiOptions) as unknown as WebpackPluginInstance,
-
 		new MiniCSSExtractPlugin({
 			filename: "static/css/[name].[contenthash].css",
 			ignoreOrder: true,
@@ -177,6 +176,11 @@ const baseConfig: Configuration = {
 		new webpack.ProvidePlugin({
 			Buffer: ["buffer", "Buffer"],
 			process: ["process"],
+		}),
+		new webpack.BannerPlugin({
+			banner: "window = self;",
+			test: "background",
+			raw: true,
 		}),
 		new CopyPlugin({
 			patterns: [
@@ -210,6 +214,16 @@ const baseConfig: Configuration = {
 		new HtmlWebpackPlugin({
 			template: "./src/index.html",
 			filename: "index.html",
+			chunks: ["popup"],
+			inject: "body",
+			minify: {
+				ignoreCustomComments: [/<!-- inline_css_plugin -->/],
+			},
+			htmlCssClass: "popup",
+		}),
+		new HtmlWebpackPlugin({
+			template: "./src/index.html",
+			filename: "user-details.html",
 			chunks: ["popup"],
 			inject: "body",
 			minify: {

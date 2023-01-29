@@ -5,7 +5,7 @@
   "scripts": {
     "clean": "rimraf dist",
     "dev": "run-p dev:tools \"dev:webpack {@}\" --",
-    "dev:webpack": "DISABLE_EXTRACTION=true NODE_ENV=development webpack serve --mode=development",
+    "dev:webpack": "TAMAGUI_TARGET=web DISABLE_EXTRACTION=true NODE_ENV=development webpack serve --mode=development",
     "dev:tools": "yarn dlx @redux-devtools/cli --hostname=localhost --port=8000",
     "build": "TAMAGUI_TARGET=web NODE_ENV=production webpack build --mode production",
     "lint": "run-p 'lint:*'",
@@ -43,6 +43,7 @@
     "webpack-target-webextension": "^1.0.4"
   },
   "dependencies": {
+    "@sendnodes/pokt-wallet-background": "*",
     "@sendnodes/provider-bridge": "*",
     "@tamagui/react-native-svg": "1.1.7",
     "app": "*",
