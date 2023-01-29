@@ -1,12 +1,15 @@
 {
   "extends": "../../tsconfig",
   "compilerOptions": {
+    "baseUrl": "../..",
+    "rootDir": "../..",
     "target": "esnext",
     "lib": ["esnext", "DOM", "DOM.Iterable", "WebWorker"],
-    "baseUrl": ".",
     "paths": {
       "react-native": ["react-native-web"]
     },
+    "declaration": false,
+
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -17,23 +20,16 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "react-jsx",
-    "incremental": true
+    "jsx": "preserve",
+    "incremental": true,
+    "types": []
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "webext-env.d.ts",
-    "webpack.config.ts",
-    "../../packages/ui",
-    "../../packages/background",
-    "../../packages/provider-bridge",
-    "../../packages/provider-bridge-shared",
-    "../../packages/window-provider",
-    "../../packages/app"
-  ],
+  "include": ["src", "webext-env.d.ts", "webpack.config.ts"],
   "exclude": [
     "node_modules",
+    "node_modules/**",
+    "../../node_modules/@sendnodes",
+    "../../node_modules/@sendnodes/**",
     "dist",
     "../../packages/background/jest*",
     "../../packages/background/tests"

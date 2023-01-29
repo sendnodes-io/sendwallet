@@ -1,15 +1,9 @@
 import { Store } from "@0xbigboss/webext-redux";
 import { browser, newProxyStore } from "@sendnodes/pokt-wallet-background";
 import { setActiveTab } from "@sendnodes/pokt-wallet-background/redux-slices/ui";
-import React, {
-	CSSProperties,
-	useEffect,
-	useState,
-} from "react";
+import React, { CSSProperties, useEffect, useState } from "react";
 
-export default function StoreProvider({
-	children,
-}) {
+export default function StoreProvider({ children }) {
 	const [store, setStore] = useState<Store | null>(null);
 
 	async function init() {

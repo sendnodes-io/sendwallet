@@ -51,7 +51,6 @@ export function HomeScreen({
 						give it a ⭐️
 					</Anchor>
 				</Paragraph>
-
 			</YStack>
 
 			<Sandbox />
