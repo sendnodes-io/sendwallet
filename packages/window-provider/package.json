@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "SendWallet: window provider is responsible for creating the in-page object for communication.",
   "main": "index.ts",
+  "private": true,
   "repository": "git@github.com:sendnodes/pokt-wallet.git",
   "authors": [
     "Dire <dire@sendnodes.io>",

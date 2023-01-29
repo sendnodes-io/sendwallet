@@ -98,7 +98,7 @@ async function generateLedgerId(
 		throw new Error("Missing device model descriptor!");
 	}
 
-	switch (transport.deviceModel.id) {
+	switch (transport.deviceModel.id as unknown as DeviceModelId) {
 		case DeviceModelId.nanoS:
 			extensionDeviceType = LedgerType.LEDGER_NANO_S;
 			break;

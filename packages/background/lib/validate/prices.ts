@@ -1,5 +1,12 @@
 import { JSONSchemaType } from "ajv";
 
+export type CoingeckoPriceData = {
+	[coinId: string]: {
+		last_updated_at: number;
+		[currencyId: string]: number;
+	};
+};
+
 // Ajv's typing incorrectly requires nullable: true for last_updated_at because
 // the remaining keys in the coin entry are optional. This in turn interferes
 // with the fact that last_updated_at is listed in `required`. The two `as`
@@ -17,23 +24,9 @@ export const coingeckoPriceSchema: JSONSchemaType<CoingeckoPriceData> = {
 	required: [],
 	additionalProperties: {
 		type: "object",
-		properties: {
-			last_updated_at: { type: "number" } as {
-				type: "number";
-				nullable: true;
-			},
+		required: ["last_updated_at"],
+		additionalProperties: {
+			type: "number",
 		},
-		required: ["last_updated_at"] as never[],
-		additionalProperties: { type: "number", nullable: true },
-		nullable: true,
 	},
-};
-
-export type CoingeckoPriceData = {
-	[coinId: string]:
-		| {
-				last_updated_at: number;
-				[currencyId: string]: number | undefined;
-		  }
-		| undefined;
 };

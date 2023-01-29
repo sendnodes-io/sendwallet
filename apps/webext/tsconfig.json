@@ -1,30 +1,32 @@
 {
-  "extends": "../../tsconfig",
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
     "baseUrl": "../..",
     "rootDir": "../..",
     "target": "esnext",
     "lib": ["esnext", "DOM", "DOM.Iterable", "WebWorker"],
-    "paths": {
-      "react-native": ["react-native-web"]
-    },
-    "declaration": false,
-
     "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
-    "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "jsx": "preserve",
-    "incremental": true,
-    "types": []
+    "strict": true,
+    "noEmit": true,
+    "paths": {
+      "react-native": ["react-native-web"]
+    }
   },
-  "include": ["src", "webext-env.d.ts", "webpack.config.ts"],
+  "include": [
+    "src",
+    "webext-env.d.ts",
+    "webpack.config.ts",
+    "../../packages/app",
+    "../../packages/ui",
+    "../../packages/background",
+    "../../packages/provider-bridge"
+  ],
   "exclude": [
     "node_modules",
     "node_modules/**",
@@ -32,6 +34,7 @@
     "../../node_modules/@sendnodes/**",
     "dist",
     "../../packages/background/jest*",
-    "../../packages/background/tests"
+    "../../packages/background/tests",
+    "../../packages/ui-legacy"
   ]
 }

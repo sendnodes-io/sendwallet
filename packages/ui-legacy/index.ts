@@ -1,7 +1,5 @@
-import { newProxyStore } from "@sendnodes/pokt-wallet-background";
-import { setActiveTab } from "@sendnodes/pokt-wallet-background/redux-slices/ui";
 import CoreStartStore from "./components/Core/CoreStartStore";
-import React, { ComponentType } from "react";
+import React, { FC } from "react";
 import ReactDOM from "react-dom";
 import type { Store } from "@0xbigboss/webext-redux";
 import logger from "@sendnodes/pokt-wallet-background/lib/logger";
@@ -18,10 +16,7 @@ logger.info(
 	`Starting SendWallet UI in env:${process.env.NODE_ENV} branch:${process.env.GIT_BRANCH} commit:${process.env.GIT_COMMIT}`,
 );
 
-async function renderApp(
-	component: ComponentType<{ store: Store }>,
-	attempts = 0,
-) {
+async function renderApp(component: FC<{ store: Store }>, attempts = 0) {
 	const rootElement = document.getElementById("pokt-wallet-root");
 
 	if (!rootElement) {
@@ -37,7 +32,7 @@ async function renderApp(
 }
 
 export async function attachUiToRootElement(
-	component: ComponentType<{ store: Store }>,
+	component: FC<{ store: Store }>,
 ): Promise<void> {
 	await renderApp(component);
 }

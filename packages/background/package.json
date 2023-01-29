@@ -2,6 +2,7 @@
   "name": "@sendnodes/pokt-wallet-background",
   "version": "0.0.1",
   "description": "SendWallet: api implementation.",
+  "private": true,
   "main": "index.ts",
   "repository": "git@github.com:sendnodes/pokt-wallet.git",
   "authors": [
@@ -17,6 +18,10 @@
     "wallet",
     "web3",
     "dapp"
+  ],
+  "module:jsx": "./index.ts",
+  "files": [
+    "**/*.ts"
   ],
   "scripts": {
     "test": "jest"

@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "skipLibCheck": true,
     "strictNullChecks": true,
     "noUncheckedIndexedAccess": true,
     "paths": {

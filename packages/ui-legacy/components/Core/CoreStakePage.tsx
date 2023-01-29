@@ -384,9 +384,11 @@ export default function CoreStakePage(props: Props): ReactElement {
 					<div className="xl:px-32 lg:px-24 lg:ml-8 flex flex-col grow w-full ">
 						<main className="flex flex-col flex-1 w-full min-h-[48rem] grow">
 							<div className="flex flex-col grow px-4 sm:px-8 lg:px-0 py-8 xl:py-12 justify-center w-full h-full">
-								{isError && <ErrorFallback error={isError as Error} />}
-								{!isError && children}
-								<Snackbar />
+								<>
+									{isError && <ErrorFallback error={isError as Error} />}
+									{!isError && children}
+									<Snackbar />
+								</>
 							</div>
 						</main>
 					</div>

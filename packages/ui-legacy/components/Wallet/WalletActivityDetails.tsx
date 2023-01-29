@@ -16,10 +16,14 @@ function DetailRowItem(props: DetailRowItemProps): ReactElement {
 	return (
 		<li>
 			{label}
-			<div className="right">
-				{value}
-				<div className="value_detail">{valueDetail}</div>
-			</div>
+			<>
+				<div className="right">
+					<>
+						{value}
+						<div className="value_detail">{valueDetail}</div>
+					</>
+				</div>
+			</>
 			<style jsx>
 				{`
           li {

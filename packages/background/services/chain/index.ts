@@ -1502,7 +1502,7 @@ export default class ChainService extends BaseService<Events> {
 							this.remoteConfig,
 							`${network.family}.${network.chainID}.rpc`,
 							this.pocketNetwork?.rcpUrl,
-						) ?? this.pocketNetwork?.rcpUrl,
+						) ?? this.pocketNetwork?.rcpUrl!,
 					);
 					logger.debug("Attempted to configure with remote config", {
 						rpcUrl: pocketRPC.toString(),

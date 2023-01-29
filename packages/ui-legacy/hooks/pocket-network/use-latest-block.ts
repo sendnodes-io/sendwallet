@@ -29,7 +29,7 @@ function getPocketRPCUrl() {
 					remoteConfig,
 					`${POCKET.family}.${POCKET.chainID}.rpc`,
 					POCKET.rcpUrl,
-				) ?? POCKET.rcpUrl,
+				) ?? POCKET.rcpUrl!,
 			);
 			pocketRpcUrl = pocketRPC.toString();
 			logger.debug("Configuring with remote config", {

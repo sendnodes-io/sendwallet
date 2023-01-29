@@ -21,7 +21,7 @@ export default function SharedModalPopup({
 	isOpen,
 	minHeight,
 	closeOnOverlayClick = true,
-}: SharedModalProps): ReactElement {
+}: SharedModalProps) {
 	const ref = useRef(null);
 
 	useOnClickOutside(ref, closeOnOverlayClick ? onClose : () => {});
