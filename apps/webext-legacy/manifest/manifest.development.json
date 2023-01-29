@@ -1,4 +1,9 @@
 {
   "name": "[DEV] SendWallet",
-  "description": "DEVELOPMENT VERSION.... DO NOT SUBMIT TO STORES"
+  "description": "DEVELOPMENT VERSION.... DO NOT SUBMIT TO STORES",
+  "content_security_policy": "object-src 'self'; script-src 'self' 'unsafe-eval' http://localhost:8097;",
+  "browser_action": {
+    "default_title": "[DEV] SendWallet"
+  },
+  "web_accessible_resources": ["*.json", "*.txt", "*.js", "*.css"]
 }

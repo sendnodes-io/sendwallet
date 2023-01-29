@@ -39,7 +39,6 @@ export default function LedgerPanelContainer({
 
         .heading {
           margin: 0.25rem;
-          font-family: "Quincy CF";
           font-size: 36px;
           font-weight: 500;
           line-height: 42px;

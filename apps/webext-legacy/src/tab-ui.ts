@@ -2,12 +2,6 @@ import "@sendnodes/pokt-wallet-ui/public/variables.css";
 import "@sendnodes/pokt-wallet-ui/public/index.css";
 import "@sendnodes/pokt-wallet-ui/public/tab.css";
 
-// inject extension reload if dev
-if (process.env.NODE_ENV === "development") {
-	const liveReloadScript = document.createElement("script");
-	liveReloadScript.src = "./dev-utils/extension-reload.js";
-	document.body.appendChild(liveReloadScript);
-}
 self.PROCESS_ID = `tab-ui-${Math.random()}.${new Date().getTime()}`;
 
 /**

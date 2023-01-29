@@ -49,7 +49,6 @@ export default function LedgerConnectPopup(): ReactElement {
 
         .main {
           margin: 0.25rem 0;
-          font-family: "Quincy CF";
           font-weight: 500;
           font-size: 36px;
           line-height: 42px;

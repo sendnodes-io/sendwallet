@@ -1,6 +1,6 @@
 import path from "path";
 import webpack, {
-	Configuration,
+	Configuration as WebpackConfiguration,
 	DefinePlugin,
 	WebpackOptionsNormalized,
 	WebpackPluginInstance,
@@ -19,6 +19,14 @@ import StatoscopeWebpackPlugin from "@statoscope/webpack-plugin";
 import CssMinimizerPlugin from "css-minimizer-webpack-plugin";
 import { getBranch, getRevision } from "build-utils/src/index";
 import WebExtensionArchivePlugin from "build-utils/src/web-extension-archive-webpack-plugin";
+import type { Configuration as WebpackDevServerConfiguration } from "webpack-dev-server";
+import ReactRefreshWebpackPlugin from "@pmmmwh/react-refresh-webpack-plugin";
+
+const isDevelopment = process.env.NODE_ENV !== "production";
+
+interface Configuration extends WebpackConfiguration {
+	devServer?: WebpackDevServerConfiguration;
+}
 
 const branch = getBranch();
 const revision = getRevision();
@@ -34,22 +42,27 @@ const supportedBrowsers = [
 const outputDir = path.resolve(process.env.WEBPACK_OUTPUT_DIR || __dirname);
 const uiRoot = path.resolve(__dirname, "..", "..", "packages", "ui-legacy");
 
+const entry: { [key: string]: string | string[] } = {
+	ui: "./src/ui.ts",
+	"tab-ui": "./src/tab-ui.ts",
+	"stake-ui": "./src/stake-ui.ts",
+	background: "./src/background.ts",
+	"background-ui": "./src/background-ui.ts",
+	"window-provider": "./src/window-provider.ts",
+	"provider-bridge": "./src/provider-bridge.ts",
+};
+
 // Replicated and adjusted for each target browser and the current build mode.
 const baseConfig: Configuration = {
-	devtool: "source-map",
+	devtool: !isDevelopment ? undefined : "eval-cheap-source-map",
+	devServer: {
+		hot: true,
+	},
 	watchOptions: {
 		ignored: "**/node_modules",
 	},
 	stats: "errors-only",
-	entry: {
-		ui: "./src/ui.ts",
-		"tab-ui": "./src/tab-ui.ts",
-		"stake-ui": "./src/stake-ui.ts",
-		background: "./src/background.ts",
-		"background-ui": "./src/background-ui.ts",
-		"window-provider": "./src/window-provider.ts",
-		"provider-bridge": "./src/provider-bridge.ts",
-	},
+	entry,
 	module: {
 		rules: [
 			{
@@ -58,12 +71,15 @@ const baseConfig: Configuration = {
 				exclude: /node_modules(?!\/@sendnodes)|webpack|packages\/ui-legacy/,
 				// exclude: /node_modules/,
 				use: [
-					"thread-loader",
+					// "thread-loader",
 					{
 						loader: "babel-loader",
 						options: {
 							cacheDirectory: true,
 							rootMode: "upward",
+							plugins: [
+								isDevelopment && require.resolve("react-refresh/babel"),
+							].filter(Boolean),
 						},
 					},
 				],
@@ -81,6 +97,9 @@ const baseConfig: Configuration = {
 						options: {
 							cacheDirectory: true,
 							rootMode: "upward",
+							plugins: [
+								isDevelopment && require.resolve("react-refresh/babel"),
+							].filter(Boolean),
 						},
 					},
 					{
@@ -241,12 +260,7 @@ const baseConfig: Configuration = {
 		}),
 	],
 	optimization: {
-		splitChunks: {
-			chunks: "all",
-			minSize: 1e4,
-			enforceSizeThreshold: 2.5e5,
-			maxSize: 5e5,
-		},
+		minimize: false,
 	},
 };
 
@@ -254,42 +268,39 @@ const baseConfig: Configuration = {
 const modeConfigs: {
 	[mode: string]: (browser: string) => Partial<Configuration>;
 } = {
-	development: () => ({
-		entry:
-			process.env.ENABLE_REACT_DEVTOOLS === "true"
-				? {
-						ui: ["react-devtools", "./src/ui.ts"],
-						"tab-ui": ["react-devtools", "./src/tab-ui.ts"],
-						"stake-ui": ["react-devtools", "./src/stake-ui.ts"],
-				  }
-				: undefined,
-		plugins: [
-			new LiveReloadPlugin({
-				useSourceHash: true,
-				delay: 400,
-			}),
-			new CopyPlugin({
-				patterns: ["dev-utils/*.js"],
-				// Forced cast below due to an incompatibility between the webpack version refed in @types/copy-webpack-plugin and our local webpack version.
-			}) as unknown as WebpackPluginInstance,
-			new StatoscopeWebpackPlugin(),
-		],
-		optimization: {
-			minimizer: [
-				new TerserPlugin({
-					terserOptions: {
-						mangle: false,
-						compress: false,
-						output: {
-							beautify: true,
-							indent_level: 2, // eslint-disable-line camelcase
-						},
-					},
-				}),
-				new CssMinimizerPlugin(),
+	development: () => {
+		// process.env.ENABLE_REACT_DEVTOOLS === "true"
+		// 	? {
+		// 			ui: ["react-devtools", "./src/ui.ts"],
+		// 			"tab-ui": ["react-devtools", "./src/tab-ui.ts"],
+		// 			"stake-ui": ["react-devtools", "./src/stake-ui.ts"],
+		// 	  }
+		// 	: undefined;
+
+		// let devEntry = Object.entries(entry).reduce((acc, [key, value]) => {
+		// 	value = Array.isArray(value) ? value : [value];
+		// 	acc[key] = ["webpack-hot-middleware/client?reload=true", ...value];
+		// 	return acc;
+		// }, {} as typeof entry);
+
+		// console.log("devEntry", devEntry);
+
+		return {
+			// entry: devEntry,
+			plugins: [
+				// new webpack.HotModuleReplacementPlugin(),
+				// new CopyPlugin({
+				// 	patterns: ["dev-utils/*.js"],
+				// 	// Forced cast below due to an incompatibility between the webpack version refed in @types/copy-webpack-plugin and our local webpack version.
+				// }) as unknown as WebpackPluginInstance,
+				// new StatoscopeWebpackPlugin(),
+				new ReactRefreshWebpackPlugin(),
 			],
-		},
-	}),
+			optimization: {
+				minimize: false,
+			},
+		};
+	},
 	production: (browser) => {
 		const date = new Date();
 		return {
@@ -380,23 +391,24 @@ export default (
 					background: {
 						entry: "background",
 						// !! Add this to support manifest v3
-						manifest: browser === "chrome" ? 3 : 2,
-						classicLoader: true,
+						// manifest: browser === "chrome" ? 3 : 2,
+						// manifest: 2,
+						// classicLoader: true,
 					},
 					weakRuntimeCheck: true,
-					hmrConfig: false,
+					// hmrConfig: false,
 				}),
 			],
 		});
-		// console.log(
-		//   "Building for browser: ",
-		//   browser,
-		//   " in mode: ",
-		//   mode,
-		//   " to: ",
-		//   distPath,
-		//   " with config: ",
-		//   mergedConfig
-		// )
+		console.log(
+			"Building for browser: ",
+			browser,
+			" in mode: ",
+			mode,
+			" to: ",
+			distPath,
+			" with config: ",
+			mergedConfig,
+		);
 		return mergedConfig;
 	});

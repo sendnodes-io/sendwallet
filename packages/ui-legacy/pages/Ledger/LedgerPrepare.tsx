@@ -41,7 +41,7 @@ export default function LedgerPrepare({
 			<ol className="steps">
 				<li>Plug in a single Ledger</li>
 				<li>Enter pin to unlock</li>
-				<li>Open Ethereum App</li>
+				<li>Open Pocket App</li>
 			</ol>
 			<LedgerContinueButton onClick={onContinue}>
 				{buttonLabel}

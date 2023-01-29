@@ -3682,6 +3682,45 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@pmmmwh/react-refresh-webpack-plugin@npm:^0.5.10":
+  version: 0.5.10
+  resolution: "@pmmmwh/react-refresh-webpack-plugin@npm:0.5.10"
+  dependencies:
+    ansi-html-community: ^0.0.8
+    common-path-prefix: ^3.0.0
+    core-js-pure: ^3.23.3
+    error-stack-parser: ^2.0.6
+    find-up: ^5.0.0
+    html-entities: ^2.1.0
+    loader-utils: ^2.0.4
+    schema-utils: ^3.0.0
+    source-map: ^0.7.3
+  peerDependencies:
+    "@types/webpack": 4.x || 5.x
+    react-refresh: ">=0.10.0 <1.0.0"
+    sockjs-client: ^1.4.0
+    type-fest: ">=0.17.0 <4.0.0"
+    webpack: ">=4.43.0 <6.0.0"
+    webpack-dev-server: 3.x || 4.x
+    webpack-hot-middleware: 2.x
+    webpack-plugin-serve: 0.x || 1.x
+  peerDependenciesMeta:
+    "@types/webpack":
+      optional: true
+    sockjs-client:
+      optional: true
+    type-fest:
+      optional: true
+    webpack-dev-server:
+      optional: true
+    webpack-hot-middleware:
+      optional: true
+    webpack-plugin-serve:
+      optional: true
+  checksum: c45beded9c56fbbdc7213a2c36131ace5db360ed704d462cc39d6678f980173a91c9a3f691e6bd3a026f25486644cd0027e8a12a0a4eced8e8b886a0472e7d34
+  languageName: node
+  linkType: hard
+
 "@pokt-network/aat-js@npm:0.1.3-rc":
   version: 0.1.3-rc
   resolution: "@pokt-network/aat-js@npm:0.1.3-rc"
@@ -9159,6 +9198,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"common-path-prefix@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "common-path-prefix@npm:3.0.0"
+  checksum: fdb3c4f54e51e70d417ccd950c07f757582de800c0678ca388aedefefc84982039f346f9fd9a1252d08d2da9e9ef4019f580a1d1d3a10da031e4bb3c924c5818
+  languageName: node
+  linkType: hard
+
 "common-tags@npm:^1.8.2":
   version: 1.8.2
   resolution: "common-tags@npm:1.8.2"
@@ -9432,6 +9478,13 @@ __metadata:
   dependencies:
     browserslist: ^4.21.4
   checksum: 4574d4507de8cba9a75e37401b3ca6e5908ab066ec717e3b34866d25f623e1aa614fb886e10973be64a6250f325dcba6809e4fae4ed43375cc3e4276c5514c13
+  languageName: node
+  linkType: hard
+
+"core-js-pure@npm:^3.23.3":
+  version: 3.27.2
+  resolution: "core-js-pure@npm:3.27.2"
+  checksum: 7cb24502a782a032ffa2af6e84abfcfeffa0c30e84c38f4d0a1d7567c8c86e2d36a7554a00ca47762606c84d2a86d99662a7158e9f4df989f3fe3c7e7c09fa45
   languageName: node
   linkType: hard
 
@@ -10683,6 +10736,15 @@ __metadata:
   dependencies:
     is-arrayish: ^0.2.1
   checksum: c1c2b8b65f9c91b0f9d75f0debaa7ec5b35c266c2cac5de412c1a6de86d4cbae04ae44e510378cb14d032d0645a36925d0186f8bb7367bcc629db256b743a001
+  languageName: node
+  linkType: hard
+
+"error-stack-parser@npm:^2.0.6":
+  version: 2.1.4
+  resolution: "error-stack-parser@npm:2.1.4"
+  dependencies:
+    stackframe: ^1.3.4
+  checksum: 3b916d2d14c6682f287c8bfa28e14672f47eafe832701080e420e7cdbaebb2c50293868256a95706ac2330fe078cf5664713158b49bc30d7a5f2ac229ded0e18
   languageName: node
   linkType: hard
 
@@ -12851,7 +12913,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"html-entities@npm:^2.3.2":
+"html-entities@npm:^2.1.0, html-entities@npm:^2.3.2":
   version: 2.3.3
   resolution: "html-entities@npm:2.3.3"
   checksum: 92521501da8aa5f66fee27f0f022d6e9ceae62667dae93aa6a2f636afa71ad530b7fb24a18d4d6c124c9885970cac5f8a52dbf1731741161002816ae43f98196
@@ -14981,7 +15043,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"loader-utils@npm:^2.0.0":
+"loader-utils@npm:^2.0.0, loader-utils@npm:^2.0.4":
   version: 2.0.4
   resolution: "loader-utils@npm:2.0.4"
   dependencies:
@@ -19450,7 +19512,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rimraf@npm:^4.1.1":
+"rimraf@npm:^4.1.1, rimraf@npm:^4.1.2":
   version: 4.1.2
   resolution: "rimraf@npm:4.1.2"
   bin:
@@ -20568,6 +20630,13 @@ __metadata:
   dependencies:
     escape-string-regexp: ^2.0.0
   checksum: 052bf4d25bbf5f78e06c1d5e67de2e088b06871fa04107ca8d3f0e9d9263326e2942c8bedee3545795fc77d787d443a538345eef74db2f8e35db3558c6f91ff7
+  languageName: node
+  linkType: hard
+
+"stackframe@npm:^1.3.4":
+  version: 1.3.4
+  resolution: "stackframe@npm:1.3.4"
+  checksum: bae1596873595c4610993fa84f86a3387d67586401c1816ea048c0196800c0646c4d2da98c2ee80557fd9eff05877efe33b91ba6cd052658ed96ddc85d19067d
   languageName: node
   linkType: hard
 
@@ -22573,6 +22642,7 @@ __metadata:
     "@babel/register": ^7.18.9
     "@ethersproject/providers": 5.5.3
     "@fortawesome/fontawesome-free": ^5.15.2
+    "@pmmmwh/react-refresh-webpack-plugin": ^0.5.10
     "@sendnodes/pokt-wallet-background": "*"
     "@sendnodes/pokt-wallet-ui": "*"
     "@sendnodes/provider-bridge": "*"
@@ -22615,8 +22685,10 @@ __metadata:
     process: ^0.11.10
     react: ^17.0.2
     react-devtools: ^4.24.4
+    react-refresh: ^0.14.0
     remotedev: ^0.2.9
     remotedev-server: ^0.3.1
+    rimraf: ^4.1.2
     size-plugin: ^2.0.2
     stream-browserify: ^3.0.0
     stream-http: ^3.2.0
@@ -22629,11 +22701,13 @@ __metadata:
     typescript: ^4.6.4
     webext-options-sync: ^2.0.1
     webextension-polyfill: ^0.10.0
-    webpack: ^5.72.1
+    webpack: ^5.75.0
+    webpack-bundle-analyzer: ^4.7.0
     webpack-cli: ^4.9.2
+    webpack-dev-server: ^4.7.4
     webpack-livereload-plugin: ^3.0.1
     webpack-merge: ^5.8.0
-    webpack-target-webextension: ^1.0.3
+    webpack-target-webextension: ^1.0.4
   languageName: unknown
   linkType: soft
 
@@ -22808,7 +22882,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack-dev-server@npm:*, webpack-dev-server@npm:^4.11.1":
+"webpack-dev-server@npm:*, webpack-dev-server@npm:^4.11.1, webpack-dev-server@npm:^4.7.4":
   version: 4.11.1
   resolution: "webpack-dev-server@npm:4.11.1"
   dependencies:
@@ -22893,7 +22967,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack-target-webextension@npm:^1.0.3, webpack-target-webextension@npm:^1.0.4":
+"webpack-target-webextension@npm:^1.0.4":
   version: 1.0.4
   resolution: "webpack-target-webextension@npm:1.0.4"
   peerDependencies:

@@ -167,9 +167,9 @@ export default class LedgerService extends BaseService<Events> {
 
 	async onConnection(productId: number): Promise<void> {
 		return this.runSerialized(async () => {
-			if (!TestedProductId(productId)) {
-				return;
-			}
+			// if (!TestedProductId(productId)) {
+			// 	return;
+			// }
 
 			this.transport = await TransportWebUSB.create();
 
