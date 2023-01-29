@@ -141,7 +141,8 @@ export default class PocketProvider extends BaseService<ServiceLifecycleEvents> 
 		super({
 			blockPolling: {
 				schedule: {
-					periodInMinutes: 0.5,
+					// manifest v2 Alarm period is less than minimum of 1 minutes. In released .crx, alarm "blockPolling" will fire approximately every 1 minutes.
+					periodInMinutes: 1,
 				},
 				handler: () => {
 					this._startEvent();

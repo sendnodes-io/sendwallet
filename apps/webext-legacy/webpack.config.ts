@@ -24,6 +24,8 @@ import ReactRefreshWebpackPlugin from "@pmmmwh/react-refresh-webpack-plugin";
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
+console.log("isDevelopment", isDevelopment);
+
 interface Configuration extends WebpackConfiguration {
 	devServer?: WebpackDevServerConfiguration;
 }
@@ -152,11 +154,6 @@ const baseConfig: Configuration = {
 		},
 	},
 	plugins: [
-		// new CleanWebpackPlugin({
-		//   dry: true,
-		//   dangerouslyAllowCleanPatternsOutsideProject: true,
-		//   cleanOnceBeforeBuildPatterns: [path.join(outputDir, "dist")],
-		// }),
 		new MiniCssExtractPlugin({
 			filename: "[name].css",
 			chunkFilename: "[id].css",
@@ -261,6 +258,11 @@ const baseConfig: Configuration = {
 	],
 	optimization: {
 		minimize: false,
+		splitChunks: {
+			minSize: 1e4,
+			enforceSizeThreshold: 2.5e5,
+			maxSize: 5e5,
+		},
 	},
 };
 
@@ -269,36 +271,17 @@ const modeConfigs: {
 	[mode: string]: (browser: string) => Partial<Configuration>;
 } = {
 	development: () => {
-		// process.env.ENABLE_REACT_DEVTOOLS === "true"
-		// 	? {
-		// 			ui: ["react-devtools", "./src/ui.ts"],
-		// 			"tab-ui": ["react-devtools", "./src/tab-ui.ts"],
-		// 			"stake-ui": ["react-devtools", "./src/stake-ui.ts"],
-		// 	  }
-		// 	: undefined;
-
-		// let devEntry = Object.entries(entry).reduce((acc, [key, value]) => {
-		// 	value = Array.isArray(value) ? value : [value];
-		// 	acc[key] = ["webpack-hot-middleware/client?reload=true", ...value];
-		// 	return acc;
-		// }, {} as typeof entry);
-
-		// console.log("devEntry", devEntry);
+		if (process.env.ENABLE_REACT_DEVTOOLS === "true") {
+			entry["ui"] = ["react-devtools", "./src/ui.ts"];
+			entry["tab-ui"] = ["react-devtools", "./src/tab-ui.ts"];
+			entry["stake-ui"] = ["react-devtools", "./src/stake-ui.ts"];
+		}
 
 		return {
-			// entry: devEntry,
-			plugins: [
-				// new webpack.HotModuleReplacementPlugin(),
-				// new CopyPlugin({
-				// 	patterns: ["dev-utils/*.js"],
-				// 	// Forced cast below due to an incompatibility between the webpack version refed in @types/copy-webpack-plugin and our local webpack version.
-				// }) as unknown as WebpackPluginInstance,
-				// new StatoscopeWebpackPlugin(),
-				new ReactRefreshWebpackPlugin(),
-			],
-			optimization: {
-				minimize: false,
-			},
+			entry,
+			plugins: [isDevelopment && new ReactRefreshWebpackPlugin()].filter(
+				Boolean,
+			) as WebpackPluginInstance[],
 		};
 	},
 	production: (browser) => {
@@ -400,15 +383,19 @@ export default (
 				}),
 			],
 		});
-		console.log(
-			"Building for browser: ",
-			browser,
-			" in mode: ",
-			mode,
-			" to: ",
-			distPath,
-			" with config: ",
-			mergedConfig,
-		);
+
+		if (process.env.DEBUG?.includes("webpack")) {
+			console.log(
+				"Building for browser: ",
+				browser,
+				" in mode: ",
+				mode,
+				" to: ",
+				distPath,
+				" with config: ",
+				mergedConfig,
+			);
+		}
+
 		return mergedConfig;
 	});
