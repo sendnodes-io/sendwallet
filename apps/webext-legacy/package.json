@@ -1,7 +1,7 @@
 {
   "name": "webext-legacy",
   "private": true,
-  "version": "0.4.4",
+  "version": "0.4.5",
   "description": "Secure your POKT with a modern and simple crypto wallet. It's your POKT, store it safely.",
   "main": "index.js",
   "repository": "git@github.com:sendnodes/sendwallet.git",
@@ -39,7 +39,7 @@
     "@sendnodes/provider-bridge-shared": "*",
     "@sendnodes/window-provider": "*",
     "buffer": "^6.0.3",
-    "react": "^17.0.2",
+    "react": "^18.2.0",
     "webext-options-sync": "^2.0.1",
     "webextension-polyfill": "^0.10.0"
   },
