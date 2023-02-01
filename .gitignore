@@ -24,3 +24,5 @@ stats.json
 *.tsbuildinfo
 
 .turbo
+
+.tamagui

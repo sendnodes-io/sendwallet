@@ -1,6 +1,5 @@
 import CoreStartStore from "./components/Core/CoreStartStore";
 import React, { FC } from "react";
-import ReactDOM from "react-dom";
 import type { Store } from "@0xbigboss/webext-redux";
 import logger from "@sendnodes/pokt-wallet-background/lib/logger";
 import Popup from "./pages/Popup";
@@ -9,6 +8,7 @@ import Stake from "./pages/Stake";
 
 import "./public/variables.css";
 import "./public/index.css";
+import { createRoot } from "react-dom/client";
 
 export { Popup, Tab, Stake };
 
@@ -25,9 +25,8 @@ async function renderApp(component: FC<{ store: Store }>, attempts = 0) {
 		);
 	}
 
-	ReactDOM.render(
+	createRoot(rootElement).render(
 		React.createElement(CoreStartStore, { Component: component }),
-		rootElement,
 	);
 }
 

@@ -10,7 +10,8 @@ export function Provider({
 	return (
 		<StoreProvider>
 			<TamaguiProvider config={config} defaultTheme="light" {...rest}>
-				<NavigationProvider>{children}</NavigationProvider>
+				{/* <NavigationProvider>{children}</NavigationProvider> */}
+				{children}
 			</TamaguiProvider>
 		</StoreProvider>
 	);

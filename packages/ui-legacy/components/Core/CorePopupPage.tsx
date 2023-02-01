@@ -1,5 +1,7 @@
 import React, { ReactElement } from "react";
 import Snackbar from "../Snackbar/Snackbar";
+import { Provider } from "app/provider";
+import { MyComponent } from "@my/ui";
 
 interface Props {
 	children: React.ReactNode;
@@ -8,9 +10,18 @@ interface Props {
 
 export default function CorePopupPage(props: Props): ReactElement {
 	const { children, hasTopBar } = props;
+	// const scheme = useColorScheme();
+	// const [loaded] = useFonts({
+	//   Inter: require('@tamagui/font-inter/otf/Inter-Medium.otf'),
+	//   InterBold: require('@tamagui/font-inter/otf/Inter-Bold.otf'),
+	// })
+
+	// if (!loaded) {
+	//   return null
+	// }
 
 	return (
-		<>
+		<Provider defaultTheme={"dark"}>
 			<main className="dashed_border">
 				{children}
 				<Snackbar />
@@ -36,7 +47,7 @@ export default function CorePopupPage(props: Props): ReactElement {
           }
         `}
 			</style>
-		</>
+		</Provider>
 	);
 }
 

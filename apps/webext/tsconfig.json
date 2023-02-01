@@ -13,7 +13,27 @@
     "strict": true,
     "noEmit": true,
     "paths": {
-      "react-native": ["react-native-web"]
+      "react-native": ["react-native-web"],
+      "app": ["../../packages/app"],
+      "app/*": ["../../packages/app/*"],
+      "@my/ui": ["../../packages/ui"],
+      "@my/ui/*": ["../../packages/ui/*"],
+      "build-utils": ["../../packages/build-utils"],
+      "build-utils/*": ["../../packages/build-utils/*"],
+      "@sendnodes/pokt-wallet-ui": ["../../packages/ui-legacy"],
+      "@sendnodes/pokt-wallet-ui/*": ["../../packages/ui-legacy/*"],
+      "@sendnodes/pokt-wallet-background": ["../../packages/background"],
+      "@sendnodes/pokt-wallet-background/*": ["../../packages/background/*"],
+      "@sendnodes/provider-bridge-shared/*": [
+        "../../packages/provider-bridge-shared/*"
+      ],
+      "@sendnodes/provider-bridge-shared": [
+        "../../packages/provider-bridge-shared"
+      ],
+      "@sendnodes/provider-bridge/*": ["../../packages/provider-bridge/*"],
+      "@sendnodes/provider-bridge": ["../../packages/provider-bridge"],
+      "@sendnodes/window-provider/*": ["../../packages/window-provider/*"],
+      "@sendnodes/window-provider": ["../../packages/window-provider"]
     }
   },
   "include": [

@@ -8,27 +8,25 @@ import webpack, {
 import { merge as webpackMerge } from "webpack-merge";
 import Dotenv from "dotenv-webpack";
 import SizePlugin from "size-plugin";
-import TerserPlugin from "terser-webpack-plugin";
-import LiveReloadPlugin from "webpack-livereload-plugin";
 import CopyPlugin, { ObjectPattern } from "copy-webpack-plugin";
 import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import WebExtension from "webpack-target-webextension";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
-import StatoscopeWebpackPlugin from "@statoscope/webpack-plugin";
-import CssMinimizerPlugin from "css-minimizer-webpack-plugin";
 import { getBranch, getRevision } from "build-utils/src/index";
 import WebExtensionArchivePlugin from "build-utils/src/web-extension-archive-webpack-plugin";
 import type { Configuration as WebpackDevServerConfiguration } from "webpack-dev-server";
 import ReactRefreshWebpackPlugin from "@pmmmwh/react-refresh-webpack-plugin";
-
-const isDevelopment = process.env.NODE_ENV !== "production";
-
-console.log("isDevelopment", isDevelopment);
+import { ESBuildMinifyPlugin } from "esbuild-loader";
 
 interface Configuration extends WebpackConfiguration {
 	devServer?: WebpackDevServerConfiguration;
 }
+
+const isDevelopment = process.env.NODE_ENV !== "production";
+const NODE_ENV = process.env.NODE_ENV || "development";
+const target = "web";
+const isProduction = NODE_ENV === "production";
 
 const branch = getBranch();
 const revision = getRevision();
@@ -42,7 +40,21 @@ const supportedBrowsers = [
 ];
 
 const outputDir = path.resolve(process.env.WEBPACK_OUTPUT_DIR || __dirname);
-const uiRoot = path.resolve(__dirname, "..", "..", "packages", "ui-legacy");
+const uiLegacyRoot = path.resolve(
+	__dirname,
+	"..",
+	"..",
+	"packages",
+	"ui-legacy",
+);
+
+const tamaguiOptions = {
+	config: "./tamagui.config.ts",
+	components: ["tamagui", "app", "@my/ui"],
+	importsWhitelist: [],
+	logTimings: false,
+	disableExtraction: !isProduction,
+};
 
 const entry: { [key: string]: string | string[] } = {
 	ui: "./src/ui.ts",
@@ -68,68 +80,105 @@ const baseConfig: Configuration = {
 	module: {
 		rules: [
 			{
-				test: /.*\.[tj]s$/,
-				// exclude: /node_modules(?!\/@sendnodes)|webpack/,
-				exclude: /node_modules(?!\/@sendnodes)|webpack|packages\/ui-legacy/,
-				// exclude: /node_modules/,
-				use: [
-					// "thread-loader",
+				oneOf: [
+					/* FIXME: the goal is to remove this rule and use the one below it */
 					{
-						loader: "babel-loader",
-						options: {
-							cacheDirectory: true,
-							rootMode: "upward",
-							plugins: [
-								isDevelopment && require.resolve("react-refresh/babel"),
-							].filter(Boolean),
-						},
-					},
-				],
-			},
-			{
-				test: /.*\.[tj]sx?$/,
-				include: uiRoot,
-				// exclude: /node_modules(?!\/@sendnodes)|webpack/,
-				exclude: /node_modules(?!\/@sendnodes)|webpack/,
-				// exclude: /node_modules/,
-				use: [
-					// "thread-loader", // does not support astroturf
-					{
-						loader: "babel-loader",
-						options: {
-							cacheDirectory: true,
-							rootMode: "upward",
-							plugins: [
-								isDevelopment && require.resolve("react-refresh/babel"),
-							].filter(Boolean),
-						},
-					},
-					{
-						loader: "astroturf/loader",
-						options: { extension: ".module.css" },
-					},
-				],
-			},
-
-			{
-				test: /\.css$/i,
-				// exclude: /node_modules/,
-				use: [
-					// "thread-loader",
-					MiniCssExtractPlugin.loader,
-					{
-						loader: "css-loader",
-						options: {
-							importLoaders: 1,
-						},
-					},
-					{
-						loader: "postcss-loader",
-						options: {
-							postcssOptions: {
-								config: path.resolve(__dirname, "postcss.config.js"),
+						test: /.*\.[tj]sx?$/,
+						include: /packages\/ui-legacy/,
+						use: [
+							{
+								loader: "babel-loader",
+								options: {
+									cacheDirectory: true,
+									rootMode: "upward",
+									plugins: [
+										isDevelopment && require.resolve("react-refresh/babel"),
+									].filter(Boolean),
+								},
 							},
-						},
+							{
+								loader: "astroturf/loader",
+								options: { extension: ".module.css" },
+							},
+						],
+					},
+
+					// {
+					// 	test: /.*\.[tj]s$/,
+					// 	// exclude: /node_modules(?!\/@sendnodes)|webpack/,
+					// 	exclude: /node_modules(?!\/@sendnodes)|webpack|packages\/ui-legacy/,
+					// 	// exclude: /node_modules/,
+					// 	use: [
+					// 		// "thread-loader",
+					// 		{
+					// 			loader: "babel-loader",
+					// 			options: {
+					// 				cacheDirectory: true,
+					// 				rootMode: "upward",
+					// 				plugins: [
+					// 					isDevelopment && require.resolve("react-refresh/babel"),
+					// 				].filter(Boolean),
+					// 			},
+					// 		},
+					// 	],
+					// },
+
+					{
+						test: /.*\.[tj]s$/,
+						use: [
+							"thread-loader",
+							{
+								loader: "esbuild-loader",
+								options: {
+									target: "es2020",
+									loader: "tsx",
+								},
+							},
+						],
+					},
+					{
+						test: /.*\.[tj]sx?$/,
+						use: [
+							{
+								loader: "esbuild-loader",
+								options: {
+									target: "es2020",
+									loader: "tsx",
+								},
+							},
+							{
+								loader: "tamagui-loader",
+								options: tamaguiOptions,
+							},
+						],
+					},
+
+					{
+						test: /\.css$/i,
+						// exclude: /node_modules/,
+						use: [
+							// "thread-loader",
+							MiniCssExtractPlugin.loader,
+							{
+								loader: "css-loader",
+								options: {
+									importLoaders: 1,
+								},
+							},
+							{
+								loader: "postcss-loader",
+								options: {
+									postcssOptions: {
+										config: path.resolve(__dirname, "postcss.config.js"),
+									},
+								},
+							},
+						],
+					},
+
+					{
+						test: /\.(jpe?g|svg|png|gif|ico|eot|ttf|woff2?)(\?v=\d+\.\d+\.\d+)?$/i,
+						type: "asset/resource",
 					},
 				],
 			},
@@ -142,7 +191,18 @@ const baseConfig: Configuration = {
 		environment: { dynamicImport: true },
 	},
 	resolve: {
-		extensions: [".tsx", ".ts", ".js", ".jsx"],
+		mainFields: ["module:jsx", "browser", "module", "main"],
+
+		extensions: [
+			".web.tsx",
+			".web.ts",
+			".web.jsx",
+			".web.js",
+			".tsx",
+			".ts",
+			".js",
+			".jsx",
+		],
 		fallback: {
 			stream: require.resolve("stream-browserify"),
 			process: require.resolve("process/browser"),
@@ -151,6 +211,11 @@ const baseConfig: Configuration = {
 			path: require.resolve("path-browserify"),
 			https: require.resolve("https-browserify"),
 			http: require.resolve("stream-http"),
+		},
+		alias: {
+			"react-native": require.resolve("react-native-web"),
+			"react-native$": require.resolve("react-native-web"),
+			"react-native-svg": require.resolve("@tamagui/react-native-svg"),
 		},
 	},
 	plugins: [
@@ -189,7 +254,7 @@ const baseConfig: Configuration = {
 		new CopyPlugin({
 			patterns: [
 				{
-					context: uiRoot,
+					context: uiLegacyRoot,
 					from: "_locales",
 					to: "_locales/",
 					globOptions: {
@@ -198,7 +263,7 @@ const baseConfig: Configuration = {
 					},
 				},
 				{
-					context: uiRoot,
+					context: uiLegacyRoot,
 					from: "./public",
 					force: true,
 					globOptions: {
@@ -214,9 +279,12 @@ const baseConfig: Configuration = {
 			"process.env.APP_NAME": JSON.stringify(process.env.npm_package_name),
 			"process.env.GIT_BRANCH": JSON.stringify(branch),
 			"process.env.GIT_COMMIT": JSON.stringify(revision),
+			"process.env.__DEV__": NODE_ENV === "development" ? "true" : "false",
+			"process.env.NODE_ENV": JSON.stringify(NODE_ENV),
+			"process.env.TAMAGUI_TARGET": JSON.stringify(target),
 		}),
 		new HtmlWebpackPlugin({
-			template: path.resolve(uiRoot, "pages", "base.html"),
+			template: path.resolve(uiLegacyRoot, "pages", "base.html"),
 			filename: "popup.html",
 			chunks: ["ui"],
 			inject: "body",
@@ -226,7 +294,7 @@ const baseConfig: Configuration = {
 			htmlCssClass: "popup",
 		}),
 		new HtmlWebpackPlugin({
-			template: path.resolve(uiRoot, "pages", "base.html"),
+			template: path.resolve(uiLegacyRoot, "pages", "base.html"),
 			filename: "popout.html",
 			chunks: ["ui"],
 			inject: "body",
@@ -236,7 +304,7 @@ const baseConfig: Configuration = {
 			htmlCssClass: "popup",
 		}),
 		new HtmlWebpackPlugin({
-			template: path.resolve(uiRoot, "pages", "base.html"),
+			template: path.resolve(uiLegacyRoot, "pages", "base.html"),
 			filename: "tab.html",
 			chunks: ["tab-ui"],
 			inject: "body",
@@ -246,7 +314,7 @@ const baseConfig: Configuration = {
 			htmlCssClass: "tab",
 		}),
 		new HtmlWebpackPlugin({
-			template: path.resolve(uiRoot, "pages", "base.html"),
+			template: path.resolve(uiLegacyRoot, "pages", "base.html"),
 			filename: "stake.html",
 			chunks: ["stake-ui"],
 			inject: "body",
@@ -279,9 +347,10 @@ const modeConfigs: {
 
 		return {
 			entry,
-			plugins: [isDevelopment && new ReactRefreshWebpackPlugin()].filter(
-				Boolean,
-			) as WebpackPluginInstance[],
+			plugins: [
+				// no longer useful after legacy migration, not compatible with esbuild
+				isDevelopment && new ReactRefreshWebpackPlugin(),
+			].filter(Boolean) as WebpackPluginInstance[],
 		};
 	},
 	production: (browser) => {
@@ -297,11 +366,8 @@ const modeConfigs: {
 			],
 			optimization: {
 				minimizer: [
-					new TerserPlugin({
-						terserOptions: {
-							mangle: true,
-							compress: true,
-						},
+					new ESBuildMinifyPlugin({
+						css: true,
 					}),
 				],
 			},

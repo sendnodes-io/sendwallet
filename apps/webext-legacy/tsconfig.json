@@ -1,18 +1,41 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "baseUrl": "../..",
-    "rootDir": "../..",
+    "baseUrl": ".",
     "target": "esnext",
     "lib": ["esnext", "DOM", "DOM.Iterable", "WebWorker"],
-    "declaration": false,
+    "forceConsistentCasingInFileNames": true,
+    "allowJs": true,
     "module": "esnext",
     "moduleResolution": "node",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "strict": true,
-    "noEmit": true
+    "noEmit": true,
+    "paths": {
+      "react-native": ["react-native-web"],
+      "app": ["../../packages/app"],
+      "app/*": ["../../packages/app/*"],
+      "@my/ui": ["../../packages/ui"],
+      "@my/ui/*": ["../../packages/ui/*"],
+      "build-utils": ["../../packages/build-utils"],
+      "build-utils/*": ["../../packages/build-utils/*"],
+      "@sendnodes/pokt-wallet-ui": ["../../packages/ui-legacy"],
+      "@sendnodes/pokt-wallet-ui/*": ["../../packages/ui-legacy/*"],
+      "@sendnodes/pokt-wallet-background": ["../../packages/background"],
+      "@sendnodes/pokt-wallet-background/*": ["../../packages/background/*"],
+      "@sendnodes/provider-bridge-shared/*": [
+        "../../packages/provider-bridge-shared/*"
+      ],
+      "@sendnodes/provider-bridge-shared": [
+        "../../packages/provider-bridge-shared"
+      ],
+      "@sendnodes/provider-bridge/*": ["../../packages/provider-bridge/*"],
+      "@sendnodes/provider-bridge": ["../../packages/provider-bridge"],
+      "@sendnodes/window-provider/*": ["../../packages/window-provider/*"],
+      "@sendnodes/window-provider": ["../../packages/window-provider"]
+    }
   },
   "ts-node": {
     "compilerOptions": {
@@ -28,13 +51,9 @@
     "../../packages/background",
     "../../packages/provider-bridge",
     "../../packages/provider-bridge-shared",
-    "../../packages/window-provider"
+    "../../packages/window-provider",
+    "../../packages/app",
+    "../../packages/ui"
   ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "../../packages/background/tests",
-    "../../packages/ui",
-    "../../packages/app"
-  ]
+  "exclude": ["node_modules", "dist", "../../packages/background/tests"]
 }

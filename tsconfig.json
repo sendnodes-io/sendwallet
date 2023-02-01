@@ -22,7 +22,7 @@
       "@sendnodes/provider-bridge/*": ["./packages/provider-bridge/*"],
       "@sendnodes/provider-bridge": ["./packages/provider-bridg*"],
       "@sendnodes/window-provider/*": ["./packages/window-provider/*"],
-      "@sendnodes/window-provider": ["./packages/window-provid/*"]
+      "@sendnodes/window-provider": ["./packages/window-provider/*"]
     },
     "baseUrl": ".",
     "rootDir": "."
