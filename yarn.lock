@@ -3424,18 +3424,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ledgerhq/devices@npm:^6.20.0":
-  version: 6.27.1
-  resolution: "@ledgerhq/devices@npm:6.27.1"
-  dependencies:
-    "@ledgerhq/errors": ^6.10.0
-    "@ledgerhq/logs": ^6.10.0
-    rxjs: 6
-    semver: ^7.3.5
-  checksum: e4615841b094fe4990c74421c23f57da6a83b56bfa73880af3ce0a67db86f5b3a642f6022be24bf4b24d7b236623a578dbdba74805b28e2486006d1f0cbff543
-  languageName: node
-  linkType: hard
-
 "@ledgerhq/devices@npm:^7.0.7":
   version: 7.0.7
   resolution: "@ledgerhq/devices@npm:7.0.7"
@@ -3448,14 +3436,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ledgerhq/errors@npm:^6.10.0, @ledgerhq/errors@npm:^6.12.3":
+"@ledgerhq/errors@npm:^6.12.3":
   version: 6.12.3
   resolution: "@ledgerhq/errors@npm:6.12.3"
   checksum: 3284cbc85dc2df24f17a6e3899eb5afdff96e63d073b5914906c45ed8f1a93c7daa1e2b847d621610a1088b63c0abb9379e6b6ca395144c2d50855a4606c1d3f
   languageName: node
   linkType: hard
 
-"@ledgerhq/hw-app-eth@npm:^6.23.0":
+"@ledgerhq/hw-app-eth@npm:^6.30.5":
   version: 6.30.5
   resolution: "@ledgerhq/hw-app-eth@npm:6.30.5"
   dependencies:
@@ -3483,7 +3471,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ledgerhq/hw-transport-webusb@npm:^6.20.0":
+"@ledgerhq/hw-transport-webusb@npm:^6.27.10":
   version: 6.27.10
   resolution: "@ledgerhq/hw-transport-webusb@npm:6.27.10"
   dependencies:
@@ -3495,7 +3483,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ledgerhq/hw-transport@npm:^6.20.0, @ledgerhq/hw-transport@npm:^6.27.10":
+"@ledgerhq/hw-transport@npm:^6.27.10":
   version: 6.27.10
   resolution: "@ledgerhq/hw-transport@npm:6.27.10"
   dependencies:
@@ -3506,7 +3494,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ledgerhq/logs@npm:^6.10.0, @ledgerhq/logs@npm:^6.10.1":
+"@ledgerhq/logs@npm:^6.10.1":
   version: 6.10.1
   resolution: "@ledgerhq/logs@npm:6.10.1"
   checksum: 4dde46557d9daa6028f7040d26585aaa7260445212ad8348ae4a01463b7d76a1592dfc36921e47f5fc477c50b5d73e840070ac167e3cbe5b45123f36a4f96b08
@@ -4126,11 +4114,11 @@ __metadata:
     "@ethersproject/providers": ^5.5.3
     "@ethersproject/transactions": ^5.5.0
     "@ethersproject/web": ^5.5.1
-    "@ledgerhq/devices": ^6.20.0
-    "@ledgerhq/errors": ^6.10.0
-    "@ledgerhq/hw-app-eth": ^6.23.0
-    "@ledgerhq/hw-transport": ^6.20.0
-    "@ledgerhq/hw-transport-webusb": ^6.20.0
+    "@ledgerhq/devices": ^7.0.7
+    "@ledgerhq/errors": ^6.12.3
+    "@ledgerhq/hw-app-eth": ^6.30.5
+    "@ledgerhq/hw-transport": ^6.27.10
+    "@ledgerhq/hw-transport-webusb": ^6.27.10
     "@reduxjs/toolkit": ^1.6.1
     "@sendnodes/hd-keyring": 0.1.0
     "@sendnodes/pocket-js": 0.8.0-rc
@@ -4179,7 +4167,7 @@ __metadata:
     "@headlessui/react": ^1.6.6
     "@heroicons/react": ^1.0.6
     "@iconify/react": ^3.2.2
-    "@ledgerhq/devices": ^6.20.0
+    "@ledgerhq/devices": ^7.0.7
     "@lottiefiles/react-lottie-player": ^3.5.0
     "@reduxjs/toolkit": ^1.6.1
     "@sendnodes/pocket-js": 0.8.0-rc

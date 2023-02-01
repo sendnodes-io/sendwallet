@@ -17,7 +17,7 @@
     "@ethersproject/hdnode": "^5.5.0",
     "@ethersproject/units": "5.5.0",
     "@ethersproject/web": "^5.5.1",
-    "@ledgerhq/devices": "^6.20.0",
+    "@ledgerhq/devices": "^7.0.7",
     "@lottiefiles/react-lottie-player": "^3.5.0",
     "@reduxjs/toolkit": "^1.6.1",
     "@sendnodes/pocket-js": "0.8.0-rc",
