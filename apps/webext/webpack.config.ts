@@ -176,6 +176,7 @@ const baseConfig: Configuration = {
 		new webpack.ProvidePlugin({
 			Buffer: ["buffer", "Buffer"],
 			process: ["process"],
+			React: "react",
 		}),
 		new webpack.BannerPlugin({
 			banner: "window = self;",
