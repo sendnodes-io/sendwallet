@@ -25,6 +25,8 @@
     "clean:turbo": "rimraf ./node_modules/.cache",
     "dev:webext": "turbo run dev --filter=webext --filter=@my/ui",
     "dev:legacy": "turbo run dev --filter=webext-legacy",
+    "dev:legacy:chrome": "turbo run dev --filter=webext-legacy -- --config-name chrome",
+    "dev:legacy:firefox": "turbo run dev --filter=webext-legacy  -- --config-name firefox",
     "build:webext": "turbo run build --filter=webext",
     "build:legacy": "turbo run build --filter=webext-legacy",
     "test": "turbo run test",
