@@ -3,45 +3,45 @@ import React, { ReactElement, useState } from "react";
 type VerticalPosition = "top" | "bottom";
 
 interface Props {
-	verticalPosition?: VerticalPosition;
-	width: number;
-	children: React.ReactNode;
-	IconComponent?: () => ReactElement;
+  verticalPosition?: VerticalPosition;
+  width: number;
+  children: React.ReactNode;
+  IconComponent?: () => ReactElement;
 }
 
 function getHorizontalPosition(width: number) {
-	return `right: -${width / 2 + 4}px;`;
+  return `right: -${width / 2 + 4}px;`;
 }
 
 function getVerticalPosition(vertical: VerticalPosition) {
-	switch (vertical) {
-		case "bottom":
-			return "top: 16px; margin-top: 5px;";
-		case "top":
-			return "bottom: 16px; margin-bottom: 5px;";
-		default:
-			return "";
-	}
+  switch (vertical) {
+    case "bottom":
+      return "top: 16px; margin-top: 5px;";
+    case "top":
+      return "bottom: 16px; margin-bottom: 5px;";
+    default:
+      return "";
+  }
 }
 
 export default function SharedTooltip(props: Props): ReactElement {
-	const { children, verticalPosition = "bottom", width, IconComponent } = props;
-	const [isShowingTooltip, setIsShowingTooltip] = useState(false);
+  const { children, verticalPosition = "bottom", width, IconComponent } = props;
+  const [isShowingTooltip, setIsShowingTooltip] = useState(false);
 
-	return (
-		<div
-			className="tooltip_wrap"
-			onMouseEnter={() => {
-				setIsShowingTooltip(true);
-			}}
-			onMouseLeave={() => {
-				setIsShowingTooltip(false);
-			}}
-		>
-			{IconComponent ? <IconComponent /> : <div className="info_icon" />}
-			{isShowingTooltip ? <div className="tooltip">{children}</div> : null}
-			<style jsx>
-				{`
+  return (
+    <div
+      className="tooltip_wrap"
+      onMouseEnter={() => {
+        setIsShowingTooltip(true);
+      }}
+      onMouseLeave={() => {
+        setIsShowingTooltip(false);
+      }}
+    >
+      {IconComponent ? <IconComponent /> : <div className="info_icon" />}
+      {isShowingTooltip ? <div className="tooltip">{children}</div> : null}
+      <style jsx>
+        {`
           .tooltip_wrap {
             width: fit-content;
             display: block;
@@ -72,7 +72,7 @@ export default function SharedTooltip(props: Props): ReactElement {
             ${getHorizontalPosition(width)}
           }
         `}
-			</style>
-		</div>
-	);
+      </style>
+    </div>
+  );
 }

@@ -6,26 +6,26 @@ import { isEqual } from "lodash";
 import { useBackgroundSelector } from "../redux-hooks";
 
 export default function useAssetInMainCurrency({
-	assetAmount,
-	desiredDecimals = 2,
+  assetAmount,
+  desiredDecimals = 2,
 }: {
-	assetAmount: AssetAmount;
-	desiredDecimals?: number;
+  assetAmount: AssetAmount;
+  desiredDecimals?: number;
 }) {
-	const mainCurrencySymbol = useBackgroundSelector(
-		selectMainCurrencySymbol,
-		isEqual,
-	);
-	const assetPricePoint = useBackgroundSelector((state) =>
-		selectAssetPricePoint(
-			state.assets,
-			assetAmount.asset.symbol,
-			mainCurrencySymbol,
-		),
-	);
-	return enrichAssetAmountWithMainCurrencyValues(
-		assetAmount,
-		assetPricePoint,
-		desiredDecimals,
-	);
+  const mainCurrencySymbol = useBackgroundSelector(
+    selectMainCurrencySymbol,
+    isEqual
+  );
+  const assetPricePoint = useBackgroundSelector((state) =>
+    selectAssetPricePoint(
+      state.assets,
+      assetAmount.asset.symbol,
+      mainCurrencySymbol
+    )
+  );
+  return enrichAssetAmountWithMainCurrencyValues(
+    assetAmount,
+    assetPricePoint,
+    desiredDecimals
+  );
 }

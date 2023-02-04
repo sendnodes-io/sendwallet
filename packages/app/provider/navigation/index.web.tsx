@@ -3,7 +3,7 @@
 // for more, see: https://solito.dev/recipes/tree-shaking
 
 export const NavigationProvider = ({
-	children,
+  children,
 }: {
-	children: React.ReactElement;
+  children: React.ReactElement;
 }) => <>{children}</>;

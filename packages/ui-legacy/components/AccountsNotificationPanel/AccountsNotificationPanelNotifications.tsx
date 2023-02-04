@@ -3,47 +3,47 @@ import AccountsNotificationPanelNotificationItem from "./AccountsNotificationPan
 import SharedButton from "../Shared/SharedButton";
 
 export default function AccountsNotificationPanelNotifications(): ReactElement {
-	return (
-		<>
-			<h3 className="list_title">
-				Unread (3){" "}
-				<SharedButton
-					type="tertiary"
-					size="small"
-					icon="mark_read"
-					iconSize="secondaryMedium"
-					isDisabled
-				>
-					Mark all as read
-				</SharedButton>
-			</h3>
-			<ul className="standard_width">
-				{Array(3)
-					.fill("")
-					.map((_, index) => (
-						<AccountsNotificationPanelNotificationItem key={index.toString()} />
-					))}
-			</ul>
-			<h3 className="list_title">
-				Read (128){" "}
-				<SharedButton
-					type="tertiary"
-					size="small"
-					icon="garbage"
-					iconSize="secondaryMedium"
-					isDisabled
-				>
-					Delete all
-				</SharedButton>
-			</h3>
-			<ul className="standard_width read_list">
-				{Array(4)
-					.fill("")
-					.map((_, index) => (
-						<AccountsNotificationPanelNotificationItem key={index.toString()} />
-					))}
-			</ul>
-			<style jsx>{`
+  return (
+    <>
+      <h3 className="list_title">
+        Unread (3){" "}
+        <SharedButton
+          type="tertiary"
+          size="small"
+          icon="mark_read"
+          iconSize="secondaryMedium"
+          isDisabled
+        >
+          Mark all as read
+        </SharedButton>
+      </h3>
+      <ul className="standard_width">
+        {Array(3)
+          .fill("")
+          .map((_, index) => (
+            <AccountsNotificationPanelNotificationItem key={index.toString()} />
+          ))}
+      </ul>
+      <h3 className="list_title">
+        Read (128){" "}
+        <SharedButton
+          type="tertiary"
+          size="small"
+          icon="garbage"
+          iconSize="secondaryMedium"
+          isDisabled
+        >
+          Delete all
+        </SharedButton>
+      </h3>
+      <ul className="standard_width read_list">
+        {Array(4)
+          .fill("")
+          .map((_, index) => (
+            <AccountsNotificationPanelNotificationItem key={index.toString()} />
+          ))}
+      </ul>
+      <style jsx>{`
         ul {
           display: flex;
           flex-direction: column;
@@ -65,11 +65,11 @@ export default function AccountsNotificationPanelNotifications(): ReactElement {
           align-items: center;
         }
       `}</style>
-			<style jsx global>{`
+      <style jsx global>{`
         .read_list .icon_notification {
           background-color: var(--cod-gray-200);
         }
       `}</style>
-		</>
-	);
+    </>
+  );
 }

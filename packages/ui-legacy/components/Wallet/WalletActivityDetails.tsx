@@ -5,27 +5,27 @@ import SharedButton from "../Shared/SharedButton";
 import SharedAddress from "../Shared/SharedAddress";
 
 interface DetailRowItemProps {
-	label: string;
-	value: unknown;
-	valueDetail: string;
+  label: string;
+  value: unknown;
+  valueDetail: string;
 }
 
 function DetailRowItem(props: DetailRowItemProps): ReactElement {
-	const { label, value, valueDetail } = props;
+  const { label, value, valueDetail } = props;
 
-	return (
-		<li>
-			{label}
-			<>
-				<div className="right">
-					<>
-						{value}
-						<div className="value_detail">{valueDetail}</div>
-					</>
-				</div>
-			</>
-			<style jsx>
-				{`
+  return (
+    <li>
+      {label}
+      <>
+        <div className="right">
+          <>
+            {value}
+            <div className="value_detail">{valueDetail}</div>
+          </>
+        </div>
+      </>
+      <style jsx>
+        {`
           li {
             width: 100%;
             border-bottom: 1px solid var(--eerie-black-100);
@@ -49,27 +49,27 @@ function DetailRowItem(props: DetailRowItemProps): ReactElement {
             margin-left: 8px;
           }
         `}
-			</style>
-		</li>
-	);
+      </style>
+    </li>
+  );
 }
 
 interface DestinationCardProps {
-	label: string;
-	address: string;
-	name?: string | undefined;
+  label: string;
+  address: string;
+  name?: string | undefined;
 }
 
 function DestinationCard(props: DestinationCardProps): ReactElement {
-	const { label, address, name } = props;
+  const { label, address, name } = props;
 
-	return (
-		<div className="card_wrap">
-			<div className="sub_info from">{label}:</div>
-			<SharedAddress address={address} name={name} alwaysShowAddress />
-			<div className="sub_info name" />
-			<style jsx>
-				{`
+  return (
+    <div className="card_wrap">
+      <div className="sub_info from">{label}:</div>
+      <SharedAddress address={address} name={name} alwaysShowAddress />
+      <div className="sub_info name" />
+      <style jsx>
+        {`
           .card_wrap {
             width: 160px;
             height: 96px;
@@ -96,110 +96,110 @@ function DestinationCard(props: DestinationCardProps): ReactElement {
             margin-top: 10px;
           }
         `}
-			</style>
-		</div>
-	);
+      </style>
+    </div>
+  );
 }
 
 interface WalletActivityDetailsProps {
-	activityItem: ActivityItem;
+  activityItem: ActivityItem;
 }
 // Include this "or" type to handle existing placeholder data
 // on the single asset page. TODO: Remove once single asset page
 // has real data
 
 export default function WalletActivityDetails(
-	props: WalletActivityDetailsProps,
+  props: WalletActivityDetailsProps
 ): ReactElement {
-	const { activityItem } = props;
+  const { activityItem } = props;
 
-	// TODO: v0.2.0 decide if we still need this component
-	const openExplorer = useCallback(() => {
-		const baseUrl =
-			activityItem.network.family === "POKT"
-				? "https://explorer.pokt.network/tx/"
-				: "https://etherscan.io/tx/";
-		window.open(`${baseUrl}${activityItem.hash}`, "_blank")?.focus();
-	}, [activityItem?.hash]);
+  // TODO: v0.2.0 decide if we still need this component
+  const openExplorer = useCallback(() => {
+    const baseUrl =
+      activityItem.network.family === "POKT"
+        ? "https://explorer.pokt.network/tx/"
+        : "https://etherscan.io/tx/";
+    window.open(`${baseUrl}${activityItem.hash}`, "_blank")?.focus();
+  }, [activityItem?.hash]);
 
-	if (!activityItem) return <></>;
+  if (!activityItem) return <></>;
 
-	let from = "";
-	if ("from" in activityItem) from = activityItem.from;
-	if ("txResult" in activityItem)
-		from = activityItem.txResult?.signer as string;
+  let from = "";
+  if ("from" in activityItem) from = activityItem.from;
+  if ("txResult" in activityItem)
+    from = activityItem.txResult?.signer as string;
 
-	const recipient = getRecipient(activityItem);
-	const { address: recipientAddress, name: recipientName } = recipient ?? {};
+  const recipient = getRecipient(activityItem);
+  const { address: recipientAddress, name: recipientName } = recipient ?? {};
 
-	return (
-		<div className="wrap standard_width center_horizontal">
-			<div className="header">
-				<div className="header_button">
-					<SharedButton
-						type="tertiary"
-						size="medium"
-						icon="external"
-						iconSize="large"
-						onClick={openExplorer}
-					>
-						{activityItem.network.family === "POKT"
-							? "POKT Explorer"
-							: "Etherscan"}
-					</SharedButton>
-				</div>
-			</div>
-			<div className="destination_cards">
-				<DestinationCard label="From" address={from} />
-				<div className="icon_transfer" />
-				<DestinationCard
-					label="To"
-					address={recipientAddress || "(Contract creation)"}
-					name={recipientName}
-				/>
-			</div>
-			<ul>
-				{Object.entries(activityItem.infoRows).map(
-					([key, { label, value }]) => {
-						return (
-							<DetailRowItem
-								key={key}
-								label={label}
-								value={value}
-								valueDetail=""
-							/>
-						);
-					},
-				)}
-				<DetailRowItem
-					label="Timestamp"
-					value={
-						typeof activityItem.timestamp !== "undefined"
-							? new Date(activityItem.timestamp * 1000).toLocaleString()
-							: "(Unknown)"
-					}
-					valueDetail=""
-				/>
-			</ul>
-			<div className="activity_log_wrap">
-				<div className="activity_log_title">Activity Log</div>
-				<ul>
-					<li className="activity_log_item">
-						<div className="activity_log_icon plus" />
-						Tx created at 03:00 on 14/4/2021
-					</li>
-					<li className="activity_log_item">
-						<div className="activity_log_icon arrow" />
-						Tx submitted 03:01 on 14/4/2021
-					</li>
-					<li className="activity_log_item">
-						<div className="activity_log_icon check" />
-						Tx confirmed at 03:03 on 14/4/2021
-					</li>
-				</ul>
-			</div>
-			<style jsx>
-				{`
+  return (
+    <div className="wrap standard_width center_horizontal">
+      <div className="header">
+        <div className="header_button">
+          <SharedButton
+            type="tertiary"
+            size="medium"
+            icon="external"
+            iconSize="large"
+            onClick={openExplorer}
+          >
+            {activityItem.network.family === "POKT"
+              ? "POKT Explorer"
+              : "Etherscan"}
+          </SharedButton>
+        </div>
+      </div>
+      <div className="destination_cards">
+        <DestinationCard label="From" address={from} />
+        <div className="icon_transfer" />
+        <DestinationCard
+          label="To"
+          address={recipientAddress || "(Contract creation)"}
+          name={recipientName}
+        />
+      </div>
+      <ul>
+        {Object.entries(activityItem.infoRows).map(
+          ([key, { label, value }]) => {
+            return (
+              <DetailRowItem
+                key={key}
+                label={label}
+                value={value}
+                valueDetail=""
+              />
+            );
+          }
+        )}
+        <DetailRowItem
+          label="Timestamp"
+          value={
+            typeof activityItem.timestamp !== "undefined"
+              ? new Date(activityItem.timestamp * 1000).toLocaleString()
+              : "(Unknown)"
+          }
+          valueDetail=""
+        />
+      </ul>
+      <div className="activity_log_wrap">
+        <div className="activity_log_title">Activity Log</div>
+        <ul>
+          <li className="activity_log_item">
+            <div className="activity_log_icon plus" />
+            Tx created at 03:00 on 14/4/2021
+          </li>
+          <li className="activity_log_item">
+            <div className="activity_log_icon arrow" />
+            Tx submitted 03:01 on 14/4/2021
+          </li>
+          <li className="activity_log_item">
+            <div className="activity_log_icon check" />
+            Tx confirmed at 03:03 on 14/4/2021
+          </li>
+        </ul>
+      </div>
+      <style jsx>
+        {`
           .wrap {
             margin-top: -24px;
             height: 100%;
@@ -280,7 +280,7 @@ export default function WalletActivityDetails(
             display: none;
           }
         `}
-			</style>
-		</div>
-	);
+      </style>
+    </div>
+  );
 }

@@ -2,17 +2,17 @@ import classNames from "clsx";
 import React, { ReactElement } from "react";
 
 interface EditWalletNameProps {
-	hoverable?: boolean;
+  hoverable?: boolean;
 }
 
 export default function EditWalletNameLabel({
-	hoverable,
+  hoverable,
 }: EditWalletNameProps): ReactElement {
-	return (
-		<div className={classNames("edit_wallet_name", { hover: hoverable })}>
-			<div className="icon_edit" />
-			<span>Edit</span>
-			<style jsx>{`
+  return (
+    <div className={classNames("edit_wallet_name", { hover: hoverable })}>
+      <div className="icon_edit" />
+      <span>Edit</span>
+      <style jsx>{`
           .icon_edit {
             mask-image: url("./images/edit@2x.png");
             mask-size: cover;
@@ -40,9 +40,9 @@ export default function EditWalletNameLabel({
             background-color: var(--dim-gray);
           }
         `}</style>
-		</div>
-	);
+    </div>
+  );
 }
 EditWalletNameLabel.defaultProps = {
-	hoverable: false,
+  hoverable: false,
 };

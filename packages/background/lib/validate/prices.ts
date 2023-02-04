@@ -1,10 +1,10 @@
 import { JSONSchemaType } from "ajv";
 
 export type CoingeckoPriceData = {
-	[coinId: string]: {
-		last_updated_at: number;
-		[currencyId: string]: number;
-	};
+  [coinId: string]: {
+    last_updated_at: number;
+    [currencyId: string]: number;
+  };
 };
 
 // Ajv's typing incorrectly requires nullable: true for last_updated_at because
@@ -20,13 +20,13 @@ export type CoingeckoPriceData = {
 // Ajv v9 via
 // https://github.com/ajv-validator/ajv/commit/b4b806fd03a9906e9126ad86cef233fa405c9a3e
 export const coingeckoPriceSchema: JSONSchemaType<CoingeckoPriceData> = {
-	type: "object",
-	required: [],
-	additionalProperties: {
-		type: "object",
-		required: ["last_updated_at"],
-		additionalProperties: {
-			type: "number",
-		},
-	},
+  type: "object",
+  required: [],
+  additionalProperties: {
+    type: "object",
+    required: ["last_updated_at"],
+    additionalProperties: {
+      type: "number",
+    },
+  },
 };

@@ -113,6 +113,6 @@ const DISTRIBUTOR_ABI = [
     stateMutability: "view",
     type: "function",
   },
-]
+];
 
-export default DISTRIBUTOR_ABI
+export default DISTRIBUTOR_ABI;

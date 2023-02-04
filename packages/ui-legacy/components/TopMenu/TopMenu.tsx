@@ -2,8 +2,8 @@ import React, { ReactElement, useState, useEffect, useCallback } from "react";
 import { browser } from "@sendnodes/pokt-wallet-background";
 import { PermissionRequest } from "@sendnodes/provider-bridge-shared";
 import {
-	selectAllowedPages,
-	selectCurrentAccount,
+  selectAllowedPages,
+  selectCurrentAccount,
 } from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
 import { denyOrRevokePermission } from "@sendnodes/pokt-wallet-background/redux-slices/dapp-permission";
 import TopMenuProtocolSwitcher from "./TopMenuProtocolSwitcher";
@@ -17,116 +17,116 @@ import TopMenuProtocolList from "./TopMenuProtocolList";
 import { useBackgroundDispatch, useBackgroundSelector } from "../../hooks";
 
 export default function TopMenu(): ReactElement {
-	const [isProtocolListOpen, setIsProtocolListOpen] = useState(false);
-	const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [isProtocolListOpen, setIsProtocolListOpen] = useState(false);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 
-	const [isActiveDAppConnectionInfoOpen, setIsActiveDAppConnectionInfoOpen] =
-		useState(false);
+  const [isActiveDAppConnectionInfoOpen, setIsActiveDAppConnectionInfoOpen] =
+    useState(false);
 
-	const dispatch = useBackgroundDispatch();
+  const dispatch = useBackgroundDispatch();
 
-	const [currentPermission, setCurrentPermission] = useState<PermissionRequest>(
-		{} as PermissionRequest,
-	);
-	const [isConnectedToDApp, setIsConnectedToDApp] = useState(false);
+  const [currentPermission, setCurrentPermission] = useState<PermissionRequest>(
+    {} as PermissionRequest
+  );
+  const [isConnectedToDApp, setIsConnectedToDApp] = useState(false);
 
-	const allowedPages = useBackgroundSelector(selectAllowedPages);
-	const currentAccount = useBackgroundSelector(selectCurrentAccount);
+  const allowedPages = useBackgroundSelector(selectAllowedPages);
+  const currentAccount = useBackgroundSelector(selectCurrentAccount);
 
-	const initPermissionAndOrigin = useCallback(async () => {
-		const { url } = await browser.tabs
-			.query({
-				active: true,
-				lastFocusedWindow: true,
-			})
-			.then((tabs) =>
-				tabs[0] ? tabs[0] : { url: "", favIconUrl: "", title: "" },
-			);
+  const initPermissionAndOrigin = useCallback(async () => {
+    const { url } = await browser.tabs
+      .query({
+        active: true,
+        lastFocusedWindow: true,
+      })
+      .then((tabs) =>
+        tabs[0] ? tabs[0] : { url: "", favIconUrl: "", title: "" }
+      );
 
-		if (!url) return;
+    if (!url) return;
 
-		const { origin } = new URL(url);
+    const { origin } = new URL(url);
 
-		const allowPermission = allowedPages[`${origin}_${currentAccount.address}`];
+    const allowPermission = allowedPages[`${origin}_${currentAccount.address}`];
 
-		if (allowPermission) {
-			setCurrentPermission(allowPermission);
-			setIsConnectedToDApp(true);
-		} else {
-			setIsConnectedToDApp(false);
-		}
-	}, [allowedPages, setCurrentPermission, currentAccount]);
+    if (allowPermission) {
+      setCurrentPermission(allowPermission);
+      setIsConnectedToDApp(true);
+    } else {
+      setIsConnectedToDApp(false);
+    }
+  }, [allowedPages, setCurrentPermission, currentAccount]);
 
-	useEffect(() => {
-		initPermissionAndOrigin();
-	}, [initPermissionAndOrigin]);
+  useEffect(() => {
+    initPermissionAndOrigin();
+  }, [initPermissionAndOrigin]);
 
-	const deny = useCallback(async () => {
-		if (typeof currentPermission !== "undefined") {
-			await dispatch(
-				denyOrRevokePermission({ ...currentPermission, state: "deny" }),
-			);
-		}
-		window.close();
-	}, [dispatch, currentPermission]);
+  const deny = useCallback(async () => {
+    if (typeof currentPermission !== "undefined") {
+      await dispatch(
+        denyOrRevokePermission({ ...currentPermission, state: "deny" })
+      );
+    }
+    window.close();
+  }, [dispatch, currentPermission]);
 
-	return (
-		<>
-			{isConnectedToDApp && isActiveDAppConnectionInfoOpen ? (
-				<TopMenuConnectedDAppInfo
-					title={currentPermission.title}
-					url={currentPermission.origin}
-					faviconUrl={currentPermission.faviconUrl}
-					close={() => {
-						setIsActiveDAppConnectionInfoOpen(false);
-					}}
-					disconnect={deny}
-				/>
-			) : null}
-			<SharedSlideUpMenu
-				isOpen={isProtocolListOpen}
-				close={() => {
-					setIsProtocolListOpen(false);
-				}}
-			>
-				<TopMenuProtocolList />
-			</SharedSlideUpMenu>
-			<SharedSlideUpMenu
-				isOpen={isNotificationsOpen}
-				close={() => {
-					setIsNotificationsOpen(false);
-				}}
-			>
-				<AccountsNotificationPanel
-					onCurrentAddressChange={() => setIsNotificationsOpen(false)}
-				/>
-			</SharedSlideUpMenu>
-			<div className="nav_wrap">
-				<nav className="standard_width_padded">
-					<TopMenuProtocolSwitcher />
-					<div className="profile_group">
-						{isConnectedToDApp && (
-							<button
-								type="button"
-								aria-label="Show current dApp connection"
-								className="connection_button"
-								onClick={() => {
-									setIsActiveDAppConnectionInfoOpen(
-										!isActiveDAppConnectionInfoOpen,
-									);
-								}}
-							/>
-						)}
-						<TopMenuProfileButton
-							onClick={() => {
-								setIsNotificationsOpen(!isNotificationsOpen);
-							}}
-						/>
-					</div>
-				</nav>
+  return (
+    <>
+      {isConnectedToDApp && isActiveDAppConnectionInfoOpen ? (
+        <TopMenuConnectedDAppInfo
+          title={currentPermission.title}
+          url={currentPermission.origin}
+          faviconUrl={currentPermission.faviconUrl}
+          close={() => {
+            setIsActiveDAppConnectionInfoOpen(false);
+          }}
+          disconnect={deny}
+        />
+      ) : null}
+      <SharedSlideUpMenu
+        isOpen={isProtocolListOpen}
+        close={() => {
+          setIsProtocolListOpen(false);
+        }}
+      >
+        <TopMenuProtocolList />
+      </SharedSlideUpMenu>
+      <SharedSlideUpMenu
+        isOpen={isNotificationsOpen}
+        close={() => {
+          setIsNotificationsOpen(false);
+        }}
+      >
+        <AccountsNotificationPanel
+          onCurrentAddressChange={() => setIsNotificationsOpen(false)}
+        />
+      </SharedSlideUpMenu>
+      <div className="nav_wrap">
+        <nav className="standard_width_padded">
+          <TopMenuProtocolSwitcher />
+          <div className="profile_group">
+            {isConnectedToDApp && (
+              <button
+                type="button"
+                aria-label="Show current dApp connection"
+                className="connection_button"
+                onClick={() => {
+                  setIsActiveDAppConnectionInfoOpen(
+                    !isActiveDAppConnectionInfoOpen
+                  );
+                }}
+              />
+            )}
+            <TopMenuProfileButton
+              onClick={() => {
+                setIsNotificationsOpen(!isNotificationsOpen);
+              }}
+            />
+          </div>
+        </nav>
 
-				<style jsx>
-					{`
+        <style jsx>
+          {`
             nav {
               flex-shrink: 0;
               height: 52px;
@@ -160,8 +160,8 @@ export default function TopMenu(): ReactElement {
               background-color: var(--cod-gray-200);
             }
           `}
-				</style>
-			</div>
-		</>
-	);
+        </style>
+      </div>
+    </>
+  );
 }

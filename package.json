@@ -33,9 +33,9 @@
     "build:webext": "turbo run build --filter=webext",
     "build:legacy": "turbo run build --filter=webext-legacy",
     "test": "turbo run test",
-    "lint:rome": "yarn run rome ci .",
-    "lint:rome:fix": "rome check . --apply",
-    "format:rome": "rome format . --write",
+    "lint:tsc": "tsc --noEmit",
+    "lint:prettier": "prettier --check .",
+    "lint:prettier:fix": "prettier --write .",
     "lint": "turbo run lint",
     "postinstall": "is-ci || husky install || yarn build",
     "upgrade:tamagui": "yarn run manypkg upgrade tamagui && yarn run manypkg upgrade @tamagui && yarn run manypkg upgrade tamagui-loader"

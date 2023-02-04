@@ -1,40 +1,40 @@
 import React, { ReactElement } from "react";
 
 export default function TopMenuConnectedDAppInfo(props: {
-	title: string;
-	url: string;
-	faviconUrl: string;
-	close: () => void;
-	disconnect: () => void;
+  title: string;
+  url: string;
+  faviconUrl: string;
+  close: () => void;
+  disconnect: () => void;
 }): ReactElement {
-	const { title, url, close, faviconUrl, disconnect } = props;
-	return (
-		<div className="bg">
-			<div className="window">
-				<button
-					type="button"
-					className="icon_close"
-					aria-label="Close"
-					onClick={close}
-				/>
-				<h1>Account connected to</h1>
-				<div className="favicon" />
-				<div className="title">{title}</div>
-				<div className="url">{url}</div>
-				<button
-					aria-label="disconnect"
-					type="button"
-					className="disconnect_icon"
-					onClick={disconnect}
-				/>
-			</div>
-			<button
-				aria-label="Background close"
-				type="button"
-				className="void_space"
-				onClick={close}
-			/>
-			<style jsx>{`
+  const { title, url, close, faviconUrl, disconnect } = props;
+  return (
+    <div className="bg">
+      <div className="window">
+        <button
+          type="button"
+          className="icon_close"
+          aria-label="Close"
+          onClick={close}
+        />
+        <h1>Account connected to</h1>
+        <div className="favicon" />
+        <div className="title">{title}</div>
+        <div className="url">{url}</div>
+        <button
+          aria-label="disconnect"
+          type="button"
+          className="disconnect_icon"
+          onClick={disconnect}
+        />
+      </div>
+      <button
+        aria-label="Background close"
+        type="button"
+        className="void_space"
+        onClick={close}
+      />
+      <style jsx>{`
         .bg {
           width: 100%;
           height: 100%;
@@ -84,11 +84,9 @@ export default function TopMenuConnectedDAppInfo(props: {
           text-align: center;
         }
         .favicon {
-          background: url("${
-						faviconUrl === ""
-							? "./images/dapp_favicon_default@2x.png"
-							: faviconUrl
-					}");
+          background: url("${faviconUrl === ""
+            ? "./images/dapp_favicon_default@2x.png"
+            : faviconUrl}");
           background-size: cover;
           width: 48px;
           height: 48px;
@@ -114,6 +112,6 @@ export default function TopMenuConnectedDAppInfo(props: {
           margin-top: 16px;
         }
       `}</style>
-		</div>
-	);
+    </div>
+  );
 }

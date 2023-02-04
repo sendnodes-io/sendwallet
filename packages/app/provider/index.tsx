@@ -4,18 +4,18 @@ import { TamaguiProvider, TamaguiProviderProps } from "@my/ui";
 import { useColorScheme } from "react-native";
 
 export function Provider({
-	children,
-	...rest
+  children,
+  ...rest
 }: Omit<TamaguiProviderProps, "config">) {
-	const scheme = useColorScheme();
-	return (
-		<TamaguiProvider
-			config={config}
-			disableInjectCSS
-			defaultTheme={scheme === "dark" ? "dark" : "light"}
-			{...rest}
-		>
-			<NavigationProvider>{children}</NavigationProvider>
-		</TamaguiProvider>
-	);
+  const scheme = useColorScheme();
+  return (
+    <TamaguiProvider
+      config={config}
+      disableInjectCSS
+      defaultTheme={scheme === "dark" ? "dark" : "light"}
+      {...rest}
+    >
+      <NavigationProvider>{children}</NavigationProvider>
+    </TamaguiProvider>
+  );
 }

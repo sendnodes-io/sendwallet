@@ -2,14 +2,14 @@ import React, { ReactElement } from "react";
 import classNames from "clsx";
 
 export default function SharedLoadingSpinner(props: {
-	size: "small" | "medium" | "large";
+  size: "small" | "medium" | "large";
 }): ReactElement {
-	const { size } = props;
+  const { size } = props;
 
-	return (
-		<div className={classNames("spinner", size)}>
-			<style jsx>
-				{`
+  return (
+    <div className={classNames("spinner", size)}>
+      <style jsx>
+        {`
           .spinner {
             width: 28px;
             height: 28px;
@@ -34,11 +34,11 @@ export default function SharedLoadingSpinner(props: {
             height: 3rem;
           }
         `}
-			</style>
-		</div>
-	);
+      </style>
+    </div>
+  );
 }
 
 SharedLoadingSpinner.defaultProps = {
-	size: "medium",
+  size: "medium",
 };

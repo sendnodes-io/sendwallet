@@ -6,59 +6,59 @@ import SharedButton from "../../components/Shared/SharedButton";
 import SharedSlideUpMenu from "../../components/Shared/SharedSlideUpMenu";
 
 export default function OnboardingAccountCreated() {
-	const history = useHistory();
+  const history = useHistory();
 
-	return (
-		<div>
-			<OnboardingAccountLayout
-				icon={<OnboardingNewAccountIcon />}
-				title={
-					<>
-						<img
-							src="./images/add_wallet/account_created@2x.png"
-							width="300"
-							height="300"
-							draggable="false"
-							alt="Account Created"
-						/>
-					</>
-				}
-				body={<></>}
-				buttons={
-					<>
-						<h1>Congratulations</h1>
-						<div className="spacing" />
-						<h2>
-							You can now safely use your wallet!
-							<br />
-							You may close this tab and
-							<br />
-							open your wallet by clicking the <br />
-							extension icon (
-							<img
-								src="./icon-128-black.png"
-								alt="SendWallet Extension Icon"
-								width="128"
-								height="128"
-								draggable="false"
-								className="inline-block"
-							/>
-							).
-						</h2>
-						<div className="spacing" />
+  return (
+    <div>
+      <OnboardingAccountLayout
+        icon={<OnboardingNewAccountIcon />}
+        title={
+          <>
+            <img
+              src="./images/add_wallet/account_created@2x.png"
+              width="300"
+              height="300"
+              draggable="false"
+              alt="Account Created"
+            />
+          </>
+        }
+        body={<></>}
+        buttons={
+          <>
+            <h1>Congratulations</h1>
+            <div className="spacing" />
+            <h2>
+              You can now safely use your wallet!
+              <br />
+              You may close this tab and
+              <br />
+              open your wallet by clicking the <br />
+              extension icon (
+              <img
+                src="./icon-128-black.png"
+                alt="SendWallet Extension Icon"
+                width="128"
+                height="128"
+                draggable="false"
+                className="inline-block"
+              />
+              ).
+            </h2>
+            <div className="spacing" />
 
-						<SharedButton
-							type="primary"
-							size="large"
-							onClick={() => history.push("/")}
-						>
-							TAKE ME TO MY WALLET
-						</SharedButton>
-					</>
-				}
-			/>
-			<style jsx>
-				{`
+            <SharedButton
+              type="primary"
+              size="large"
+              onClick={() => history.push("/")}
+            >
+              TAKE ME TO MY WALLET
+            </SharedButton>
+          </>
+        }
+      />
+      <style jsx>
+        {`
           div :global(.top) {
             margin-top: 0;
           }
@@ -119,7 +119,7 @@ export default function OnboardingAccountCreated() {
             margin-top: 0.5rem;
           }
         `}
-			</style>
-		</div>
-	);
+      </style>
+    </div>
+  );
 }

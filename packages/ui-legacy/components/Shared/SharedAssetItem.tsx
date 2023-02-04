@@ -1,72 +1,72 @@
 import React, { ReactElement } from "react";
 import {
-	AnyAsset,
-	AnyAssetAmount,
+  AnyAsset,
+  AnyAssetAmount,
 } from "@sendnodes/pokt-wallet-background/assets";
 import SharedAssetIcon from "./SharedAssetIcon";
 
 export type AnyAssetWithOptionalAmount<T extends AnyAsset> =
-	| {
-			asset: T;
-	  }
-	| {
-			asset: T;
-			amount: bigint;
-			localizedDecimalAmount: string;
-	  };
+  | {
+      asset: T;
+    }
+  | {
+      asset: T;
+      amount: bigint;
+      localizedDecimalAmount: string;
+    };
 
 export function hasAmounts<T extends AnyAsset>(
-	assetWithOptionalAmount: AnyAssetWithOptionalAmount<T>,
+  assetWithOptionalAmount: AnyAssetWithOptionalAmount<T>
 ): assetWithOptionalAmount is AnyAssetAmount<T> & {
-	localizedDecimalAmount: string;
+  localizedDecimalAmount: string;
 } {
-	// The types on AnyAssetWithOptionalAmount ensures that if amount exists, so
-	// does localizedDecimalAmount.
-	return "amount" in assetWithOptionalAmount;
+  // The types on AnyAssetWithOptionalAmount ensures that if amount exists, so
+  // does localizedDecimalAmount.
+  return "amount" in assetWithOptionalAmount;
 }
 
 interface Props<T extends AnyAsset> {
-	assetAndAmount: AnyAssetWithOptionalAmount<T>;
-	onClick?: (asset: T) => void;
+  assetAndAmount: AnyAssetWithOptionalAmount<T>;
+  onClick?: (asset: T) => void;
 }
 
 export default function SharedAssetItem<T extends AnyAsset>(
-	props: Props<T>,
+  props: Props<T>
 ): ReactElement {
-	const { onClick, assetAndAmount } = props;
-	const { asset } = assetAndAmount;
+  const { onClick, assetAndAmount } = props;
+  const { asset } = assetAndAmount;
 
-	function handleClick() {
-		onClick?.(asset);
-	}
+  function handleClick() {
+    onClick?.(asset);
+  }
 
-	return (
-		<li>
-			<button type="button" className="token_group" onClick={handleClick}>
-				<div className="list_item standard_width">
-					<div className="left">
-						<SharedAssetIcon
-							logoURL={asset?.metadata?.logoURL}
-							symbol={asset?.symbol}
-						/>
+  return (
+    <li>
+      <button type="button" className="token_group" onClick={handleClick}>
+        <div className="list_item standard_width">
+          <div className="left">
+            <SharedAssetIcon
+              logoURL={asset?.metadata?.logoURL}
+              symbol={asset?.symbol}
+            />
 
-						<div className="left_content">
-							<div className="symbol">{asset.symbol}</div>
-							<div className="token_subtitle">{asset.name}</div>
-						</div>
-					</div>
+            <div className="left_content">
+              <div className="symbol">{asset.symbol}</div>
+              <div className="token_subtitle">{asset.name}</div>
+            </div>
+          </div>
 
-					{hasAmounts(assetAndAmount) ? (
-						<div className="amount">
-							{assetAndAmount.localizedDecimalAmount}
-						</div>
-					) : (
-						<></>
-					)}
-				</div>
-			</button>
-			<style jsx>
-				{`
+          {hasAmounts(assetAndAmount) ? (
+            <div className="amount">
+              {assetAndAmount.localizedDecimalAmount}
+            </div>
+          ) : (
+            <></>
+          )}
+        </div>
+      </button>
+      <style jsx>
+        {`
           .left {
             display: flex;
           }
@@ -131,7 +131,7 @@ export default function SharedAssetItem<T extends AnyAsset>(
             margin-top: 2px;
           }
         `}
-			</style>
-		</li>
-	);
+      </style>
+    </li>
+  );
 }

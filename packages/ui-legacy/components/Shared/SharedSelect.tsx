@@ -1,153 +1,153 @@
 import React, {
-	useState,
-	useRef,
-	ReactElement,
-	useEffect,
-	useMemo,
+  useState,
+  useRef,
+  ReactElement,
+  useEffect,
+  useMemo,
 } from "react";
 import classNames from "clsx";
 
 import { useOnClickOutside } from "../../hooks";
 
 export type Option = {
-	value: string;
-	label: string;
-	hideActiveValue?: boolean;
+  value: string;
+  label: string;
+  hideActiveValue?: boolean;
 };
 
 type Props = {
-	options: Option[] | string[];
-	onChange: (value: string) => void;
-	defaultIndex?: number;
-	label?: string;
-	placement?: "top" | "bottom";
-	triggerLabel?: string;
-	onTrigger?: () => void;
-	showValue?: boolean;
+  options: Option[] | string[];
+  onChange: (value: string) => void;
+  defaultIndex?: number;
+  label?: string;
+  placement?: "top" | "bottom";
+  triggerLabel?: string;
+  onTrigger?: () => void;
+  showValue?: boolean;
 };
 
 export default function SharedSelect(props: Props): ReactElement {
-	const {
-		options: initialOptions,
-		onChange,
-		defaultIndex = 0,
-		label,
-		placement = "bottom",
-		triggerLabel,
-		onTrigger,
-		showValue,
-	} = props;
+  const {
+    options: initialOptions,
+    onChange,
+    defaultIndex = 0,
+    label,
+    placement = "bottom",
+    triggerLabel,
+    onTrigger,
+    showValue,
+  } = props;
 
-	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-	const [activeIndex, setActiveIndex] = useState(defaultIndex);
-	const previousdefaultIndex = useRef(defaultIndex);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(defaultIndex);
+  const previousdefaultIndex = useRef(defaultIndex);
 
-	const showDropdownHandler = () => setIsDropdownOpen(!isDropdownOpen);
-	const hideDropdownHandler = () => setIsDropdownOpen(false);
+  const showDropdownHandler = () => setIsDropdownOpen(!isDropdownOpen);
+  const hideDropdownHandler = () => setIsDropdownOpen(false);
 
-	const selectContainerRef = useRef<HTMLDivElement | null>(null);
-	useOnClickOutside(selectContainerRef, hideDropdownHandler);
+  const selectContainerRef = useRef<HTMLDivElement | null>(null);
+  useOnClickOutside(selectContainerRef, hideDropdownHandler);
 
-	const options = useMemo(
-		() =>
-			initialOptions.map((option) =>
-				(option as Option).label
-					? option
-					: {
-							value: option,
-							label: option,
-					  },
-			) as Option[],
-		[initialOptions],
-	);
+  const options = useMemo(
+    () =>
+      initialOptions.map((option) =>
+        (option as Option).label
+          ? option
+          : {
+              value: option,
+              label: option,
+            }
+      ) as Option[],
+    [initialOptions]
+  );
 
-	const currentOption =
-		activeIndex !== null && activeIndex !== undefined
-			? options[activeIndex]
-			: null;
-	const currentLabel = currentOption?.label ?? null;
-	const currentValue = currentOption?.value ?? null;
-	const currentHideActiveValue = currentOption?.hideActiveValue ?? false;
+  const currentOption =
+    activeIndex !== null && activeIndex !== undefined
+      ? options[activeIndex]
+      : null;
+  const currentLabel = currentOption?.label ?? null;
+  const currentValue = currentOption?.value ?? null;
+  const currentHideActiveValue = currentOption?.hideActiveValue ?? false;
 
-	useEffect(() => {
-		if (currentValue) onChange(currentValue);
-	}, [currentValue, onChange]);
+  useEffect(() => {
+    if (currentValue) onChange(currentValue);
+  }, [currentValue, onChange]);
 
-	useEffect(() => {
-		if (previousdefaultIndex.current !== defaultIndex)
-			setActiveIndex(defaultIndex);
-	}, [defaultIndex]);
+  useEffect(() => {
+    if (previousdefaultIndex.current !== defaultIndex)
+      setActiveIndex(defaultIndex);
+  }, [defaultIndex]);
 
-	const updateSelectedOption = (index: number) => {
-		setActiveIndex(index);
-		setIsDropdownOpen(false);
-	};
+  const updateSelectedOption = (index: number) => {
+    setActiveIndex(index);
+    setIsDropdownOpen(false);
+  };
 
-	return (
-		<>
-			<div
-				className={classNames("select", [placement], {
-					active: isDropdownOpen,
-				})}
-				ref={selectContainerRef}
-			>
-				{label && <label htmlFor="button">{label}</label>}
-				<button
-					id="button"
-					type="button"
-					className="button"
-					onClick={showDropdownHandler}
-					onKeyPress={showDropdownHandler}
-					tabIndex={0}
-				>
-					<span>
-						{showValue && activeIndex && !currentHideActiveValue
-							? `${currentLabel} - ${currentValue}`
-							: `${currentLabel}`}
-					</span>
-					<span className="icon" />
-				</button>
-				<ul
-					className={classNames("options", {
-						show: isDropdownOpen,
-						hide: !isDropdownOpen,
-					})}
-				>
-					{options.map((option, index) => {
-						return (
-							<li
-								key={option.value}
-								role="option"
-								tabIndex={index}
-								className={classNames("option", {
-									selected: activeIndex === index,
-								})}
-								aria-selected={activeIndex === index}
-								onClick={() => updateSelectedOption(index)}
-								onKeyPress={(e) => {
-									if (e.key === "enter") {
-										updateSelectedOption(index);
-									}
-								}}
-							>
-								<div className="option_content">
-									<span>{option.label}</span>
-									<span>{option.value}</span>
-								</div>
-							</li>
-						);
-					})}
-					{triggerLabel && (
-						<li className="custom_option">
-							<button type="button" onClick={onTrigger}>
-								{triggerLabel}
-							</button>
-						</li>
-					)}
-				</ul>
-			</div>
-			<style jsx>
-				{`
+  return (
+    <>
+      <div
+        className={classNames("select", [placement], {
+          active: isDropdownOpen,
+        })}
+        ref={selectContainerRef}
+      >
+        {label && <label htmlFor="button">{label}</label>}
+        <button
+          id="button"
+          type="button"
+          className="button"
+          onClick={showDropdownHandler}
+          onKeyPress={showDropdownHandler}
+          tabIndex={0}
+        >
+          <span>
+            {showValue && activeIndex && !currentHideActiveValue
+              ? `${currentLabel} - ${currentValue}`
+              : `${currentLabel}`}
+          </span>
+          <span className="icon" />
+        </button>
+        <ul
+          className={classNames("options", {
+            show: isDropdownOpen,
+            hide: !isDropdownOpen,
+          })}
+        >
+          {options.map((option, index) => {
+            return (
+              <li
+                key={option.value}
+                role="option"
+                tabIndex={index}
+                className={classNames("option", {
+                  selected: activeIndex === index,
+                })}
+                aria-selected={activeIndex === index}
+                onClick={() => updateSelectedOption(index)}
+                onKeyPress={(e) => {
+                  if (e.key === "enter") {
+                    updateSelectedOption(index);
+                  }
+                }}
+              >
+                <div className="option_content">
+                  <span>{option.label}</span>
+                  <span>{option.value}</span>
+                </div>
+              </li>
+            );
+          })}
+          {triggerLabel && (
+            <li className="custom_option">
+              <button type="button" onClick={onTrigger}>
+                {triggerLabel}
+              </button>
+            </li>
+          )}
+        </ul>
+      </div>
+      <style jsx>
+        {`
           .select {
             box-sizing: border-box;
             display: inline-block;
@@ -288,7 +288,7 @@ export default function SharedSelect(props: Props): ReactElement {
             background-color: var(--cod-gray-200);
           }
         `}
-			</style>
-		</>
-	);
+      </style>
+    </>
+  );
 }

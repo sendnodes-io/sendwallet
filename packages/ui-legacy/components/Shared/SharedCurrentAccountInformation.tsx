@@ -2,26 +2,26 @@ import React, { ReactElement } from "react";
 import classNames from "clsx";
 
 type Props = {
-	shortenedAddress: string;
-	name: string | undefined;
-	avatarURL: string | undefined;
-	showHoverStyle: boolean;
+  shortenedAddress: string;
+  name: string | undefined;
+  avatarURL: string | undefined;
+  showHoverStyle: boolean;
 };
 
 export default function SharedCurrentAccountInformation({
-	shortenedAddress,
-	name,
-	avatarURL,
-	showHoverStyle,
+  shortenedAddress,
+  name,
+  avatarURL,
+  showHoverStyle,
 }: Props): ReactElement {
-	return (
-		<div className={classNames("account_info_wrap", { hover: showHoverStyle })}>
-			<span className="account_info_label">
-				{name?.includes(".") ? name : shortenedAddress}
-			</span>
-			<div className="avatar" />
-			<style jsx>
-				{`
+  return (
+    <div className={classNames("account_info_wrap", { hover: showHoverStyle })}>
+      <span className="account_info_label">
+        {name?.includes(".") ? name : shortenedAddress}
+      </span>
+      <div className="avatar" />
+      <style jsx>
+        {`
           .account_info_wrap {
             display: flex;
             align-items: center;
@@ -40,11 +40,11 @@ export default function SharedCurrentAccountInformation({
             color: var(--aqua);
           }
         `}
-			</style>
-		</div>
-	);
+      </style>
+    </div>
+  );
 }
 
 SharedCurrentAccountInformation.defaultProps = {
-	showHoverStyle: false,
+  showHoverStyle: false,
 };

@@ -4,115 +4,112 @@ import { useDelayContentChange, useOnClickOutside } from "../../hooks";
 import { SharedIconButton } from "./SharedIcon";
 
 export type SharedSlideUpMenuSize =
-	| "auto"
-	| "small"
-	| "medium"
-	| "large"
-	| "full"
-	| "custom";
+  | "auto"
+  | "small"
+  | "medium"
+  | "large"
+  | "full"
+  | "custom";
 
 const SLIDE_TRANSITION_MS = 445;
 
 interface Props {
-	isOpen: boolean;
-	close: (
-		e:
-			| MouseEvent
-			| TouchEvent
-			| React.MouseEvent<HTMLButtonElement, MouseEvent>,
-	) => void;
-	title?: string | ReactElement;
-	children: React.ReactNode;
-	customSize?: string;
-	size: SharedSlideUpMenuSize;
-	alwaysRenderChildren?: boolean;
-	leftButton?: ReactElement;
-	closeOnClickOutside?: boolean;
+  isOpen: boolean;
+  close: (
+    e: MouseEvent | TouchEvent | React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => void;
+  title?: string | ReactElement;
+  children: React.ReactNode;
+  customSize?: string;
+  size: SharedSlideUpMenuSize;
+  alwaysRenderChildren?: boolean;
+  leftButton?: ReactElement;
+  closeOnClickOutside?: boolean;
 }
 
 const menuHeights: Record<SharedSlideUpMenuSize, string | null> = {
-	auto: "auto",
-	small: "24rem",
-	medium: "33.5rem",
-	large: "37.5rem",
-	full: "var(--popup-height)",
-	custom: null,
+  auto: "auto",
+  small: "24rem",
+  medium: "33.5rem",
+  large: "37.5rem",
+  full: "var(--popup-height)",
+  custom: null,
 };
 
 export default function SharedSlideUpMenu(props: Props): ReactElement {
-	const {
-		isOpen,
-		close,
-		size,
-		title = "",
-		children,
-		customSize,
-		alwaysRenderChildren,
-		leftButton,
-		closeOnClickOutside = true,
-	} = props;
+  const {
+    isOpen,
+    close,
+    size,
+    title = "",
+    children,
+    customSize,
+    alwaysRenderChildren,
+    leftButton,
+    closeOnClickOutside = true,
+  } = props;
 
-	const slideUpMenuRef = useRef(null);
+  const slideUpMenuRef = useRef(null);
 
-	useOnClickOutside(slideUpMenuRef, (e) =>
-		closeOnClickOutside ? close(e) : e.preventDefault(),
-	);
+  useOnClickOutside(slideUpMenuRef, (e) =>
+    closeOnClickOutside ? close(e) : e.preventDefault()
+  );
 
-	// Continue showing children during the close transition.
-	const visibleChildren = isOpen || alwaysRenderChildren ? children : <></>;
-	const displayChildren = useDelayContentChange(
-		visibleChildren,
-		!isOpen,
-		SLIDE_TRANSITION_MS,
-	);
+  // Continue showing children during the close transition.
+  const visibleChildren = isOpen || alwaysRenderChildren ? children : <></>;
+  const displayChildren = useDelayContentChange(
+    visibleChildren,
+    !isOpen,
+    SLIDE_TRANSITION_MS
+  );
 
-	const menuHeight = menuHeights[size] ?? customSize ?? menuHeights.medium;
+  const menuHeight = menuHeights[size] ?? customSize ?? menuHeights.medium;
 
-	return (
-		<div className="slide_up_menu_wrap ">
-			<div className={classNames("overlay", { closed: !isOpen })} />
-			<div
-				className={classNames("slide_up_menu", "base_texture", {
-					large: size === "large",
-					closed: !isOpen,
-				})}
-				style={
-					{
-						"--menu-height": menuHeight,
-						"--menu-height-transform":
-							menuHeight === "auto" ? "100%" : menuHeight,
-					} as CSSProperties
-				}
-				ref={isOpen ? slideUpMenuRef : null}
-			>
-				<div className="dashed_border">
-					<div className="slide_up_header">
-						<div className="left_button_wrap">{leftButton}</div>
-						{typeof title === "string" ? <h2>{title}</h2> : title}
-						<div className="close_button_wrap">
-							<SharedIconButton
-								icon="close.svg"
-								width="1rem"
-								color="var(--spanish-gray)"
-								hoverColor="#fff"
-								customStyles="
+  return (
+    <div className="slide_up_menu_wrap ">
+      <div className={classNames("overlay", { closed: !isOpen })} />
+      <div
+        className={classNames("slide_up_menu", "base_texture", {
+          large: size === "large",
+          closed: !isOpen,
+        })}
+        style={
+          {
+            "--menu-height": menuHeight,
+            "--menu-height-transform":
+              menuHeight === "auto" ? "100%" : menuHeight,
+          } as CSSProperties
+        }
+        ref={isOpen ? slideUpMenuRef : null}
+      >
+        <div className="dashed_border">
+          <div className="slide_up_header">
+            <div className="left_button_wrap">{leftButton}</div>
+            {typeof title === "string" ? <h2>{title}</h2> : title}
+            <div className="close_button_wrap">
+              <SharedIconButton
+                icon="close.svg"
+                width="1rem"
+                color="var(--spanish-gray)"
+                hoverColor="#fff"
+                customStyles="
             z-index: 2;
             position: sticky;
             top: 0px;
             right: 1.5rem;
             float: right;"
-								ariaLabel="Close menu"
-								onClick={(e) => {
-									close(e);
-								}}
-							/>
-						</div>
-					</div>
-					{displayChildren}
-				</div>
-			</div>
-			<style jsx>
-				{`
+                ariaLabel="Close menu"
+                onClick={(e) => {
+                  close(e);
+                }}
+              />
+            </div>
+          </div>
+          {displayChildren}
+        </div>
+      </div>
+      <style jsx>
+        {`
           .left_button_wrap {
             position: absolute;
             top: 50%;
@@ -192,11 +189,11 @@ export default function SharedSlideUpMenu(props: Props): ReactElement {
             pointer-events: none;
           }
         `}
-			</style>
-		</div>
-	);
+      </style>
+    </div>
+  );
 }
 
 SharedSlideUpMenu.defaultProps = {
-	size: "medium",
+  size: "medium",
 };

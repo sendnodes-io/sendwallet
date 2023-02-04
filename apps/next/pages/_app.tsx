@@ -10,36 +10,36 @@ import React, { startTransition } from "react";
 import type { SolitoAppProps } from "solito";
 
 function MyApp({ Component, pageProps }: SolitoAppProps) {
-	return (
-		<>
-			<Head>
-				<title>Tamagui Example App</title>
-				<meta name="description" content="Tamagui, Solito, Expo & Next.js" />
-				<link rel="icon" href="/favicon.ico" />
-			</Head>
-			<ThemeProvider>
-				<Component {...pageProps} />
-			</ThemeProvider>
-		</>
-	);
+  return (
+    <>
+      <Head>
+        <title>Tamagui Example App</title>
+        <meta name="description" content="Tamagui, Solito, Expo & Next.js" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+      <ThemeProvider>
+        <Component {...pageProps} />
+      </ThemeProvider>
+    </>
+  );
 }
 
 function ThemeProvider({ children }: { children: React.ReactNode }) {
-	const [theme, setTheme] = useRootTheme();
+  const [theme, setTheme] = useRootTheme();
 
-	return (
-		<NextThemeProvider
-			onChangeTheme={(next) => {
-				startTransition(() => {
-					setTheme(next);
-				});
-			}}
-		>
-			<Provider disableRootThemeClass defaultTheme={theme}>
-				{children}
-			</Provider>
-		</NextThemeProvider>
-	);
+  return (
+    <NextThemeProvider
+      onChangeTheme={(next) => {
+        startTransition(() => {
+          setTheme(next);
+        });
+      }}
+    >
+      <Provider disableRootThemeClass defaultTheme={theme}>
+        {children}
+      </Provider>
+    </NextThemeProvider>
+  );
 }
 
 export default MyApp;

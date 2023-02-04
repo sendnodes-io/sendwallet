@@ -3,152 +3,152 @@ import { RouteComponentProps } from "react-router-dom";
 import tabs from "./tabs";
 
 export interface AnimationConditions {
-	shouldDisplayDecoy: boolean;
-	isDirectionRight: boolean;
+  shouldDisplayDecoy: boolean;
+  isDirectionRight: boolean;
 }
 
 export function useAnimationConditions(
-	routeProps: {
-		history: {
-			entries?: {
-				state: {
-					isBack: boolean;
-				};
-				pathname: string;
-			}[];
-		};
-		location: {
-			pathname: string;
-		};
-	},
-	pagePreferences: {
-		[path: string]: {
-			hasTabBar: boolean;
-			hasTopBar: boolean;
-		};
-	},
+  routeProps: {
+    history: {
+      entries?: {
+        state: {
+          isBack: boolean;
+        };
+        pathname: string;
+      }[];
+    };
+    location: {
+      pathname: string;
+    };
+  },
+  pagePreferences: {
+    [path: string]: {
+      hasTabBar: boolean;
+      hasTopBar: boolean;
+    };
+  }
 ): AnimationConditions {
-	const { entries } = routeProps.history;
-	const locationName = routeProps.location.pathname.split("/")[1]!;
-	const prevLocationName =
-		(entries?.[entries.length - 2] &&
-			entries[entries.length - 2]!.pathname.split("/")[1]) ||
-		"";
+  const { entries } = routeProps.history;
+  const locationName = routeProps.location.pathname.split("/")[1]!;
+  const prevLocationName =
+    (entries?.[entries.length - 2] &&
+      entries[entries.length - 2]!.pathname.split("/")[1]) ||
+    "";
 
-	return useMemo((): AnimationConditions => {
-		let shouldDisplayDecoy = false;
-		let isDirectionRight = false;
+  return useMemo((): AnimationConditions => {
+    let shouldDisplayDecoy = false;
+    let isDirectionRight = false;
 
-		const isDecoyNeeded = Boolean(
-			pagePreferences[
-				`/${prevLocationName === "wallet" ? "" : prevLocationName}`
-			]?.hasTopBar &&
-				pagePreferences[`/${locationName === "wallet" ? "" : locationName}`]
-					?.hasTopBar,
-		);
-		// setShouldDisplayDecoy(isDecoyNeeded)
-		shouldDisplayDecoy = isDecoyNeeded;
+    const isDecoyNeeded = Boolean(
+      pagePreferences[
+        `/${prevLocationName === "wallet" ? "" : prevLocationName}`
+      ]?.hasTopBar &&
+        pagePreferences[`/${locationName === "wallet" ? "" : locationName}`]
+          ?.hasTopBar
+    );
+    // setShouldDisplayDecoy(isDecoyNeeded)
+    shouldDisplayDecoy = isDecoyNeeded;
 
-		const isGoingBetweenTabs =
-			tabs.includes(locationName) && tabs.includes(prevLocationName);
+    const isGoingBetweenTabs =
+      tabs.includes(locationName) && tabs.includes(prevLocationName);
 
-		const isGoingToATabLeftOfTab =
-			tabs.includes(locationName) &&
-			tabs.indexOf(locationName) < tabs.indexOf(prevLocationName);
+    const isGoingToATabLeftOfTab =
+      tabs.includes(locationName) &&
+      tabs.indexOf(locationName) < tabs.indexOf(prevLocationName);
 
-		const isGoingBack =
-			entries?.[entries.length - 1] &&
-			entries[entries.length - 1]?.state?.isBack === true;
+    const isGoingBack =
+      entries?.[entries.length - 1] &&
+      entries[entries.length - 1]?.state?.isBack === true;
 
-		if (isGoingBack) {
-			// setIsDirectionRight(true)
-			isDirectionRight = true;
-		} else if (isGoingBetweenTabs) {
-			if (isGoingToATabLeftOfTab) {
-				// setIsDirectionRight(true)
-				isDirectionRight = true;
-			} else if (!isGoingToATabLeftOfTab) {
-				// setIsDirectionRight(false)
-				isDirectionRight = false;
-			}
-		} else {
-			// setIsDirectionRight(false)
-			isDirectionRight = false;
-		}
-		return {
-			shouldDisplayDecoy,
-			isDirectionRight,
-		};
-	}, [entries, locationName, prevLocationName]);
+    if (isGoingBack) {
+      // setIsDirectionRight(true)
+      isDirectionRight = true;
+    } else if (isGoingBetweenTabs) {
+      if (isGoingToATabLeftOfTab) {
+        // setIsDirectionRight(true)
+        isDirectionRight = true;
+      } else if (!isGoingToATabLeftOfTab) {
+        // setIsDirectionRight(false)
+        isDirectionRight = false;
+      }
+    } else {
+      // setIsDirectionRight(false)
+      isDirectionRight = false;
+    }
+    return {
+      shouldDisplayDecoy,
+      isDirectionRight,
+    };
+  }, [entries, locationName, prevLocationName]);
 }
 
 export default function setAnimationConditions(
-	routeProps: RouteComponentProps & {
-		history?: {
-			entries?: {
-				state: {
-					isBack: boolean;
-				};
-				pathname: string;
-			}[];
-		};
-		location?: {
-			pathname: string;
-		};
-	},
-	pagePreferences: {
-		[path: string]: {
-			hasTabBar: boolean;
-			hasTopBar: boolean;
-		};
-	},
-	setShouldDisplayDecoy: (choice: boolean) => void,
-	setIsDirectionRight: (choice: boolean) => void,
+  routeProps: RouteComponentProps & {
+    history?: {
+      entries?: {
+        state: {
+          isBack: boolean;
+        };
+        pathname: string;
+      }[];
+    };
+    location?: {
+      pathname: string;
+    };
+  },
+  pagePreferences: {
+    [path: string]: {
+      hasTabBar: boolean;
+      hasTopBar: boolean;
+    };
+  },
+  setShouldDisplayDecoy: (choice: boolean) => void,
+  setIsDirectionRight: (choice: boolean) => void
 ): void {
-	const { entries } = routeProps.history;
-	const locationName = routeProps.location.pathname.split("/")[1]!;
-	const prevLocationName =
-		(entries?.[entries.length - 2] &&
-			entries[entries.length - 2]!.pathname.split("/")[1]) ||
-		"";
+  const { entries } = routeProps.history;
+  const locationName = routeProps.location.pathname.split("/")[1]!;
+  const prevLocationName =
+    (entries?.[entries.length - 2] &&
+      entries[entries.length - 2]!.pathname.split("/")[1]) ||
+    "";
 
-	const isDecoyNeeded = Boolean(
-		pagePreferences[`/${prevLocationName === "wallet" ? "" : prevLocationName}`]
-			?.hasTopBar &&
-			pagePreferences[`/${locationName === "wallet" ? "" : locationName}`]
-				?.hasTopBar,
-	);
-	setShouldDisplayDecoy(isDecoyNeeded);
+  const isDecoyNeeded = Boolean(
+    pagePreferences[`/${prevLocationName === "wallet" ? "" : prevLocationName}`]
+      ?.hasTopBar &&
+      pagePreferences[`/${locationName === "wallet" ? "" : locationName}`]
+        ?.hasTopBar
+  );
+  setShouldDisplayDecoy(isDecoyNeeded);
 
-	const isGoingBetweenTabs =
-		tabs.includes(locationName) && tabs.includes(prevLocationName);
+  const isGoingBetweenTabs =
+    tabs.includes(locationName) && tabs.includes(prevLocationName);
 
-	const isGoingToATabLeftOfTab =
-		tabs.includes(locationName) &&
-		tabs.indexOf(locationName) < tabs.indexOf(prevLocationName);
+  const isGoingToATabLeftOfTab =
+    tabs.includes(locationName) &&
+    tabs.indexOf(locationName) < tabs.indexOf(prevLocationName);
 
-	const isGoingBack =
-		entries?.[entries.length - 1] &&
-		entries[entries.length - 1]?.state?.isBack === true;
+  const isGoingBack =
+    entries?.[entries.length - 1] &&
+    entries[entries.length - 1]?.state?.isBack === true;
 
-	if (isGoingBack) {
-		setIsDirectionRight(true);
-	} else if (isGoingBetweenTabs) {
-		if (isGoingToATabLeftOfTab) {
-			setIsDirectionRight(true);
-		} else if (!isGoingToATabLeftOfTab) {
-			setIsDirectionRight(false);
-		}
-	} else {
-		setIsDirectionRight(false);
-	}
+  if (isGoingBack) {
+    setIsDirectionRight(true);
+  } else if (isGoingBetweenTabs) {
+    if (isGoingToATabLeftOfTab) {
+      setIsDirectionRight(true);
+    } else if (!isGoingToATabLeftOfTab) {
+      setIsDirectionRight(false);
+    }
+  } else {
+    setIsDirectionRight(false);
+  }
 }
 
 export function animationStyles(
-	shouldDisplayDecoy: boolean,
-	isDirectionRight: boolean,
+  shouldDisplayDecoy: boolean,
+  isDirectionRight: boolean
 ): string {
-	return `
+  return `
       .top_menu_wrap_decoy {
         position: absolute;
         top: -6px;
@@ -182,7 +182,9 @@ export function animationStyles(
       }
 
       .page-transition-enter .anti_animation {
-        transform: ${!isDirectionRight ? "translateX(-7px)" : "translateX(7px)"};
+        transform: ${
+          !isDirectionRight ? "translateX(-7px)" : "translateX(7px)"
+        };
       }
       .page-transition-enter-active .anti_animation {
         transform: translateX(0px);
@@ -194,7 +196,9 @@ export function animationStyles(
       }
       .page-transition-exit-active .anti_animation {
         opacity: 1;
-        transform: ${!isDirectionRight ? "translateX(-7px)" : "translateX(7px)"};
+        transform: ${
+          !isDirectionRight ? "translateX(-7px)" : "translateX(7px)"
+        };
         transition: transform cubic-bezier(0.25, 0.4, 0.55, 1.4) 250ms;
       }
       `;

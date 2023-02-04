@@ -5,55 +5,55 @@ import OverviewAssetsTable from "../components/Overview/OverviewAssetsTable";
 import SharedLoadingSpinner from "../components/Shared/SharedLoadingSpinner";
 
 export default function Overview(): ReactElement {
-	const { combinedData } = useBackgroundSelector(
-		selectAccountAndTimestampedActivities,
-	);
+  const { combinedData } = useBackgroundSelector(
+    selectAccountAndTimestampedActivities
+  );
 
-	const { initializationLoadingTimeExpired, numberOfAddresses } =
-		useBackgroundSelector((background) => {
-			return {
-				numberOfAddresses: Object.keys(background.account.accountsData).length,
-				initializationLoadingTimeExpired:
-					background.ui?.initializationLoadingTimeExpired,
-			};
-		});
+  const { initializationLoadingTimeExpired, numberOfAddresses } =
+    useBackgroundSelector((background) => {
+      return {
+        numberOfAddresses: Object.keys(background.account.accountsData).length,
+        initializationLoadingTimeExpired:
+          background.ui?.initializationLoadingTimeExpired,
+      };
+    });
 
-	return (
-		<>
-			<header className="standard_width">
-				<div className="header_primary_content">
-					<span className="total_balance_label">Total balance</span>
-					<div className="primary_balance">
-						{initializationLoadingTimeExpired ||
-						combinedData?.totalMainCurrencyValue ? (
-							<>
-								<span className="primary_money_sign">$</span>
-								{combinedData?.totalMainCurrencyValue}
-							</>
-						) : (
-							<div className="loading_wrap">
-								<SharedLoadingSpinner />
-							</div>
-						)}
-					</div>
-				</div>
-				<div className="sub_info_row">
-					<div className="info_group_item">
-						<span className="info_left">Addresses</span>
-						{numberOfAddresses}
-					</div>
-					<div className="info_group_item">
-						<span className="info_left">Assets</span>
-						{combinedData.assets.length}
-					</div>
-				</div>
-			</header>
-			<OverviewAssetsTable
-				assets={combinedData.assets}
-				initializationLoadingTimeExpired={initializationLoadingTimeExpired}
-			/>
-			<style jsx>
-				{`
+  return (
+    <>
+      <header className="standard_width">
+        <div className="header_primary_content">
+          <span className="total_balance_label">Total balance</span>
+          <div className="primary_balance">
+            {initializationLoadingTimeExpired ||
+            combinedData?.totalMainCurrencyValue ? (
+              <>
+                <span className="primary_money_sign">$</span>
+                {combinedData?.totalMainCurrencyValue}
+              </>
+            ) : (
+              <div className="loading_wrap">
+                <SharedLoadingSpinner />
+              </div>
+            )}
+          </div>
+        </div>
+        <div className="sub_info_row">
+          <div className="info_group_item">
+            <span className="info_left">Addresses</span>
+            {numberOfAddresses}
+          </div>
+          <div className="info_group_item">
+            <span className="info_left">Assets</span>
+            {combinedData.assets.length}
+          </div>
+        </div>
+      </header>
+      <OverviewAssetsTable
+        assets={combinedData.assets}
+        initializationLoadingTimeExpired={initializationLoadingTimeExpired}
+      />
+      <style jsx>
+        {`
           .header_primary_content {
             height: 87px;
             margin: 0 auto;
@@ -129,7 +129,7 @@ export default function Overview(): ReactElement {
             text-align: center;
           }
         `}
-			</style>
-		</>
-	);
+      </style>
+    </>
+  );
 }

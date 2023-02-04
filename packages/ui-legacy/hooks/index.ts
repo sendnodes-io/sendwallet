@@ -12,29 +12,29 @@ export * from "./dom-hooks";
 export * from "./validation-hooks";
 
 export function useIsDappPopup(): boolean {
-	const [isDappPopup, setIsDappPopup] = useState(false);
+  const [isDappPopup, setIsDappPopup] = useState(false);
 
-	useEffect(() => {
-		const params = new URLSearchParams(window.location.search);
-		const maybePage = params.get("page");
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const maybePage = params.get("page");
 
-		if (isAllowedQueryParamPage(maybePage)) {
-			setIsDappPopup(true);
-		} else {
-			setIsDappPopup(false);
-		}
-	}, []);
+    if (isAllowedQueryParamPage(maybePage)) {
+      setIsDappPopup(true);
+    } else {
+      setIsDappPopup(false);
+    }
+  }, []);
 
-	return isDappPopup;
+  return isDappPopup;
 }
 
 export function useRunOnFirstRender(func: () => void): void {
-	const isFirst = useRef(true);
+  const isFirst = useRef(true);
 
-	if (isFirst.current) {
-		isFirst.current = false;
-		func();
-	}
+  if (isFirst.current) {
+    isFirst.current = false;
+    func();
+  }
 }
 
 /**
@@ -42,32 +42,32 @@ export function useRunOnFirstRender(func: () => void): void {
  * open in a new focused browser window.
  */
 export function useIsInTab(path?: string): boolean {
-	const popoutWindowId = useBackgroundSelector(selectPopoutWindowId);
-	const isPopout = window.location.pathname.includes("/tab.html");
-	useEffect(() => {
-		const _openPopout = async () => {
-			// not in a popout
-			if (!isPopout) {
-				await openInBrowserTab(path);
-				window.close();
-			}
-			// that's it, now render a placeholder advising user to continue in popout
-		};
+  const popoutWindowId = useBackgroundSelector(selectPopoutWindowId);
+  const isPopout = window.location.pathname.includes("/tab.html");
+  useEffect(() => {
+    const _openPopout = async () => {
+      // not in a popout
+      if (!isPopout) {
+        await openInBrowserTab(path);
+        window.close();
+      }
+      // that's it, now render a placeholder advising user to continue in popout
+    };
 
-		_openPopout().catch((e) => console.error(e));
-	}, [popoutWindowId]);
-	return isPopout;
+    _openPopout().catch((e) => console.error(e));
+  }, [popoutWindowId]);
+  return isPopout;
 }
 
 async function openInBrowserTab(path?: string) {
-	const popoutURL = browser.runtime.getURL("tab.html");
+  const popoutURL = browser.runtime.getURL("tab.html");
 
-	const win = window.open(
-		`${popoutURL}${path ? `#${path}` : ""}`,
-		"poktwallet_tab",
-	);
-	win?.focus();
-	return win;
+  const win = window.open(
+    `${popoutURL}${path ? `#${path}` : ""}`,
+    "poktwallet_tab"
+  );
+  win?.focus();
+  return win;
 }
 
 /**
@@ -75,24 +75,24 @@ async function openInBrowserTab(path?: string) {
  * the current window.
  */
 async function openInBrowserWindow(path?: string) {
-	const popoutURL = browser.runtime.getURL("popout.html");
-	const height = 625;
-	const width = 384;
-	const { outerHeight, outerWidth, screenY, screenX } = window.top ?? {
-		outerHeight: screen.height,
-		outerWidth: screen.width,
-		screenY: screen.height,
-		screenX: screen.width,
-	};
-	const top = parseInt((outerHeight / 2 + screenY - height / 2).toString());
-	const left = parseInt((outerWidth / 2 + screenX - width / 2).toString());
-	return browser.windows.create({
-		url: `${popoutURL}${path ? `#${path}` : ""}`,
-		type: "popup",
-		height,
-		width,
-		focused: true,
-		left,
-		top,
-	});
+  const popoutURL = browser.runtime.getURL("popout.html");
+  const height = 625;
+  const width = 384;
+  const { outerHeight, outerWidth, screenY, screenX } = window.top ?? {
+    outerHeight: screen.height,
+    outerWidth: screen.width,
+    screenY: screen.height,
+    screenX: screen.width,
+  };
+  const top = parseInt((outerHeight / 2 + screenY - height / 2).toString());
+  const left = parseInt((outerWidth / 2 + screenX - width / 2).toString());
+  return browser.windows.create({
+    url: `${popoutURL}${path ? `#${path}` : ""}`,
+    type: "popup",
+    height,
+    width,
+    focused: true,
+    left,
+    top,
+  });
 }

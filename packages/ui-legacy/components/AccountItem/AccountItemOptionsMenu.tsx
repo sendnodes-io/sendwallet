@@ -13,194 +13,194 @@ import AccountItemExportPrivateKeyConfirm from "./AccountItemExportPrivateKeyCon
 import { AccountType } from "@sendnodes/pokt-wallet-background/redux-slices/AccountType";
 
 type AccountItemOptionsMenuProps = {
-	accountTotal: AccountTotal;
-	address: HexString;
+  accountTotal: AccountTotal;
+  address: HexString;
 };
 
 export default function AccountItemOptionsMenu({
-	accountTotal,
-	address,
+  accountTotal,
+  address,
 }: AccountItemOptionsMenuProps): ReactElement {
-	const [showOptionsMenu, setShowOptionsMenu] = useState(false);
-	const [showAddressRemoveConfirm, setShowAddressRemoveConfirm] =
-		useState(false);
-	const [showExportPrivateKeyConfirm, setShowExportPrivateKeyConfirm] =
-		useState(false);
-	const [showEditWalletName, setShowEditWalletName] = useState(false);
-	const optionsMenuRef = useRef<null | HTMLUListElement>(null);
-	useOnClickOutside(optionsMenuRef, () => {
-		setShowOptionsMenu(false);
-	});
+  const [showOptionsMenu, setShowOptionsMenu] = useState(false);
+  const [showAddressRemoveConfirm, setShowAddressRemoveConfirm] =
+    useState(false);
+  const [showExportPrivateKeyConfirm, setShowExportPrivateKeyConfirm] =
+    useState(false);
+  const [showEditWalletName, setShowEditWalletName] = useState(false);
+  const optionsMenuRef = useRef<null | HTMLUListElement>(null);
+  useOnClickOutside(optionsMenuRef, () => {
+    setShowOptionsMenu(false);
+  });
 
-	useEffect(() => {
-		if (showOptionsMenu && optionsMenuRef?.current) {
-			optionsMenuRef.current.scrollIntoView({
-				behavior: "smooth",
-				block: "nearest",
-			});
-		}
-	}, [showOptionsMenu]);
+  useEffect(() => {
+    if (showOptionsMenu && optionsMenuRef?.current) {
+      optionsMenuRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+      });
+    }
+  }, [showOptionsMenu]);
 
-	return (
-		<div>
-			<div className="options_menu_wrap">
-				<button
-					type="button"
-					className="icon_settings"
-					role="menu"
-					tabIndex={0}
-					onKeyPress={(e) => {
-						if (e.key === "enter") {
-							setShowOptionsMenu(true);
-						}
-					}}
-					onClick={(e) => {
-						e.stopPropagation();
-						setShowOptionsMenu(true);
-					}}
-				>
-					<FiMoreHorizontal />
-				</button>
+  return (
+    <div>
+      <div className="options_menu_wrap">
+        <button
+          type="button"
+          className="icon_settings"
+          role="menu"
+          tabIndex={0}
+          onKeyPress={(e) => {
+            if (e.key === "enter") {
+              setShowOptionsMenu(true);
+            }
+          }}
+          onClick={(e) => {
+            e.stopPropagation();
+            setShowOptionsMenu(true);
+          }}
+        >
+          <FiMoreHorizontal />
+        </button>
 
-				{showOptionsMenu && (
-					// eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
-					<ul
-						ref={optionsMenuRef}
-						className="options"
-						onClick={(e) => e.stopPropagation()}
-						onKeyDown={(e) => e.stopPropagation()}
-						onMouseOver={(e) => e.stopPropagation()}
-						onFocus={(e) => e.stopPropagation()}
-					>
-						<li className="option">
-							<button
-								className="edit_wallet_name_button"
-								type="button"
-								onClick={(e) => {
-									e.stopPropagation();
-									setShowOptionsMenu(false);
-									setShowEditWalletName(true);
-								}}
-							>
-								<EditWalletNameLabel hoverable />
-							</button>
-							<button
-								type="button"
-								className="close_button"
-								aria-label="Close"
-								onClick={(e) => {
-									e.stopPropagation();
-									setShowOptionsMenu(false);
-								}}
-							>
-								<div className="icon_close" />
-							</button>
-						</li>
-						<li className="option">
-							<button
-								className="remove_address_button"
-								type="button"
-								onClick={(e) => {
-									e.stopPropagation();
-									setShowOptionsMenu(false);
-									setShowAddressRemoveConfirm(true);
-								}}
-							>
-								<RemoveAddressLabel hoverable />
-							</button>
-						</li>
-						{accountTotal.accountType !== AccountType.ReadOnly && (
-							<li className="option">
-								<button
-									className="export_pk_button"
-									type="button"
-									onClick={(e) => {
-										e.stopPropagation();
-										setShowOptionsMenu(false);
-										setShowExportPrivateKeyConfirm(true);
-									}}
-								>
-									<ExportPrivateKeyLabel hoverable />
-								</button>
-							</li>
-						)}
-					</ul>
-				)}
-			</div>
-			<div title="Remove Address">
-				<SharedSlideUpMenu
-					title="Remove Address"
-					size="auto"
-					isOpen={showAddressRemoveConfirm}
-					close={(e) => {
-						e?.stopPropagation();
-						setShowAddressRemoveConfirm(false);
-					}}
-				>
-					<div
-						role="presentation"
-						onClick={(e) => e.stopPropagation()}
-						onKeyPress={(e) => e.stopPropagation()}
-						style={{ cursor: "default", height: "100%" }}
-					>
-						<AccountItemRemovalConfirm
-							address={address}
-							account={accountTotal}
-							close={() => setShowAddressRemoveConfirm(false)}
-						/>
-					</div>
-				</SharedSlideUpMenu>
-			</div>
-			<div title="Edit Wallet Name">
-				<SharedSlideUpMenu
-					title="Edit Name"
-					size="small"
-					isOpen={showEditWalletName}
-					close={(e) => {
-						e?.stopPropagation();
-						setShowEditWalletName(false);
-					}}
-				>
-					<div
-						role="presentation"
-						onClick={(e) => e.stopPropagation()}
-						onKeyPress={(e) => e.stopPropagation()}
-						style={{ cursor: "default", height: "100%" }}
-					>
-						<AccountItemEditName
-							address={address}
-							account={accountTotal}
-							close={() => setShowEditWalletName(false)}
-						/>
-					</div>
-				</SharedSlideUpMenu>
-			</div>
-			<div title="Export Private Key">
-				<SharedSlideUpMenu
-					title="Export Private Key"
-					size="auto"
-					isOpen={showExportPrivateKeyConfirm}
-					close={(e) => {
-						e?.stopPropagation();
-						setShowExportPrivateKeyConfirm(false);
-					}}
-				>
-					<div
-						role="presentation"
-						onClick={(e) => e.stopPropagation()}
-						onKeyPress={(e) => e.stopPropagation()}
-						style={{ cursor: "default", height: "100%" }}
-					>
-						<AccountItemExportPrivateKeyConfirm
-							address={address}
-							account={accountTotal}
-							close={() => setShowExportPrivateKeyConfirm(false)}
-						/>
-					</div>
-				</SharedSlideUpMenu>
-			</div>
-			<style jsx>
-				{`
+        {showOptionsMenu && (
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
+          <ul
+            ref={optionsMenuRef}
+            className="options"
+            onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => e.stopPropagation()}
+            onMouseOver={(e) => e.stopPropagation()}
+            onFocus={(e) => e.stopPropagation()}
+          >
+            <li className="option">
+              <button
+                className="edit_wallet_name_button"
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowOptionsMenu(false);
+                  setShowEditWalletName(true);
+                }}
+              >
+                <EditWalletNameLabel hoverable />
+              </button>
+              <button
+                type="button"
+                className="close_button"
+                aria-label="Close"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowOptionsMenu(false);
+                }}
+              >
+                <div className="icon_close" />
+              </button>
+            </li>
+            <li className="option">
+              <button
+                className="remove_address_button"
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowOptionsMenu(false);
+                  setShowAddressRemoveConfirm(true);
+                }}
+              >
+                <RemoveAddressLabel hoverable />
+              </button>
+            </li>
+            {accountTotal.accountType !== AccountType.ReadOnly && (
+              <li className="option">
+                <button
+                  className="export_pk_button"
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowOptionsMenu(false);
+                    setShowExportPrivateKeyConfirm(true);
+                  }}
+                >
+                  <ExportPrivateKeyLabel hoverable />
+                </button>
+              </li>
+            )}
+          </ul>
+        )}
+      </div>
+      <div title="Remove Address">
+        <SharedSlideUpMenu
+          title="Remove Address"
+          size="auto"
+          isOpen={showAddressRemoveConfirm}
+          close={(e) => {
+            e?.stopPropagation();
+            setShowAddressRemoveConfirm(false);
+          }}
+        >
+          <div
+            role="presentation"
+            onClick={(e) => e.stopPropagation()}
+            onKeyPress={(e) => e.stopPropagation()}
+            style={{ cursor: "default", height: "100%" }}
+          >
+            <AccountItemRemovalConfirm
+              address={address}
+              account={accountTotal}
+              close={() => setShowAddressRemoveConfirm(false)}
+            />
+          </div>
+        </SharedSlideUpMenu>
+      </div>
+      <div title="Edit Wallet Name">
+        <SharedSlideUpMenu
+          title="Edit Name"
+          size="small"
+          isOpen={showEditWalletName}
+          close={(e) => {
+            e?.stopPropagation();
+            setShowEditWalletName(false);
+          }}
+        >
+          <div
+            role="presentation"
+            onClick={(e) => e.stopPropagation()}
+            onKeyPress={(e) => e.stopPropagation()}
+            style={{ cursor: "default", height: "100%" }}
+          >
+            <AccountItemEditName
+              address={address}
+              account={accountTotal}
+              close={() => setShowEditWalletName(false)}
+            />
+          </div>
+        </SharedSlideUpMenu>
+      </div>
+      <div title="Export Private Key">
+        <SharedSlideUpMenu
+          title="Export Private Key"
+          size="auto"
+          isOpen={showExportPrivateKeyConfirm}
+          close={(e) => {
+            e?.stopPropagation();
+            setShowExportPrivateKeyConfirm(false);
+          }}
+        >
+          <div
+            role="presentation"
+            onClick={(e) => e.stopPropagation()}
+            onKeyPress={(e) => e.stopPropagation()}
+            style={{ cursor: "default", height: "100%" }}
+          >
+            <AccountItemExportPrivateKeyConfirm
+              address={address}
+              account={accountTotal}
+              close={() => setShowExportPrivateKeyConfirm(false)}
+            />
+          </div>
+        </SharedSlideUpMenu>
+      </div>
+      <style jsx>
+        {`
           .options_menu_wrap {
             position: relative;
             z-index: 1;
@@ -251,7 +251,7 @@ export default function AccountItemOptionsMenu({
             cursor: default;
           }
         `}
-			</style>
-		</div>
-	);
+      </style>
+    </div>
+  );
 }

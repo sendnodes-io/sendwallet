@@ -13,25 +13,25 @@ import { createRoot } from "react-dom/client";
 export { Popup, Tab, Stake };
 
 logger.info(
-	`Starting SendWallet UI in env:${process.env.NODE_ENV} branch:${process.env.GIT_BRANCH} commit:${process.env.GIT_COMMIT}`,
+  `Starting SendWallet UI in env:${process.env.NODE_ENV} branch:${process.env.GIT_BRANCH} commit:${process.env.GIT_COMMIT}`
 );
 
 async function renderApp(component: FC<{ store: Store }>, attempts = 0) {
-	const rootElement = document.getElementById("pokt-wallet-root");
+  const rootElement = document.getElementById("pokt-wallet-root");
 
-	if (!rootElement) {
-		throw new Error(
-			"Failed to find #pokt-wallet-root element; page structure changed?",
-		);
-	}
+  if (!rootElement) {
+    throw new Error(
+      "Failed to find #pokt-wallet-root element; page structure changed?"
+    );
+  }
 
-	createRoot(rootElement).render(
-		React.createElement(CoreStartStore, { Component: component }),
-	);
+  createRoot(rootElement).render(
+    React.createElement(CoreStartStore, { Component: component })
+  );
 }
 
 export async function attachUiToRootElement(
-	component: FC<{ store: Store }>,
+  component: FC<{ store: Store }>
 ): Promise<void> {
-	await renderApp(component);
+  await renderApp(component);
 }

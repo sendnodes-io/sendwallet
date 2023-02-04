@@ -3,50 +3,50 @@ import LedgerContinueButton from "../../components/Ledger/LedgerContinueButton";
 import LedgerPanelContainer from "../../components/Ledger/LedgerPanelContainer";
 
 export default function LedgerPrepare({
-	onContinue,
-	initialScreen,
-	deviceCount,
+  onContinue,
+  initialScreen,
+  deviceCount,
 }: {
-	onContinue: () => void;
-	initialScreen: boolean;
-	deviceCount: number;
+  onContinue: () => void;
+  initialScreen: boolean;
+  deviceCount: number;
 }): ReactElement {
-	const buttonLabel = initialScreen ? "Continue" : "Try Again";
-	const subHeadingVerb = initialScreen ? "start" : "retry";
-	const warningText =
-		deviceCount === 0
-			? "No Ledger device is connected"
-			: "Multiple Ledgers are connected";
-	return (
-		<LedgerPanelContainer
-			indicatorImageSrc="/images/connect_ledger_indicator_disconnected.svg"
-			heading={initialScreen ? "Before we get started" : "Check your Ledger"}
-			subHeading={`Make sure you take these 3 steps before we ${subHeadingVerb}`}
-		>
-			{!initialScreen && deviceCount !== 1 ? (
-				<div className="steps">
-					<div className="box error">
-						<span className="block_icon" />
-						{warningText}
-					</div>
-					<div className="box">
-						<p className="highlight_text">
-							Please follow the steps below and click on Try Again!
-						</p>
-					</div>
-				</div>
-			) : (
-				<></>
-			)}
-			<ol className="steps">
-				<li>Plug in a single Ledger</li>
-				<li>Enter pin to unlock</li>
-				<li>Open Pocket App</li>
-			</ol>
-			<LedgerContinueButton onClick={onContinue}>
-				{buttonLabel}
-			</LedgerContinueButton>
-			<style jsx>{`
+  const buttonLabel = initialScreen ? "Continue" : "Try Again";
+  const subHeadingVerb = initialScreen ? "start" : "retry";
+  const warningText =
+    deviceCount === 0
+      ? "No Ledger device is connected"
+      : "Multiple Ledgers are connected";
+  return (
+    <LedgerPanelContainer
+      indicatorImageSrc="/images/connect_ledger_indicator_disconnected.svg"
+      heading={initialScreen ? "Before we get started" : "Check your Ledger"}
+      subHeading={`Make sure you take these 3 steps before we ${subHeadingVerb}`}
+    >
+      {!initialScreen && deviceCount !== 1 ? (
+        <div className="steps">
+          <div className="box error">
+            <span className="block_icon" />
+            {warningText}
+          </div>
+          <div className="box">
+            <p className="highlight_text">
+              Please follow the steps below and click on Try Again!
+            </p>
+          </div>
+        </div>
+      ) : (
+        <></>
+      )}
+      <ol className="steps">
+        <li>Plug in a single Ledger</li>
+        <li>Enter pin to unlock</li>
+        <li>Open Pocket App</li>
+      </ol>
+      <LedgerContinueButton onClick={onContinue}>
+        {buttonLabel}
+      </LedgerContinueButton>
+      <style jsx>{`
         .steps {
           list-style: none;
           padding: 0.5rem;
@@ -107,6 +107,6 @@ export default function LedgerPrepare({
           color: var(--spanish-gray);
         }
       `}</style>
-		</LedgerPanelContainer>
-	);
+    </LedgerPanelContainer>
+  );
 }

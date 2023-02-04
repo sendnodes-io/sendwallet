@@ -13,38 +13,38 @@ import ErrorFallback from "./ErrorFallback";
  * Entry point for UI shown in browser tabs.
  */
 export default function Tab({ store }: { store: Store }): ReactElement {
-	return (
-		<Provider store={store}>
-			{/* HashRouter seems the only choice supporting safe page reloads. */}
-			<HashRouter>
-				<Switch>
-					<Route path="/ledger" exact>
-						<CorePopupPage hasTopBar={false}>
-							<ErrorBoundary FallbackComponent={ErrorFallback}>
-								<Ledger />
-							</ErrorBoundary>
-						</CorePopupPage>
-					</Route>
-					{pageList.map(({ path, Component, hasTopBar }) => {
-						return (
-							<Route key={path} path={path} exact>
-								<CorePopupPage hasTopBar={hasTopBar}>
-									<ErrorBoundary FallbackComponent={ErrorFallback}>
-										<Component />
-									</ErrorBoundary>
-								</CorePopupPage>
-							</Route>
-						);
-					})}
-					<Route path="/*">
-						<CorePopupPage hasTopBar={false}>
-							<ErrorBoundary FallbackComponent={ErrorFallback}>
-								<TabNotFound />
-							</ErrorBoundary>
-						</CorePopupPage>
-					</Route>
-				</Switch>
-			</HashRouter>
-		</Provider>
-	);
+  return (
+    <Provider store={store}>
+      {/* HashRouter seems the only choice supporting safe page reloads. */}
+      <HashRouter>
+        <Switch>
+          <Route path="/ledger" exact>
+            <CorePopupPage hasTopBar={false}>
+              <ErrorBoundary FallbackComponent={ErrorFallback}>
+                <Ledger />
+              </ErrorBoundary>
+            </CorePopupPage>
+          </Route>
+          {pageList.map(({ path, Component, hasTopBar }) => {
+            return (
+              <Route key={path} path={path} exact>
+                <CorePopupPage hasTopBar={hasTopBar}>
+                  <ErrorBoundary FallbackComponent={ErrorFallback}>
+                    <Component />
+                  </ErrorBoundary>
+                </CorePopupPage>
+              </Route>
+            );
+          })}
+          <Route path="/*">
+            <CorePopupPage hasTopBar={false}>
+              <ErrorBoundary FallbackComponent={ErrorFallback}>
+                <TabNotFound />
+              </ErrorBoundary>
+            </CorePopupPage>
+          </Route>
+        </Switch>
+      </HashRouter>
+    </Provider>
+  );
 }

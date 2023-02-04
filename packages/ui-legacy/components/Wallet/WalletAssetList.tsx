@@ -5,26 +5,26 @@ import { CompleteAssetAmount } from "@sendnodes/pokt-wallet-background/redux-sli
 import WalletAssetListItem from "./WalletAssetListItem";
 
 interface Props {
-	assetAmounts: CompleteAssetAmount[];
-	initializationLoadingTimeExpired: boolean;
+  assetAmounts: CompleteAssetAmount[];
+  initializationLoadingTimeExpired: boolean;
 }
 
 export default function WalletAssetList(props: Props): ReactElement {
-	const { assetAmounts, initializationLoadingTimeExpired } = props;
-	if (!assetAmounts) return <></>;
-	return (
-		<ul>
-			{assetAmounts.map((assetAmount) => (
-				<WalletAssetListItem
-					assetAmount={assetAmount}
-					key={assetAmount.asset.symbol}
-					initializationLoadingTimeExpired={initializationLoadingTimeExpired}
-				/>
-			))}
-			{!initializationLoadingTimeExpired && (
-				<li className="loading">Digging deeper...</li>
-			)}
-			<style jsx>{`
+  const { assetAmounts, initializationLoadingTimeExpired } = props;
+  if (!assetAmounts) return <></>;
+  return (
+    <ul>
+      {assetAmounts.map((assetAmount) => (
+        <WalletAssetListItem
+          assetAmount={assetAmount}
+          key={assetAmount.asset.symbol}
+          initializationLoadingTimeExpired={initializationLoadingTimeExpired}
+        />
+      ))}
+      {!initializationLoadingTimeExpired && (
+        <li className="loading">Digging deeper...</li>
+      )}
+      <style jsx>{`
         .loading {
           display: flex;
           justify-content: center;
@@ -34,6 +34,6 @@ export default function WalletAssetList(props: Props): ReactElement {
           font-size: 15px;
         }
       `}</style>
-		</ul>
-	);
+    </ul>
+  );
 }

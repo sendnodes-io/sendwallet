@@ -9,9 +9,9 @@ import { fromFixedPoint } from "./lib/fixed-point";
  * metadata.
  */
 export type TokenListCitation = {
-	name: string;
-	url: string;
-	logoURL?: string;
+  name: string;
+  url: string;
+  logoURL?: string;
 };
 
 /**
@@ -19,8 +19,8 @@ export type TokenListCitation = {
  * token list.
  */
 export type TokenListAndReference = {
-	url: string;
-	tokenList: TokenList;
+  url: string;
+  tokenList: TokenList;
 };
 
 /**
@@ -30,10 +30,10 @@ export type TokenListAndReference = {
  * Note that the metadata is entirely optional.
  */
 export type AssetMetadata = {
-	coinGeckoID?: string;
-	logoURL?: string;
-	websiteURL?: string;
-	tokenLists: TokenListCitation[];
+  coinGeckoID?: string;
+  logoURL?: string;
+  websiteURL?: string;
+  tokenLists: TokenListCitation[];
 };
 
 /**
@@ -41,9 +41,9 @@ export type AssetMetadata = {
  * alongside potential metadata about that asset.
  */
 export type Asset = {
-	symbol: string;
-	name: string;
-	metadata?: AssetMetadata;
+  symbol: string;
+  name: string;
+  metadata?: AssetMetadata;
 };
 
 /**
@@ -51,16 +51,16 @@ export type Asset = {
  * asset id in CoinGecko's records.
  */
 export type CoinGeckoAsset = Asset & {
-	metadata: Asset["metadata"] & {
-		coinGeckoID: string;
-	};
+  metadata: Asset["metadata"] & {
+    coinGeckoID: string;
+  };
 };
 
 /*
  * Fungible assets include coins, currencies, and many tokens.
  */
 export type FungibleAsset = Asset & {
-	decimals: number;
+  decimals: number;
 };
 
 /**
@@ -97,8 +97,8 @@ export type SmartContractFungibleAsset = FungibleAsset & SmartContract;
  * transactions.
  */
 export type AssetAmount = {
-	asset: Asset;
-	amount: bigint;
+  asset: Asset;
+  amount: bigint;
 };
 
 /*
@@ -110,11 +110,11 @@ export type FungibleAssetAmount = AnyAssetAmount<FungibleAsset>;
  * A union of all assets we expect to price.
  */
 export type AnyAsset =
-	| Asset
-	| NetworkSpecificAsset
-	| FiatCurrency
-	| FungibleAsset
-	| SmartContractFungibleAsset;
+  | Asset
+  | NetworkSpecificAsset
+  | FiatCurrency
+  | FungibleAsset
+  | SmartContractFungibleAsset;
 
 /**
  * An amount associated with a smart contract; used to carry information like
@@ -122,16 +122,16 @@ export type AnyAsset =
  * available.
  */
 export type SmartContractAmount = {
-	smartContract: SmartContract;
-	amount: bigint;
+  smartContract: SmartContract;
+  amount: bigint;
 };
 
 /*
  * The primary type representing amounts in fungible asset transactions.
  */
 export type AnyAssetAmount<T extends AnyAsset = AnyAsset> = {
-	asset: T;
-	amount: bigint;
+  asset: T;
+  amount: bigint;
 };
 
 /*
@@ -142,9 +142,9 @@ export type AnyAssetAmount<T extends AnyAsset = AnyAsset> = {
  * and doesn't give up any accuracy.
  */
 export type PricePoint = {
-	pair: [AnyAsset, AnyAsset];
-	amounts: [bigint, bigint];
-	time: UNIXTime;
+  pair: [AnyAsset, AnyAsset];
+  amounts: [bigint, bigint];
+  time: UNIXTime;
 };
 
 /*
@@ -156,8 +156,8 @@ export type PricePoint = {
  * only be used when the details of the other side of a price pair are unknown.
  */
 export type UnitPricePoint<T extends AnyAsset> = {
-	unitPrice: AnyAssetAmount<T>;
-	time: UNIXTime;
+  unitPrice: AnyAssetAmount<T>;
+  time: UNIXTime;
 };
 
 /**
@@ -166,28 +166,28 @@ export type UnitPricePoint<T extends AnyAsset> = {
  * well as the transaction that executed the transfer.
  */
 export type AssetTransfer = {
-	network: Network;
-	assetAmount: AssetAmount;
-	from: HexString;
-	to: HexString;
-	dataSource: "alchemy" | "local";
-	txHash: string;
+  network: Network;
+  assetAmount: AssetAmount;
+  from: HexString;
+  to: HexString;
+  dataSource: "alchemy" | "local";
+  txHash: string;
 };
 
 /**
  * Type guard to check if an AnyAsset is actually a FungibleAsset.
  */
 export function isFungibleAsset(asset: AnyAsset): asset is FungibleAsset {
-	return "decimals" in asset;
+  return "decimals" in asset;
 }
 
 /**
  * Type guard to check if an AnyAsset is actually a SmartContractFungibleAsset.
  */
 export function isSmartContractFungibleAsset(
-	asset: AnyAsset,
+  asset: AnyAsset
 ): asset is SmartContractFungibleAsset {
-	return "homeNetwork" in asset && isFungibleAsset(asset);
+  return "homeNetwork" in asset && isFungibleAsset(asset);
 }
 
 /**
@@ -197,9 +197,9 @@ export function isSmartContractFungibleAsset(
  * FungibleAsset nature of the internal asset!
  */
 export function isFungibleAssetAmount(
-	assetAmount: AnyAssetAmount,
+  assetAmount: AnyAssetAmount
 ): assetAmount is FungibleAssetAmount {
-	return isFungibleAsset(assetAmount.asset);
+  return isFungibleAsset(assetAmount.asset);
 }
 
 /**
@@ -229,64 +229,64 @@ export function isFungibleAssetAmount(
  *         undefined.
  */
 export function convertAssetAmountViaPricePoint<T extends AnyAssetAmount>(
-	sourceAssetAmount: T,
-	assetPricePoint: PricePoint | undefined,
+  sourceAssetAmount: T,
+  assetPricePoint: PricePoint | undefined
 ): FungibleAssetAmount | undefined {
-	if (typeof assetPricePoint === "undefined") {
-		return undefined;
-	}
+  if (typeof assetPricePoint === "undefined") {
+    return undefined;
+  }
 
-	const [sourceAsset, targetAsset] = assetPricePoint.pair;
-	const [sourceConversionFactor, targetConversionFactor] =
-		assetPricePoint.amounts;
+  const [sourceAsset, targetAsset] = assetPricePoint.pair;
+  const [sourceConversionFactor, targetConversionFactor] =
+    assetPricePoint.amounts;
 
-	if (
-		sourceAssetAmount.asset.symbol === sourceAsset.symbol &&
-		isFungibleAsset(sourceAsset) &&
-		isFungibleAsset(targetAsset)
-	) {
-		// A price point gives us X of the source asset = Y of the target asset, as
-		// a pair of fixed-point values. We have M of the source asset, and want to
-		// find out how much of the target asset that is.
-		//
-		// The simple version is that we want to do M * X / Y; however, we have the
-		// conversion _factor_ for X and Y, which are the mathematical inverse of
-		// what we refer to as X and Y above. As such, we can instead express this as
-		// M * T / S, where S is the source conversion factor and T is the target
-		// conversion factor.
-		//
-		// Below, M is the source asset amount, S is the sourceConversionFactor,
-		// and T is the targetConversionFactor. Extra parentheses are added around
-		// the multiplication to emphasize order matters! If we computed M / S
-		// first we would risk losing precision in the integer division.
-		const targetCurrencyAmount =
-			(sourceAssetAmount.amount * targetConversionFactor) /
-			sourceConversionFactor;
+  if (
+    sourceAssetAmount.asset.symbol === sourceAsset.symbol &&
+    isFungibleAsset(sourceAsset) &&
+    isFungibleAsset(targetAsset)
+  ) {
+    // A price point gives us X of the source asset = Y of the target asset, as
+    // a pair of fixed-point values. We have M of the source asset, and want to
+    // find out how much of the target asset that is.
+    //
+    // The simple version is that we want to do M * X / Y; however, we have the
+    // conversion _factor_ for X and Y, which are the mathematical inverse of
+    // what we refer to as X and Y above. As such, we can instead express this as
+    // M * T / S, where S is the source conversion factor and T is the target
+    // conversion factor.
+    //
+    // Below, M is the source asset amount, S is the sourceConversionFactor,
+    // and T is the targetConversionFactor. Extra parentheses are added around
+    // the multiplication to emphasize order matters! If we computed M / S
+    // first we would risk losing precision in the integer division.
+    const targetCurrencyAmount =
+      (sourceAssetAmount.amount * targetConversionFactor) /
+      sourceConversionFactor;
 
-		// Reduce the fixed-point representation to the target asset's decimals.
-		return {
-			asset: targetAsset,
-			amount: targetCurrencyAmount,
-		};
-	}
+    // Reduce the fixed-point representation to the target asset's decimals.
+    return {
+      asset: targetAsset,
+      amount: targetCurrencyAmount,
+    };
+  }
 
-	// For non-fungible assets, require that the target asset be fungible and
-	// that the source conversion factor be 1, i.e. that the price point tells us
-	// what 1 of the source asset is in target asset terms. Generally in these
-	// cases we expect the source asset amount to be 1, but we multiply out just
-	// in case.
-	if (
-		sourceAssetAmount.asset.symbol === sourceAsset.symbol &&
-		isFungibleAsset(targetAsset) &&
-		sourceConversionFactor === 1n
-	) {
-		return {
-			asset: targetAsset,
-			amount: sourceAssetAmount.amount * targetConversionFactor,
-		};
-	}
+  // For non-fungible assets, require that the target asset be fungible and
+  // that the source conversion factor be 1, i.e. that the price point tells us
+  // what 1 of the source asset is in target asset terms. Generally in these
+  // cases we expect the source asset amount to be 1, but we multiply out just
+  // in case.
+  if (
+    sourceAssetAmount.asset.symbol === sourceAsset.symbol &&
+    isFungibleAsset(targetAsset) &&
+    sourceConversionFactor === 1n
+  ) {
+    return {
+      asset: targetAsset,
+      amount: sourceAssetAmount.amount * targetConversionFactor,
+    };
+  }
 
-	return undefined;
+  return undefined;
 }
 
 /**
@@ -301,33 +301,33 @@ export function convertAssetAmountViaPricePoint<T extends AnyAssetAmount>(
  * is undefined.
  */
 export function unitPricePointForPricePoint(
-	assetPricePoint: PricePoint | undefined,
+  assetPricePoint: PricePoint | undefined
 ): UnitPricePoint<FungibleAsset> | undefined {
-	if (typeof assetPricePoint === "undefined") {
-		return undefined;
-	}
+  if (typeof assetPricePoint === "undefined") {
+    return undefined;
+  }
 
-	const sourceAsset = assetPricePoint.pair[0];
+  const sourceAsset = assetPricePoint.pair[0];
 
-	const unitPrice = convertAssetAmountViaPricePoint(
-		{
-			amount:
-				"decimals" in sourceAsset
-					? 1n * 10n ** BigInt(sourceAsset.decimals)
-					: 1n,
-			asset: sourceAsset,
-		},
-		assetPricePoint,
-	);
+  const unitPrice = convertAssetAmountViaPricePoint(
+    {
+      amount:
+        "decimals" in sourceAsset
+          ? 1n * 10n ** BigInt(sourceAsset.decimals)
+          : 1n,
+      asset: sourceAsset,
+    },
+    assetPricePoint
+  );
 
-	if (typeof unitPrice !== "undefined") {
-		return {
-			unitPrice,
-			time: assetPricePoint.time,
-		};
-	}
+  if (typeof unitPrice !== "undefined") {
+    return {
+      unitPrice,
+      time: assetPricePoint.time,
+    };
+  }
 
-	return undefined;
+  return undefined;
 }
 
 /**
@@ -344,12 +344,12 @@ export function unitPricePointForPricePoint(
  *         asset amount, truncated to the given number of decimal points.
  */
 export function assetAmountToDesiredDecimals(
-	assetAmount: FungibleAssetAmount,
-	desiredDecimals: number,
+  assetAmount: FungibleAssetAmount,
+  desiredDecimals: number
 ): number {
-	const {
-		amount,
-		asset: { decimals },
-	} = assetAmount;
-	return fromFixedPoint(amount, decimals, desiredDecimals);
+  const {
+    amount,
+    asset: { decimals },
+  } = assetAmount;
+  return fromFixedPoint(amount, decimals, desiredDecimals);
 }

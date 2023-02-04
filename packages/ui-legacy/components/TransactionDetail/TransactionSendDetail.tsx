@@ -4,13 +4,13 @@ import { POKTTransactionRequest } from "@sendnodes/pokt-wallet-background/networ
 import { ActivityItem } from "@sendnodes/pokt-wallet-background/redux-slices/activities";
 import { selectAssetPricePoint } from "@sendnodes/pokt-wallet-background/redux-slices/assets";
 import {
-	getAccountData,
-	selectCurrentAddressNetwork,
+  getAccountData,
+  selectCurrentAddressNetwork,
 } from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
 import {
-	enrichAssetAmountWithDecimalValues,
-	enrichAssetAmountWithMainCurrencyValues,
-	heuristicDesiredDecimalsForUnitPrice,
+  enrichAssetAmountWithDecimalValues,
+  enrichAssetAmountWithMainCurrencyValues,
+  heuristicDesiredDecimalsForUnitPrice,
 } from "@sendnodes/pokt-wallet-background/redux-slices/utils/asset-utils";
 import React, { ReactElement } from "react";
 import { useBackgroundSelector } from "../../hooks";
@@ -19,143 +19,143 @@ import SharedAddress from "../Shared/SharedAddress";
 import SharedAssetIcon from "../Shared/SharedAssetIcon";
 
 export type TransactionSendDetailProps = {
-	transaction: ActivityItem;
+  transaction: ActivityItem;
 };
 
 export default function TransactionSendDetail({
-	transaction,
+  transaction,
 }: TransactionSendDetailProps): ReactElement {
-	const { address, network } = useBackgroundSelector(
-		selectCurrentAddressNetwork,
-	);
-	const baseAssetPricePoint = useBackgroundSelector((state) =>
-		selectAssetPricePoint(state.assets, network.baseAsset.symbol, USD.symbol),
-	);
-	let amount = BigInt(0);
-	let from = address;
-	let to: string | undefined;
+  const { address, network } = useBackgroundSelector(
+    selectCurrentAddressNetwork
+  );
+  const baseAssetPricePoint = useBackgroundSelector((state) =>
+    selectAssetPricePoint(state.assets, network.baseAsset.symbol, USD.symbol)
+  );
+  let amount = BigInt(0);
+  let from = address;
+  let to: string | undefined;
 
-	if ("value" in transaction) {
-		amount = transaction.value;
-	}
-	if ("txMsg" in transaction) {
-		amount = BigInt(transaction.txMsg.value.amount);
-		to = transaction.to;
-		from = transaction.from;
-	}
-	if ("to" in transaction) to = transaction.to;
-	const transactionAssetAmount = enrichAssetAmountWithDecimalValues(
-		{
-			asset: network.baseAsset,
-			amount,
-		},
-		heuristicDesiredDecimalsForUnitPrice(
-			network.baseAsset.decimals,
-			typeof baseAssetPricePoint !== "undefined"
-				? unitPricePointForPricePoint(baseAssetPricePoint)
-				: undefined,
-		),
-	);
+  if ("value" in transaction) {
+    amount = transaction.value;
+  }
+  if ("txMsg" in transaction) {
+    amount = BigInt(transaction.txMsg.value.amount);
+    to = transaction.to;
+    from = transaction.from;
+  }
+  if ("to" in transaction) to = transaction.to;
+  const transactionAssetAmount = enrichAssetAmountWithDecimalValues(
+    {
+      asset: network.baseAsset,
+      amount,
+    },
+    heuristicDesiredDecimalsForUnitPrice(
+      network.baseAsset.decimals,
+      typeof baseAssetPricePoint !== "undefined"
+        ? unitPricePointForPricePoint(baseAssetPricePoint)
+        : undefined
+    )
+  );
 
-	const decimalPlaces = transactionAssetAmount.decimalAmount < 1 ? 6 : 2;
-	const {
-		decimalAmount: tokenValue,
-		mainCurrencyAmount: dollarValue,
-		localizedDecimalAmount: localizedTokenValue,
-		localizedMainCurrencyAmount: localizedDollarValue,
-	} = enrichAssetAmountWithMainCurrencyValues(
-		transactionAssetAmount,
-		baseAssetPricePoint,
-		decimalPlaces,
-	);
+  const decimalPlaces = transactionAssetAmount.decimalAmount < 1 ? 6 : 2;
+  const {
+    decimalAmount: tokenValue,
+    mainCurrencyAmount: dollarValue,
+    localizedDecimalAmount: localizedTokenValue,
+    localizedMainCurrencyAmount: localizedDollarValue,
+  } = enrichAssetAmountWithMainCurrencyValues(
+    transactionAssetAmount,
+    baseAssetPricePoint,
+    decimalPlaces
+  );
 
-	const fromAccountData = useBackgroundSelector((state) =>
-		getAccountData(state, from),
-	);
+  const fromAccountData = useBackgroundSelector((state) =>
+    getAccountData(state, from)
+  );
 
-	const toAccountData = useBackgroundSelector((state) =>
-		getAccountData(state, to ?? ""),
-	);
+  const toAccountData = useBackgroundSelector((state) =>
+    getAccountData(state, to ?? "")
+  );
 
-	return (
-		<div className="sign_block">
-			<div className="dashed_border width_full amount_row">
-				<SharedAssetIcon
-					symbol={transactionAssetAmount.asset.symbol}
-					size="large"
-				/>
-				<span
-					className="spend_amount"
-					title={`${localizedTokenValue} ${transactionAssetAmount.asset.symbol}`}
-				>
-					{transactionAssetAmount.decimalAmount < 1
-						? formatTokenAmount(tokenValue, 1, 6)
-						: formatTokenAmount(tokenValue)}
-				</span>
-				<span className="dollar_amount" title={`${localizedDollarValue}`}>
-					{localizedDollarValue}
-				</span>
-			</div>
-			<div className="spacing" />
-			<div className="width_full addresses_row">
-				<div>
-					{typeof address === "undefined" ? (
-						<>
-							<div className="label">Send to</div>
-							<div className="send_to">Contract creation</div>
-						</>
-					) : (
-						<>
-							<div className="width_full">
-								<h3 className="label">FROM</h3>
-							</div>
-							<div className="width_full">
-								<div className="dashed_border" style={{ margin: 0 }}>
-									<SharedAddress
-										name={
-											fromAccountData !== "loading"
-												? (fromAccountData ?? undefined)?.name
-												: undefined
-										}
-										address={from}
-									/>
-								</div>
-							</div>
-						</>
-					)}
-				</div>
-				<div>
-					{typeof to === "undefined" ? (
-						<>
-							<div className="label">Send to</div>
-							<div className="send_to">Contract creation</div>
-						</>
-					) : (
-						<>
-							<div className="width_full">
-								<h3 className="label">TO</h3>
-							</div>
-							<div className="width_full">
-								<div className="dashed_border" style={{ margin: 0 }}>
-									<SharedAddress
-										name={
-											toAccountData !== "loading"
-												? (toAccountData ?? undefined)?.name
-												: undefined
-										}
-										address={to}
-									/>
-								</div>
-							</div>
-						</>
-					)}
-				</div>
-			</div>
+  return (
+    <div className="sign_block">
+      <div className="dashed_border width_full amount_row">
+        <SharedAssetIcon
+          symbol={transactionAssetAmount.asset.symbol}
+          size="large"
+        />
+        <span
+          className="spend_amount"
+          title={`${localizedTokenValue} ${transactionAssetAmount.asset.symbol}`}
+        >
+          {transactionAssetAmount.decimalAmount < 1
+            ? formatTokenAmount(tokenValue, 1, 6)
+            : formatTokenAmount(tokenValue)}
+        </span>
+        <span className="dollar_amount" title={`${localizedDollarValue}`}>
+          {localizedDollarValue}
+        </span>
+      </div>
+      <div className="spacing" />
+      <div className="width_full addresses_row">
+        <div>
+          {typeof address === "undefined" ? (
+            <>
+              <div className="label">Send to</div>
+              <div className="send_to">Contract creation</div>
+            </>
+          ) : (
+            <>
+              <div className="width_full">
+                <h3 className="label">FROM</h3>
+              </div>
+              <div className="width_full">
+                <div className="dashed_border" style={{ margin: 0 }}>
+                  <SharedAddress
+                    name={
+                      fromAccountData !== "loading"
+                        ? (fromAccountData ?? undefined)?.name
+                        : undefined
+                    }
+                    address={from}
+                  />
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+        <div>
+          {typeof to === "undefined" ? (
+            <>
+              <div className="label">Send to</div>
+              <div className="send_to">Contract creation</div>
+            </>
+          ) : (
+            <>
+              <div className="width_full">
+                <h3 className="label">TO</h3>
+              </div>
+              <div className="width_full">
+                <div className="dashed_border" style={{ margin: 0 }}>
+                  <SharedAddress
+                    name={
+                      toAccountData !== "loading"
+                        ? (toAccountData ?? undefined)?.name
+                        : undefined
+                    }
+                    address={to}
+                  />
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
 
-			<div className="spacing" />
+      <div className="spacing" />
 
-			<style jsx>
-				{`
+      <style jsx>
+        {`
           .sign_block {
             display: flex;
             width: 100%;
@@ -232,7 +232,7 @@ export default function TransactionSendDetail({
             margin-bottom: 0.5rem;
           }
         `}
-			</style>
-		</div>
-	);
+      </style>
+    </div>
+  );
 }

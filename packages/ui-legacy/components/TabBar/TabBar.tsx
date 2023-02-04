@@ -5,22 +5,22 @@ import TabBarIcon from "./TabBarIcon";
 import tabs from "../../utils/tabs";
 
 export default function TabBar(): ReactElement {
-	const location = useLocation();
-	const activeTabName = location?.pathname?.split("/")[1] || "wallet";
+  const location = useLocation();
+  const activeTabName = location?.pathname?.split("/")[1] || "wallet";
 
-	return (
-		<nav>
-			{tabs.map((tabName) => {
-				return (
-					<TabBarIcon
-						key={tabName}
-						name={tabName}
-						isActive={activeTabName === tabName}
-					/>
-				);
-			})}
-			<style jsx>
-				{`
+  return (
+    <nav>
+      {tabs.map((tabName) => {
+        return (
+          <TabBarIcon
+            key={tabName}
+            name={tabName}
+            isActive={activeTabName === tabName}
+          />
+        );
+      })}
+      <style jsx>
+        {`
           nav {
             width: 100%;
             height: 56px;
@@ -35,7 +35,7 @@ export default function TabBar(): ReactElement {
             z-index: 10;
           }
         `}
-			</style>
-		</nav>
-	);
+      </style>
+    </nav>
+  );
 }

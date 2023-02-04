@@ -1,15 +1,15 @@
 import React, { ReactElement } from "react";
 
 export default function NotificationItem(): ReactElement {
-	return (
-		<li>
-			<div className="icon_notification" />
-			<div>
-				Receive <span className="white">240 ETH</span> from{" "}
-				<span className="white">0x424..12f3</span> succesful{" "}
-				<span className="time">03:03 on 14 May</span>
-			</div>
-			<style jsx>{`
+  return (
+    <li>
+      <div className="icon_notification" />
+      <div>
+        Receive <span className="white">240 ETH</span> from{" "}
+        <span className="white">0x424..12f3</span> succesful{" "}
+        <span className="time">03:03 on 14 May</span>
+      </div>
+      <style jsx>{`
         li {
           min-height: 34px;
           padding: 8px 0px;
@@ -40,6 +40,6 @@ export default function NotificationItem(): ReactElement {
           line-height: 16px;
         }
       `}</style>
-		</li>
-	);
+    </li>
+  );
 }

@@ -107,5 +107,5 @@ export interface Service<T extends ServiceLifecycleEvents> {
 export type ServiceCreatorFunction<
   EventsType extends ServiceLifecycleEvents,
   ServiceType extends Service<EventsType>,
-  Deps extends Promise<Service<ServiceLifecycleEvents>>[],
+  Deps extends Promise<Service<ServiceLifecycleEvents>>[]
 > = (...serviceDependencies: Deps) => Promise<ServiceType>;

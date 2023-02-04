@@ -7,56 +7,56 @@ import { useBackgroundDispatch } from "../../hooks";
 import SharedAddress from "./SharedAddress";
 
 interface Props {
-	isSelected?: boolean;
-	accountTotal: AccountTotal;
-	children?: React.ReactNode;
+  isSelected?: boolean;
+  accountTotal: AccountTotal;
+  children?: React.ReactNode;
 }
 
 export default function SharedAccountItemSummary(props: Props): ReactElement {
-	const dispatch = useBackgroundDispatch();
-	const { isSelected, accountTotal, children } = props;
-	const {
-		shortenedAddress,
-		name,
-		defaultName,
-		avatarURL,
-		localizedTotalMainCurrencyAmount,
-		address,
-		network,
-		networkTokenAmount,
-	} = accountTotal;
+  const dispatch = useBackgroundDispatch();
+  const { isSelected, accountTotal, children } = props;
+  const {
+    shortenedAddress,
+    name,
+    defaultName,
+    avatarURL,
+    localizedTotalMainCurrencyAmount,
+    address,
+    network,
+    networkTokenAmount,
+  } = accountTotal;
 
-	const nameOrDefaultName = name || defaultName;
-	return (
-		<div className="wrap">
-			<div className="summary">
-				<div className="left">
-					<div className="avatar" />
+  const nameOrDefaultName = name || defaultName;
+  return (
+    <div className="wrap">
+      <div className="summary">
+        <div className="left">
+          <div className="avatar" />
 
-					<div className="info">
-						<div className="address_name">
-							{typeof nameOrDefaultName === "undefined"
-								? shortenedAddress
-								: nameOrDefaultName}
-						</div>
-						<div title={`${address}`} className="address">
-							<SharedAddress address={address} />
-						</div>
-					</div>
-				</div>
-				<div className="right">
-					<div className="balance_status">
-						<div className="balance">
-							<span className="token_icon" />
-							{formatTokenAmount(networkTokenAmount?.decimalAmount, 5)}
-						</div>
-					</div>
-					{children}
-				</div>
-			</div>
+          <div className="info">
+            <div className="address_name">
+              {typeof nameOrDefaultName === "undefined"
+                ? shortenedAddress
+                : nameOrDefaultName}
+            </div>
+            <div title={`${address}`} className="address">
+              <SharedAddress address={address} />
+            </div>
+          </div>
+        </div>
+        <div className="right">
+          <div className="balance_status">
+            <div className="balance">
+              <span className="token_icon" />
+              {formatTokenAmount(networkTokenAmount?.decimalAmount, 5)}
+            </div>
+          </div>
+          {children}
+        </div>
+      </div>
 
-			<style jsx>
-				{`
+      <style jsx>
+        {`
           .wrap {
             display: flex;
             justify-content: space-between;
@@ -130,18 +130,18 @@ export default function SharedAccountItemSummary(props: Props): ReactElement {
             text-align: center;
           }
         `}
-			</style>
-			<style jsx>
-				{`
+      </style>
+      <style jsx>
+        {`
           .token_icon {
             mask-image: url("./images/${network?.baseAsset.symbol.toLocaleLowerCase()}@2x.png");
           }
         `}
-			</style>
-		</div>
-	);
+      </style>
+    </div>
+  );
 }
 
 SharedAccountItemSummary.defaultProps = {
-	isSelected: false,
+  isSelected: false,
 };

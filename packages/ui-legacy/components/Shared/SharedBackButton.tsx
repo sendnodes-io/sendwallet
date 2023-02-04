@@ -3,40 +3,40 @@ import { useHistory, Redirect } from "react-router-dom";
 import classNames from "clsx";
 
 export default function SharedBackButton(): ReactElement {
-	const historyPre: unknown = useHistory();
-	const [redirect, setRedirect] = useState(false);
-	const history = historyPre as {
-		entries: { pathName: string }[];
-	};
+  const historyPre: unknown = useHistory();
+  const [redirect, setRedirect] = useState(false);
+  const history = historyPre as {
+    entries: { pathName: string }[];
+  };
 
-	if (redirect) {
-		return (
-			<Redirect
-				push
-				to={{
-					pathname:
-						history.entries?.length > 0
-							? history.entries[history.entries.length - 1]?.pathName ?? "/"
-							: "/",
-					state: { isBack: true },
-				}}
-			/>
-		);
-	}
+  if (redirect) {
+    return (
+      <Redirect
+        push
+        to={{
+          pathname:
+            history.entries?.length > 0
+              ? history.entries[history.entries.length - 1]?.pathName ?? "/"
+              : "/",
+          state: { isBack: true },
+        }}
+      />
+    );
+  }
 
-	return (
-		<button
-			type="button"
-			className={classNames({
-				hide: history.entries?.length <= 1,
-			})}
-			onClick={() => {
-				setRedirect(true);
-			}}
-		>
-			<div className="icon_chevron_left" />
-			Back
-			<style jsx>{`
+  return (
+    <button
+      type="button"
+      className={classNames({
+        hide: history.entries?.length <= 1,
+      })}
+      onClick={() => {
+        setRedirect(true);
+      }}
+    >
+      <div className="icon_chevron_left" />
+      Back
+      <style jsx>{`
         button {
           color: var(--spanish-gray);
           font-size: 12px;
@@ -62,6 +62,6 @@ export default function SharedBackButton(): ReactElement {
           background-color: #fff;
         }
       `}</style>
-		</button>
-	);
+    </button>
+  );
 }

@@ -1,15 +1,15 @@
 import React, { ReactElement } from "react";
 
 export default function TopMenuProfileTooltip(props: {
-	copyAddress: () => void;
+  copyAddress: () => void;
 }): ReactElement {
-	const { copyAddress } = props;
+  const { copyAddress } = props;
 
-	return (
-		<button type="button" className="tooltip" onClick={copyAddress}>
-			<span className="tooltip_label">Copy address</span>
-			<span className="tooltip_icon" />
-			<style jsx>{`
+  return (
+    <button type="button" className="tooltip" onClick={copyAddress}>
+      <span className="tooltip_label">Copy address</span>
+      <span className="tooltip_icon" />
+      <style jsx>{`
         .tooltip {
           display: flex;
           align-items: center;
@@ -44,6 +44,6 @@ export default function TopMenuProfileTooltip(props: {
           background-color: var(--aqua);
         }
       `}</style>
-		</button>
-	);
+    </button>
+  );
 }

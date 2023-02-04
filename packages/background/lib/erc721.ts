@@ -7,7 +7,7 @@ import { HexString, URI } from "../types";
 import { isValidMetadata } from "./validate";
 
 const abi = [
-	"function tokenURI(uint256 _tokenId) external view returns (string)",
+  "function tokenURI(uint256 _tokenId) external view returns (string)",
 ];
 
 /**
@@ -15,18 +15,18 @@ const abi = [
  * return the specific token's URI.
  */
 export async function getTokenURI(
-	provider: BaseProvider,
-	tokenAddress: HexString,
-	tokenID: bigint,
+  provider: BaseProvider,
+  tokenAddress: HexString,
+  tokenID: bigint
 ): Promise<URI | undefined> {
-	const tokenContract = new Contract(tokenAddress, abi).connect(provider);
-	return tokenContract.tokenURI(tokenID);
+  const tokenContract = new Contract(tokenAddress, abi).connect(provider);
+  return tokenContract.tokenURI(tokenID);
 }
 
 export interface ERC721Metadata {
-	name: string | undefined;
-	description: string | undefined;
-	image: URI | undefined;
+  name: string | undefined;
+  description: string | undefined;
+  image: URI | undefined;
 }
 
 /**
@@ -34,34 +34,34 @@ export interface ERC721Metadata {
  * ERC-721 metadata.
  */
 export async function getTokenMetadata(
-	provider: BaseProvider,
-	tokenAddress: HexString,
-	tokenID: bigint,
+  provider: BaseProvider,
+  tokenAddress: HexString,
+  tokenID: bigint
 ): Promise<ERC721Metadata | undefined> {
-	const uri = await getTokenURI(provider, tokenAddress, tokenID);
-	if (uri) {
-		const jsonResponse = await fetchJson(uri);
+  const uri = await getTokenURI(provider, tokenAddress, tokenID);
+  if (uri) {
+    const jsonResponse = await fetchJson(uri);
 
-		if (isValidMetadata(jsonResponse)) {
-			return {
-				name: jsonResponse.name,
-				description: jsonResponse.description,
-				image: jsonResponse.image,
-			};
-		}
+    if (isValidMetadata(jsonResponse)) {
+      return {
+        name: jsonResponse.name,
+        description: jsonResponse.description,
+        image: jsonResponse.image,
+      };
+    }
 
-		logger.warn(
-			"Invalid ERC-721 metadata",
-			tokenAddress,
-			tokenID,
-			jsonResponse,
-		);
-	} else {
-		logger.warn(
-			"No token URI was found, perhaps this isn't an ERC-721 metadata-compliant NFT?",
-			tokenAddress,
-			tokenID,
-		);
-	}
-	return undefined;
+    logger.warn(
+      "Invalid ERC-721 metadata",
+      tokenAddress,
+      tokenID,
+      jsonResponse
+    );
+  } else {
+    logger.warn(
+      "No token URI was found, perhaps this isn't an ERC-721 metadata-compliant NFT?",
+      tokenAddress,
+      tokenID
+    );
+  }
+  return undefined;
 }

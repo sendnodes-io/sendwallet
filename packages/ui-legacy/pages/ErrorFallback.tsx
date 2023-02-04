@@ -4,39 +4,39 @@ import { useHistory } from "react-router-dom";
 import SharedButton from "../components/Shared/SharedButton";
 
 export default function ErrorFallback({
-	error,
+  error,
 }: {
-	error: Error;
+  error: Error;
 }): ReactElement {
-	const history = useHistory();
-	return (
-		<>
-			<div className="static md:absolute md:top-1/2  md:-translate-y-1/2">
-				<Icon
-					icon="fa6-solid:person-falling-burst"
-					className="opacity-25 z-0  h-56 w-56"
-				/>
-			</div>
-			<div className="wrap z-10">
-				<h1>Unexpected Error</h1>
-				<p className="text-white">Apologies, but something went wrong.</p>
-				<div className="py-4 mb-4 w-full">
-					<h2 className="text-spanish-gray">For the devs:</h2>
-					<pre className="block whitespace-pre-wrap">{error.message}</pre>
-				</div>
+  const history = useHistory();
+  return (
+    <>
+      <div className="static md:absolute md:top-1/2  md:-translate-y-1/2">
+        <Icon
+          icon="fa6-solid:person-falling-burst"
+          className="opacity-25 z-0  h-56 w-56"
+        />
+      </div>
+      <div className="wrap z-10">
+        <h1>Unexpected Error</h1>
+        <p className="text-white">Apologies, but something went wrong.</p>
+        <div className="py-4 mb-4 w-full">
+          <h2 className="text-spanish-gray">For the devs:</h2>
+          <pre className="block whitespace-pre-wrap">{error.message}</pre>
+        </div>
 
-				<SharedButton
-					type="primary"
-					size="medium"
-					onClick={() => {
-						window.location.reload();
-					}}
-				>
-					Reload
-				</SharedButton>
-			</div>
+        <SharedButton
+          type="primary"
+          size="medium"
+          onClick={() => {
+            window.location.reload();
+          }}
+        >
+          Reload
+        </SharedButton>
+      </div>
 
-			<style jsx>{`
+      <style jsx>{`
         .wrap {
           height: 100%;
           width: 100%;
@@ -52,6 +52,6 @@ export default function ErrorFallback({
           margin-bottom: 20px;
         }
       `}</style>
-		</>
-	);
+    </>
+  );
 }
