@@ -1,3 +1,5 @@
+import {jest, beforeAll, describe, expect, test, xit, beforeEach} from '@jest/globals';
+
 // It's necessary to have an object w/ the function on it so we can use spyOn
 import * as ethers from "@ethersproject/web"; // << THIS IS THE IMPORTANT TRICK
 

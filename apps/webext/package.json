@@ -30,7 +30,7 @@
     "react-native-reanimated": "^2.13.0",
     "react-refresh": "^0.14.0",
     "rome": "^11.0.0",
-    "tamagui-loader": "1.1.7",
+    "tamagui-loader": "1.2.4",
     "ts-node": "^10.9.1",
     "typescript": "^4.6.4",
     "url-loader": "^4.1.1",
@@ -45,7 +45,7 @@
   "dependencies": {
     "@sendnodes/pokt-wallet-background": "*",
     "@sendnodes/provider-bridge": "*",
-    "@tamagui/react-native-svg": "1.1.7",
+    "@tamagui/react-native-svg": "1.2.4",
     "app": "*",
     "expo": "^47.0.9",
     "react": "^18.2.0",

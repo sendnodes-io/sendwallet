@@ -1,15 +1,14 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
 import { HomeScreen } from "../../features/home/screen";
 import { UserDetailScreen } from "../../features/user/detail-screen";
 
-export type RootStackParamList = {
+const Stack = createNativeStackNavigator<{
 	home: undefined;
 	"user-detail": {
 		id: string;
 	};
-};
-
-const Stack = createNativeStackNavigator<RootStackParamList>();
+}>();
 
 export function NativeNavigation() {
 	return (
@@ -21,21 +20,6 @@ export function NativeNavigation() {
 					title: "Home",
 				}}
 			/>
-			{/* TODO for wallet:
-					- Onboarding
-						- Create
-						- Restore
-					- Accounts
-						- Send
-						- Receive
-						- Transactions
-						- Notifications
-						- Staking
-						- Performance
-					- Analytics
-					- Settings
-					- About
-			*/}
 			<Stack.Screen
 				name="user-detail"
 				component={UserDetailScreen}

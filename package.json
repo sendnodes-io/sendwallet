@@ -23,10 +23,13 @@
     "build": "turbo run build",
     "clean": "turbo run clean",
     "clean:turbo": "rimraf ./node_modules/.cache",
-    "dev:webext": "turbo run dev --filter=webext --filter=@my/ui",
+    "watch": "yarn workspaces foreach -pi run watch",
+    "dev:native": "turbo run dev --filter=expo-app",
+    "dev:webext": "turbo run dev --filter=webext",
     "dev:legacy": "turbo run dev --filter=webext-legacy",
     "dev:legacy:chrome": "turbo run dev --filter=webext-legacy -- --config-name chrome",
     "dev:legacy:firefox": "turbo run dev --filter=webext-legacy  -- --config-name firefox",
+    "dev:web": "turbo run dev --filter=next-app",
     "build:webext": "turbo run build --filter=webext",
     "build:legacy": "turbo run build --filter=webext-legacy",
     "test": "turbo run test",
@@ -34,7 +37,7 @@
     "lint:rome:fix": "rome check . --apply",
     "format:rome": "rome format . --write",
     "lint": "turbo run lint",
-    "postinstall": "is-ci || husky install",
+    "postinstall": "is-ci || husky install || yarn build",
     "upgrade:tamagui": "yarn run manypkg upgrade tamagui && yarn run manypkg upgrade @tamagui && yarn run manypkg upgrade tamagui-loader"
   },
   "workspaces": {
@@ -43,13 +46,17 @@
       "packages/**"
     ]
   },
-  "devDependencies": {
+  "dependencies": {
     "@babel/core": "^7.20.7",
     "@babel/preset-env": "^7.20.2",
     "@babel/preset-react": "^7.18.6",
     "@babel/preset-typescript": "^7.18.6",
     "@babel/register": "^7.18.9",
+    "@babel/runtime": "^7.18.9"
+  },
+  "devDependencies": {
     "@manypkg/cli": "^0.19.2",
+    "eslint": "^8.21.0",
     "husky": "^8.0.0",
     "is-ci": "^3.0.1",
     "pre-commit": "^1.2.2",
@@ -57,7 +64,6 @@
     "react-native-safe-area-context": "^4.5.0",
     "react-native-web": "^0.18.11",
     "rimraf": "^4.1.2",
-    "rome": "^11.0.0",
     "turbo": "^1.6.3",
     "typescript": "^4.6.4"
   },
@@ -67,6 +73,11 @@
   "packageManager": "yarn@3.3.0",
   "resolutions": {
     "jsan@^3.1.13": "patch:jsan@npm%3A3.1.13#./.yarn/patches/jsan-npm-3.1.13-376d4a9e3f.patch",
-    "jsan@^3.1.3": "patch:jsan@npm%3A3.1.13#./.yarn/patches/jsan-npm-3.1.13-376d4a9e3f.patch"
+    "jsan@^3.1.3": "patch:jsan@npm%3A3.1.13#./.yarn/patches/jsan-npm-3.1.13-376d4a9e3f.patch",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-refresh": "^0.14.0",
+    "react-native-svg": "13.4.0",
+    "react-native-web": "0.18.9"
   }
 }

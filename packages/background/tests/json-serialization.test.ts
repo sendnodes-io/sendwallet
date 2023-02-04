@@ -1,3 +1,4 @@
+import {describe, expect, test} from '@jest/globals';
 import { decodeJSON, encodeJSON } from "../lib/utils";
 
 const smallBigInt = 12n;

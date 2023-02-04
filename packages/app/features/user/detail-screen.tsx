@@ -1,21 +1,22 @@
 import { Button, Paragraph, YStack } from "@my/ui";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { ChevronLeft } from "@tamagui/lucide-icons";
-import { RootStackParamList } from "app/navigation/native";
+import React from "react";
+import { createParam } from "solito";
+import { TextLink } from "solito/link";
+import { useLink } from "solito/link";
 
-export function UserDetailScreen({
-	route,
-	navigation,
-}: NativeStackScreenProps<RootStackParamList, "user-detail">) {
-	console.log("route", route);
-	console.log("navigation", navigation);
+const { useParam } = createParam<{ id: string }>();
+
+export function UserDetailScreen() {
+	const [id] = useParam("id");
+	const link = useLink({
+		href: "/",
+	});
+
 	return (
 		<YStack f={1} jc="center" ai="center" space>
-			<Paragraph
-				ta="center"
-				fow="800"
-			>{`User ID: ${route.params.id}`}</Paragraph>
-			<Button onPress={() => navigation.navigate("home")} icon={ChevronLeft}>
+			<Paragraph ta="center" fow="800">{`User ID: ${id}`}</Paragraph>
+			<Button {...link} icon={ChevronLeft}>
 				Go Home
 			</Button>
 		</YStack>

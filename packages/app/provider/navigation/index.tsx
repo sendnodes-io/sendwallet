@@ -1,18 +1,15 @@
 import {
 	NavigationContainer,
-	DefaultTheme,
 	DarkTheme,
+	DefaultTheme,
 } from "@react-navigation/native";
 import * as Linking from "expo-linking";
 import { useMemo } from "react";
-import { useTheme } from "@my/ui";
-import { Platform, useColorScheme, View } from "react-native";
+import { useColorScheme } from "react-native";
 
 export function NavigationProvider({
 	children,
-}: {
-	children: React.ReactNode;
-}) {
+}: { children: React.ReactNode }) {
 	const scheme = useColorScheme();
 	return (
 		<NavigationContainer
@@ -21,9 +18,10 @@ export function NavigationProvider({
 				() => ({
 					prefixes: [Linking.createURL("/")],
 					config: {
+						initialRouteName: "home",
 						screens: {
-							"user-detail": "/user-details.html",
-							home: "/index.html",
+							home: "",
+							"user-detail": "user/:id",
 						},
 					},
 				}),
