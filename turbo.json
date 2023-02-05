@@ -2,7 +2,7 @@
   "$schema": "https://turbo.build/schema.json",
   "pipeline": {
     "build": {
-      "dependsOn": ["^@my/ui#build"],
+      "dependsOn": ["^build"],
       "outputs": ["dist/**", "types/**", ".next/**"]
     },
     "test": {
@@ -18,7 +18,7 @@
       "outputs": []
     },
     "//#lint:tsc": {
-      "dependsOn": ["^@my/ui#build"],
+      "dependsOn": ["@my/ui#build"],
       "outputs": []
     },
     "dev": {

@@ -29,8 +29,3 @@ declare module "react-native" {
     onClick?: (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => void;
   }
 }
-
-declare module "*.svg" {
-  const content: React.FunctionComponent<React.SVGAttributes<SVGElement>>;
-  export default content;
-}

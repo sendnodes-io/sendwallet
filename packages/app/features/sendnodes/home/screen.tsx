@@ -24,7 +24,7 @@ export function HomeScreen() {
   return (
     <YStack f={1} jc="center" ai="center" p="$4" space>
       <YStack space="$4" maw={600}>
-        <Image src={SendNodesLogo} height={48} width={278}  />
+        <Image src={SendNodesLogo} height={48} width={278} />
         <H1 ta="center">SendWallet</H1>
       </YStack>
 

@@ -47,6 +47,7 @@
     "env.d.ts",
     "src",
     "webpack.config.ts",
+    "../../global.d.ts",
     "../../packages/ui-legacy",
     "../../packages/background",
     "../../packages/provider-bridge",
