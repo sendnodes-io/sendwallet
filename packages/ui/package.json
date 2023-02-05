@@ -16,7 +16,8 @@
     "clean": "rimraf dist types",
     "build": "tamagui-build",
     "watch": "tamagui-build --watch",
-    "dev": "tamagui-build --watch --dev"
+    "dev": "tamagui-build --watch --dev",
+    "lint": "tsc --noEmit && yarn build"
   },
   "dependencies": {
     "@tamagui/animations-react-native": "^1.2.4",

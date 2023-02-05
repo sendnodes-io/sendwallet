@@ -8,10 +8,10 @@
     "test": {
       "dependsOn": ["build", "lint"],
       "outputs": [],
-      "inputs": ["src/**/*.tsx", "src/**/*.ts", "test/**/*.ts", "test/**/*.tsx"]
+      "inputs": ["**/*.tsx", "**/*.ts", "**/*.ts", "**/*.tsx"]
     },
     "lint": {
-      "dependsOn": ["//#lint:prettier"],
+      "dependsOn": ["//#lint:prettier", "^lint"],
       "outputs": []
     },
     "//#lint:prettier": {
