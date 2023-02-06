@@ -1,19 +1,19 @@
 import {
-	CoinDenom as POKTCoinDenom,
-	Fee as POKTFee,
-	Signature as POKTSignature,
-	Hex,
+  CoinDenom as POKTCoinDenom,
+  Fee as POKTFee,
+  Signature as POKTSignature,
+  Hex,
 } from "@sendnodes/pocket-js/dist/index";
 import { HexString, UNIXTime } from "./types";
 
 export enum NetworkBlockExplorerUrl {
-	ETHERSCAN = "https://etherscan.io/",
-	POLYGONSCAN = "https://polygonscan.com/",
-	POKTWATCH = "https://pokt.watch/",
-	ROPSTEN = "https://ropsten.etherscan.io/",
-	RINKEBY = "https://rinkeby.etherscan.io/",
-	GOERLI = "https://goerli.etherscan.io/",
-	KOVAN = "https://kovan.etherscan.io/",
+  ETHERSCAN = "https://etherscan.io/",
+  POLYGONSCAN = "https://polygonscan.com/",
+  POKTWATCH = "https://pokt.watch/",
+  ROPSTEN = "https://ropsten.etherscan.io/",
+  RINKEBY = "https://rinkeby.etherscan.io/",
+  GOERLI = "https://goerli.etherscan.io/",
+  KOVAN = "https://kovan.etherscan.io/",
 }
 
 /**
@@ -21,29 +21,29 @@ export enum NetworkBlockExplorerUrl {
  * transaction, consensus, and/or wire format perspective.
  */
 export enum NetworkFamily {
-	EVM = "EVM",
-	BTC = "BTC",
-	POKT = "POKT",
+  EVM = "EVM",
+  BTC = "BTC",
+  POKT = "POKT",
 }
 
 // Should be structurally compatible with FungibleAsset or much code will
 // likely explode.
 type NetworkBaseAsset = {
-	symbol: string;
-	name: string;
-	decimals: number;
+  symbol: string;
+  name: string;
+  decimals: number;
 };
 
 /**
  * Represents a cryptocurrency network; these can potentially be L1 or L2.
  */
 export type Network = {
-	// Considered a primary key; two Networks should never share a name.
-	name: string;
-	baseAsset: NetworkBaseAsset;
-	family: NetworkFamily;
-	chainID?: string;
-	rcpUrl?: string;
+  // Considered a primary key; two Networks should never share a name.
+  name: string;
+  baseAsset: NetworkBaseAsset;
+  family: NetworkFamily;
+  chainID?: string;
+  rcpUrl?: string;
 };
 
 /**
@@ -53,7 +53,7 @@ export type Network = {
  * networks.
  */
 export type NetworkSpecific = {
-	homeNetwork: AnyNetwork;
+  homeNetwork: AnyNetwork;
 };
 
 /**
@@ -61,25 +61,25 @@ export type NetworkSpecific = {
  * contract address.
  */
 export type SmartContract = NetworkSpecific & {
-	contractAddress: HexString;
+  contractAddress: HexString;
 };
 
 /**
  * An EVM-style network which *must* include a chainID.
  */
 export type EVMNetwork = Network & {
-	chainID: string;
-	family: NetworkFamily.EVM;
-	blockExplorerUrl?: string;
+  chainID: string;
+  family: NetworkFamily.EVM;
+  blockExplorerUrl?: string;
 };
 
 /**
  * An POKT-style network which *must* include a chainID.
  */
 export type POKTNetwork = Network & {
-	chainID: string;
-	family: NetworkFamily.POKT;
-	blockExplorerUrl: NetworkBlockExplorerUrl.POKTWATCH;
+  chainID: string;
+  family: NetworkFamily.POKT;
+  blockExplorerUrl: NetworkBlockExplorerUrl.POKTWATCH;
 };
 
 /**
@@ -92,19 +92,19 @@ export type AnyNetwork = EVMNetwork | POKTNetwork;
  * self/parent hash data.
  */
 export type EVMBlock = {
-	hash: string;
-	parentHash: string;
-	difficulty: bigint;
-	blockHeight: number;
-	timestamp: UNIXTime;
-	network: EVMNetwork;
+  hash: string;
+  parentHash: string;
+  difficulty: bigint;
+  blockHeight: number;
+  timestamp: UNIXTime;
+  network: EVMNetwork;
 };
 
 /**
  * An EVM-style block identifier that includes the base fee, as per EIP-1559.
  */
 export type EIP1559Block = EVMBlock & {
-	baseFeePerGas: bigint;
+  baseFeePerGas: bigint;
 };
 
 /**
@@ -117,79 +117,79 @@ export type AnyEVMBlock = EVMBlock | EIP1559Block;
  * subtypes.
  */
 export type EVMTransaction = {
-	hash: string;
-	from: HexString;
-	to?: HexString;
-	gasLimit: bigint;
-	gasPrice: bigint | null;
-	maxFeePerGas: bigint | null;
-	maxPriorityFeePerGas: bigint | null;
-	input: string | null;
-	nonce: number;
-	value: bigint;
-	blockHash: string | null;
-	blockHeight: number | null;
-	asset: NetworkBaseAsset;
-	network: EVMNetwork;
-	/*
-	 * 0 - plain jane
-	 * 1 - EIP-2930
-	 * 2 - EIP-1559 transactions
-	 */
-	type: 0 | 1 | 2 | null;
+  hash: string;
+  from: HexString;
+  to?: HexString;
+  gasLimit: bigint;
+  gasPrice: bigint | null;
+  maxFeePerGas: bigint | null;
+  maxPriorityFeePerGas: bigint | null;
+  input: string | null;
+  nonce: number;
+  value: bigint;
+  blockHash: string | null;
+  blockHeight: number | null;
+  asset: NetworkBaseAsset;
+  network: EVMNetwork;
+  /*
+   * 0 - plain jane
+   * 1 - EIP-2930
+   * 2 - EIP-1559 transactions
+   */
+  type: 0 | 1 | 2 | null;
 };
 
 export type POKTBlock = {
-	network: POKTNetwork;
-	timestamp: UNIXTime;
-	header: {
-		app_hash: string;
-		chain_id: string;
-		consensus_hash: string;
-		data_hash: string;
-		evidence_hash: string;
-		height: number;
-		last_block_id: {
-			hash: string;
-			parts: {
-				hash: string;
-				total: number;
-			};
-		};
-		last_commit_hash: string;
-		last_results_hash: string;
-		next_validators_hash: string;
-		num_txs: number;
-		proposer_address: string;
-		time: string;
-		total_txs: number;
-		validators_hash: string;
-	};
+  network: POKTNetwork;
+  timestamp: UNIXTime;
+  header: {
+    app_hash: string;
+    chain_id: string;
+    consensus_hash: string;
+    data_hash: string;
+    evidence_hash: string;
+    height: number;
+    last_block_id: {
+      hash: string;
+      parts: {
+        hash: string;
+        total: number;
+      };
+    };
+    last_commit_hash: string;
+    last_results_hash: string;
+    next_validators_hash: string;
+    num_txs: number;
+    proposer_address: string;
+    time: string;
+    total_txs: number;
+    validators_hash: string;
+  };
 };
 
 export type POKTSkinnyBlock = {
-	network: POKTNetwork;
-	timestamp: UNIXTime;
-	header: {
-		height: number;
-		time: string;
-		proposer_address: string;
-		num_txs: number;
-	};
+  network: POKTNetwork;
+  timestamp: UNIXTime;
+  header: {
+    height: number;
+    time: string;
+    proposer_address: string;
+    num_txs: number;
+  };
 };
 
 export enum POKTTransactionMessageType {
-	app_stake = "app_stake",
-	app_begin_unstake = "app_begin_unstake",
-	stake_validator = "stake_validator",
-	begin_unstake_validator = "begin_unstake_validator",
-	unjail_validator = "unjail_validator",
-	send = "send",
-	upgrade = "upgrade",
-	change_param = "change_param",
-	dao_transfer = "dao_transfer",
-	claim = "claim",
-	proof = "proof",
+  app_stake = "app_stake",
+  app_begin_unstake = "app_begin_unstake",
+  stake_validator = "stake_validator",
+  begin_unstake_validator = "begin_unstake_validator",
+  unjail_validator = "unjail_validator",
+  send = "send",
+  upgrade = "upgrade",
+  change_param = "change_param",
+  dao_transfer = "dao_transfer",
+  claim = "claim",
+  proof = "proof",
 }
 
 /**
@@ -197,15 +197,15 @@ export enum POKTTransactionMessageType {
  * subtypes.
  */
 export type POKTTransactionResult = {
-	code: number;
-	codespace: string;
-	data: string[] | null;
-	events: object[] | null;
-	log: string;
-	info: string;
-	signer: string;
-	recipient: string;
-	messageType: string;
+  code: number;
+  codespace: string;
+  data: string[] | null;
+  events: object[] | null;
+  log: string;
+  info: string;
+  signer: string;
+  recipient: string;
+  messageType: string;
 };
 
 /**
@@ -213,10 +213,10 @@ export type POKTTransactionResult = {
  * subtypes.
  */
 export type POKTTransactionSimpleProof = {
-	total: number;
-	index: number;
-	leaf_hash: Hex | null;
-	aunts: Hex[] | null;
+  total: number;
+  index: number;
+  leaf_hash: Hex | null;
+  aunts: Hex[] | null;
 };
 
 /**
@@ -224,9 +224,9 @@ export type POKTTransactionSimpleProof = {
  * subtypes.
  */
 export type POKTTransactionProof = {
-	root_hash: string;
-	data: string | null;
-	proof: POKTTransactionSimpleProof;
+  root_hash: string;
+  data: string | null;
+  proof: POKTTransactionSimpleProof;
 };
 
 /**
@@ -234,11 +234,11 @@ export type POKTTransactionProof = {
  * subtypes.
  */
 export type POKTTransactionStd = {
-	entropy: number;
-	fee: POKTFee;
-	memo: string;
-	msg: unknown;
-	signature: POKTSignature;
+  entropy: number;
+  fee: POKTFee;
+  memo: string;
+  msg: unknown;
+  signature: POKTSignature;
 };
 
 /**
@@ -246,23 +246,23 @@ export type POKTTransactionStd = {
  * subtypes.
  */
 export type POKTTransaction = {
-	hash: string;
-	height: number;
-	targetHeight: number;
-	tx: string;
-	from: string;
-	to: string;
-	txMsg: POKTMsgSend;
-	network: POKTNetwork;
-	asset: NetworkBaseAsset;
-	memo?: string;
-	stdTx?: POKTTransactionStd;
-	txResult?: POKTTransactionResult;
-	proof?: POKTTransactionProof;
+  hash: string;
+  height: number;
+  targetHeight: number;
+  tx: string;
+  from: string;
+  to: string;
+  txMsg: POKTMsgSend;
+  network: POKTNetwork;
+  asset: NetworkBaseAsset;
+  memo?: string;
+  stdTx?: POKTTransactionStd;
+  txResult?: POKTTransactionResult;
+  proof?: POKTTransactionProof;
 };
 
 export enum POKTMsgType {
-	send = "pos/Send",
+  send = "pos/Send",
 }
 
 /**
@@ -270,12 +270,12 @@ export enum POKTMsgType {
  * subtypes.
  */
 export type POKTMsgSend = {
-	type: POKTMsgType.send;
-	value: {
-		amount: string;
-		fromAddress: string;
-		toAddress: string;
-	};
+  type: POKTMsgType.send;
+  value: {
+    amount: string;
+    fromAddress: string;
+    toAddress: string;
+  };
 };
 
 /**
@@ -285,11 +285,11 @@ export type POKTMsgSend = {
 export type POKTMsg = POKTMsgSend;
 
 export type POKTTransactionRPCRequest = {
-	amount: string;
-	from: string;
-	to: string;
-	fee?: string;
-	memo?: string;
+  amount: string;
+  from: string;
+  to: string;
+  fee?: string;
+  memo?: string;
 };
 
 /**
@@ -297,14 +297,14 @@ export type POKTTransactionRPCRequest = {
  * subtypes.
  */
 export type POKTTransactionRequest = {
-	txMsg: POKTMsgSend;
-	chainID: "mainnet" | "localnet" | string;
-	fee: string;
-	network: POKTNetwork;
-	from: string;
-	to: string;
-	feeDenom?: POKTCoinDenom;
-	memo?: string;
+  txMsg: POKTMsgSend;
+  chainID: "mainnet" | "localnet" | string;
+  fee: string;
+  network: POKTNetwork;
+  from: string;
+  to: string;
+  feeDenom?: POKTCoinDenom;
+  memo?: string;
 };
 
 /**
@@ -312,7 +312,7 @@ export type POKTTransactionRequest = {
  * subtypes.
  */
 export type SignedPOKTTransaction = POKTTransactionRequest & {
-	tx: string;
+  tx: string;
 };
 
 /**
@@ -326,10 +326,10 @@ export type AnyPOKTTransaction = POKTTransaction;
  * set.
  */
 export type LegacyEVMTransaction = EVMTransaction & {
-	gasPrice: bigint;
-	type: 0 | null;
-	maxFeePerGas: null;
-	maxPriorityFeePerGas: null;
+  gasPrice: bigint;
+  type: 0 | null;
+  maxFeePerGas: null;
+  maxPriorityFeePerGas: null;
 };
 
 /**
@@ -339,11 +339,11 @@ export type LegacyEVMTransaction = EVMTransaction & {
  * request a signed transaction, and does not include signature fields.
  */
 export type LegacyEVMTransactionRequest = Pick<
-	LegacyEVMTransaction,
-	"gasPrice" | "type" | "nonce" | "from" | "to" | "input" | "value"
+  LegacyEVMTransaction,
+  "gasPrice" | "type" | "nonce" | "from" | "to" | "input" | "value"
 > & {
-	chainID: LegacyEVMTransaction["network"]["chainID"];
-	gasLimit: bigint;
+  chainID: LegacyEVMTransaction["network"]["chainID"];
+  gasLimit: bigint;
 };
 
 /**
@@ -352,10 +352,10 @@ export type LegacyEVMTransactionRequest = Pick<
  * mandated to be `null`.
  */
 export type EIP1559Transaction = EVMTransaction & {
-	gasPrice: null;
-	type: 1 | 2;
-	maxFeePerGas: bigint;
-	maxPriorityFeePerGas: bigint;
+  gasPrice: null;
+  type: 1 | 2;
+  maxFeePerGas: bigint;
+  maxPriorityFeePerGas: bigint;
 };
 
 /**
@@ -368,18 +368,18 @@ export type EIP1559Transaction = EVMTransaction & {
  * populate the nonce immediately before a request is signed.
  */
 export type EIP1559TransactionRequest = Pick<
-	EIP1559Transaction,
-	| "from"
-	| "to"
-	| "type"
-	| "input"
-	| "value"
-	| "maxFeePerGas"
-	| "maxPriorityFeePerGas"
+  EIP1559Transaction,
+  | "from"
+  | "to"
+  | "type"
+  | "input"
+  | "value"
+  | "maxFeePerGas"
+  | "maxPriorityFeePerGas"
 > & {
-	gasLimit: bigint;
-	chainID: EIP1559Transaction["network"]["chainID"];
-	nonce: number | undefined;
+  gasLimit: bigint;
+  chainID: EIP1559Transaction["network"]["chainID"];
+  nonce: number | undefined;
 };
 
 /**
@@ -387,9 +387,9 @@ export type EIP1559TransactionRequest = Pick<
  * full log data, and the indexed log topics.
  */
 export type EVMLog = {
-	contractAddress: HexString;
-	data: HexString;
-	topics: HexString[];
+  contractAddress: HexString;
+  data: HexString;
+  topics: HexString[];
 };
 
 /**
@@ -398,11 +398,11 @@ export type EVMLog = {
  * as the block hash and block height at which the transaction was included.
  */
 export type ConfirmedEVMTransaction = EVMTransaction & {
-	gasUsed: bigint;
-	status: number;
-	blockHash: string;
-	blockHeight: number;
-	logs: EVMLog[] | undefined;
+  gasUsed: bigint;
+  status: number;
+  blockHash: string;
+  blockHeight: number;
+  logs: EVMLog[] | undefined;
 };
 
 /**
@@ -410,10 +410,10 @@ export type ConfirmedEVMTransaction = EVMTransaction & {
  * the error if available.
  */
 export type FailedConfirmationEVMTransaction = EVMTransaction & {
-	status: 0;
-	error?: string;
-	blockHash: null;
-	blockHeight: null;
+  status: 0;
+  error?: string;
+  blockHash: null;
+  blockHeight: null;
 };
 
 /**
@@ -421,9 +421,9 @@ export type FailedConfirmationEVMTransaction = EVMTransaction & {
  * signature fields but may not have them all populated yet.
  */
 export type AlmostSignedEVMTransaction = EVMTransaction & {
-	r?: string;
-	s?: string;
-	v?: number;
+  r?: string;
+  s?: string;
+  v?: number;
 };
 
 /**
@@ -431,9 +431,9 @@ export type AlmostSignedEVMTransaction = EVMTransaction & {
  * to the network.
  */
 export type SignedEVMTransaction = EVMTransaction & {
-	r: string;
-	s: string;
-	v: number;
+  r: string;
+  s: string;
+  v: number;
 };
 
 /**
@@ -441,17 +441,17 @@ export type SignedEVMTransaction = EVMTransaction & {
  * block.
  */
 export type SignedConfirmedEVMTransaction = SignedEVMTransaction &
-	ConfirmedEVMTransaction;
+  ConfirmedEVMTransaction;
 
 /**
  * Any EVM transaction, confirmed or unconfirmed and signed or unsigned.
  */
 export type AnyEVMTransaction =
-	| EVMTransaction
-	| ConfirmedEVMTransaction
-	| AlmostSignedEVMTransaction
-	| SignedEVMTransaction
-	| FailedConfirmationEVMTransaction;
+  | EVMTransaction
+  | ConfirmedEVMTransaction
+  | AlmostSignedEVMTransaction
+  | SignedEVMTransaction
+  | FailedConfirmationEVMTransaction;
 
 /**
  * The estimated gas prices for including a transaction in the next block.
@@ -460,26 +460,26 @@ export type AnyEVMTransaction =
  * the given `baseFeePerGas` will be included in the next block.
  */
 export enum BlockPriceDataSource {
-	LOCAL = "local",
-	BLOCKNATIVE = "blocknative",
+  LOCAL = "local",
+  BLOCKNATIVE = "blocknative",
 }
 export type BlockPrices = {
-	network: Network;
-	blockNumber: number;
-	baseFeePerGas: bigint;
-	/**
-	 * An estimate of how many transactions will be included in the next block.
-	 */
-	estimatedTransactionCount: number | null;
-	/**
-	 * A choice of gas price parameters with associated confidence that a
-	 * transaction using those parameters will be included in the next block.
-	 */
-	estimatedPrices: BlockEstimate[];
-	/**
-	 * Whether these prices were estimated locally or via a third party provider
-	 */
-	dataSource: BlockPriceDataSource;
+  network: Network;
+  blockNumber: number;
+  baseFeePerGas: bigint;
+  /**
+   * An estimate of how many transactions will be included in the next block.
+   */
+  estimatedTransactionCount: number | null;
+  /**
+   * A choice of gas price parameters with associated confidence that a
+   * transaction using those parameters will be included in the next block.
+   */
+  estimatedPrices: BlockEstimate[];
+  /**
+   * Whether these prices were estimated locally or via a third party provider
+   */
+  dataSource: BlockPriceDataSource;
 };
 
 /**
@@ -487,22 +487,22 @@ export type BlockPrices = {
  * will result in the inclusion of a transaction in the next block.
  */
 export type BlockEstimate = {
-	confidence: number;
-	/**
-	 * For legacy (pre-EIP1559) transactions, the gas price that results in the
-	 * above likelihood of inclusion.
-	 */
-	price: bigint;
-	/**
-	 * For EIP1559 transactions, the max priority fee per gas that results in the
-	 * above likelihood of inclusion.
-	 */
-	maxPriorityFeePerGas: bigint;
-	/**
-	 * For EIP1559 transactions, the max fee per gas that results in the above
-	 * likelihood of inclusion.
-	 */
-	maxFeePerGas: bigint;
+  confidence: number;
+  /**
+   * For legacy (pre-EIP1559) transactions, the gas price that results in the
+   * above likelihood of inclusion.
+   */
+  price: bigint;
+  /**
+   * For EIP1559 transactions, the max priority fee per gas that results in the
+   * above likelihood of inclusion.
+   */
+  maxPriorityFeePerGas: bigint;
+  /**
+   * For EIP1559 transactions, the max fee per gas that results in the above
+   * likelihood of inclusion.
+   */
+  maxFeePerGas: bigint;
 };
 
 /**
@@ -510,12 +510,12 @@ export type BlockEstimate = {
  * chainID, and name.
  */
 export function sameNetwork(
-	network1: AnyNetwork,
-	network2: AnyNetwork,
+  network1: AnyNetwork,
+  network2: AnyNetwork
 ): boolean {
-	return (
-		network1.family === network2.family &&
-		network1.chainID === network2.chainID &&
-		network1.name === network2.name
-	);
+  return (
+    network1.family === network2.family &&
+    network1.chainID === network2.chainID &&
+    network1.name === network2.name
+  );
 }

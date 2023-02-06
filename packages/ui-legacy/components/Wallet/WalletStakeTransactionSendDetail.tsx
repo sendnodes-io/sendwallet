@@ -2,14 +2,14 @@ import { unitPricePointForPricePoint } from "@sendnodes/pokt-wallet-background/a
 import { USD } from "@sendnodes/pokt-wallet-background/constants";
 import { selectAssetPricePoint } from "@sendnodes/pokt-wallet-background/redux-slices/assets";
 import {
-	getAccountData,
-	selectCurrentAccountActivityForTxHash,
-	selectCurrentAddressNetwork,
+  getAccountData,
+  selectCurrentAccountActivityForTxHash,
+  selectCurrentAddressNetwork,
 } from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
 import {
-	enrichAssetAmountWithDecimalValues,
-	enrichAssetAmountWithMainCurrencyValues,
-	heuristicDesiredDecimalsForUnitPrice,
+  enrichAssetAmountWithDecimalValues,
+  enrichAssetAmountWithMainCurrencyValues,
+  heuristicDesiredDecimalsForUnitPrice,
 } from "@sendnodes/pokt-wallet-background/redux-slices/utils/asset-utils";
 import React, { ReactElement } from "react";
 import { useBackgroundSelector } from "../../hooks";
@@ -20,147 +20,147 @@ import SharedAssetIcon from "../Shared/SharedAssetIcon";
 import { StakeTransactionItemState } from "../Stake/StakeTransactionInfo";
 
 export type WalletStakeTransactionSendDetailProps = {
-	transaction: StakeTransactionItemState;
+  transaction: StakeTransactionItemState;
 };
 
 export default function WalletStakeTransactionSendDetail({
-	transaction,
+  transaction,
 }: WalletStakeTransactionSendDetailProps): ReactElement {
-	const activity = useBackgroundSelector((state) =>
-		selectCurrentAccountActivityForTxHash(state, transaction.hash),
-	);
-	const { data: stakingPoktParams } = useStakingPoktParams();
-	const sendnodesWallets = Object.values(stakingPoktParams?.wallets ?? {});
-	const { address, network } = useBackgroundSelector(
-		selectCurrentAddressNetwork,
-	);
-	const baseAssetPricePoint = useBackgroundSelector((state) =>
-		selectAssetPricePoint(state.assets, network.baseAsset.symbol, USD.symbol),
-	);
-	const { amount } = transaction;
-	const from = transaction.signer;
-	const to = activity?.to ?? transaction.userWalletAddress;
+  const activity = useBackgroundSelector((state) =>
+    selectCurrentAccountActivityForTxHash(state, transaction.hash)
+  );
+  const { data: stakingPoktParams } = useStakingPoktParams();
+  const sendnodesWallets = Object.values(stakingPoktParams?.wallets ?? {});
+  const { address, network } = useBackgroundSelector(
+    selectCurrentAddressNetwork
+  );
+  const baseAssetPricePoint = useBackgroundSelector((state) =>
+    selectAssetPricePoint(state.assets, network.baseAsset.symbol, USD.symbol)
+  );
+  const { amount } = transaction;
+  const from = transaction.signer;
+  const to = activity?.to ?? transaction.userWalletAddress;
 
-	const transactionAssetAmount = enrichAssetAmountWithDecimalValues(
-		{
-			asset: network.baseAsset,
-			amount: amount.toBigInt(),
-		},
-		heuristicDesiredDecimalsForUnitPrice(
-			network.baseAsset.decimals,
-			typeof baseAssetPricePoint !== "undefined"
-				? unitPricePointForPricePoint(baseAssetPricePoint)
-				: undefined,
-		),
-	);
+  const transactionAssetAmount = enrichAssetAmountWithDecimalValues(
+    {
+      asset: network.baseAsset,
+      amount: amount.toBigInt(),
+    },
+    heuristicDesiredDecimalsForUnitPrice(
+      network.baseAsset.decimals,
+      typeof baseAssetPricePoint !== "undefined"
+        ? unitPricePointForPricePoint(baseAssetPricePoint)
+        : undefined
+    )
+  );
 
-	const decimalPlaces = transactionAssetAmount.decimalAmount < 1 ? 6 : 2;
-	const {
-		decimalAmount: tokenValue,
-		mainCurrencyAmount: dollarValue,
-		localizedDecimalAmount: localizedTokenValue,
-		localizedMainCurrencyAmount: localizedDollarValue,
-	} = enrichAssetAmountWithMainCurrencyValues(
-		transactionAssetAmount,
-		baseAssetPricePoint,
-		decimalPlaces,
-	);
+  const decimalPlaces = transactionAssetAmount.decimalAmount < 1 ? 6 : 2;
+  const {
+    decimalAmount: tokenValue,
+    mainCurrencyAmount: dollarValue,
+    localizedDecimalAmount: localizedTokenValue,
+    localizedMainCurrencyAmount: localizedDollarValue,
+  } = enrichAssetAmountWithMainCurrencyValues(
+    transactionAssetAmount,
+    baseAssetPricePoint,
+    decimalPlaces
+  );
 
-	const fromAccountData = useBackgroundSelector((state) =>
-		getAccountData(state, from),
-	);
+  const fromAccountData = useBackgroundSelector((state) =>
+    getAccountData(state, from)
+  );
 
-	const toAccountData = useBackgroundSelector((state) =>
-		getAccountData(state, to ?? ""),
-	);
+  const toAccountData = useBackgroundSelector((state) =>
+    getAccountData(state, to ?? "")
+  );
 
-	return (
-		<div className="sign_block">
-			{amount.gt(0) && (
-				<div className="dashed_border width_full amount_row">
-					<SharedAssetIcon
-						symbol={transactionAssetAmount.asset.symbol}
-						size="large"
-					/>
-					<span
-						className="spend_amount"
-						title={`${localizedTokenValue} ${transactionAssetAmount.asset.symbol}`}
-					>
-						{transactionAssetAmount.decimalAmount < 1
-							? formatTokenAmount(tokenValue, 1, 6)
-							: formatTokenAmount(tokenValue)}
-					</span>
-					<span className="dollar_amount" title={`${localizedDollarValue}`}>
-						{localizedDollarValue}
-					</span>
-				</div>
-			)}
-			<div className="spacing" />
-			<div className="width_full addresses_row">
-				<div>
-					<div className="width_full">
-						<h3 className="label">FROM</h3>
-					</div>
-					<div className="width_full">
-						<div className="dashed_border" style={{ margin: 0 }}>
-							{sendnodesWallets.includes(from) && (
-								<img
-									src="/images/sendnodes.png"
-									width="558"
-									height="84"
-									className="w-full block mx-auto max-w-[5rem]"
-									alt="SendNodes"
-									title={stakingPoktParams?.wallets.siw}
-								/>
-							)}
-							{!sendnodesWallets.includes(from) && (
-								<SharedAddress
-									name={
-										fromAccountData !== "loading"
-											? (fromAccountData ?? undefined)?.name
-											: undefined
-									}
-									address={to}
-								/>
-							)}
-						</div>
-					</div>
-				</div>
-				<div>
-					<div className="width_full">
-						<h3 className="label">TO</h3>
-					</div>
-					<div className="width_full">
-						<div className="dashed_border" style={{ margin: 0 }}>
-							{sendnodesWallets.includes(to) && (
-								<img
-									src="/images/sendnodes.png"
-									width="558"
-									height="84"
-									className="w-full block mx-auto max-w-[5rem]"
-									alt="SendNodes"
-									title={stakingPoktParams?.wallets.siw}
-								/>
-							)}
-							{!sendnodesWallets.includes(to) && (
-								<SharedAddress
-									name={
-										toAccountData !== "loading"
-											? (toAccountData ?? undefined)?.name
-											: undefined
-									}
-									address={to}
-								/>
-							)}
-						</div>
-					</div>
-				</div>
-			</div>
+  return (
+    <div className="sign_block">
+      {amount.gt(0) && (
+        <div className="dashed_border width_full amount_row">
+          <SharedAssetIcon
+            symbol={transactionAssetAmount.asset.symbol}
+            size="large"
+          />
+          <span
+            className="spend_amount"
+            title={`${localizedTokenValue} ${transactionAssetAmount.asset.symbol}`}
+          >
+            {transactionAssetAmount.decimalAmount < 1
+              ? formatTokenAmount(tokenValue, 1, 6)
+              : formatTokenAmount(tokenValue)}
+          </span>
+          <span className="dollar_amount" title={`${localizedDollarValue}`}>
+            {localizedDollarValue}
+          </span>
+        </div>
+      )}
+      <div className="spacing" />
+      <div className="width_full addresses_row">
+        <div>
+          <div className="width_full">
+            <h3 className="label">FROM</h3>
+          </div>
+          <div className="width_full">
+            <div className="dashed_border" style={{ margin: 0 }}>
+              {sendnodesWallets.includes(from) && (
+                <img
+                  src="/images/sendnodes.png"
+                  width="558"
+                  height="84"
+                  className="w-full block mx-auto max-w-[5rem]"
+                  alt="SendNodes"
+                  title={stakingPoktParams?.wallets.siw}
+                />
+              )}
+              {!sendnodesWallets.includes(from) && (
+                <SharedAddress
+                  name={
+                    fromAccountData !== "loading"
+                      ? (fromAccountData ?? undefined)?.name
+                      : undefined
+                  }
+                  address={to}
+                />
+              )}
+            </div>
+          </div>
+        </div>
+        <div>
+          <div className="width_full">
+            <h3 className="label">TO</h3>
+          </div>
+          <div className="width_full">
+            <div className="dashed_border" style={{ margin: 0 }}>
+              {sendnodesWallets.includes(to) && (
+                <img
+                  src="/images/sendnodes.png"
+                  width="558"
+                  height="84"
+                  className="w-full block mx-auto max-w-[5rem]"
+                  alt="SendNodes"
+                  title={stakingPoktParams?.wallets.siw}
+                />
+              )}
+              {!sendnodesWallets.includes(to) && (
+                <SharedAddress
+                  name={
+                    toAccountData !== "loading"
+                      ? (toAccountData ?? undefined)?.name
+                      : undefined
+                  }
+                  address={to}
+                />
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
 
-			<div className="spacing" />
+      <div className="spacing" />
 
-			<style jsx>
-				{`
+      <style jsx>
+        {`
           .sign_block {
             display: flex;
             width: 100%;
@@ -237,7 +237,7 @@ export default function WalletStakeTransactionSendDetail({
             margin-bottom: 0.5rem;
           }
         `}
-			</style>
-		</div>
-	);
+      </style>
+    </div>
+  );
 }

@@ -2,34 +2,34 @@ import classNames from "clsx";
 import React, { CSSProperties, ReactElement } from "react";
 
 interface Props {
-	size: "small" | "medium" | "large";
-	logoURL: string;
-	symbol: string;
+  size: "small" | "medium" | "large";
+  logoURL: string;
+  symbol: string;
 }
 
 export default function SharedAssetIcon(props: Props): ReactElement {
-	let { size, logoURL, symbol } = props;
-	symbol = symbol.toLowerCase();
-	const hardcodedIcons = ["eth", "pokt", "matic"];
-	const hasHardcodedIcon = hardcodedIcons.includes(symbol);
+  let { size, logoURL, symbol } = props;
+  symbol = symbol.toLowerCase();
+  const hardcodedIcons = ["eth", "pokt", "matic"];
+  const hasHardcodedIcon = hardcodedIcons.includes(symbol);
 
-	// Checks to see if it's an http(s) address because I've seen
-	// strings get here like ipfs://QmYNz8J1h5yefkaAw6tZwUYoJyBTWmBXgAY28ZWZ5rPsLR
-	// which won't load. Of if we have a hardcoded backup image
-	const hasValidImage = logoURL?.includes("http") || hasHardcodedIcon;
-	const tokenIconUrl = hasHardcodedIcon ? `./images/${symbol}@2x.png` : logoURL;
+  // Checks to see if it's an http(s) address because I've seen
+  // strings get here like ipfs://QmYNz8J1h5yefkaAw6tZwUYoJyBTWmBXgAY28ZWZ5rPsLR
+  // which won't load. Of if we have a hardcoded backup image
+  const hasValidImage = logoURL?.includes("http") || hasHardcodedIcon;
+  const tokenIconUrl = hasHardcodedIcon ? `./images/${symbol}@2x.png` : logoURL;
 
-	return (
-		<div className={`token_icon_wrap ${size}`}>
-			{hasValidImage ? (
-				<div className={classNames(["token_icon", `icon_${symbol}`])} />
-			) : (
-				<div className={`token_icon_fallback ${size}`}>
-					{symbol.slice(0)[0]}
-				</div>
-			)}
-			<style jsx>
-				{`
+  return (
+    <div className={`token_icon_wrap ${size}`}>
+      {hasValidImage ? (
+        <div className={classNames(["token_icon", `icon_${symbol}`])} />
+      ) : (
+        <div className={`token_icon_fallback ${size}`}>
+          {symbol.slice(0)[0]}
+        </div>
+      )}
+      <style jsx>
+        {`
           .token_icon_wrap {
             display: flex;
           }
@@ -81,20 +81,20 @@ export default function SharedAssetIcon(props: Props): ReactElement {
             height: 0.8rem;
           }
         `}
-			</style>
-			<style jsx>
-				{`
+      </style>
+      <style jsx>
+        {`
           .token_icon {
             mask-image: url("${tokenIconUrl}");
           }
         `}
-			</style>
-		</div>
-	);
+      </style>
+    </div>
+  );
 }
 
 SharedAssetIcon.defaultProps = {
-	size: "medium",
-	logoURL: null,
-	symbol: "POKT",
+  size: "medium",
+  logoURL: null,
+  symbol: "POKT",
 };

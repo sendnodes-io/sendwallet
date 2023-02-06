@@ -2,19 +2,19 @@ import classNames from "clsx";
 import React, { ReactElement, ReactNode } from "react";
 
 export default function TransactionDetailItem({
-	name,
-	value,
-	type = "inline",
+  name,
+  value,
+  type = "inline",
 }: {
-	name: ReactNode;
-	value: ReactNode;
-	type?: "block" | "inline";
+  name: ReactNode;
+  value: ReactNode;
+  type?: "block" | "inline";
 }): ReactElement {
-	return (
-		<div className={classNames("container", type)}>
-			<div className="name">{name}</div>
-			<div className="value">{value}</div>
-			<style jsx>{`
+  return (
+    <div className={classNames("container", type)}>
+      <div className="name">{name}</div>
+      <div className="value">{value}</div>
+      <style jsx>{`
         .container {
           display: flex;
           font-size: 16px;
@@ -39,6 +39,6 @@ export default function TransactionDetailItem({
           color: var(--spanish-gray);
         }
       `}</style>
-		</div>
-	);
+    </div>
+  );
 }

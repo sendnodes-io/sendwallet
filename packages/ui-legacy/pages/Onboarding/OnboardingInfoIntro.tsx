@@ -7,24 +7,24 @@ import styles from "../../components/Onboarding/styles";
 import openPoktWalletTab from "../../helpers/open-pokt-wallet-tab";
 
 interface OnboardingIntroStep {
-	content: React.ReactElement;
-	buttonCopy: string;
+  content: React.ReactElement;
+  buttonCopy: string;
 }
 
 const OnboardingIntroStep1 = (
-	<>
-		<span>
-			<small>WELCOME TO</small>
-		</span>
-		<img
-			src="/images/onboarding/step-1-logo-simple@4x.png"
-			alt="SendWallet"
-			width={232}
-			height={32}
-		/>
-		<p>Simple. Secure.</p>
-		<style jsx global>
-			{`
+  <>
+    <span>
+      <small>WELCOME TO</small>
+    </span>
+    <img
+      src="/images/onboarding/step-1-logo-simple@4x.png"
+      alt="SendWallet"
+      width={232}
+      height={32}
+    />
+    <p>Simple. Secure.</p>
+    <style jsx global>
+      {`
         .illustration {
           background-image: url("./images/onboarding/step-1-logo-icon@2x.png");
           width: 13.5rem;
@@ -43,21 +43,21 @@ const OnboardingIntroStep1 = (
           font-size: 1.25rem;
         }
       `}
-		</style>
-	</>
+    </style>
+  </>
 );
 
 const OnboardingIntroStep2 = (
-	<>
-		<h1>
-			<span>Send</span>Wallet by SendNodes
-		</h1>
-		<p>
-			Some of the best devs and designers contributing to the Pocket Ecosystem.
-			Open-source.
-		</p>
-		<style jsx global>
-			{`
+  <>
+    <h1>
+      <span>Send</span>Wallet by SendNodes
+    </h1>
+    <p>
+      Some of the best devs and designers contributing to the Pocket Ecosystem.
+      Open-source.
+    </p>
+    <style jsx global>
+      {`
         .illustration_section {
           justify-content: center;
         }
@@ -71,8 +71,8 @@ const OnboardingIntroStep2 = (
           padding-bottom: 2rem;
         }
       `}
-		</style>
-	</>
+    </style>
+  </>
 );
 
 // const OnboardingIntroStep3 = (
@@ -107,68 +107,68 @@ const OnboardingIntroStep2 = (
 // )
 
 const steps: OnboardingIntroStep[] = [
-	{
-		content: OnboardingIntroStep1,
-		buttonCopy: "CONTINUE",
-	},
-	{
-		content: OnboardingIntroStep2,
-		buttonCopy: "GET STARTED",
-	},
-	// {
-	//   content: OnboardingIntroStep3,
-	//   buttonCopy: "GET STARTED",
-	// },
+  {
+    content: OnboardingIntroStep1,
+    buttonCopy: "CONTINUE",
+  },
+  {
+    content: OnboardingIntroStep2,
+    buttonCopy: "GET STARTED",
+  },
+  // {
+  //   content: OnboardingIntroStep3,
+  //   buttonCopy: "GET STARTED",
+  // },
 ];
 
 export default function OnboardingInfoIntro(): ReactElement {
-	const [activeStep, setActiveStep] = useState(1);
+  const [activeStep, setActiveStep] = useState(1);
 
-	const hasAccounts = useBackgroundSelector(
-		(state) => Object.keys(state.account.accountsData).length > 0,
-	);
+  const hasAccounts = useBackgroundSelector(
+    (state) => Object.keys(state.account.accountsData).length > 0
+  );
 
-	// If there's an account, return to /
-	if (hasAccounts) {
-		return <Redirect to="/" />;
-	}
+  // If there's an account, return to /
+  if (hasAccounts) {
+    return <Redirect to="/" />;
+  }
 
-	return (
-		<section>
-			<div className={`fade-in-${activeStep - 1} onboarding_step`}>
-				<div className="illustration_section">
-					<div className="illustration" />
-				</div>
-				<div className="bottom_part">
-					<div className="bottom_content">{steps[activeStep - 1]!.content}</div>
-				</div>
-			</div>
-			<div className="buttons">
-				<SharedButton
-					type="primaryGhost"
-					size="large"
-					onClick={() => {
-						if (activeStep < steps.length) {
-							setActiveStep(activeStep + 1);
-						} else {
-							openPoktWalletTab("/onboarding/add-wallet");
-						}
-					}}
-				>
-					{steps[activeStep - 1]!.buttonCopy}
-				</SharedButton>
-				<div className="spacing" />
-				<SharedProgressIndicator
-					numberOfSteps={2}
-					activeStep={activeStep}
-					onProgressStepClicked={(step) => {
-						setActiveStep(step);
-					}}
-				/>
-			</div>
-			<style jsx>{styles}</style>
-			<style jsx>
-				{`
+  return (
+    <section>
+      <div className={`fade-in-${activeStep - 1} onboarding_step`}>
+        <div className="illustration_section">
+          <div className="illustration" />
+        </div>
+        <div className="bottom_part">
+          <div className="bottom_content">{steps[activeStep - 1]!.content}</div>
+        </div>
+      </div>
+      <div className="buttons">
+        <SharedButton
+          type="primaryGhost"
+          size="large"
+          onClick={() => {
+            if (activeStep < steps.length) {
+              setActiveStep(activeStep + 1);
+            } else {
+              openPoktWalletTab("/onboarding/add-wallet");
+            }
+          }}
+        >
+          {steps[activeStep - 1]!.buttonCopy}
+        </SharedButton>
+        <div className="spacing" />
+        <SharedProgressIndicator
+          numberOfSteps={2}
+          activeStep={activeStep}
+          onProgressStepClicked={(step) => {
+            setActiveStep(step);
+          }}
+        />
+      </div>
+      <style jsx>{styles}</style>
+      <style jsx>
+        {`
           .spacing {
             padding: 0.5rem 0;
           }
@@ -228,9 +228,9 @@ export default function OnboardingInfoIntro(): ReactElement {
             max-width: 20rem;
           }
         `}
-			</style>
-			<style jsx>
-				{`
+      </style>
+      <style jsx>
+        {`
           @keyframes fadeIn {
             0% {
               opacity: 0;
@@ -243,7 +243,7 @@ export default function OnboardingInfoIntro(): ReactElement {
             animation: fadeIn ease-out 0.8s;
           }
         `}
-			</style>
-		</section>
-	);
+      </style>
+    </section>
+  );
 }

@@ -1,8 +1,8 @@
 import { truncateDecimalAmount } from "@sendnodes/pokt-wallet-background/lib/utils";
 import { selectAssetPricePoint } from "@sendnodes/pokt-wallet-background/redux-slices/assets";
 import {
-	getAssetsState,
-	selectMainCurrencySymbol,
+  getAssetsState,
+  selectMainCurrencySymbol,
 } from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
 import { enrichAssetAmountWithMainCurrencyValues } from "@sendnodes/pokt-wallet-background/redux-slices/utils/asset-utils";
 import { TransactionAnnotation } from "@sendnodes/pokt-wallet-background/services/enrichment";
@@ -14,50 +14,50 @@ import TransactionDetailAddressValue from "../TransactionDetail/TransactionDetai
 import TransactionDetailContainer from "../TransactionDetail/TransactionDetailContainer";
 import TransactionDetailItem from "../TransactionDetail/TransactionDetailItem";
 import SignTransactionBaseInfoProvider, {
-	SignTransactionInfoProviderProps,
+  SignTransactionInfoProviderProps,
 } from "./SignTransactionBaseInfoProvider";
 
 export default function SignTransactionTransferInfoProvider({
-	transactionDetails,
-	annotation: { assetAmount, recipientAddress, recipientName },
-	inner,
+  transactionDetails,
+  annotation: { assetAmount, recipientAddress, recipientName },
+  inner,
 }: SignTransactionInfoProviderProps & {
-	annotation: TransactionAnnotation & { type: "asset-transfer" };
+  annotation: TransactionAnnotation & { type: "asset-transfer" };
 }): ReactElement {
-	const assets = useBackgroundSelector(getAssetsState);
-	const mainCurrencySymbol = useBackgroundSelector(selectMainCurrencySymbol);
-	const assetPricePoint = selectAssetPricePoint(
-		assets,
-		assetAmount.asset.symbol,
-		mainCurrencySymbol,
-	);
-	const localizedMainCurrencyAmount =
-		enrichAssetAmountWithMainCurrencyValues(assetAmount, assetPricePoint, 2)
-			.localizedMainCurrencyAmount ?? "-";
+  const assets = useBackgroundSelector(getAssetsState);
+  const mainCurrencySymbol = useBackgroundSelector(selectMainCurrencySymbol);
+  const assetPricePoint = selectAssetPricePoint(
+    assets,
+    assetAmount.asset.symbol,
+    mainCurrencySymbol
+  );
+  const localizedMainCurrencyAmount =
+    enrichAssetAmountWithMainCurrencyValues(assetAmount, assetPricePoint, 2)
+      .localizedMainCurrencyAmount ?? "-";
 
-	return (
-		<SignTransactionBaseInfoProvider
-			title="Sign Transfer"
-			confirmButtonLabel="Sign"
-			infoBlock={
-				<div className="sign_block">
-					<div className="container">
-						<div className="label">Send to</div>
-						<div className="send_to">
-							<SharedAddress address={recipientAddress} name={recipientName} />
-						</div>
-					</div>
-					<div className="divider" />
-					<div className="container">
-						<span className="label">Spend Amount</span>
-						<span className="spend_amount">
-							{assetAmount.localizedDecimalAmount} {assetAmount.asset.symbol}
-						</span>
-						<span className="label">{`${localizedMainCurrencyAmount}`}</span>
-					</div>
+  return (
+    <SignTransactionBaseInfoProvider
+      title="Sign Transfer"
+      confirmButtonLabel="Sign"
+      infoBlock={
+        <div className="sign_block">
+          <div className="container">
+            <div className="label">Send to</div>
+            <div className="send_to">
+              <SharedAddress address={recipientAddress} name={recipientName} />
+            </div>
+          </div>
+          <div className="divider" />
+          <div className="container">
+            <span className="label">Spend Amount</span>
+            <span className="spend_amount">
+              {assetAmount.localizedDecimalAmount} {assetAmount.asset.symbol}
+            </span>
+            <span className="label">{`${localizedMainCurrencyAmount}`}</span>
+          </div>
 
-					<style jsx>
-						{`
+          <style jsx>
+            {`
               .sign_block {
                 display: flex;
                 width: 100%;
@@ -92,43 +92,43 @@ export default function SignTransactionTransferInfoProvider({
                 font-size: 16px;
               }
             `}
-					</style>
-				</div>
-			}
-			textualInfoBlock={
-				<TransactionDetailContainer
-					footer={
-						<TransactionDetailItem
-							name="Estimated network fee"
-							value={<FeeSettingsText />}
-						/>
-					}
-				>
-					<TransactionDetailItem name="Type" value="Send Asset" />
-					<TransactionDetailItem
-						name="Spend amount"
-						value={
-							<>
-								{truncateDecimalAmount(assetAmount.decimalAmount, 4)}{" "}
-								{assetAmount.asset.symbol}
-							</>
-						}
-					/>
-					<TransactionDetailItem
-						name="To:"
-						value={
-							<TransactionDetailAddressValue
-								address={
-									"to" in transactionDetails
-										? (transactionDetails.to as string)
-										: "-"
-								}
-							/>
-						}
-					/>
-				</TransactionDetailContainer>
-			}
-			inner={inner}
-		/>
-	);
+          </style>
+        </div>
+      }
+      textualInfoBlock={
+        <TransactionDetailContainer
+          footer={
+            <TransactionDetailItem
+              name="Estimated network fee"
+              value={<FeeSettingsText />}
+            />
+          }
+        >
+          <TransactionDetailItem name="Type" value="Send Asset" />
+          <TransactionDetailItem
+            name="Spend amount"
+            value={
+              <>
+                {truncateDecimalAmount(assetAmount.decimalAmount, 4)}{" "}
+                {assetAmount.asset.symbol}
+              </>
+            }
+          />
+          <TransactionDetailItem
+            name="To:"
+            value={
+              <TransactionDetailAddressValue
+                address={
+                  "to" in transactionDetails
+                    ? (transactionDetails.to as string)
+                    : "-"
+                }
+              />
+            }
+          />
+        </TransactionDetailContainer>
+      }
+      inner={inner}
+    />
+  );
 }

@@ -23,10 +23,27 @@ jobs:
         run: yarn run build
       - name: test
         run: yarn run test
-      - name: Archive production artifacts
+      - name: Archive production webext artifacts chrome
         uses: actions/upload-artifact@v3
         with:
-          name: dist-webext-zips
+          name: dist-webext-zips-chrome
           path: |
-            ./apps/webext/dist/*.zip
-            ./apps/webext-legacy/dist/*.zip
+            ./apps/webext/dist/*chrome*.zip
+      - name: Archive production webext artifacts firefox
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist-webext-zips-firefox
+          path: |
+            ./apps/webext/dist/*firefox*.zip
+      - name: Archive production webext legacy artifacts chrome
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist-webext-legacy-zips-chrome
+          path: |
+            ./apps/webext-legacy/dist/*chrome*.zip
+      - name: Archive production webext legacy artifacts firefox
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist-webext-legacy-zips-firefox
+          path: |
+            ./apps/webext-legacy/dist/*firefox*.zip

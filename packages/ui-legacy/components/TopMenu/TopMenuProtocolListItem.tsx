@@ -2,32 +2,32 @@ import React, { ReactElement } from "react";
 import classNames from "clsx";
 
 interface Props {
-	name: string;
-	info: string;
-	width: number;
-	height: number;
-	isSelected: boolean;
+  name: string;
+  info: string;
+  width: number;
+  height: number;
+  isSelected: boolean;
 }
 
 export default function TopMenuProtocolListItem(props: Props): ReactElement {
-	const { name, width, height, info, isSelected } = props;
+  const { name, width, height, info, isSelected } = props;
 
-	return (
-		<li className={classNames({ select: isSelected })}>
-			<div className="left">
-				<div className="icon_wrap">
-					<span className="icon" />
-				</div>
-			</div>
-			<div className="right">
-				<div className="title">{name}</div>
-				<div className="sub_title">
-					{info}
-					{isSelected && <span className="status">Connected</span>}
-				</div>
-			</div>
-			<style jsx>
-				{`
+  return (
+    <li className={classNames({ select: isSelected })}>
+      <div className="left">
+        <div className="icon_wrap">
+          <span className="icon" />
+        </div>
+      </div>
+      <div className="right">
+        <div className="title">{name}</div>
+        <div className="sub_title">
+          {info}
+          {isSelected && <span className="status">Connected</span>}
+        </div>
+      </div>
+      <style jsx>
+        {`
           li {
             display: flex;
             margin-bottom: 15px;
@@ -43,7 +43,9 @@ export default function TopMenuProtocolListItem(props: Props): ReactElement {
             margin-left: 8px;
           }
           .icon {
-            background: url("./images/${name.replaceAll(" ", "").toLowerCase()}@2x.png");
+            background: url("./images/${name
+              .replaceAll(" ", "")
+              .toLowerCase()}@2x.png");
             background-size: cover;
             width: ${width}px;
             height: ${height}px;
@@ -90,11 +92,11 @@ export default function TopMenuProtocolListItem(props: Props): ReactElement {
             margin-left: 0px;
           }
         `}
-			</style>
-		</li>
-	);
+      </style>
+    </li>
+  );
 }
 
 TopMenuProtocolListItem.defaultProps = {
-	isSelected: false,
+  isSelected: false,
 };

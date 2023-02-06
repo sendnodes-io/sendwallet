@@ -1,6 +1,9 @@
-dist
-*.js
-*.jsx
-*.ts
-*.tsx
+dist/
 size-plugin.json
+.tamagui/
+json-validators.js
+jtd-validators.js
+types/
+.yarn/
+Pods/
+.next/

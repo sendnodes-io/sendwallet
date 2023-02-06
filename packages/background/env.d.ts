@@ -2,5 +2,5 @@
 /// <reference types="webextension-polyfill" />
 
 interface Window {
-	PROCESS_ID?: string;
+  PROCESS_ID?: string;
 }

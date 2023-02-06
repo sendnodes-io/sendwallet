@@ -1,7 +1,7 @@
 export type {
-	ServiceLifecycleEvents,
-	Service,
-	ServiceCreatorFunction,
+  ServiceLifecycleEvents,
+  Service,
+  ServiceCreatorFunction,
 } from "./types";
 
 export { default as BaseService } from "./base";

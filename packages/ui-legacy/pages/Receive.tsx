@@ -7,43 +7,43 @@ import { useBackgroundSelector } from "../hooks";
 import SharedButton from "../components/Shared/SharedButton";
 
 export default function Receive(): ReactElement {
-	const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-	const currentAccount: { address: string } =
-		useBackgroundSelector(selectCurrentAccount);
-	if (!currentAccount) return <></>;
+  const currentAccount: { address: string } =
+    useBackgroundSelector(selectCurrentAccount);
+  if (!currentAccount) return <></>;
 
-	return (
-		<section>
-			<h1>
-				<span className="icon_activity_send_medium" />
-				Receive address
-			</h1>
-			<div className="sub_title">
-				Only send Pokt on the Pokt Network to this address.
-			</div>
-			<div className="qr_code">
-				<QRCode value={currentAccount.address} size={128} />
-			</div>
-			<div className="copy_wrap">
-				<SharedButton
-					icon="copy"
-					size="medium"
-					iconSize="large"
-					type="primary"
-					onClick={() => {
-						navigator.clipboard.writeText(currentAccount.address);
-						dispatch(setSnackbarMessage("Copied!"));
-					}}
-				>
-					{`${currentAccount.address.slice(
-						0,
-						7,
-					)}...${currentAccount.address.slice(-6)}`}
-				</SharedButton>
-			</div>
-			<style jsx>
-				{`
+  return (
+    <section>
+      <h1>
+        <span className="icon_activity_send_medium" />
+        Receive address
+      </h1>
+      <div className="sub_title">
+        Only send Pokt on the Pokt Network to this address.
+      </div>
+      <div className="qr_code">
+        <QRCode value={currentAccount.address} size={128} />
+      </div>
+      <div className="copy_wrap">
+        <SharedButton
+          icon="copy"
+          size="medium"
+          iconSize="large"
+          type="primary"
+          onClick={() => {
+            navigator.clipboard.writeText(currentAccount.address);
+            dispatch(setSnackbarMessage("Copied!"));
+          }}
+        >
+          {`${currentAccount.address.slice(
+            0,
+            7
+          )}...${currentAccount.address.slice(-6)}`}
+        </SharedButton>
+      </div>
+      <style jsx>
+        {`
           section {
             display: flex;
             flex-direction: column;
@@ -99,7 +99,7 @@ export default function Receive(): ReactElement {
             margin-right: 8px;
           }
         `}
-			</style>
-		</section>
-	);
+      </style>
+    </section>
+  );
 }

@@ -1,22 +1,22 @@
 import {
-	AlchemyProvider,
-	AlchemyWebSocketProvider,
+  AlchemyProvider,
+  AlchemyWebSocketProvider,
 } from "@ethersproject/providers";
 import { BigNumber, utils } from "ethers";
 
 import logger from "./logger";
 import { HexString } from "../types";
 import {
-	AssetTransfer,
-	SmartContractAmount,
-	SmartContractFungibleAsset,
+  AssetTransfer,
+  SmartContractAmount,
+  SmartContractFungibleAsset,
 } from "../assets";
 import { ETH } from "../constants";
 import { AnyEVMTransaction, EVMNetwork, SmartContract } from "../networks";
 import {
-	isValidAlchemyAssetTransferResponse,
-	isValidAlchemyTokenBalanceResponse,
-	isValidAlchemyTokenMetadataResponse,
+  isValidAlchemyAssetTransferResponse,
+  isValidAlchemyTokenBalanceResponse,
+  isValidAlchemyTokenMetadataResponse,
 } from "./validate";
 import { AddressOnNetwork } from "../accounts";
 import { alchemyGetAssetTransfersJTD } from "./validate/alchemy";
@@ -39,89 +39,88 @@ import { JTDDataType } from "ajv/dist/core";
  *        to look.
  */
 export async function getAssetTransfers(
-	provider: AlchemyProvider | AlchemyWebSocketProvider,
-	addressOnNetwork: AddressOnNetwork,
-	fromBlock: number,
-	toBlock?: number,
+  provider: AlchemyProvider | AlchemyWebSocketProvider,
+  addressOnNetwork: AddressOnNetwork,
+  fromBlock: number,
+  toBlock?: number
 ): Promise<AssetTransfer[]> {
-	const { address: account, network } = addressOnNetwork;
+  const { address: account, network } = addressOnNetwork;
 
-	const params = {
-		fromBlock: utils.hexValue(fromBlock),
-		toBlock: toBlock === undefined ? "latest" : utils.hexValue(toBlock),
-		category: ["external", "erc20", "erc721", "erc1155"],
-	};
+  const params = {
+    fromBlock: utils.hexValue(fromBlock),
+    toBlock: toBlock === undefined ? "latest" : utils.hexValue(toBlock),
+    category: ["external", "erc20", "erc721", "erc1155"],
+  };
 
-	// TODO handle partial failure
-	const rpcResponses = await Promise.all([
-		provider.send("alchemy_getAssetTransfers", [
-			{
-				...params,
-				fromAddress: account,
-			},
-		]),
-		provider.send("alchemy_getAssetTransfers", [
-			{
-				...params,
-				toAddress: account,
-			},
-		]),
-	]);
+  // TODO handle partial failure
+  const rpcResponses = await Promise.all([
+    provider.send("alchemy_getAssetTransfers", [
+      {
+        ...params,
+        fromAddress: account,
+      },
+    ]),
+    provider.send("alchemy_getAssetTransfers", [
+      {
+        ...params,
+        toAddress: account,
+      },
+    ]),
+  ]);
 
-	return rpcResponses
-		.flatMap((jsonResponse: unknown) => {
-			if (!isValidAlchemyAssetTransferResponse(jsonResponse)) {
-				logger.warn(
-					"Alchemy asset transfer response didn't validate, did the API change?",
-					jsonResponse,
-					isValidAlchemyAssetTransferResponse.errors,
-				);
-			}
+  return rpcResponses
+    .flatMap((jsonResponse: unknown) => {
+      if (!isValidAlchemyAssetTransferResponse(jsonResponse)) {
+        logger.warn(
+          "Alchemy asset transfer response didn't validate, did the API change?",
+          jsonResponse,
+          isValidAlchemyAssetTransferResponse.errors
+        );
+      }
 
-			return (
-				jsonResponse as JTDDataType<typeof alchemyGetAssetTransfersJTD>
-			).transfers;
-		})
-		.map((transfer) => {
-			// TODO handle NFT asset lookup properly
-			if (transfer.erc721TokenId) {
-				return null;
-			}
+      return (jsonResponse as JTDDataType<typeof alchemyGetAssetTransfersJTD>)
+        .transfers;
+    })
+    .map((transfer) => {
+      // TODO handle NFT asset lookup properly
+      if (transfer.erc721TokenId) {
+        return null;
+      }
 
-			// we don't care about 0-value transfers
-			// TODO handle nonfungible assets properly
-			// TODO handle assets with a contract address and no name
-			if (
-				!(
-					transfer.rawContract?.value &&
-					transfer.rawContract.decimal &&
-					transfer.asset
-				)
-			) {
-				return null;
-			}
+      // we don't care about 0-value transfers
+      // TODO handle nonfungible assets properly
+      // TODO handle assets with a contract address and no name
+      if (
+        !(
+          transfer.rawContract?.value &&
+          transfer.rawContract.decimal &&
+          transfer.asset
+        )
+      ) {
+        return null;
+      }
 
-			const asset = !transfer.rawContract.address
-				? {
-						contractAddress: transfer.rawContract.address,
-						decimals: Number(BigInt(transfer.rawContract.decimal)),
-						symbol: transfer.asset,
-						homeNetwork: network,
-				  }
-				: ETH;
-			return {
-				network, // TODO make this friendly across other networks
-				assetAmount: {
-					asset,
-					amount: BigInt(transfer.rawContract.value),
-				},
-				txHash: transfer.hash,
-				to: transfer.to,
-				from: transfer.from,
-				dataSource: "alchemy",
-			} as AssetTransfer;
-		})
-		.filter((t): t is AssetTransfer => t !== null);
+      const asset = !transfer.rawContract.address
+        ? {
+            contractAddress: transfer.rawContract.address,
+            decimals: Number(BigInt(transfer.rawContract.decimal)),
+            symbol: transfer.asset,
+            homeNetwork: network,
+          }
+        : ETH;
+      return {
+        network, // TODO make this friendly across other networks
+        assetAmount: {
+          asset,
+          amount: BigInt(transfer.rawContract.value),
+        },
+        txHash: transfer.hash,
+        to: transfer.to,
+        from: transfer.from,
+        dataSource: "alchemy",
+      } as AssetTransfer;
+    })
+    .filter((t): t is AssetTransfer => t !== null);
 }
 
 /**
@@ -137,57 +136,57 @@ export async function getAssetTransfers(
  *        tokens on its platform
  */
 export async function getTokenBalances(
-	provider: AlchemyProvider | AlchemyWebSocketProvider,
-	{ address, network }: AddressOnNetwork,
-	tokens?: HexString[],
+  provider: AlchemyProvider | AlchemyWebSocketProvider,
+  { address, network }: AddressOnNetwork,
+  tokens?: HexString[]
 ): Promise<SmartContractAmount[]> {
-	const uniqueTokens = tokens ? [...new Set(tokens)] : undefined;
+  const uniqueTokens = tokens ? [...new Set(tokens)] : undefined;
 
-	const json: unknown = await provider.send("alchemy_getTokenBalances", [
-		address,
-		uniqueTokens ?? "DEFAULT_TOKENS",
-	]);
+  const json: unknown = await provider.send("alchemy_getTokenBalances", [
+    address,
+    uniqueTokens ?? "DEFAULT_TOKENS",
+  ]);
 
-	if (!isValidAlchemyTokenBalanceResponse(json)) {
-		logger.warn(
-			"Alchemy token balance response didn't validate, did the API change?",
-			json,
-			isValidAlchemyTokenBalanceResponse.errors,
-		);
-		return [];
-	}
+  if (!isValidAlchemyTokenBalanceResponse(json)) {
+    logger.warn(
+      "Alchemy token balance response didn't validate, did the API change?",
+      json,
+      isValidAlchemyTokenBalanceResponse.errors
+    );
+    return [];
+  }
 
-	// TODO log balances with errors, consider returning an error type
-	return (
-		json.tokenBalances
-			.filter(
-				(
-					b,
-				): b is typeof json["tokenBalances"][0] & {
-					tokenBalance: Exclude<
-						typeof json["tokenBalances"][0]["tokenBalance"],
-						null
-					>;
-				} => b.error === null && b.tokenBalance !== null,
-			)
-			// A hex value of 0x without any subsequent numbers generally means "no
-			// value" (as opposed to 0) in Ethereum implementations, so filter it out
-			// as effectively undefined.
-			.filter(({ tokenBalance }) => tokenBalance !== "0x")
-			.map((tokenBalance) => {
-				let balance = tokenBalance.tokenBalance;
-				if (balance.length > 66) {
-					balance = balance.substring(0, 66);
-				}
-				return {
-					smartContract: {
-						contractAddress: tokenBalance.contractAddress,
-						homeNetwork: network,
-					},
-					amount: BigInt(balance),
-				};
-			})
-	);
+  // TODO log balances with errors, consider returning an error type
+  return (
+    json.tokenBalances
+      .filter(
+        (
+          b
+        ): b is (typeof json)["tokenBalances"][0] & {
+          tokenBalance: Exclude<
+            (typeof json)["tokenBalances"][0]["tokenBalance"],
+            null
+          >;
+        } => b.error === null && b.tokenBalance !== null
+      )
+      // A hex value of 0x without any subsequent numbers generally means "no
+      // value" (as opposed to 0) in Ethereum implementations, so filter it out
+      // as effectively undefined.
+      .filter(({ tokenBalance }) => tokenBalance !== "0x")
+      .map((tokenBalance) => {
+        let balance = tokenBalance.tokenBalance;
+        if (balance.length > 66) {
+          balance = balance.substring(0, 66);
+        }
+        return {
+          smartContract: {
+            contractAddress: tokenBalance.contractAddress,
+            homeNetwork: network,
+          },
+          amount: BigInt(balance),
+        };
+      })
+  );
 }
 
 /**
@@ -202,84 +201,84 @@ export async function getTokenBalances(
  *        for the same network, or results are undefined.
  */
 export async function getTokenMetadata(
-	provider: AlchemyProvider | AlchemyWebSocketProvider,
-	{ contractAddress, homeNetwork }: SmartContract,
+  provider: AlchemyProvider | AlchemyWebSocketProvider,
+  { contractAddress, homeNetwork }: SmartContract
 ): Promise<SmartContractFungibleAsset | undefined> {
-	const json: unknown = await provider.send("alchemy_getTokenMetadata", [
-		contractAddress,
-	]);
-	if (!isValidAlchemyTokenMetadataResponse(json)) {
-		logger.warn(
-			"Alchemy token metadata response didn't validate, did the API change?",
-			json,
-			isValidAlchemyTokenMetadataResponse.errors,
-		);
-		throw new Error("Alchemy token metadata response didn't validate.");
-	}
-	return {
-		decimals: json.decimals,
-		name: json.name,
-		symbol: json.symbol,
-		metadata: {
-			tokenLists: [],
-			...(json.logo ? { logoURL: json.logo } : {}),
-		},
-		homeNetwork,
-		contractAddress,
-	};
+  const json: unknown = await provider.send("alchemy_getTokenMetadata", [
+    contractAddress,
+  ]);
+  if (!isValidAlchemyTokenMetadataResponse(json)) {
+    logger.warn(
+      "Alchemy token metadata response didn't validate, did the API change?",
+      json,
+      isValidAlchemyTokenMetadataResponse.errors
+    );
+    throw new Error("Alchemy token metadata response didn't validate.");
+  }
+  return {
+    decimals: json.decimals,
+    name: json.name,
+    symbol: json.symbol,
+    metadata: {
+      tokenLists: [],
+      ...(json.logo ? { logoURL: json.logo } : {}),
+    },
+    homeNetwork,
+    contractAddress,
+  };
 }
 
 /**
  * Parse a transaction as returned by an Alchemy provider subscription.
  */
 export function transactionFromAlchemyWebsocketTransaction(
-	websocketTx: unknown,
-	network: EVMNetwork,
+  websocketTx: unknown,
+  network: EVMNetwork
 ): AnyEVMTransaction {
-	// These are the props we expect here.
-	const tx = websocketTx as {
-		hash: string;
-		to: string;
-		from: string;
-		gas: string;
-		gasPrice: string;
-		maxFeePerGas: string | undefined | null;
-		maxPriorityFeePerGas: string | undefined | null;
-		input: string;
-		r: string;
-		s: string;
-		v: string;
-		nonce: string;
-		value: string;
-		blockHash: string | undefined | null;
-		blockHeight: string | undefined | null;
-		blockNumber: number | undefined | null;
-		type: string | undefined | null;
-	};
+  // These are the props we expect here.
+  const tx = websocketTx as {
+    hash: string;
+    to: string;
+    from: string;
+    gas: string;
+    gasPrice: string;
+    maxFeePerGas: string | undefined | null;
+    maxPriorityFeePerGas: string | undefined | null;
+    input: string;
+    r: string;
+    s: string;
+    v: string;
+    nonce: string;
+    value: string;
+    blockHash: string | undefined | null;
+    blockHeight: string | undefined | null;
+    blockNumber: number | undefined | null;
+    type: string | undefined | null;
+  };
 
-	return {
-		hash: tx.hash,
-		to: tx.to,
-		from: tx.from,
-		gasLimit: BigInt(tx.gas),
-		gasPrice: BigInt(tx.gasPrice),
-		maxFeePerGas: tx.maxFeePerGas ? BigInt(tx.maxFeePerGas) : null,
-		maxPriorityFeePerGas: tx.maxPriorityFeePerGas
-			? BigInt(tx.maxPriorityFeePerGas)
-			: null,
-		input: tx.input,
-		r: tx.r || undefined,
-		s: tx.s || undefined,
-		v: BigNumber.from(tx.v).toNumber(),
-		nonce: Number(tx.nonce),
-		value: BigInt(tx.value),
-		blockHash: tx.blockHash ?? null,
-		blockHeight: tx.blockNumber ?? null,
-		type:
-			tx.type !== undefined
-				? (BigNumber.from(tx.type).toNumber() as AnyEVMTransaction["type"])
-				: 0,
-		asset: network.baseAsset,
-		network,
-	};
+  return {
+    hash: tx.hash,
+    to: tx.to,
+    from: tx.from,
+    gasLimit: BigInt(tx.gas),
+    gasPrice: BigInt(tx.gasPrice),
+    maxFeePerGas: tx.maxFeePerGas ? BigInt(tx.maxFeePerGas) : null,
+    maxPriorityFeePerGas: tx.maxPriorityFeePerGas
+      ? BigInt(tx.maxPriorityFeePerGas)
+      : null,
+    input: tx.input,
+    r: tx.r || undefined,
+    s: tx.s || undefined,
+    v: BigNumber.from(tx.v).toNumber(),
+    nonce: Number(tx.nonce),
+    value: BigInt(tx.value),
+    blockHash: tx.blockHash ?? null,
+    blockHeight: tx.blockNumber ?? null,
+    type:
+      tx.type !== undefined
+        ? (BigNumber.from(tx.type).toNumber() as AnyEVMTransaction["type"])
+        : 0,
+    asset: network.baseAsset,
+    network,
+  };
 }

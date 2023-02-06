@@ -1,7 +1,7 @@
 import {
-	isProbablyEVMAddress,
-	isProbablyPOKTAddress,
-	isValidPoktAddress,
+  isProbablyEVMAddress,
+  isProbablyPOKTAddress,
+  isValidPoktAddress,
 } from "@sendnodes/pokt-wallet-background/lib/utils";
 // import { resolveNameOnNetwork } from "@sendnodes/pokt-wallet-background/redux-slices/accounts"
 import { selectCurrentAccount } from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
@@ -23,34 +23,34 @@ export type ValidDataChangeHandler<T> = (validData: T | undefined) => void;
  * valid, undefined.
  */
 export type AdditionalDataValidator<T> = (
-	data: T,
+  data: T
 ) => { error: string } | undefined;
 
 export type ValidationHookProperties = {
-	/**
-	 * A passthrough for the raw value. This is useful to avoid clearing the
-	 * user's input just because they entered an invalid value, and can be used
-	 * as a direct input to a `value` prop.
-	 */
-	rawValue: string;
-	/**
-	 * The error message from parsing the current value, if any.
-	 */
-	errorMessage: string | undefined;
-	/**
-	 * The handler that should receive new raw user inputs (e.g. for passing to
-	 * an input's `onChange`).
-	 */
-	handleInputChange: (newValue: string) => void;
+  /**
+   * A passthrough for the raw value. This is useful to avoid clearing the
+   * user's input just because they entered an invalid value, and can be used
+   * as a direct input to a `value` prop.
+   */
+  rawValue: string;
+  /**
+   * The error message from parsing the current value, if any.
+   */
+  errorMessage: string | undefined;
+  /**
+   * The handler that should receive new raw user inputs (e.g. for passing to
+   * an input's `onChange`).
+   */
+  handleInputChange: (newValue: string) => void;
 };
 
 export type AsyncValidationHookProperties = ValidationHookProperties & {
-	/**
-	 * A boolean indicating if the async validator is currently validating the
-	 * passed input. The most straightforward use of this is to show a spinner
-	 * while the validator is running.
-	 */
-	isValidating: boolean;
+  /**
+   * A boolean indicating if the async validator is currently validating the
+   * passed input. The most straightforward use of this is to show a spinner
+   * while the validator is running.
+   */
+  isValidating: boolean;
 };
 
 /**
@@ -72,8 +72,8 @@ export type AsyncValidationHookProperties = ValidationHookProperties & {
  *     can layer caller-specified validation on the parsed value.
  */
 export type ValidationHook<T> = (
-	onValidChange: ValidDataChangeHandler<T>,
-	...additionalValidators: AdditionalDataValidator<T>[]
+  onValidChange: ValidDataChangeHandler<T>,
+  ...additionalValidators: AdditionalDataValidator<T>[]
 ) => ValidationHookProperties;
 
 /**
@@ -84,8 +84,8 @@ export type ValidationHook<T> = (
  * progress, which can be used to reflect the pending operation in the UI.
  */
 export type AsyncValidationHook<T> = (
-	onValidChange: ValidDataChangeHandler<T>,
-	...additionalValidators: AdditionalDataValidator<Promise<T>>[]
+  onValidChange: ValidDataChangeHandler<T>,
+  ...additionalValidators: AdditionalDataValidator<Promise<T>>[]
 ) => AsyncValidationHookProperties;
 
 /**
@@ -95,43 +95,43 @@ export type AsyncValidationHook<T> = (
  * `undefined`.
  */
 export const useParsedValidation = <T>(
-	onValidChange: (validValue: T | undefined) => void,
-	parser: (value: string) => { parsed: T } | { error: string },
-	additionalValidator?: AdditionalDataValidator<T>,
+  onValidChange: (validValue: T | undefined) => void,
+  parser: (value: string) => { parsed: T } | { error: string },
+  additionalValidator?: AdditionalDataValidator<T>
 ): ValidationHookProperties => {
-	const [errorMessage, setErrorMessage] = useState<string | undefined>();
-	const [rawValue, setRawValue] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string | undefined>();
+  const [rawValue, setRawValue] = useState<string>("");
 
-	const handleInputChange = (newValue: string) => {
-		setRawValue(newValue);
+  const handleInputChange = (newValue: string) => {
+    setRawValue(newValue);
 
-		const trimmed = newValue.trim();
+    const trimmed = newValue.trim();
 
-		setErrorMessage(undefined);
-		if (trimmed === "") {
-			onValidChange(undefined);
-		} else {
-			try {
-				const parseResult = parser(trimmed);
-				if ("error" in parseResult) {
-					setErrorMessage(parseResult.error);
-				} else {
-					const additionalValidation = additionalValidator?.(
-						parseResult.parsed,
-					);
-					if (additionalValidation !== undefined) {
-						setErrorMessage(additionalValidation.error);
-					} else {
-						onValidChange(parseResult.parsed);
-					}
-				}
-			} catch (e) {
-				setErrorMessage("Must be a number");
-			}
-		}
-	};
+    setErrorMessage(undefined);
+    if (trimmed === "") {
+      onValidChange(undefined);
+    } else {
+      try {
+        const parseResult = parser(trimmed);
+        if ("error" in parseResult) {
+          setErrorMessage(parseResult.error);
+        } else {
+          const additionalValidation = additionalValidator?.(
+            parseResult.parsed
+          );
+          if (additionalValidation !== undefined) {
+            setErrorMessage(additionalValidation.error);
+          } else {
+            onValidChange(parseResult.parsed);
+          }
+        }
+      } catch (e) {
+        setErrorMessage("Must be a number");
+      }
+    }
+  };
 
-	return { rawValue, errorMessage, handleInputChange };
+  return { rawValue, errorMessage, handleInputChange };
 };
 
 /**
@@ -144,94 +144,94 @@ export const useParsedValidation = <T>(
  * strings are resolved asynchronously.
  */
 export const useAddressOrNameValidation: AsyncValidationHook<
-	HexString | undefined
+  HexString | undefined
 > = (onValidChange) => {
-	const remoteConfig = useRemoteConfig();
-	const [errorMessage, setErrorMessage] = useState<string | undefined>();
-	const [rawValue, setRawValue] = useState<string>("");
-	// Flag and value tracked separately due to async handling.
-	const [isValidating, setIsValidating] = useState(false);
-	const validatingValue = useRef<string | undefined>(undefined);
-	const currentAccount = useBackgroundSelector(selectCurrentAccount);
+  const remoteConfig = useRemoteConfig();
+  const [errorMessage, setErrorMessage] = useState<string | undefined>();
+  const [rawValue, setRawValue] = useState<string>("");
+  // Flag and value tracked separately due to async handling.
+  const [isValidating, setIsValidating] = useState(false);
+  const validatingValue = useRef<string | undefined>(undefined);
+  const currentAccount = useBackgroundSelector(selectCurrentAccount);
 
-	const handleInputChange = async (newValue: string) => {
-		setRawValue(newValue);
+  const handleInputChange = async (newValue: string) => {
+    setRawValue(newValue);
 
-		const trimmed = newValue.trim();
+    const trimmed = newValue.trim();
 
-		setErrorMessage(undefined);
+    setErrorMessage(undefined);
 
-		// EVM address validation
-		if (currentAccount.network.family === "EVM") {
-			if (trimmed === "") {
-				onValidChange(undefined);
-			} else if (isProbablyEVMAddress(trimmed)) {
-				onValidChange(trimmed);
-			} else {
-				setIsValidating(true);
-				validatingValue.current = trimmed;
+    // EVM address validation
+    if (currentAccount.network.family === "EVM") {
+      if (trimmed === "") {
+        onValidChange(undefined);
+      } else if (isProbablyEVMAddress(trimmed)) {
+        onValidChange(trimmed);
+      } else {
+        setIsValidating(true);
+        validatingValue.current = trimmed;
 
-				const resolved = (await resolution
-					.addr(trimmed, "ETH")
-					.catch(() => "")) as unknown as string;
+        const resolved = (await resolution
+          .addr(trimmed, "ETH")
+          .catch(() => "")) as unknown as string;
 
-				// Asynchronicity means we could already have started validating another
-				// value before this validation completed; ignore those cases.
-				if (validatingValue.current === trimmed) {
-					if (resolved === undefined) {
-						onValidChange(undefined);
-						setErrorMessage("Address could not be found");
-					} else {
-						onValidChange(resolved);
-					}
+        // Asynchronicity means we could already have started validating another
+        // value before this validation completed; ignore those cases.
+        if (validatingValue.current === trimmed) {
+          if (resolved === undefined) {
+            onValidChange(undefined);
+            setErrorMessage("Address could not be found");
+          } else {
+            onValidChange(resolved);
+          }
 
-					setIsValidating(false);
-					validatingValue.current = undefined;
-				}
-			}
-		}
+          setIsValidating(false);
+          validatingValue.current = undefined;
+        }
+      }
+    }
 
-		// POKT address validation
-		if (currentAccount.network.family === "POKT") {
-			if (trimmed === "") {
-				onValidChange(undefined);
-			} else if (
-				isProbablyPOKTAddress(trimmed) &&
-				isValidPoktAddress(trimmed)
-			) {
-				onValidChange(trimmed);
-			} else if (remoteConfig?.POKT?.features?.unstoppableDomains) {
-				setIsValidating(true);
-				validatingValue.current = trimmed;
+    // POKT address validation
+    if (currentAccount.network.family === "POKT") {
+      if (trimmed === "") {
+        onValidChange(undefined);
+      } else if (
+        isProbablyPOKTAddress(trimmed) &&
+        isValidPoktAddress(trimmed)
+      ) {
+        onValidChange(trimmed);
+      } else if (remoteConfig?.POKT?.features?.unstoppableDomains) {
+        setIsValidating(true);
+        validatingValue.current = trimmed;
 
-				const resolved = await resolution
-					.addr(trimmed, "POKT")
-					.catch(() => undefined);
+        const resolved = await resolution
+          .addr(trimmed, "POKT")
+          .catch(() => undefined);
 
-				// Asynchronicity means we could already have started validating another
-				// value before this validation completed; ignore those cases.
-				if (validatingValue.current === trimmed) {
-					if (resolved === undefined) {
-						onValidChange(undefined);
-						setErrorMessage("Address could not be found");
-					} else {
-						onValidChange(resolved);
-					}
+        // Asynchronicity means we could already have started validating another
+        // value before this validation completed; ignore those cases.
+        if (validatingValue.current === trimmed) {
+          if (resolved === undefined) {
+            onValidChange(undefined);
+            setErrorMessage("Address could not be found");
+          } else {
+            onValidChange(resolved);
+          }
 
-					setIsValidating(false);
-					validatingValue.current = undefined;
-				}
-			} else {
-				onValidChange(undefined);
-				setErrorMessage("Invalid Address");
-			}
-		}
-	};
+          setIsValidating(false);
+          validatingValue.current = undefined;
+        }
+      } else {
+        onValidChange(undefined);
+        setErrorMessage("Invalid Address");
+      }
+    }
+  };
 
-	return {
-		rawValue,
-		errorMessage,
-		isValidating,
-		handleInputChange,
-	};
+  return {
+    rawValue,
+    errorMessage,
+    isValidating,
+    handleInputChange,
+  };
 };

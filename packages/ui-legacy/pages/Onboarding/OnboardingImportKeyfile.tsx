@@ -1,20 +1,20 @@
 import React, {
-	FormEvent,
-	ReactElement,
-	useRef,
-	useState,
-	useEffect,
-	useCallback,
+  FormEvent,
+  ReactElement,
+  useRef,
+  useState,
+  useEffect,
+  useCallback,
 } from "react";
 import {
-	InMemoryKVStore as PocketInMemoryKVStore,
-	Keybase as PocketKeybase,
+  InMemoryKVStore as PocketInMemoryKVStore,
+  Keybase as PocketKeybase,
 } from "@sendnodes/pocket-js/dist/index";
 
 import {
-	clearImporting,
-	ImportPrivateKey,
-	importPrivateKey as importPrivateKeyBackground,
+  clearImporting,
+  ImportPrivateKey,
+  importPrivateKey as importPrivateKeyBackground,
 } from "@sendnodes/pokt-wallet-background/redux-slices/keyrings";
 import { useHistory } from "react-router-dom";
 import classNames from "clsx";
@@ -25,452 +25,452 @@ import { KeyType } from "@sendnodes/pokt-wallet-background/services/keyring";
 import SharedButton from "../../components/Shared/SharedButton";
 import OnboardingAccountLayout from "../../components/Onboarding/OnboardingAccountLayout";
 import {
-	useBackgroundSelector,
-	useAreKeyringsUnlocked,
-	useBackgroundDispatch,
+  useBackgroundSelector,
+  useAreKeyringsUnlocked,
+  useBackgroundDispatch,
 } from "../../hooks";
 import { OnboardingImportRecoveryPhraseIcon } from "../../components/Onboarding/Icons";
 import SharedInput from "../../components/Shared/SharedInput";
 import { KeyringTypes } from "@sendnodes/pokt-wallet-background/types";
 
 export default function OnboardingImportKeyfile() {
-	const rootRef = useRef<HTMLDivElement>(null);
-	const keyfileInputRef = useRef<HTMLInputElement>(null);
-	const [usingPrivateKey, setUsingPrivateKey] = useState(false);
-	const [importPrivateKey, setImportPrivateKey] = useState("");
-	const [importPrivateKeyType, setImportPrivateKeyType] =
-		useState<KeyringTypes | null>(null);
-	const [importPrivateKeyLabel, setImportPrivateKeyLabel] = useState("");
-	const [importKeyfileContents, setImportKeyfileContents] = useState<
-		string | null
-	>(null);
-	const [importKeyfile, setImportKeyfile] = useState<File | null>(null);
-	const [isDragging, setIsDragging] = useState(false);
-	const areKeyringsUnlocked = useAreKeyringsUnlocked(true);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const keyfileInputRef = useRef<HTMLInputElement>(null);
+  const [usingPrivateKey, setUsingPrivateKey] = useState(false);
+  const [importPrivateKey, setImportPrivateKey] = useState("");
+  const [importPrivateKeyType, setImportPrivateKeyType] =
+    useState<KeyringTypes | null>(null);
+  const [importPrivateKeyLabel, setImportPrivateKeyLabel] = useState("");
+  const [importKeyfileContents, setImportKeyfileContents] = useState<
+    string | null
+  >(null);
+  const [importKeyfile, setImportKeyfile] = useState<File | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const areKeyringsUnlocked = useAreKeyringsUnlocked(true);
 
-	const [importPassphrase, setImportPassphrase] = useState("");
-	const [errorMessage, setErrorMessage] = useState("");
-	const [isImporting, setIsImporting] = useState(false);
+  const [importPassphrase, setImportPassphrase] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isImporting, setIsImporting] = useState(false);
 
-	const dispatch = useBackgroundDispatch();
-	const keyringImport = useBackgroundSelector(
-		(state) => state.keyrings.importing,
-	);
+  const dispatch = useBackgroundDispatch();
+  const keyringImport = useBackgroundSelector(
+    (state) => state.keyrings.importing
+  );
 
-	const history = useHistory();
+  const history = useHistory();
 
-	useEffect(() => {
-		// always start fresh
-		dispatch(clearImporting());
-	}, [dispatch]);
+  useEffect(() => {
+    // always start fresh
+    dispatch(clearImporting());
+  }, [dispatch]);
 
-	// handle success state or failure after importing started
-	useEffect(() => {
-		if (isImporting && keyringImport === "done") {
-			// it worked
-			dispatch(clearImporting()); // clean up
-			history.push("/onboarding/account-created");
-		}
+  // handle success state or failure after importing started
+  useEffect(() => {
+    if (isImporting && keyringImport === "done") {
+      // it worked
+      dispatch(clearImporting()); // clean up
+      history.push("/onboarding/account-created");
+    }
 
-		if (keyringImport === "failed") {
-			setErrorMessage("Something went wrong. Please try again.");
-			setIsImporting(false);
-		}
-	}, [history, areKeyringsUnlocked, keyringImport, isImporting]);
+    if (keyringImport === "failed") {
+      setErrorMessage("Something went wrong. Please try again.");
+      setIsImporting(false);
+    }
+  }, [history, areKeyringsUnlocked, keyringImport, isImporting]);
 
-	// determine keyring type to show user
-	useEffect(() => {
-		if (importPrivateKeyType) {
-			if (importPrivateKeyType === KeyringTypes.singleSECP) {
-				setImportPrivateKeyLabel("EVM compatible private key detected");
-			}
-			if (importPrivateKeyType === KeyringTypes.singleED25519) {
-				setImportPrivateKeyLabel("POKT compatible private key detected");
-			}
-		} else {
-			setImportPrivateKeyLabel("ENTER PRIVATE KEY");
-		}
-	}, [importPrivateKey, importPrivateKeyType]);
+  // determine keyring type to show user
+  useEffect(() => {
+    if (importPrivateKeyType) {
+      if (importPrivateKeyType === KeyringTypes.singleSECP) {
+        setImportPrivateKeyLabel("EVM compatible private key detected");
+      }
+      if (importPrivateKeyType === KeyringTypes.singleED25519) {
+        setImportPrivateKeyLabel("POKT compatible private key detected");
+      }
+    } else {
+      setImportPrivateKeyLabel("ENTER PRIVATE KEY");
+    }
+  }, [importPrivateKey, importPrivateKeyType]);
 
-	const readKeyfile = async (file: File) => {
-		const fileReader = new FileReader();
+  const readKeyfile = async (file: File) => {
+    const fileReader = new FileReader();
 
-		const promise = new Promise<string | null>((resolve) => {
-			fileReader.onloadend = (_) => {
-				if (fileReader.error) {
-					return resolve(null);
-				}
-				const contents = fileReader.result?.toString();
-				if (contents === undefined) return resolve(null);
-				return resolve(contents);
-			};
-		});
+    const promise = new Promise<string | null>((resolve) => {
+      fileReader.onloadend = (_) => {
+        if (fileReader.error) {
+          return resolve(null);
+        }
+        const contents = fileReader.result?.toString();
+        if (contents === undefined) return resolve(null);
+        return resolve(contents);
+      };
+    });
 
-		fileReader.readAsText(file, "UTF-8");
+    fileReader.readAsText(file, "UTF-8");
 
-		return promise;
-	};
+    return promise;
+  };
 
-	const computePrivateKey = async (keyfile: string, passphrase: string) => {
-		const pocketKeybase = new PocketKeybase(new PocketInMemoryKVStore());
-		const account = await pocketKeybase.importPPKFromJSON(
-			passphrase,
-			keyfile,
-			passphrase,
-		);
-		if (account instanceof Error) {
-			throw account;
-		}
-		const unlockedAccount = await pocketKeybase.getUnlockedAccount(
-			account.addressHex,
-			passphrase,
-		);
-		if (unlockedAccount instanceof Error) {
-			throw account;
-		}
+  const computePrivateKey = async (keyfile: string, passphrase: string) => {
+    const pocketKeybase = new PocketKeybase(new PocketInMemoryKVStore());
+    const account = await pocketKeybase.importPPKFromJSON(
+      passphrase,
+      keyfile,
+      passphrase
+    );
+    if (account instanceof Error) {
+      throw account;
+    }
+    const unlockedAccount = await pocketKeybase.getUnlockedAccount(
+      account.addressHex,
+      passphrase
+    );
+    if (unlockedAccount instanceof Error) {
+      throw account;
+    }
 
-		return unlockedAccount.privateKey.toString("hex");
-	};
+    return unlockedAccount.privateKey.toString("hex");
+  };
 
-	const importWallet = useCallback(async () => {
-		if (isImporting) {
-			return;
-		}
-		// clear error
-		setErrorMessage("");
+  const importWallet = useCallback(async () => {
+    if (isImporting) {
+      return;
+    }
+    // clear error
+    setErrorMessage("");
 
-		if (usingPrivateKey) {
-			await importWalletFromPrivateKey();
-		} else {
-			await importWalletFromKeyfile();
-		}
-	}, [
-		dispatch,
-		importPassphrase,
-		importKeyfileContents,
-		importPrivateKey,
-		usingPrivateKey,
-	]);
+    if (usingPrivateKey) {
+      await importWalletFromPrivateKey();
+    } else {
+      await importWalletFromKeyfile();
+    }
+  }, [
+    dispatch,
+    importPassphrase,
+    importKeyfileContents,
+    importPrivateKey,
+    usingPrivateKey,
+  ]);
 
-	const importWalletFromKeyfile = useCallback(async () => {
-		if (isImporting) {
-			return;
-		}
-		// clear error
-		setErrorMessage("");
+  const importWalletFromKeyfile = useCallback(async () => {
+    if (isImporting) {
+      return;
+    }
+    // clear error
+    setErrorMessage("");
 
-		if (importKeyfileContents === null) {
-			setErrorMessage("Please attach a keyfile");
-			return;
-		}
+    if (importKeyfileContents === null) {
+      setErrorMessage("Please attach a keyfile");
+      return;
+    }
 
-		if (importPassphrase === "") {
-			setErrorMessage("Invalid passphrase");
-			return;
-		}
+    if (importPassphrase === "") {
+      setErrorMessage("Invalid passphrase");
+      return;
+    }
 
-		setIsImporting(true);
+    setIsImporting(true);
 
-		try {
-			const privateKey = await computePrivateKey(
-				importKeyfileContents,
-				importPassphrase,
-			);
+    try {
+      const privateKey = await computePrivateKey(
+        importKeyfileContents,
+        importPassphrase
+      );
 
-			await dispatch(
-				importPrivateKeyBackground({
-					privateKey,
-					keyType: KeyType.ED25519,
-				}),
-			);
-		} catch (e) {
-			setErrorMessage(`Invalid import, reason: ${e}`);
-			setIsImporting(false);
-		}
-	}, [dispatch, importPassphrase, importKeyfileContents]);
+      await dispatch(
+        importPrivateKeyBackground({
+          privateKey,
+          keyType: KeyType.ED25519,
+        })
+      );
+    } catch (e) {
+      setErrorMessage(`Invalid import, reason: ${e}`);
+      setIsImporting(false);
+    }
+  }, [dispatch, importPassphrase, importKeyfileContents]);
 
-	const importWalletFromPrivateKey = useCallback(async () => {
-		if (isImporting) {
-			return;
-		}
-		// clear error
-		setErrorMessage("");
+  const importWalletFromPrivateKey = useCallback(async () => {
+    if (isImporting) {
+      return;
+    }
+    // clear error
+    setErrorMessage("");
 
-		if (importPrivateKey === "") {
-			setErrorMessage("Invalid private key");
-			return;
-		}
+    if (importPrivateKey === "") {
+      setErrorMessage("Invalid private key");
+      return;
+    }
 
-		setIsImporting(true);
+    setIsImporting(true);
 
-		try {
-			let fixedKeyring: ImportPrivateKey;
-			// ed25519 private are 64 bytes
-			if (ethers.utils.isHexString(`0x${importPrivateKey}`, 64)) {
-				const pocketKeybase = new PocketKeybase(new PocketInMemoryKVStore());
-				const account = await pocketKeybase.importAccount(
-					Buffer.from(importPrivateKey, "hex"),
-					"poktwallet",
-				);
-				if (account instanceof Error) {
-					throw account;
-				}
-				const unlockedAccount = await pocketKeybase.getUnlockedAccount(
-					account.addressHex,
-					"poktwallet",
-				);
-				if (unlockedAccount instanceof Error) {
-					throw unlockedAccount;
-				}
+    try {
+      let fixedKeyring: ImportPrivateKey;
+      // ed25519 private are 64 bytes
+      if (ethers.utils.isHexString(`0x${importPrivateKey}`, 64)) {
+        const pocketKeybase = new PocketKeybase(new PocketInMemoryKVStore());
+        const account = await pocketKeybase.importAccount(
+          Buffer.from(importPrivateKey, "hex"),
+          "poktwallet"
+        );
+        if (account instanceof Error) {
+          throw account;
+        }
+        const unlockedAccount = await pocketKeybase.getUnlockedAccount(
+          account.addressHex,
+          "poktwallet"
+        );
+        if (unlockedAccount instanceof Error) {
+          throw unlockedAccount;
+        }
 
-				fixedKeyring = {
-					privateKey: unlockedAccount.privateKey.toString("hex"),
-					keyType: KeyType.ED25519,
-				};
-			} else if (ethers.utils.isHexString(`0x${importPrivateKey}`, 32)) {
-				// secp25k1 private are 32 bytes
-				fixedKeyring = {
-					privateKey: importPrivateKey,
-					keyType: KeyType.SECP256K1,
-				};
-			} else {
-				setErrorMessage("Invalid private key");
-				return;
-			}
+        fixedKeyring = {
+          privateKey: unlockedAccount.privateKey.toString("hex"),
+          keyType: KeyType.ED25519,
+        };
+      } else if (ethers.utils.isHexString(`0x${importPrivateKey}`, 32)) {
+        // secp25k1 private are 32 bytes
+        fixedKeyring = {
+          privateKey: importPrivateKey,
+          keyType: KeyType.SECP256K1,
+        };
+      } else {
+        setErrorMessage("Invalid private key");
+        return;
+      }
 
-			await dispatch(importPrivateKeyBackground(fixedKeyring));
-		} catch (e) {
-			setErrorMessage(`Invalid import. ${e}`);
-		}
-	}, [dispatch, importPrivateKey]);
+      await dispatch(importPrivateKeyBackground(fixedKeyring));
+    } catch (e) {
+      setErrorMessage(`Invalid import. ${e}`);
+    }
+  }, [dispatch, importPrivateKey]);
 
-	const handleDroppedFile = async (ev: DragEvent) => {
-		setIsDragging(false);
-		ev.stopPropagation();
-		ev.preventDefault();
-		if (ev.dataTransfer) {
-			// validate JSON here
-			const file = ev.dataTransfer.files[0]!;
-			setImportKeyfile(file);
-		}
-	};
+  const handleDroppedFile = async (ev: DragEvent) => {
+    setIsDragging(false);
+    ev.stopPropagation();
+    ev.preventDefault();
+    if (ev.dataTransfer) {
+      // validate JSON here
+      const file = ev.dataTransfer.files[0]!;
+      setImportKeyfile(file);
+    }
+  };
 
-	// listen for drag events on window for easy DnD
-	useEffect(() => {
-		const handleDragging = (ev: DragEvent) => {
-			ev.stopPropagation();
-			ev.preventDefault();
-			setIsDragging(true);
-		};
-		const handleDragLeave = (ev: DragEvent) => {
-			if (ev.target === document.documentElement) setIsDragging(false);
-			if (ev.screenX === 0 && ev.screenY === 0) setIsDragging(false);
-		};
-		document.addEventListener("dragenter", handleDragging);
-		document.addEventListener("dragover", handleDragging);
-		document.addEventListener("dragend", handleDragLeave);
-		document.addEventListener("dragleave", handleDragLeave);
-		document.addEventListener("drop", handleDroppedFile);
+  // listen for drag events on window for easy DnD
+  useEffect(() => {
+    const handleDragging = (ev: DragEvent) => {
+      ev.stopPropagation();
+      ev.preventDefault();
+      setIsDragging(true);
+    };
+    const handleDragLeave = (ev: DragEvent) => {
+      if (ev.target === document.documentElement) setIsDragging(false);
+      if (ev.screenX === 0 && ev.screenY === 0) setIsDragging(false);
+    };
+    document.addEventListener("dragenter", handleDragging);
+    document.addEventListener("dragover", handleDragging);
+    document.addEventListener("dragend", handleDragLeave);
+    document.addEventListener("dragleave", handleDragLeave);
+    document.addEventListener("drop", handleDroppedFile);
 
-		return () => {
-			document.removeEventListener("dragenter", handleDragging);
-			document.removeEventListener("dragover", handleDragging);
-			document.removeEventListener("dragend", handleDragLeave);
-			document.removeEventListener("dragleave", handleDragLeave);
-			document.removeEventListener("drop", handleDroppedFile);
-		};
-	}, []);
+    return () => {
+      document.removeEventListener("dragenter", handleDragging);
+      document.removeEventListener("dragover", handleDragging);
+      document.removeEventListener("dragend", handleDragLeave);
+      document.removeEventListener("dragleave", handleDragLeave);
+      document.removeEventListener("drop", handleDroppedFile);
+    };
+  }, []);
 
-	// validate
-	useEffect(() => {
-		const validate = async () => {
-			setErrorMessage("");
-			setImportKeyfileContents(null);
+  // validate
+  useEffect(() => {
+    const validate = async () => {
+      setErrorMessage("");
+      setImportKeyfileContents(null);
 
-			if (importKeyfile === null) {
-				return;
-			}
-			const results =
-				importKeyfile === null ? null : await readKeyfile(importKeyfile);
-			try {
-				if (results) {
-					JSON.parse(results);
-					setImportKeyfileContents(results);
-					return;
-				}
-			} catch (e) {
-				console.warn("Invalid JSON", e);
-			}
-			setErrorMessage("Invalid keyfile");
-		};
-		validate().catch(console.error);
-	}, [importKeyfile, setImportPassphrase]);
+      if (importKeyfile === null) {
+        return;
+      }
+      const results =
+        importKeyfile === null ? null : await readKeyfile(importKeyfile);
+      try {
+        if (results) {
+          JSON.parse(results);
+          setImportKeyfileContents(results);
+          return;
+        }
+      } catch (e) {
+        console.warn("Invalid JSON", e);
+      }
+      setErrorMessage("Invalid keyfile");
+    };
+    validate().catch(console.error);
+  }, [importKeyfile, setImportPassphrase]);
 
-	if (!areKeyringsUnlocked) return <></>;
+  if (!areKeyringsUnlocked) return <></>;
 
-	return (
-		<div ref={rootRef}>
-			<OnboardingAccountLayout
-				showCloseButton
-				icon={<OnboardingImportRecoveryPhraseIcon />}
-				title={
-					<>
-						<div className="stacked">
-							<h1>Import Account</h1>
-							<div
-								style={{
-									display: "flex",
-									justifyContent: "center",
-									alignItems: "center",
-									gap: "1rem",
-									marginTop: "1rem",
-								}}
-							>
-								<h3 style={{ flex: 1, width: "8rem", textAlign: "right" }}>
-									<small>Using Keyfile</small>
-								</h3>
-								<label className="switch">
-									<input
-										disabled={isImporting}
-										checked={!usingPrivateKey}
-										onChange={() => setUsingPrivateKey(!usingPrivateKey)}
-										type="checkbox"
-									/>
-									<span className="slider round" />
-								</label>
-								<h3 style={{ flex: 1, width: "8rem", textAlign: "left" }}>
-									<small>Using Private Key</small>
-								</h3>
-							</div>
-							<h2>
-								{usingPrivateKey
-									? "Input the private key of the POKT account. The private key will be encrypted using the wallet password."
-									: "Attach or drag-and-drop the keyfile below and enter the keyfile passphrase."}
-							</h2>
-						</div>
-					</>
-				}
-				body={
-					<div className="import_wrap">
-						{usingPrivateKey ? (
-							<div className="import_private_key_wrap">
-								<form
-									onSubmit={async (e) => {
-										e.preventDefault();
-										await importWalletFromPrivateKey();
-									}}
-									style={{ width: "100%" }}
-								>
-									<SharedInput
-										label={importPrivateKeyLabel}
-										type="password"
-										disabled={isImporting}
-										parseAndValidate={(val) => {
-											val = val.replace(/^0x/, "").trim();
-											if (!val) {
-												return { parsed: undefined };
-											}
-											if (ethers.utils.isHexString(`0x${val}`, 32)) {
-												setImportPrivateKeyType(KeyringTypes.singleSECP);
-											} else if (ethers.utils.isHexString(`0x${val}`, 64)) {
-												setImportPrivateKeyType(KeyringTypes.singleED25519);
-											} else {
-												setImportPrivateKeyType(null);
-												return { parsed: val, error: "Invalid private key" };
-											}
-											return { parsed: val };
-										}}
-										onChange={setImportPrivateKey}
-										focusedLabelBackgroundColor="var(--eerie-black-200)"
-									/>
-								</form>
-							</div>
-						) : (
-							<div className="import_keyfile_wrap">
-								<form
-									onSubmit={async (e) => {
-										e.preventDefault();
-										await importWallet();
-									}}
-									style={{ width: "100%" }}
-								>
-									<label
-										htmlFor="keyfile"
-										className={classNames({
-											active: importKeyfile && importKeyfileContents,
-											dragging: isDragging,
-										})}
-									>
-										<span className="center_text">
-											<small>
-												{importKeyfile && importKeyfileContents
-													? `${importKeyfile.name} attached`
-													: "Upload Keyfile"}
-											</small>
-										</span>
-										<div className="keyfile_input_icon_wrap">
-											<div className="dashed_border">
-												<div className="keyfile_input_icon" />
-											</div>
-											<div className="checkmark">
-												<IoIosCheckmark style={{ position: "absolute" }} />
-											</div>
-										</div>
-										<input
-											ref={keyfileInputRef}
-											type="file"
-											id="keyfile"
-											accept="application/JSON"
-											onChange={(e) =>
-												e.target.files?.[0] &&
-												setImportKeyfile(e.target.files[0])
-											}
-										/>
-									</label>
+  return (
+    <div ref={rootRef}>
+      <OnboardingAccountLayout
+        showCloseButton
+        icon={<OnboardingImportRecoveryPhraseIcon />}
+        title={
+          <>
+            <div className="stacked">
+              <h1>Import Account</h1>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: "1rem",
+                  marginTop: "1rem",
+                }}
+              >
+                <h3 style={{ flex: 1, width: "8rem", textAlign: "right" }}>
+                  <small>Using Keyfile</small>
+                </h3>
+                <label className="switch">
+                  <input
+                    disabled={isImporting}
+                    checked={!usingPrivateKey}
+                    onChange={() => setUsingPrivateKey(!usingPrivateKey)}
+                    type="checkbox"
+                  />
+                  <span className="slider round" />
+                </label>
+                <h3 style={{ flex: 1, width: "8rem", textAlign: "left" }}>
+                  <small>Using Private Key</small>
+                </h3>
+              </div>
+              <h2>
+                {usingPrivateKey
+                  ? "Input the private key of the POKT account. The private key will be encrypted using the wallet password."
+                  : "Attach or drag-and-drop the keyfile below and enter the keyfile passphrase."}
+              </h2>
+            </div>
+          </>
+        }
+        body={
+          <div className="import_wrap">
+            {usingPrivateKey ? (
+              <div className="import_private_key_wrap">
+                <form
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    await importWalletFromPrivateKey();
+                  }}
+                  style={{ width: "100%" }}
+                >
+                  <SharedInput
+                    label={importPrivateKeyLabel}
+                    type="password"
+                    disabled={isImporting}
+                    parseAndValidate={(val) => {
+                      val = val.replace(/^0x/, "").trim();
+                      if (!val) {
+                        return { parsed: undefined };
+                      }
+                      if (ethers.utils.isHexString(`0x${val}`, 32)) {
+                        setImportPrivateKeyType(KeyringTypes.singleSECP);
+                      } else if (ethers.utils.isHexString(`0x${val}`, 64)) {
+                        setImportPrivateKeyType(KeyringTypes.singleED25519);
+                      } else {
+                        setImportPrivateKeyType(null);
+                        return { parsed: val, error: "Invalid private key" };
+                      }
+                      return { parsed: val };
+                    }}
+                    onChange={setImportPrivateKey}
+                    focusedLabelBackgroundColor="var(--eerie-black-200)"
+                  />
+                </form>
+              </div>
+            ) : (
+              <div className="import_keyfile_wrap">
+                <form
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    await importWallet();
+                  }}
+                  style={{ width: "100%" }}
+                >
+                  <label
+                    htmlFor="keyfile"
+                    className={classNames({
+                      active: importKeyfile && importKeyfileContents,
+                      dragging: isDragging,
+                    })}
+                  >
+                    <span className="center_text">
+                      <small>
+                        {importKeyfile && importKeyfileContents
+                          ? `${importKeyfile.name} attached`
+                          : "Upload Keyfile"}
+                      </small>
+                    </span>
+                    <div className="keyfile_input_icon_wrap">
+                      <div className="dashed_border">
+                        <div className="keyfile_input_icon" />
+                      </div>
+                      <div className="checkmark">
+                        <IoIosCheckmark style={{ position: "absolute" }} />
+                      </div>
+                    </div>
+                    <input
+                      ref={keyfileInputRef}
+                      type="file"
+                      id="keyfile"
+                      accept="application/JSON"
+                      onChange={(e) =>
+                        e.target.files?.[0] &&
+                        setImportKeyfile(e.target.files[0])
+                      }
+                    />
+                  </label>
 
-									<SharedInput
-										label="ENTER KEYFILE PASSPHRASE"
-										type="password"
-										onChange={setImportPassphrase}
-										focusedLabelBackgroundColor="var(--eerie-black-200)"
-									/>
-								</form>
-							</div>
-						)}
-					</div>
-				}
-				buttons={
-					<>
-						<div>
-							<span
-								className="text-xs"
-								style={{
-									color: "var(--error)",
-									margin: "0.5rem 0 1rem",
-									display: "block",
-									textAlign: "center",
-								}}
-							>
-								{errorMessage || <br />}
-							</span>
-						</div>
-						<div style={{ marginBottom: "1rem", width: "100%" }}>
-							<SharedButton
-								type="primary"
-								size="large"
-								iconSize="large"
-								isDisabled={isImporting}
-								isLoading={isImporting}
-								onClick={importWallet}
-							>
-								IMPORT ACCOUNT
-							</SharedButton>
-						</div>
-					</>
-				}
-			/>
-			<style jsx>
-				{`
+                  <SharedInput
+                    label="ENTER KEYFILE PASSPHRASE"
+                    type="password"
+                    onChange={setImportPassphrase}
+                    focusedLabelBackgroundColor="var(--eerie-black-200)"
+                  />
+                </form>
+              </div>
+            )}
+          </div>
+        }
+        buttons={
+          <>
+            <div>
+              <span
+                className="text-xs"
+                style={{
+                  color: "var(--error)",
+                  margin: "0.5rem 0 1rem",
+                  display: "block",
+                  textAlign: "center",
+                }}
+              >
+                {errorMessage || <br />}
+              </span>
+            </div>
+            <div style={{ marginBottom: "1rem", width: "100%" }}>
+              <SharedButton
+                type="primary"
+                size="large"
+                iconSize="large"
+                isDisabled={isImporting}
+                isLoading={isImporting}
+                onClick={importWallet}
+              >
+                IMPORT ACCOUNT
+              </SharedButton>
+            </div>
+          </>
+        }
+      />
+      <style jsx>
+        {`
           div :global(.top) {
             margin-top: 4rem;
             height: 7rem;
@@ -655,7 +655,7 @@ export default function OnboardingImportKeyfile() {
             border-radius: 50%;
           }
         `}
-			</style>
-		</div>
-	);
+      </style>
+    </div>
+  );
 }

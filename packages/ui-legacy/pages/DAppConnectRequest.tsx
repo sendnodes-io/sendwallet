@@ -1,46 +1,44 @@
 import React, { ReactElement, useCallback, useEffect } from "react";
 import {
-	selectCurrentPendingPermission,
-	selectCurrentAccountTotal,
+  selectCurrentPendingPermission,
+  selectCurrentAccountTotal,
 } from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
 import {
-	denyOrRevokePermission,
-	grantPermission,
+  denyOrRevokePermission,
+  grantPermission,
 } from "@sendnodes/pokt-wallet-background/redux-slices/dapp-permission";
 
 import SharedButton from "../components/Shared/SharedButton";
 import {
-	useBackgroundDispatch,
-	useBackgroundSelector,
-	useAreKeyringsUnlocked,
+  useBackgroundDispatch,
+  useBackgroundSelector,
+  useAreKeyringsUnlocked,
 } from "../hooks";
 import SharedAccountItemSummary from "../components/Shared/SharedAccountItemSummary";
 
 function RequestingDAppBlock(props: {
-	title: string;
-	url: string;
-	faviconUrl: string;
+  title: string;
+  url: string;
+  faviconUrl: string;
 }) {
-	const { title, url, faviconUrl } = props;
-	return (
-		<div className="request_wrap">
-			<div className="dapp_favicon" />
-			<div className="info">
-				<div className="dapp_title">{title}</div>
-				<div className="dapp_url">{url}</div>
-			</div>
-			<style jsx>{`
+  const { title, url, faviconUrl } = props;
+  return (
+    <div className="request_wrap">
+      <div className="dapp_favicon" />
+      <div className="info">
+        <div className="dapp_title">{title}</div>
+        <div className="dapp_url">{url}</div>
+      </div>
+      <style jsx>{`
         .request_wrap {
           display: flex;
           align-items: center;
           width: 100%;
         }
         .dapp_favicon {
-          background: url("${
-						faviconUrl === ""
-							? "./images/dapp_favicon_default@2x.png"
-							: faviconUrl
-					}");
+          background: url("${faviconUrl === ""
+            ? "./images/dapp_favicon_default@2x.png"
+            : faviconUrl}");
           background-size: cover;
           width: 48px;
           height: 48px;
@@ -59,115 +57,115 @@ function RequestingDAppBlock(props: {
           margin-left: 16px;
         }
       `}</style>
-		</div>
-	);
+    </div>
+  );
 }
 export default function DAppConnectRequest(): ReactElement {
-	useAreKeyringsUnlocked(true);
-	const currentAccountTotal = useBackgroundSelector(selectCurrentAccountTotal);
+  useAreKeyringsUnlocked(true);
+  const currentAccountTotal = useBackgroundSelector(selectCurrentAccountTotal);
 
-	const permission = useBackgroundSelector(selectCurrentPendingPermission);
+  const permission = useBackgroundSelector(selectCurrentPendingPermission);
 
-	const dispatch = useBackgroundDispatch();
+  const dispatch = useBackgroundDispatch();
 
-	useEffect(() => {
-		window.onbeforeunload = () => {
-			if (typeof permission !== "undefined") {
-				dispatch(
-					denyOrRevokePermission({
-						...permission,
-						state: "deny",
-					}),
-				);
-			}
-		};
-	}, [dispatch, permission]);
+  useEffect(() => {
+    window.onbeforeunload = () => {
+      if (typeof permission !== "undefined") {
+        dispatch(
+          denyOrRevokePermission({
+            ...permission,
+            state: "deny",
+          })
+        );
+      }
+    };
+  }, [dispatch, permission]);
 
-	const grant = useCallback(async () => {
-		if (typeof permission !== "undefined") {
-			dispatch(
-				grantPermission({
-					...permission,
-					state: "allow",
-				}),
-			);
-		}
-		window.onbeforeunload = null;
-		window.close();
-	}, [dispatch, permission]);
+  const grant = useCallback(async () => {
+    if (typeof permission !== "undefined") {
+      dispatch(
+        grantPermission({
+          ...permission,
+          state: "allow",
+        })
+      );
+    }
+    window.onbeforeunload = null;
+    window.close();
+  }, [dispatch, permission]);
 
-	const deny = useCallback(async () => {
-		// The denyOrRevokePermission will be dispatched in the onbeforeunload effect
-		window.close();
-	}, []);
+  const deny = useCallback(async () => {
+    // The denyOrRevokePermission will be dispatched in the onbeforeunload effect
+    window.close();
+  }, []);
 
-	if (
-		typeof permission === "undefined" ||
-		permission.accountAddress !== currentAccountTotal?.address
-	) {
-		// FIXME What do we do if we end up in a weird state here? Dismiss the
-		// FIXME popover? Show an error?
-		return (
-			<div>
-				You do not seem to have an account, which is sad for a wallet :(
-			</div>
-		);
-	}
+  if (
+    typeof permission === "undefined" ||
+    permission.accountAddress !== currentAccountTotal?.address
+  ) {
+    // FIXME What do we do if we end up in a weird state here? Dismiss the
+    // FIXME popover? Show an error?
+    return (
+      <div>
+        You do not seem to have an account, which is sad for a wallet :(
+      </div>
+    );
+  }
 
-	return (
-		<div className="page">
-			<section className="standard_width">
-				<h1>Connect to dApp</h1>
-				<div className="connection_destination">
-					<div className="row">
-						<RequestingDAppBlock
-							title={permission.title}
-							url={permission.origin}
-							faviconUrl={permission.faviconUrl}
-						/>
-					</div>
-				</div>
-				<div className="icon_connection" />
-				<div className="connection_destination">
-					<div className="row">
-						<SharedAccountItemSummary
-							key={permission.accountAddress}
-							accountTotal={currentAccountTotal}
-						/>
-					</div>
-				</div>
-				<ul className="permissions_list">
-					<li className="permissions_list_title">
-						dApp would get permission to:
-					</li>
-					<li>
-						<ul>
-							<li>View address of connected account</li>
-							<li>Create but not sign transactions for you</li>
-						</ul>
-					</li>
-				</ul>
-			</section>
-			<div className="footer_actions">
-				<SharedButton
-					iconSize="large"
-					size="large"
-					type="secondary"
-					onClick={deny}
-				>
-					Reject
-				</SharedButton>
-				<div className="button_spacer" />
-				<SharedButton
-					type="primary"
-					iconSize="large"
-					size="large"
-					onClick={grant}
-				>
-					Connect
-				</SharedButton>
-			</div>
-			<style jsx>{`
+  return (
+    <div className="page">
+      <section className="standard_width">
+        <h1>Connect to dApp</h1>
+        <div className="connection_destination">
+          <div className="row">
+            <RequestingDAppBlock
+              title={permission.title}
+              url={permission.origin}
+              faviconUrl={permission.faviconUrl}
+            />
+          </div>
+        </div>
+        <div className="icon_connection" />
+        <div className="connection_destination">
+          <div className="row">
+            <SharedAccountItemSummary
+              key={permission.accountAddress}
+              accountTotal={currentAccountTotal}
+            />
+          </div>
+        </div>
+        <ul className="permissions_list">
+          <li className="permissions_list_title">
+            dApp would get permission to:
+          </li>
+          <li>
+            <ul>
+              <li>View address of connected account</li>
+              <li>Create but not sign transactions for you</li>
+            </ul>
+          </li>
+        </ul>
+      </section>
+      <div className="footer_actions">
+        <SharedButton
+          iconSize="large"
+          size="large"
+          type="secondary"
+          onClick={deny}
+        >
+          Reject
+        </SharedButton>
+        <div className="button_spacer" />
+        <SharedButton
+          type="primary"
+          iconSize="large"
+          size="large"
+          onClick={grant}
+        >
+          Connect
+        </SharedButton>
+      </div>
+      <style jsx>{`
         section {
           display: flex;
           flex-direction: column;
@@ -267,11 +265,11 @@ export default function DAppConnectRequest(): ReactElement {
           width: 1rem;
         }
       `}</style>
-			<style jsx global>{`
+      <style jsx global>{`
         body {
           background-color: var(--cod-gray-200);
         }
       `}</style>
-		</div>
-	);
+    </div>
+  );
 }

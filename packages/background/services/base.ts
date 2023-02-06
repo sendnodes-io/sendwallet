@@ -15,15 +15,15 @@ import { Service, ServiceLifecycleEvents } from "./types";
  * The MDN docs for `alarms.create`}.
  */
 type AlarmSchedule =
-	| {
-			when: number;
-			periodInMinutes?: number;
-	  }
-	| {
-			delayInMinutes: number;
-			periodInMinutes?: number;
-	  }
-	| { periodInMinutes: number };
+  | {
+      when: number;
+      periodInMinutes?: number;
+    }
+  | {
+      delayInMinutes: number;
+      periodInMinutes?: number;
+    }
+  | { periodInMinutes: number };
 
 /**
  * An object carrying the same information as {@link AlarmSchedule}, but that
@@ -36,9 +36,9 @@ type AlarmSchedule =
  * first scheduled run to execute.
  */
 export type AlarmHandlerSchedule = {
-	schedule: AlarmSchedule;
-	handler: (alarm?: Alarms.Alarm) => void;
-	runAtStart?: boolean;
+  schedule: AlarmSchedule;
+  handler: (alarm?: Alarms.Alarm) => void;
+  runAtStart?: boolean;
 };
 
 /**
@@ -47,7 +47,7 @@ export type AlarmHandlerSchedule = {
  * fire the handler associated with the appropriate alarm.
  */
 export type AlarmHandlerScheduleMap = {
-	[alarmName: string]: AlarmHandlerSchedule;
+  [alarmName: string]: AlarmHandlerSchedule;
 };
 
 /**
@@ -94,166 +94,166 @@ export type AlarmHandlerScheduleMap = {
  * should generally call `BaseService`'s implementation.
  */
 export default abstract class BaseService<Events extends ServiceLifecycleEvents>
-	implements Service<Events>
+  implements Service<Events>
 {
-	/**
-	 * {@inheritdoc Service.emitter}
-	 */
-	readonly emitter = new Emittery<Events>({
-		debug: {
-			name: "services",
-			logger: emitteryDebugLogger(`services/${this.constructor.name}`),
-		},
-	});
+  /**
+   * {@inheritdoc Service.emitter}
+   */
+  readonly emitter = new Emittery<Events>({
+    debug: {
+      name: "services",
+      logger: emitteryDebugLogger(`services/${this.constructor.name}`),
+    },
+  });
 
-	// Used for listener adding/removing, where we need an identical reference.
-	private boundAlarmHandler = this.handleAlarm.bind(this);
+  // Used for listener adding/removing, where we need an identical reference.
+  private boundAlarmHandler = this.handleAlarm.bind(this);
 
-	/**
-	 * Takes the set of alarm schedules that this service wants to run. Schedules
-	 * are not added until `startService` is called.
-	 */
-	protected constructor(
-		protected readonly alarmSchedules: AlarmHandlerScheduleMap = {},
-	) {}
+  /**
+   * Takes the set of alarm schedules that this service wants to run. Schedules
+   * are not added until `startService` is called.
+   */
+  protected constructor(
+    protected readonly alarmSchedules: AlarmHandlerScheduleMap = {}
+  ) {}
 
-	/**
-	 * Hook for subclass starting tasks. Subclasses should call
-	 * `await super.internalStartService()`, as the base implementation sets up
-	 * all alarms and their handling.
-	 */
-	protected async internalStartService(): Promise<void> {
-		const scheduleEntries = Object.entries(this.alarmSchedules);
+  /**
+   * Hook for subclass starting tasks. Subclasses should call
+   * `await super.internalStartService()`, as the base implementation sets up
+   * all alarms and their handling.
+   */
+  protected async internalStartService(): Promise<void> {
+    const scheduleEntries = Object.entries(this.alarmSchedules);
 
-		scheduleEntries.forEach(([name, { schedule, runAtStart, handler }]) => {
-			browser.alarms.create(name, schedule);
+    scheduleEntries.forEach(([name, { schedule, runAtStart, handler }]) => {
+      browser.alarms.create(name, schedule);
 
-			if (runAtStart) {
-				handler();
-			}
-		});
+      if (runAtStart) {
+        handler();
+      }
+    });
 
-		if (scheduleEntries.length > 0) {
-			browser.alarms.onAlarm.addListener(this.boundAlarmHandler);
-		}
-	}
+    if (scheduleEntries.length > 0) {
+      browser.alarms.onAlarm.addListener(this.boundAlarmHandler);
+    }
+  }
 
-	/**
-	 * Hook for subclass stopping tasks. Subclasses should call
-	 * `await super.internalStopService()`, as the base implementation cleans up
-	 * all alarms and their handling.
-	 */
-	protected async internalStopService(): Promise<void> {
-		const scheduleNames = Object.keys(this.alarmSchedules);
+  /**
+   * Hook for subclass stopping tasks. Subclasses should call
+   * `await super.internalStopService()`, as the base implementation cleans up
+   * all alarms and their handling.
+   */
+  protected async internalStopService(): Promise<void> {
+    const scheduleNames = Object.keys(this.alarmSchedules);
 
-		scheduleNames.forEach((alarmName) => browser.alarms.clear(alarmName));
+    scheduleNames.forEach((alarmName) => browser.alarms.clear(alarmName));
 
-		if (scheduleNames.length > 0) {
-			browser.alarms.onAlarm.removeListener(this.boundAlarmHandler);
-		}
-	}
+    if (scheduleNames.length > 0) {
+      browser.alarms.onAlarm.removeListener(this.boundAlarmHandler);
+    }
+  }
 
-	/**
-	 * Default handler for alarms. By default, calls the defined handler for the
-	 * named alarm, if available. Override for custom behavior.
-	 */
-	protected handleAlarm(alarm: Alarms.Alarm): void {
-		this.alarmSchedules[alarm.name]?.handler(alarm);
-	}
+  /**
+   * Default handler for alarms. By default, calls the defined handler for the
+   * named alarm, if available. Override for custom behavior.
+   */
+  protected handleAlarm(alarm: Alarms.Alarm): void {
+    this.alarmSchedules[alarm.name]?.handler(alarm);
+  }
 
-	private serviceState: "unstarted" | "started" | "stopped" = "unstarted";
+  private serviceState: "unstarted" | "started" | "stopped" = "unstarted";
 
-	/**
-	 * {@inheritdoc Service.started}
-	 *
-	 * @throws {Error} If the service has already been stopped.
-	 */
-	async started(): Promise<this> {
-		switch (this.serviceState) {
-			case "started":
-				return this;
+  /**
+   * {@inheritdoc Service.started}
+   *
+   * @throws {Error} If the service has already been stopped.
+   */
+  async started(): Promise<this> {
+    switch (this.serviceState) {
+      case "started":
+        return this;
 
-			case "stopped":
-				throw new Error("Service is already stopped and cannot be restarted.");
+      case "stopped":
+        throw new Error("Service is already stopped and cannot be restarted.");
 
-			case "unstarted":
-				return this.emitter.once("serviceStarted").then(() => this);
+      case "unstarted":
+        return this.emitter.once("serviceStarted").then(() => this);
 
-			default: {
-				const exhaustiveCheck: never = this.serviceState;
-				throw new Error(`Unreachable code: ${exhaustiveCheck}`);
-			}
-		}
-	}
+      default: {
+        const exhaustiveCheck: never = this.serviceState;
+        throw new Error(`Unreachable code: ${exhaustiveCheck}`);
+      }
+    }
+  }
 
-	// Below, readonly properties as a poor man's `final`/`sealed` so subclasses
-	// don't override this and break lifecycle management. `internalStartService`
-	// and `internalStopService` are the hooks for subclasses. Pulled from
-	// https://github.com/microsoft/TypeScript/issues/8306#issuecomment-737568178.
-	// Note that this means each subclass instance has a copy of the function;
-	// this is mostly a memory usage concern, and since services are effectively
-	// singletons at the moment and the number of services is limited, the
-	// concern should be minimal.
+  // Below, readonly properties as a poor man's `final`/`sealed` so subclasses
+  // don't override this and break lifecycle management. `internalStartService`
+  // and `internalStopService` are the hooks for subclasses. Pulled from
+  // https://github.com/microsoft/TypeScript/issues/8306#issuecomment-737568178.
+  // Note that this means each subclass instance has a copy of the function;
+  // this is mostly a memory usage concern, and since services are effectively
+  // singletons at the moment and the number of services is limited, the
+  // concern should be minimal.
 
-	/**
-	 * {@inheritdoc Service.startService}
-	 *
-	 * Subclasses should extend `internalStartService` to handle additional
-	 * starting tasks.
-	 *
-	 * @throws {Error} If the service has already been stopped.
-	 *
-	 * @sealed
-	 */
-	readonly startService = async (): Promise<void> => {
-		switch (this.serviceState) {
-			case "started":
-				return;
+  /**
+   * {@inheritdoc Service.startService}
+   *
+   * Subclasses should extend `internalStartService` to handle additional
+   * starting tasks.
+   *
+   * @throws {Error} If the service has already been stopped.
+   *
+   * @sealed
+   */
+  readonly startService = async (): Promise<void> => {
+    switch (this.serviceState) {
+      case "started":
+        return;
 
-			case "stopped":
-				throw new Error("Service is already stopped and cannot be restarted.");
+      case "stopped":
+        throw new Error("Service is already stopped and cannot be restarted.");
 
-			case "unstarted":
-				this.serviceState = "started";
-				await this.internalStartService();
-				this.emitter.emit("serviceStarted", undefined);
-				break;
+      case "unstarted":
+        this.serviceState = "started";
+        await this.internalStartService();
+        this.emitter.emit("serviceStarted", undefined);
+        break;
 
-			default: {
-				const exhaustiveCheck: never = this.serviceState;
-				throw new Error(`Unreachable code: ${exhaustiveCheck}`);
-			}
-		}
-	};
+      default: {
+        const exhaustiveCheck: never = this.serviceState;
+        throw new Error(`Unreachable code: ${exhaustiveCheck}`);
+      }
+    }
+  };
 
-	/**
-	 * {@inheritdoc Service.stopService}
-	 *
-	 * Subclasses should extend `internalStopService` to handle additional
-	 * stopping tasks.
-	 *
-	 * @throws {Error} If the service has never been started.
-	 *
-	 * @sealed
-	 */
-	readonly stopService = async (): Promise<void> => {
-		switch (this.serviceState) {
-			case "unstarted":
-				throw new Error("Attempted to stop a service that was never started.");
+  /**
+   * {@inheritdoc Service.stopService}
+   *
+   * Subclasses should extend `internalStopService` to handle additional
+   * stopping tasks.
+   *
+   * @throws {Error} If the service has never been started.
+   *
+   * @sealed
+   */
+  readonly stopService = async (): Promise<void> => {
+    switch (this.serviceState) {
+      case "unstarted":
+        throw new Error("Attempted to stop a service that was never started.");
 
-			case "stopped":
-				return;
+      case "stopped":
+        return;
 
-			case "started":
-				this.serviceState = "stopped";
-				await this.internalStopService();
-				this.emitter.emit("serviceStopped", undefined);
-				break;
+      case "started":
+        this.serviceState = "stopped";
+        await this.internalStopService();
+        this.emitter.emit("serviceStopped", undefined);
+        break;
 
-			default: {
-				const exhaustiveCheck: never = this.serviceState;
-				throw new Error(`Unreachable code: ${exhaustiveCheck}`);
-			}
-		}
-	};
+      default: {
+        const exhaustiveCheck: never = this.serviceState;
+        throw new Error(`Unreachable code: ${exhaustiveCheck}`);
+      }
+    }
+  };
 }

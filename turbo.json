@@ -2,48 +2,30 @@
   "$schema": "https://turbo.build/schema.json",
   "pipeline": {
     "build": {
-      "dependsOn": [
-        "^lint",
-        "^build"
-      ],
-      "outputs": [
-        "dist/**",
-        "types/**"
-      ]
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", "types/**", ".next/**"]
     },
     "test": {
-      "dependsOn": [
-        "build",
-        "lint"
-      ],
+      "dependsOn": ["build", "lint"],
       "outputs": [],
-      "inputs": [
-        "src/**/*.tsx",
-        "src/**/*.ts",
-        "test/**/*.ts",
-        "test/**/*.tsx"
-      ]
+      "inputs": ["**/*.tsx", "**/*.ts", "**/*.ts", "**/*.tsx"]
     },
     "lint": {
-      "dependsOn": [
-        "^//#lint:rome",
-        "^@my/ui#build"
-      ],
+      "dependsOn": ["//#lint:prettier", "^lint"],
       "outputs": []
     },
-    "//#lint:rome": {
+    "//#lint:prettier": {
       "outputs": []
     },
     "dev": {
       "cache": false,
+      "dependsOn": [],
       "outputs": []
     },
     "clean": {
       "cache": false,
       "outputs": [],
-      "dependsOn": [
-        "^//#clean:turbo"
-      ]
+      "dependsOn": ["^//#clean:turbo"]
     },
     "//#clean:turbo": {
       "cache": false,

@@ -6,68 +6,68 @@ import SharedLoadingSpinner from "../Shared/SharedLoadingSpinner";
 import SharedAssetIcon from "../Shared/SharedAssetIcon";
 
 interface Props {
-	assetAmount: CompleteAssetAmount;
-	initializationLoadingTimeExpired: boolean;
+  assetAmount: CompleteAssetAmount;
+  initializationLoadingTimeExpired: boolean;
 }
 
 export default function WalletAssetListItem(props: Props): ReactElement {
-	const { assetAmount, initializationLoadingTimeExpired } = props;
+  const { assetAmount, initializationLoadingTimeExpired } = props;
 
-	const isMissingLocalizedUserValue =
-		typeof assetAmount.localizedMainCurrencyAmount === "undefined";
+  const isMissingLocalizedUserValue =
+    typeof assetAmount.localizedMainCurrencyAmount === "undefined";
 
-	const contractAddress =
-		"contractAddress" in assetAmount.asset
-			? assetAmount.asset.contractAddress
-			: undefined;
+  const contractAddress =
+    "contractAddress" in assetAmount.asset
+      ? assetAmount.asset.contractAddress
+      : undefined;
 
-	return (
-		<li>
-			<Link
-				to={{
-					pathname: `/singleAsset/${assetAmount.asset.symbol}/${contractAddress}`,
-				}}
-			>
-				<div className="wallet_asset_list_item">
-					<div className="left">
-						<SharedAssetIcon
-							logoURL={assetAmount?.asset?.metadata?.logoURL}
-							symbol={assetAmount?.asset?.symbol}
-						/>
-						<div className="left_content">
-							<div className="amount">
-								<span className="bold_amount_count">
-									{assetAmount.localizedDecimalAmount}
-								</span>
-								{assetAmount.asset.symbol}
-							</div>
-							{initializationLoadingTimeExpired &&
-							isMissingLocalizedUserValue ? (
-								<></>
-							) : (
-								<div className="price">
-									{isMissingLocalizedUserValue ? (
-										<SharedLoadingSpinner size="small" />
-									) : (
-										`${assetAmount.localizedMainCurrencyAmount}`
-									)}
-								</div>
-							)}
-						</div>
-					</div>
-					<div className="right">
-						<Link
-							to={{
-								pathname: "/send",
-								state: assetAmount.asset,
-							}}
-							className="asset_list_item_icon asset_list_item_icon_send_asset"
-						/>
-					</div>
-				</div>
-			</Link>
-			<style jsx>
-				{`
+  return (
+    <li>
+      <Link
+        to={{
+          pathname: `/singleAsset/${assetAmount.asset.symbol}/${contractAddress}`,
+        }}
+      >
+        <div className="wallet_asset_list_item">
+          <div className="left">
+            <SharedAssetIcon
+              logoURL={assetAmount?.asset?.metadata?.logoURL}
+              symbol={assetAmount?.asset?.symbol}
+            />
+            <div className="left_content">
+              <div className="amount">
+                <span className="bold_amount_count">
+                  {assetAmount.localizedDecimalAmount}
+                </span>
+                {assetAmount.asset.symbol}
+              </div>
+              {initializationLoadingTimeExpired &&
+              isMissingLocalizedUserValue ? (
+                <></>
+              ) : (
+                <div className="price">
+                  {isMissingLocalizedUserValue ? (
+                    <SharedLoadingSpinner size="small" />
+                  ) : (
+                    `${assetAmount.localizedMainCurrencyAmount}`
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="right">
+            <Link
+              to={{
+                pathname: "/send",
+                state: assetAmount.asset,
+              }}
+              className="asset_list_item_icon asset_list_item_icon_send_asset"
+            />
+          </div>
+        </div>
+      </Link>
+      <style jsx>
+        {`
           .wallet_asset_list_item {
             height: 72px;
             width: 100%;
@@ -128,9 +128,9 @@ export default function WalletAssetListItem(props: Props): ReactElement {
             margin-right: 16px;
           }
         `}
-			</style>
-			<style jsx global>
-				{`
+      </style>
+      <style jsx global>
+        {`
           .asset_list_item_icon {
             mask-size: cover;
             background-color: var(--dim-gray);
@@ -151,7 +151,7 @@ export default function WalletAssetListItem(props: Props): ReactElement {
             margin-left: 20px;
           }
         `}
-			</style>
-		</li>
-	);
+      </style>
+    </li>
+  );
 }

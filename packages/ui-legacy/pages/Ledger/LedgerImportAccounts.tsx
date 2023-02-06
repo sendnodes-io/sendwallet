@@ -1,9 +1,9 @@
 import {
-	addLedgerAccount,
-	fetchAddress,
-	fetchBalance,
-	importLedgerAccounts,
-	LedgerDeviceState,
+  addLedgerAccount,
+  fetchAddress,
+  fetchBalance,
+  importLedgerAccounts,
+  LedgerDeviceState,
 } from "@sendnodes/pokt-wallet-background/redux-slices/ledger";
 import classNames from "clsx";
 import React, { ReactElement, useEffect, useState } from "react";
@@ -16,204 +16,204 @@ import OnboardingDerivationPathSelectAlt from "../../components/Onboarding/Onboa
 const addressesPerPage = 6;
 
 function usePageData({
-	device,
-	pageIndex,
-	parentPath,
+  device,
+  pageIndex,
+  parentPath,
 }: {
-	device: LedgerDeviceState;
-	parentPath: string;
-	pageIndex: number;
+  device: LedgerDeviceState;
+  parentPath: string;
+  pageIndex: number;
 }) {
-	const dispatch = useBackgroundDispatch();
+  const dispatch = useBackgroundDispatch();
 
-	const [selectedStates, setSelectedStates] = useState<
-		Record<string, boolean | undefined>
-	>({});
+  const [selectedStates, setSelectedStates] = useState<
+    Record<string, boolean | undefined>
+  >({});
 
-	const paths: string[] = [];
+  const paths: string[] = [];
 
-	const firstIndex = pageIndex * addressesPerPage;
-	const lastIndex = (pageIndex + 1) * addressesPerPage - 1;
-	for (let i = firstIndex; i <= lastIndex; i += 1) {
-		if (parentPath.includes("x")) {
-			const formattedString = parentPath.slice().replace("x", `${i}`);
-			paths.push(formattedString);
-		} else {
-			paths.push(`${parentPath}/${i}`);
-		}
-	}
+  const firstIndex = pageIndex * addressesPerPage;
+  const lastIndex = (pageIndex + 1) * addressesPerPage - 1;
+  for (let i = firstIndex; i <= lastIndex; i += 1) {
+    if (parentPath.includes("x")) {
+      const formattedString = parentPath.slice().replace("x", `${i}`);
+      paths.push(formattedString);
+    } else {
+      paths.push(`${parentPath}/${i}`);
+    }
+  }
 
-	const items = paths.map((path) => {
-		const account = device.accounts[path] ?? null;
-		const address = account?.address ?? null;
-		return {
-			path,
-			account,
-			address,
-			ethBalance: account?.balance ?? null,
-			isSelected: (selectedStates[path] ?? false) && address !== null,
-			setSelected: (selected: boolean) => {
-				setSelectedStates((states) => ({ ...states, [path]: selected }));
-			},
-		};
-	});
+  const items = paths.map((path) => {
+    const account = device.accounts[path] ?? null;
+    const address = account?.address ?? null;
+    return {
+      path,
+      account,
+      address,
+      ethBalance: account?.balance ?? null,
+      isSelected: (selectedStates[path] ?? false) && address !== null,
+      setSelected: (selected: boolean) => {
+        setSelectedStates((states) => ({ ...states, [path]: selected }));
+      },
+    };
+  });
 
-	useEffect(() => {
-		const nextUnresolvedAccount = items.find((item) => item.account === null);
-		if (!nextUnresolvedAccount) return;
-		const { path } = nextUnresolvedAccount;
-		dispatch(addLedgerAccount({ deviceID: device.id, path }));
-	}, [device.id, dispatch, items]);
+  useEffect(() => {
+    const nextUnresolvedAccount = items.find((item) => item.account === null);
+    if (!nextUnresolvedAccount) return;
+    const { path } = nextUnresolvedAccount;
+    dispatch(addLedgerAccount({ deviceID: device.id, path }));
+  }, [device.id, dispatch, items]);
 
-	useEffect(() => {
-		const nextUnresolvedAddress = items.find((item) => item.address === null);
-		if (!nextUnresolvedAddress) return;
-		const { account } = nextUnresolvedAddress;
-		if (!account) return;
-		const { path, fetchingAddress } = account;
-		if (!path || fetchingAddress) return;
-		dispatch(fetchAddress({ deviceID: device.id, path }));
-	}, [device.id, dispatch, items]);
+  useEffect(() => {
+    const nextUnresolvedAddress = items.find((item) => item.address === null);
+    if (!nextUnresolvedAddress) return;
+    const { account } = nextUnresolvedAddress;
+    if (!account) return;
+    const { path, fetchingAddress } = account;
+    if (!path || fetchingAddress) return;
+    dispatch(fetchAddress({ deviceID: device.id, path }));
+  }, [device.id, dispatch, items]);
 
-	useEffect(() => {
-		const nextUnresolvedBalance = items.find(
-			(item) => item.ethBalance === null,
-		);
-		if (!nextUnresolvedBalance) return;
-		const { path, account } = nextUnresolvedBalance;
-		if (!account) return;
-		const { address, fetchingBalance } = account;
-		if (!address || fetchingBalance) return;
-		dispatch(fetchBalance({ deviceID: device.id, path, address }));
-	}, [device.id, dispatch, items]);
+  useEffect(() => {
+    const nextUnresolvedBalance = items.find(
+      (item) => item.ethBalance === null
+    );
+    if (!nextUnresolvedBalance) return;
+    const { path, account } = nextUnresolvedBalance;
+    if (!account) return;
+    const { address, fetchingBalance } = account;
+    if (!address || fetchingBalance) return;
+    dispatch(fetchBalance({ deviceID: device.id, path, address }));
+  }, [device.id, dispatch, items]);
 
-	const selectedAccounts = items.flatMap((item) => {
-		if (!selectedStates[item.path]) return [];
-		if (!item.account) return [];
-		const { path, address } = item.account;
-		if (!address) return [];
-		return [{ path, address }];
-	});
+  const selectedAccounts = items.flatMap((item) => {
+    if (!selectedStates[item.path]) return [];
+    if (!item.account) return [];
+    const { path, address } = item.account;
+    if (!address) return [];
+    return [{ path, address }];
+  });
 
-	return { firstIndex, lastIndex, items, selectedAccounts };
+  return { firstIndex, lastIndex, items, selectedAccounts };
 }
 
 function LedgerAccountList({
-	device,
-	parentPath,
-	onConnect,
+  device,
+  parentPath,
+  onConnect,
 }: {
-	device: LedgerDeviceState;
-	parentPath: string;
-	onConnect: () => void;
+  device: LedgerDeviceState;
+  parentPath: string;
+  onConnect: () => void;
 }): ReactElement {
-	const [pageIndex, setPageIndex] = useState(0);
+  const [pageIndex, setPageIndex] = useState(0);
 
-	const pageData = usePageData({ device, parentPath, pageIndex });
-	const dispatch = useBackgroundDispatch();
+  const pageData = usePageData({ device, parentPath, pageIndex });
+  const dispatch = useBackgroundDispatch();
 
-	return (
-		<>
-			<div className="addresses">
-				<div className="item-list">
-					{pageData.items.map(
-						({ path, address, ethBalance, isSelected, setSelected }) => (
-							<div className="item" key={path}>
-								<label className="checkbox_label">
-									{/* TODO: Share this implementation of checkbox. */}
-									<input
-										className="checkbox_input"
-										type="checkbox"
-										disabled={address === null}
-										checked={isSelected}
-										onChange={(event) => {
-											setSelected(event.currentTarget.checked);
-										}}
-									/>
-									<div
-										className={classNames("checkbox_box", {
-											selected: isSelected,
-											disabled: address === null,
-										})}
-									/>
-								</label>
-								{address === null && <div className="address_loading" />}
-								{address !== null && (
-									<>
-										<div className="address" title={address}>
-											{address.slice(0, 4)}...
-											{address.slice(address.length - 4)}
-										</div>
-										{ethBalance === null && <div className="balance_loading" />}
-										{ethBalance !== null && (
-											<div className="balance">{ethBalance} ETH</div>
-										)}
-										<div className="etherscan_link_container">
-											<SharedButton
-												type="tertiaryGray"
-												size="medium"
-												icon="external"
-												iconSize="secondaryMedium"
-												onClick={() => {
-													window
-														.open(
-															`https://etherscan.io/address/${address}`,
-															"_blank",
-														)
-														?.focus();
-												}}
-											>
-												{/* No label. FIXME: is this ok for a11y? */}
-											</SharedButton>
-										</div>
-									</>
-								)}
-							</div>
-						),
-					)}
-				</div>
-				<div className="pagination">
-					<div className="previous_button">
-						<SharedButton
-							isDisabled={pageIndex === 0}
-							onClick={() => {
-								setPageIndex((i) => i - 1);
-							}}
-							size="medium"
-							type="tertiary"
-						>
-							Previous
-						</SharedButton>
-					</div>
-					<div className="current_page">
-						{pageData.firstIndex} - {pageData.lastIndex}
-					</div>
-					<div className="next_button">
-						<SharedButton
-							onClick={() => {
-								setPageIndex((i) => i + 1);
-							}}
-							size="medium"
-							type="tertiary"
-						>
-							Next
-						</SharedButton>
-					</div>
-				</div>
-			</div>
-			<LedgerContinueButton
-				isDisabled={pageData.selectedAccounts.length === 0}
-				onClick={() => {
-					dispatch(
-						importLedgerAccounts({ accounts: pageData.selectedAccounts }),
-					);
-					onConnect();
-				}}
-			>
-				Connect selected
-			</LedgerContinueButton>
+  return (
+    <>
+      <div className="addresses">
+        <div className="item-list">
+          {pageData.items.map(
+            ({ path, address, ethBalance, isSelected, setSelected }) => (
+              <div className="item" key={path}>
+                <label className="checkbox_label">
+                  {/* TODO: Share this implementation of checkbox. */}
+                  <input
+                    className="checkbox_input"
+                    type="checkbox"
+                    disabled={address === null}
+                    checked={isSelected}
+                    onChange={(event) => {
+                      setSelected(event.currentTarget.checked);
+                    }}
+                  />
+                  <div
+                    className={classNames("checkbox_box", {
+                      selected: isSelected,
+                      disabled: address === null,
+                    })}
+                  />
+                </label>
+                {address === null && <div className="address_loading" />}
+                {address !== null && (
+                  <>
+                    <div className="address" title={address}>
+                      {address.slice(0, 4)}...
+                      {address.slice(address.length - 4)}
+                    </div>
+                    {ethBalance === null && <div className="balance_loading" />}
+                    {ethBalance !== null && (
+                      <div className="balance">{ethBalance} ETH</div>
+                    )}
+                    <div className="etherscan_link_container">
+                      <SharedButton
+                        type="tertiaryGray"
+                        size="medium"
+                        icon="external"
+                        iconSize="secondaryMedium"
+                        onClick={() => {
+                          window
+                            .open(
+                              `https://etherscan.io/address/${address}`,
+                              "_blank"
+                            )
+                            ?.focus();
+                        }}
+                      >
+                        {/* No label. FIXME: is this ok for a11y? */}
+                      </SharedButton>
+                    </div>
+                  </>
+                )}
+              </div>
+            )
+          )}
+        </div>
+        <div className="pagination">
+          <div className="previous_button">
+            <SharedButton
+              isDisabled={pageIndex === 0}
+              onClick={() => {
+                setPageIndex((i) => i - 1);
+              }}
+              size="medium"
+              type="tertiary"
+            >
+              Previous
+            </SharedButton>
+          </div>
+          <div className="current_page">
+            {pageData.firstIndex} - {pageData.lastIndex}
+          </div>
+          <div className="next_button">
+            <SharedButton
+              onClick={() => {
+                setPageIndex((i) => i + 1);
+              }}
+              size="medium"
+              type="tertiary"
+            >
+              Next
+            </SharedButton>
+          </div>
+        </div>
+      </div>
+      <LedgerContinueButton
+        isDisabled={pageData.selectedAccounts.length === 0}
+        onClick={() => {
+          dispatch(
+            importLedgerAccounts({ accounts: pageData.selectedAccounts })
+          );
+          onConnect();
+        }}
+      >
+        Connect selected
+      </LedgerContinueButton>
 
-			<style jsx>{`
+      <style jsx>{`
         .addresses {
           margin: 0.5rem 0;
           padding: 1rem;
@@ -333,42 +333,42 @@ function LedgerAccountList({
           justify-content: flex-end;
         }
       `}</style>
-		</>
-	);
+    </>
+  );
 }
 
 export default function LedgerImportAccounts({
-	device,
-	onConnect,
+  device,
+  onConnect,
 }: {
-	device: LedgerDeviceState;
-	onConnect: () => void;
+  device: LedgerDeviceState;
+  onConnect: () => void;
 }): ReactElement {
-	const [parentPath, setParentPath] = useState<string | null>(null);
+  const [parentPath, setParentPath] = useState<string | null>(null);
 
-	return (
-		<>
-			<LedgerPanelContainer
-				indicatorImageSrc="/images/connect_ledger_indicator_connected.svg"
-				heading="Select ledger accounts"
-				subHeading="You can select as many as you want"
-			>
-				<div className="derivation_path">
-					<OnboardingDerivationPathSelectAlt
-						onChange={(value) => {
-							setParentPath(value);
-						}}
-					/>
-				</div>
-				{parentPath !== null && (
-					<LedgerAccountList
-						device={device}
-						parentPath={parentPath}
-						onConnect={onConnect}
-					/>
-				)}
-			</LedgerPanelContainer>
-			<style jsx>{`
+  return (
+    <>
+      <LedgerPanelContainer
+        indicatorImageSrc="/images/connect_ledger_indicator_connected.svg"
+        heading="Select ledger accounts"
+        subHeading="You can select as many as you want"
+      >
+        <div className="derivation_path">
+          <OnboardingDerivationPathSelectAlt
+            onChange={(value) => {
+              setParentPath(value);
+            }}
+          />
+        </div>
+        {parentPath !== null && (
+          <LedgerAccountList
+            device={device}
+            parentPath={parentPath}
+            onConnect={onConnect}
+          />
+        )}
+      </LedgerPanelContainer>
+      <style jsx>{`
         .derivation_path {
           margin: 0.5rem 0;
           padding: 1rem 1.5rem;
@@ -376,6 +376,6 @@ export default function LedgerImportAccounts({
           background: var(--eerie-black-100);
         }
       `}</style>
-		</>
-	);
+    </>
+  );
 }

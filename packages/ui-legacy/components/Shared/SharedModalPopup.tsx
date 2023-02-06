@@ -4,49 +4,49 @@ import classNames from "clsx";
 import { useOnClickOutside } from "../../hooks";
 
 export interface SharedModalProps {
-	children: ReactNode;
-	header: string;
-	onClose: () => void;
-	isOpen: boolean;
-	minHeight?: string;
-	closeOnOverlayClick?: boolean;
+  children: ReactNode;
+  header: string;
+  onClose: () => void;
+  isOpen: boolean;
+  minHeight?: string;
+  closeOnOverlayClick?: boolean;
 }
 
 const modalElement = document.getElementById("pokt-wallet-root") as HTMLElement;
 
 export default function SharedModalPopup({
-	children,
-	header,
-	onClose,
-	isOpen,
-	minHeight,
-	closeOnOverlayClick = true,
+  children,
+  header,
+  onClose,
+  isOpen,
+  minHeight,
+  closeOnOverlayClick = true,
 }: SharedModalProps) {
-	const ref = useRef(null);
+  const ref = useRef(null);
 
-	useOnClickOutside(ref, closeOnOverlayClick ? onClose : () => {});
+  useOnClickOutside(ref, closeOnOverlayClick ? onClose : () => {});
 
-	return createPortal(
-		isOpen ? (
-			<>
-				<div className={classNames("modal", { open: isOpen })}>
-					<div className="modal_overlay" />
-					<div className="modal_content" ref={ref}>
-						<button type="button" aria-label="close modal">
-							<button
-								type="button"
-								className="icon_close"
-								onClick={onClose}
-								aria-label="close modal"
-							/>
-						</button>
-						<div className="modal_body">
-							<h2 className="modal_header">{header}</h2>
-							{children}
-						</div>
-					</div>
-				</div>
-				<style jsx>{`
+  return createPortal(
+    isOpen ? (
+      <>
+        <div className={classNames("modal", { open: isOpen })}>
+          <div className="modal_overlay" />
+          <div className="modal_content" ref={ref}>
+            <button type="button" aria-label="close modal">
+              <button
+                type="button"
+                className="icon_close"
+                onClick={onClose}
+                aria-label="close modal"
+              />
+            </button>
+            <div className="modal_body">
+              <h2 className="modal_header">{header}</h2>
+              {children}
+            </div>
+          </div>
+        </div>
+        <style jsx>{`
           .modal {
             position: fixed;
             display: none;
@@ -109,8 +109,8 @@ export default function SharedModalPopup({
             margin-bottom: 24px;
           }
         `}</style>
-			</>
-		) : null,
-		modalElement,
-	);
+      </>
+    ) : null,
+    modalElement
+  );
 }

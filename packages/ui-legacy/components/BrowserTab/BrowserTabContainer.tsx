@@ -1,14 +1,14 @@
 import React, { ReactElement } from "react";
 
 export default function BrowserTabContainer({
-	children,
+  children,
 }: {
-	children: React.ReactNode;
+  children: React.ReactNode;
 }): ReactElement {
-	return (
-		<>
-			<div className="container">{children}</div>
-			<style jsx>{`
+  return (
+    <>
+      <div className="container">{children}</div>
+      <style jsx>{`
         .container {
           height: 100%;
           background: linear-gradient(
@@ -18,6 +18,6 @@ export default function BrowserTabContainer({
           );
         }
       `}</style>
-		</>
-	);
+    </>
+  );
 }

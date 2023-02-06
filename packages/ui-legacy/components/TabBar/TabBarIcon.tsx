@@ -3,30 +3,30 @@ import classNames from "clsx";
 import { useHistory } from "react-router-dom";
 
 interface Props {
-	name: string;
-	isActive: boolean;
+  name: string;
+  isActive: boolean;
 }
 
 export default function TabBarIcon(props: Props): ReactElement {
-	const history = useHistory();
+  const history = useHistory();
 
-	const { name, isActive } = props;
+  const { name, isActive } = props;
 
-	return (
-		<>
-			<button
-				type="button"
-				onClick={() => {
-					history.push(`/${name}`);
-				}}
-			>
-				<div className={classNames("tab_bar_icon_wrap", { active: isActive })}>
-					<div className={classNames("icon")} />
-					<span>{name}</span>
-				</div>
-			</button>
-			<style jsx>
-				{`
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => {
+          history.push(`/${name}`);
+        }}
+      >
+        <div className={classNames("tab_bar_icon_wrap", { active: isActive })}>
+          <div className={classNames("icon")} />
+          <span>{name}</span>
+        </div>
+      </button>
+      <style jsx>
+        {`
           .tab_bar_icon_wrap {
             display: flex;
             flex-direction: column;
@@ -81,11 +81,11 @@ export default function TabBarIcon(props: Props): ReactElement {
             color: var(--aqua);
           }
         `}
-			</style>
-		</>
-	);
+      </style>
+    </>
+  );
 }
 
 TabBarIcon.defaultProps = {
-	isActive: false,
+  isActive: false,
 };

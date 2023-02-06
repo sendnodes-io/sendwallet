@@ -1,15 +1,15 @@
 import React, { ReactElement, useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import {
-	useAreKeyringsUnlocked,
-	useBackgroundDispatch,
-	useBackgroundSelector,
-	useIsInTab,
+  useAreKeyringsUnlocked,
+  useBackgroundDispatch,
+  useBackgroundSelector,
+  useIsInTab,
 } from "../../hooks";
 import {
-	OnboardingImportKeyfileIcon,
-	OnboardingImportRecoveryPhraseIcon,
-	OnboardingNewAccountIcon,
+  OnboardingImportKeyfileIcon,
+  OnboardingImportRecoveryPhraseIcon,
+  OnboardingNewAccountIcon,
 } from "../../components/Onboarding/Icons";
 import styles from "../../components/Onboarding/styles";
 import SharedPopoutOpen from "../../components/Shared/SharedPopoutOpen";
@@ -17,136 +17,136 @@ import SharedSplashScreen from "../../components/Shared/SharedSplashScreen";
 import { InformationCircleIcon } from "@heroicons/react/outline";
 import SharedModalPopup from "@sendnodes/pokt-wallet-ui/components/Shared/SharedModalPopup";
 import SharedModal, {
-	SharedModalProps,
+  SharedModalProps,
 } from "@sendnodes/pokt-wallet-ui/components/Shared/SharedModal";
 import SharedAddressInput from "@sendnodes/pokt-wallet-ui/components/Shared/SharedAddressInput";
 import { POCKET } from "@sendnodes/pokt-wallet-background/constants";
 import {
-	addAddressNetwork,
-	clearAddingAddressNetwork,
+  addAddressNetwork,
+  clearAddingAddressNetwork,
 } from "@sendnodes/pokt-wallet-background/redux-slices/accounts";
 import SharedButton from "@sendnodes/pokt-wallet-ui/components/Shared/SharedButton";
 import {
-	selectCurrentAccount,
-	getAccountData,
+  selectCurrentAccount,
+  getAccountData,
 } from "@sendnodes/pokt-wallet-background/redux-slices/selectors";
 import {
-	setNewSelectedAccount,
-	setSnackbarMessage,
+  setNewSelectedAccount,
+  setSnackbarMessage,
 } from "@sendnodes/pokt-wallet-background/redux-slices/ui";
 
 export default function OnboardingAddAccount(): ReactElement {
-	const history = useHistory();
-	const [helpModalOpen, setHelpModalOpen] = useState(false);
+  const history = useHistory();
+  const [helpModalOpen, setHelpModalOpen] = useState(false);
 
-	const hasAccounts = useBackgroundSelector(
-		(state) => Object.keys(state.account.accountsData).length > 0,
-	);
+  const hasAccounts = useBackgroundSelector(
+    (state) => Object.keys(state.account.accountsData).length > 0
+  );
 
-	if (!useIsInTab("/onboarding/add-wallet")) {
-		return <SharedPopoutOpen />;
-	}
+  if (!useIsInTab("/onboarding/add-wallet")) {
+    return <SharedPopoutOpen />;
+  }
 
-	// ensure wallet password is set before accepting any accounts
-	if (!useAreKeyringsUnlocked(true)) {
-		return <SharedSplashScreen />;
-	}
+  // ensure wallet password is set before accepting any accounts
+  if (!useAreKeyringsUnlocked(true)) {
+    return <SharedSplashScreen />;
+  }
 
-	return (
-		<section className="start_wrap">
-			<div className="top">
-				<div className="absolute left-3 top-3">
-					<button
-						type="button"
-						aria-label="help"
-						className="group hover:text-white"
-						title={"Need Help?"}
-						onClick={() => {
-							setHelpModalOpen(true);
-						}}
-					>
-						<InformationCircleIcon className="h-4 w-5 inline-flex" />
-						<span className="w-0 opacity-0 group-hover:w-auto group-hover:opacity-100 transition duration-300">
-							Need Help?
-						</span>
-					</button>
-				</div>
+  return (
+    <section className="start_wrap">
+      <div className="top">
+        <div className="absolute left-3 top-3">
+          <button
+            type="button"
+            aria-label="help"
+            className="group hover:text-white"
+            title={"Need Help?"}
+            onClick={() => {
+              setHelpModalOpen(true);
+            }}
+          >
+            <InformationCircleIcon className="h-4 w-5 inline-flex" />
+            <span className="w-0 opacity-0 group-hover:w-auto group-hover:opacity-100 transition duration-300">
+              Need Help?
+            </span>
+          </button>
+        </div>
 
-				<h1>
-					<b>Add / Import</b> Accounts
-				</h1>
+        <h1>
+          <b>Add / Import</b> Accounts
+        </h1>
 
-				{hasAccounts && (
-					<button
-						type="button"
-						aria-label="close"
-						className="icon_close"
-						onClick={() => {
-							if (history.action !== "POP") history.goBack();
-							else history.push("/");
-						}}
-					/>
-				)}
-			</div>
-			<div className="add_account_section">
-				<div className="add_account_row_wrap">
-					<div className="add_account_row">
-						<div className="add_account_icon">
-							<Link to="/onboarding/save-seed">
-								<OnboardingNewAccountIcon />
-							</Link>
-						</div>
-						<div className="add_account_text">
-							<Link to="/onboarding/save-seed">
-								<h2>+ New Account</h2>
-							</Link>
-							<p>Create a new account by generating a new recovery phrase</p>
-						</div>
-					</div>
-				</div>
-				<div className="add_account_row_wrap">
-					<div className="add_account_row">
-						<div className="add_account_icon">
-							<Link to="/onboarding/import-seed">
-								<OnboardingImportRecoveryPhraseIcon />
-							</Link>
-						</div>
-						<div className="add_account_text">
-							<Link to="/onboarding/import-seed">
-								<h2>Using Recovery Phrase</h2>
-							</Link>
-							<p>Recover an existing wallet by entering the recovery phrase</p>
-						</div>
-					</div>
-				</div>
-				<div className="add_account_row_wrap">
-					<div className="add_account_row">
-						<div className="add_account_icon">
-							<Link to="/onboarding/import-keyfile">
-								<OnboardingImportKeyfileIcon />
-							</Link>
-						</div>
-						<div className="add_account_text">
-							<Link to="/onboarding/import-keyfile">
-								<h2>Using Keyfile or Private Key</h2>
-							</Link>
-							<p>
-								Add a POKT keyfile wallet created on the official POKT network
-								or a private key.
-							</p>
-						</div>
-					</div>
-				</div>
-			</div>
-			{helpModalOpen && (
-				<HelpModal
-					onClose={() => setHelpModalOpen(false)}
-					isOpen={helpModalOpen}
-				/>
-			)}
-			<style jsx>{styles}</style>
-			<style jsx>
-				{`
+        {hasAccounts && (
+          <button
+            type="button"
+            aria-label="close"
+            className="icon_close"
+            onClick={() => {
+              if (history.action !== "POP") history.goBack();
+              else history.push("/");
+            }}
+          />
+        )}
+      </div>
+      <div className="add_account_section">
+        <div className="add_account_row_wrap">
+          <div className="add_account_row">
+            <div className="add_account_icon">
+              <Link to="/onboarding/save-seed">
+                <OnboardingNewAccountIcon />
+              </Link>
+            </div>
+            <div className="add_account_text">
+              <Link to="/onboarding/save-seed">
+                <h2>+ New Account</h2>
+              </Link>
+              <p>Create a new account by generating a new recovery phrase</p>
+            </div>
+          </div>
+        </div>
+        <div className="add_account_row_wrap">
+          <div className="add_account_row">
+            <div className="add_account_icon">
+              <Link to="/onboarding/import-seed">
+                <OnboardingImportRecoveryPhraseIcon />
+              </Link>
+            </div>
+            <div className="add_account_text">
+              <Link to="/onboarding/import-seed">
+                <h2>Using Recovery Phrase</h2>
+              </Link>
+              <p>Recover an existing wallet by entering the recovery phrase</p>
+            </div>
+          </div>
+        </div>
+        <div className="add_account_row_wrap">
+          <div className="add_account_row">
+            <div className="add_account_icon">
+              <Link to="/onboarding/import-keyfile">
+                <OnboardingImportKeyfileIcon />
+              </Link>
+            </div>
+            <div className="add_account_text">
+              <Link to="/onboarding/import-keyfile">
+                <h2>Using Keyfile or Private Key</h2>
+              </Link>
+              <p>
+                Add a POKT keyfile wallet created on the official POKT network
+                or a private key.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      {helpModalOpen && (
+        <HelpModal
+          onClose={() => setHelpModalOpen(false)}
+          isOpen={helpModalOpen}
+        />
+      )}
+      <style jsx>{styles}</style>
+      <style jsx>
+        {`
           .start_wrap {
             background-image: url(./images/textures/wallet_texture@2x.png);
             background-position: center 0;
@@ -239,135 +239,135 @@ export default function OnboardingAddAccount(): ReactElement {
             height: 2.75rem;
           }
         `}
-			</style>
-		</section>
-	);
+      </style>
+    </section>
+  );
 }
 
 function HelpModal({
-	isOpen,
-	onClose,
+  isOpen,
+  onClose,
 }: Pick<SharedModalProps, "isOpen" | "onClose">) {
-	const [isMounted, setIsMounted] = useState(false);
-	const dispatch = useBackgroundDispatch();
-	const history = useHistory();
-	const [address, setAddress] = useState<string>("");
+  const [isMounted, setIsMounted] = useState(false);
+  const dispatch = useBackgroundDispatch();
+  const history = useHistory();
+  const [address, setAddress] = useState<string>("");
 
-	const accountData = useBackgroundSelector((state) =>
-		getAccountData(state, address),
-	);
-	const currentAccount = useBackgroundSelector(selectCurrentAccount);
-	const isAddingAccount = useBackgroundSelector(
-		(state) => state.account.addingAddressNetwork,
-	);
+  const accountData = useBackgroundSelector((state) =>
+    getAccountData(state, address)
+  );
+  const currentAccount = useBackgroundSelector(selectCurrentAccount);
+  const isAddingAccount = useBackgroundSelector(
+    (state) => state.account.addingAddressNetwork
+  );
 
-	useEffect(() => {
-		console.debug("accountData", {
-			accountData,
-			currentAccount,
-			isAddingAccount,
-		});
+  useEffect(() => {
+    console.debug("accountData", {
+      accountData,
+      currentAccount,
+      isAddingAccount,
+    });
 
-		if (!isMounted) return;
+    if (!isMounted) return;
 
-		if (accountData && accountData !== "loading") {
-			if (isAddingAccount === "fulfilled") {
-				dispatch(clearAddingAddressNetwork()); // clear the state
-				dispatch(
-					setNewSelectedAccount({
-						address: accountData.address,
-						network: accountData.network,
-					}),
-				);
-				history.replace("/");
-			} else if (isAddingAccount === "rejected") {
-				dispatch(clearAddingAddressNetwork()); // clear the state
-				dispatch(setSnackbarMessage("Something went wrong. Please try again."));
-			}
-		}
-	}, [
-		currentAccount,
-		isAddingAccount,
-		accountData,
-		address,
-		history,
-		isMounted,
-	]);
+    if (accountData && accountData !== "loading") {
+      if (isAddingAccount === "fulfilled") {
+        dispatch(clearAddingAddressNetwork()); // clear the state
+        dispatch(
+          setNewSelectedAccount({
+            address: accountData.address,
+            network: accountData.network,
+          })
+        );
+        history.replace("/");
+      } else if (isAddingAccount === "rejected") {
+        dispatch(clearAddingAddressNetwork()); // clear the state
+        dispatch(setSnackbarMessage("Something went wrong. Please try again."));
+      }
+    }
+  }, [
+    currentAccount,
+    isAddingAccount,
+    accountData,
+    address,
+    history,
+    isMounted,
+  ]);
 
-	// needs to run last
-	useEffect(() => {
-		if (!isMounted) {
-			// start fresh
-			dispatch(clearAddingAddressNetwork());
-			setIsMounted(true);
-		}
-	}, [dispatch, isAddingAccount]);
+  // needs to run last
+  useEffect(() => {
+    if (!isMounted) {
+      // start fresh
+      dispatch(clearAddingAddressNetwork());
+      setIsMounted(true);
+    }
+  }, [dispatch, isAddingAccount]);
 
-	return (
-		<SharedModalPopup header="Need Help? 🙋‍♀️" isOpen={isOpen} onClose={onClose}>
-			<div>
-				<p>
-					Please visit our{" "}
-					<a
-						href="https://docs.sendnodes.net/start-here/overview"
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						FAQ
-					</a>{" "}
-					or{" "}
-					<a
-						href="https://discord.gg/Gh76tPkjTn"
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						join our Discord
-					</a>{" "}
-					for support.
-				</p>
+  return (
+    <SharedModalPopup header="Need Help? 🙋‍♀️" isOpen={isOpen} onClose={onClose}>
+      <div>
+        <p>
+          Please visit our{" "}
+          <a
+            href="https://docs.sendnodes.net/start-here/overview"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            FAQ
+          </a>{" "}
+          or{" "}
+          <a
+            href="https://discord.gg/Gh76tPkjTn"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            join our Discord
+          </a>{" "}
+          for support.
+        </p>
 
-				<form
-					className="mt-2 py-4"
-					onSubmit={(e) => {
-						e.preventDefault();
+        <form
+          className="mt-2 py-4"
+          onSubmit={(e) => {
+            e.preventDefault();
 
-						if (isAddingAccount === "pending") {
-							return;
-						}
+            if (isAddingAccount === "pending") {
+              return;
+            }
 
-						dispatch(
-							addAddressNetwork({
-								address,
-								network: POCKET,
-							}),
-						);
-					}}
-				>
-					<p className="mb-4">
-						Try SendWallet by entering your public POKT Address below:
-					</p>
-					<SharedAddressInput
-						label="Address"
-						onAddressChange={(value) => {
-							if (value) {
-								setAddress(value);
-							}
-						}}
-					/>
-					<SharedButton
-						isFormSubmit={true}
-						type="primary"
-						className="mt-2"
-						isDisabled={
-							!address || address.length === 0 || isAddingAccount === "pending"
-						}
-						isLoading={isAddingAccount === "pending"}
-						size={"medium"}
-					>
-						Submit
-					</SharedButton>
-				</form>
-			</div>
-		</SharedModalPopup>
-	);
+            dispatch(
+              addAddressNetwork({
+                address,
+                network: POCKET,
+              })
+            );
+          }}
+        >
+          <p className="mb-4">
+            Try SendWallet by entering your public POKT Address below:
+          </p>
+          <SharedAddressInput
+            label="Address"
+            onAddressChange={(value) => {
+              if (value) {
+                setAddress(value);
+              }
+            }}
+          />
+          <SharedButton
+            isFormSubmit={true}
+            type="primary"
+            className="mt-2"
+            isDisabled={
+              !address || address.length === 0 || isAddingAccount === "pending"
+            }
+            isLoading={isAddingAccount === "pending"}
+            size={"medium"}
+          >
+            Submit
+          </SharedButton>
+        </form>
+      </div>
+    </SharedModalPopup>
+  );
 }

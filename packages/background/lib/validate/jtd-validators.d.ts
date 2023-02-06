@@ -1,31 +1,31 @@
 import { JTDDataType, ValidateFunction } from "ajv/dist/jtd";
 import { swapPriceJTD, swapQuoteJTD } from "./0x-swap";
 import {
-	alchemyGetAssetTransfersJTD,
-	alchemyTokenBalanceJTD,
-	alchemyTokenMetadataJTD,
+  alchemyGetAssetTransfersJTD,
+  alchemyTokenBalanceJTD,
+  alchemyTokenMetadataJTD,
 } from "./alchemy";
 import { metadataJTD } from "./erc721";
 
 export const isValidAlchemyAssetTransferResponse: ValidateFunction<
-	JTDDataType<typeof alchemyGetAssetTransfersJTD>
+  JTDDataType<typeof alchemyGetAssetTransfersJTD>
 >;
 
 export const isValidAlchemyTokenBalanceResponse: ValidateFunction<
-	JTDDataType<typeof alchemyTokenBalanceJTD>
+  JTDDataType<typeof alchemyTokenBalanceJTD>
 >;
 
 export const isValidAlchemyTokenMetadataResponse: ValidateFunction<
-	JTDDataType<typeof alchemyTokenMetadataJTD>
+  JTDDataType<typeof alchemyTokenMetadataJTD>
 >;
 export const isValidMetadata: ValidateFunction<JTDDataType<typeof metadataJTD>>;
 
 export const isValidSwapPriceResponse: ValidateFunction<
-	JTDDataType<typeof swapPriceJTD>
+  JTDDataType<typeof swapPriceJTD>
 >;
 
 export const isValidSwapQuoteResponse: ValidateFunction<
-	JTDDataType<typeof swapQuoteJTD>
+  JTDDataType<typeof swapQuoteJTD>
 >;
 
 /**

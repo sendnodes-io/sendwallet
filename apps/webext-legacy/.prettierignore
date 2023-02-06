@@ -1,7 +1,0 @@
-dist
-*.js
-*.jsx
-*.ts
-*.tsx
-size-plugin.json
-*.json

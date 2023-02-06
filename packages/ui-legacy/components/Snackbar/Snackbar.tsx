@@ -2,8 +2,8 @@ import React, { ReactElement, useCallback, useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 import classNames from "clsx";
 import {
-	selectSnackbarMessage,
-	clearSnackbarMessage,
+  selectSnackbarMessage,
+  clearSnackbarMessage,
 } from "@sendnodes/pokt-wallet-background/redux-slices/ui";
 import { useBackgroundSelector, useDelayContentChange } from "../../hooks";
 
@@ -15,40 +15,40 @@ const DISMISS_MS = 3000;
 const DISMISS_ANIMATION_MS = 800;
 
 export default function Snackbar(): ReactElement {
-	const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-	const snackbarMessage = useBackgroundSelector(selectSnackbarMessage);
-	const shouldHide = snackbarMessage.trim() === "";
-	// Delay the display message clearing to allow the animation to complete
-	// before the message is hidden.
-	const displayMessage = useDelayContentChange(
-		snackbarMessage,
-		shouldHide,
-		DISMISS_ANIMATION_MS,
-	);
+  const snackbarMessage = useBackgroundSelector(selectSnackbarMessage);
+  const shouldHide = snackbarMessage.trim() === "";
+  // Delay the display message clearing to allow the animation to complete
+  // before the message is hidden.
+  const displayMessage = useDelayContentChange(
+    snackbarMessage,
+    shouldHide,
+    DISMISS_ANIMATION_MS
+  );
 
-	const snackbarTimeout = useRef<number | undefined>();
+  const snackbarTimeout = useRef<number | undefined>();
 
-	const clearSnackbarTimeout = useCallback(() => {
-		if (typeof snackbarTimeout.current !== "undefined") {
-			clearTimeout(snackbarTimeout.current);
-			snackbarTimeout.current = undefined;
-		}
-	}, []);
+  const clearSnackbarTimeout = useCallback(() => {
+    if (typeof snackbarTimeout.current !== "undefined") {
+      clearTimeout(snackbarTimeout.current);
+      snackbarTimeout.current = undefined;
+    }
+  }, []);
 
-	useEffect(() => {
-		clearSnackbarTimeout();
+  useEffect(() => {
+    clearSnackbarTimeout();
 
-		snackbarTimeout.current = window.setTimeout(() => {
-			dispatch(clearSnackbarMessage());
-		}, DISMISS_MS);
-	}, [snackbarMessage, clearSnackbarTimeout, dispatch]);
+    snackbarTimeout.current = window.setTimeout(() => {
+      dispatch(clearSnackbarMessage());
+    }, DISMISS_MS);
+  }, [snackbarMessage, clearSnackbarTimeout, dispatch]);
 
-	return (
-		<div className={classNames("snackbar_wrap", { hidden: shouldHide })}>
-			{displayMessage}
-			<style jsx>
-				{`
+  return (
+    <div className={classNames("snackbar_wrap", { hidden: shouldHide })}>
+      {displayMessage}
+      <style jsx>
+        {`
           .snackbar_wrap {
             max-width: 22rem;
             width: auto;
@@ -81,7 +81,7 @@ export default function Snackbar(): ReactElement {
             transform: translateY(0.625rem);
           }
         `}
-			</style>
-		</div>
-	);
+      </style>
+    </div>
+  );
 }

@@ -36,11 +36,11 @@
     "@ethersproject/providers": "^5.5.3",
     "@ethersproject/transactions": "^5.5.0",
     "@ethersproject/web": "^5.5.1",
-    "@ledgerhq/devices": "^6.20.0",
-    "@ledgerhq/errors": "^6.10.0",
-    "@ledgerhq/hw-app-eth": "^6.23.0",
-    "@ledgerhq/hw-transport": "^6.20.0",
-    "@ledgerhq/hw-transport-webusb": "^6.20.0",
+    "@ledgerhq/devices": "^7.0.7",
+    "@ledgerhq/errors": "^6.12.3",
+    "@ledgerhq/hw-app-eth": "^6.30.5",
+    "@ledgerhq/hw-transport": "^6.27.10",
+    "@ledgerhq/hw-transport-webusb": "^6.27.10",
     "@reduxjs/toolkit": "^1.6.1",
     "@sendnodes/hd-keyring": "0.1.0",
     "@sendnodes/pocket-js": "0.8.0-rc",
@@ -64,6 +64,7 @@
     "webextension-polyfill": "^0.8.0"
   },
   "devDependencies": {
+    "@jest/globals": "^29.4.1",
     "@types/chrome": "^0.0.190",
     "@types/webextension-polyfill": "^0.9.0",
     "crypto-browserify": "^3.12.0",
@@ -74,10 +75,5 @@
     "remote-redux-devtools": "^0.5.16",
     "ts-node": "^10.9.1",
     "typescript": "^4.6.4"
-  },
-  "workspaces": {
-    "installConfig": {
-      "hoistingLimits": "dependencies"
-    }
   }
 }

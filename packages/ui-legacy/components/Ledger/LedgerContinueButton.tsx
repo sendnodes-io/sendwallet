@@ -1,25 +1,25 @@
 import React from "react";
 
 export default function LedgerContinueButton({
-	children,
-	isDisabled = false,
-	onClick,
+  children,
+  isDisabled = false,
+  onClick,
 }: {
-	children: React.ReactNode;
-	isDisabled?: boolean;
-	onClick: () => void;
+  children: React.ReactNode;
+  isDisabled?: boolean;
+  onClick: () => void;
 }): React.ReactElement {
-	return (
-		<>
-			<button
-				className="button"
-				disabled={isDisabled}
-				type="button"
-				onClick={onClick}
-			>
-				{children}
-			</button>
-			<style jsx>{`
+  return (
+    <>
+      <button
+        className="button"
+        disabled={isDisabled}
+        type="button"
+        onClick={onClick}
+      >
+        {children}
+      </button>
+      <style jsx>{`
         .button {
           background: var(--aqua);
           border-radius: 4px;
@@ -43,6 +43,6 @@ export default function LedgerContinueButton({
           color: var(--cod-gray-200);
         }
       `}</style>
-		</>
-	);
+    </>
+  );
 }

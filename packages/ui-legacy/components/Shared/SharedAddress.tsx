@@ -8,15 +8,15 @@ import SharedLoadingSpinner from "./SharedLoadingSpinner";
 import SharedTooltip from "./SharedTooltip";
 
 type SharedAddressProps = {
-	address: string;
-	name?: string | undefined;
-	nameResolverSystem?: NameResolverSystem;
-	alwaysShowAddress: boolean;
-	showAvatar?: boolean;
-	className?: string;
-	onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-	title?: string;
-	icon?: JSX.Element;
+  address: string;
+  name?: string | undefined;
+  nameResolverSystem?: NameResolverSystem;
+  alwaysShowAddress: boolean;
+  showAvatar?: boolean;
+  className?: string;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  title?: string;
+  icon?: JSX.Element;
 };
 
 /**
@@ -35,68 +35,68 @@ type SharedAddressProps = {
  * `nameResolverSystem` prop is ignored.
  */
 export default function SharedAddress({
-	name,
-	address,
-	nameResolverSystem,
-	alwaysShowAddress,
-	showAvatar = false,
-	className = "",
-	onClick = undefined,
-	title = undefined,
-	icon = undefined,
+  name,
+  address,
+  nameResolverSystem,
+  alwaysShowAddress,
+  showAvatar = false,
+  className = "",
+  onClick = undefined,
+  title = undefined,
+  icon = undefined,
 }: SharedAddressProps): ReactElement {
-	const dispatch = useBackgroundDispatch();
-	const currentAccountTotal = showAvatar
-		? useBackgroundSelector(selectCurrentAccountTotal)
-		: null;
+  const dispatch = useBackgroundDispatch();
+  const currentAccountTotal = showAvatar
+    ? useBackgroundSelector(selectCurrentAccountTotal)
+    : null;
 
-	const primaryText = name || truncateAddress(address, 5, -3);
-	const isDefaultCopy = onClick === undefined;
-	const copyAddress = useCallback(
-		(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-			e.stopPropagation();
-			navigator.clipboard.writeText(address);
-			dispatch(setSnackbarMessage("Address copied to clipboard"));
-		},
-		[address, dispatch],
-	);
+  const primaryText = name || truncateAddress(address, 5, -3);
+  const isDefaultCopy = onClick === undefined;
+  const copyAddress = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+      e.stopPropagation();
+      navigator.clipboard.writeText(address);
+      dispatch(setSnackbarMessage("Address copied to clipboard"));
+    },
+    [address, dispatch]
+  );
 
-	return (
-		<button
-			type="button"
-			className={className}
-			onClick={isDefaultCopy ? copyAddress : onClick}
-			title={isDefaultCopy ? `Copy to clipboard:\n${address}` : title}
-		>
-			{showAvatar && (
-				<div className="avatar">
-					{currentAccountTotal?.avatarURL &&
-					currentAccountTotal.avatarURL !== "" ? (
-						<img alt="" src={currentAccountTotal.avatarURL} />
-					) : (
-						<SharedLoadingSpinner size="medium" />
-					)}
-				</div>
-			)}
-			<small className="whitespace-nowrap">{primaryText}</small>
-			{name === undefined || nameResolverSystem === undefined ? (
-				<></>
-			) : (
-				<>
-					<SharedTooltip width={130}>
-						<p className="name_source_tooltip">
-							Resolved using {nameResolverSystem}
-						</p>
-					</SharedTooltip>{" "}
-				</>
-			)}
-			{alwaysShowAddress && name ? (
-				<p className="detail">{truncateAddress(address)}</p>
-			) : (
-				<></>
-			)}
-			{isDefaultCopy ? <div className="copy_icon" /> : icon}
-			<style jsx>{`
+  return (
+    <button
+      type="button"
+      className={className}
+      onClick={isDefaultCopy ? copyAddress : onClick}
+      title={isDefaultCopy ? `Copy to clipboard:\n${address}` : title}
+    >
+      {showAvatar && (
+        <div className="avatar">
+          {currentAccountTotal?.avatarURL &&
+          currentAccountTotal.avatarURL !== "" ? (
+            <img alt="" src={currentAccountTotal.avatarURL} />
+          ) : (
+            <SharedLoadingSpinner size="medium" />
+          )}
+        </div>
+      )}
+      <small className="whitespace-nowrap">{primaryText}</small>
+      {name === undefined || nameResolverSystem === undefined ? (
+        <></>
+      ) : (
+        <>
+          <SharedTooltip width={130}>
+            <p className="name_source_tooltip">
+              Resolved using {nameResolverSystem}
+            </p>
+          </SharedTooltip>{" "}
+        </>
+      )}
+      {alwaysShowAddress && name ? (
+        <p className="detail">{truncateAddress(address)}</p>
+      ) : (
+        <></>
+      )}
+      {isDefaultCopy ? <div className="copy_icon" /> : icon}
+      <style jsx>{`
         button {
           transition: 300ms color;
           display: flex;
@@ -159,10 +159,10 @@ export default function SharedAddress({
           border-radius: 1rem;
         }
       `}</style>
-		</button>
-	);
+    </button>
+  );
 }
 
 SharedAddress.defaultProps = {
-	alwaysShowAddress: false,
+  alwaysShowAddress: false,
 };

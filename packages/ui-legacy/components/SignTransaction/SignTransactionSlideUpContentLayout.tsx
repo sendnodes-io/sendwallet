@@ -4,41 +4,41 @@ import { useBackgroundDispatch } from "../../hooks";
 import SharedButton from "../Shared/SharedButton";
 
 export default function SignTransactionSlideUpContentLayout({
-	title,
-	helpMessage,
-	steps,
-	onHelpClick,
+  title,
+  helpMessage,
+  steps,
+  onHelpClick,
 }: {
-	title: ReactNode;
-	helpMessage: ReactNode;
-	steps: ReactNode[];
-	onHelpClick?: () => void;
+  title: ReactNode;
+  helpMessage: ReactNode;
+  steps: ReactNode[];
+  onHelpClick?: () => void;
 }): ReactElement {
-	const dispatch = useBackgroundDispatch();
-	return (
-		<div className="container">
-			<div className="title">{title}</div>
-			<div className="help">
-				<div className="message">{helpMessage}</div>
-				<ol className="steps">
-					{steps.map((step) => (
-						<li>{step}</li>
-					))}
-				</ol>
-			</div>
-			<div className="footer_actions">
-				<SharedButton type="tertiaryGray" size="small" onClick={onHelpClick}>
-					I need help
-				</SharedButton>
-				<SharedButton
-					type="primary"
-					size="medium"
-					onClick={() => dispatch(connectLedger())}
-				>
-					Refresh
-				</SharedButton>
-			</div>
-			<style jsx>{`
+  const dispatch = useBackgroundDispatch();
+  return (
+    <div className="container">
+      <div className="title">{title}</div>
+      <div className="help">
+        <div className="message">{helpMessage}</div>
+        <ol className="steps">
+          {steps.map((step) => (
+            <li>{step}</li>
+          ))}
+        </ol>
+      </div>
+      <div className="footer_actions">
+        <SharedButton type="tertiaryGray" size="small" onClick={onHelpClick}>
+          I need help
+        </SharedButton>
+        <SharedButton
+          type="primary"
+          size="medium"
+          onClick={() => dispatch(connectLedger())}
+        >
+          Refresh
+        </SharedButton>
+      </div>
+      <style jsx>{`
         .container {
           margin-top: -24px; // Revert slide-up padding-top (FIXME?)
         }
@@ -101,6 +101,6 @@ export default function SignTransactionSlideUpContentLayout({
           box-shadow: 0 0 5px rgba(0, 20, 19, 0.5);
         }
       `}</style>
-		</div>
-	);
+    </div>
+  );
 }

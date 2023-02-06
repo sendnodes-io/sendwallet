@@ -1,67 +1,69 @@
 import React from "react";
 
 export default function SharedSplashScreen({
-	children,
-}: { children?: React.ReactNode }) {
-	return (
-		<div className="">
-			<img
-				className="splash_screen one"
-				src="./images/splash/1@4x.png"
-				alt="SendWallet Splash Screen"
-				width="100"
-				height="100"
-				draggable="false"
-			/>
-			<img
-				className="splash_screen two"
-				src="./images/splash/2@4x.png"
-				alt="SendWallet Splash Screen"
-				width="100"
-				height="100"
-				draggable="false"
-			/>
-			<img
-				className="splash_screen three"
-				src="./images/splash/3@4x.png"
-				alt="SendWallet Splash Screen"
-				width="100"
-				height="100"
-				draggable="false"
-			/>
-			<img
-				className="splash_screen four"
-				src="./images/splash/4@4x.png"
-				alt="SendWallet Splash Screen"
-				width="100"
-				height="100"
-			/>
-			<img
-				className="splash_screen five"
-				src="./images/splash/5@4x.png"
-				alt="SendWallet Splash Screen"
-				width="100"
-				height="100"
-			/>
-			<img
-				className="splash_screen six"
-				src="./images/splash/6@4x.png"
-				alt="SendWallet Splash Screen"
-				width="100"
-				height="100"
-			/>
-			<img
-				className="splash_screen seven"
-				src="./images/splash/7@4x.png"
-				alt="SendWallet Splash Screen"
-				width="100"
-				height="100"
-			/>
-			<div className="absolute top-1/2 left-0 right-0 mx-auto mt-[100px]">
-				{children}
-			</div>
-			<style jsx>
-				{`
+  children,
+}: {
+  children?: React.ReactNode;
+}) {
+  return (
+    <div className="">
+      <img
+        className="splash_screen one"
+        src="./images/splash/1@4x.png"
+        alt="SendWallet Splash Screen"
+        width="100"
+        height="100"
+        draggable="false"
+      />
+      <img
+        className="splash_screen two"
+        src="./images/splash/2@4x.png"
+        alt="SendWallet Splash Screen"
+        width="100"
+        height="100"
+        draggable="false"
+      />
+      <img
+        className="splash_screen three"
+        src="./images/splash/3@4x.png"
+        alt="SendWallet Splash Screen"
+        width="100"
+        height="100"
+        draggable="false"
+      />
+      <img
+        className="splash_screen four"
+        src="./images/splash/4@4x.png"
+        alt="SendWallet Splash Screen"
+        width="100"
+        height="100"
+      />
+      <img
+        className="splash_screen five"
+        src="./images/splash/5@4x.png"
+        alt="SendWallet Splash Screen"
+        width="100"
+        height="100"
+      />
+      <img
+        className="splash_screen six"
+        src="./images/splash/6@4x.png"
+        alt="SendWallet Splash Screen"
+        width="100"
+        height="100"
+      />
+      <img
+        className="splash_screen seven"
+        src="./images/splash/7@4x.png"
+        alt="SendWallet Splash Screen"
+        width="100"
+        height="100"
+      />
+      <div className="absolute top-1/2 left-0 right-0 mx-auto mt-[100px]">
+        {children}
+      </div>
+      <style jsx>
+        {`
           @keyframes fadeIn {
             0% {
               opacity: 0;
@@ -119,7 +121,7 @@ export default function SharedSplashScreen({
             animation-delay: 2.75s;
           }
         `}
-			</style>
-		</div>
-	);
+      </style>
+    </div>
+  );
 }
