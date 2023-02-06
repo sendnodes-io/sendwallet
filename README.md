@@ -32,14 +32,18 @@ You'll need a few tools to get started.
 
 - NodeJS v16
 - Yarn
+- Python 3
+
+From the root of the project run the following commands:
 
 ```sh
+yarn install
 yarn build:legacy --  --config-name chrome # or firefox
 ```
 
 Once that finishes, please find the built files in the `./apps/webext-legacy/dist` directory. Then, visit <a href="chrome://extensions">chrome://extensions</a> load the `./apps/webext-legacy/dist/chrome` directory as an unpacked extension.
 
-Prepare safari build
+### Prepare safari build (highly experimental)
 
 ```sh
 xcrun safari-web-extension-converter --project-location ./ios \
