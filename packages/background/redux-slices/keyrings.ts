@@ -220,12 +220,14 @@ const keyringsSlice = createSlice({
           unlocking: "pending",
         };
       })
-      .addCase(unlockKeyrings.fulfilled, (state) => {
-        return {
-          ...state,
-          unlocking: "done",
-        };
-      })
+      // prob not needed since unlocking failed is dispatched from background
+      // done is handled by a selector
+      // .addCase(unlockKeyrings.fulfilled, (state) => {
+      //   return {
+      //     ...state,
+      //     unlocking: "done",
+      //   };
+      // })
       .addCase(deriveAddress.pending, (state) => {
         return {
           ...state,
