@@ -26,24 +26,24 @@ jobs:
       - name: Archive production webext artifacts chrome
         uses: actions/upload-artifact@v3
         with:
-          name: dist-webext-zips-chrome
+          name: dist-webext-chrome
           path: |
-            ./apps/webext/dist/*chrome*.zip
+            ./apps/webext/dist/chrome/*
       - name: Archive production webext artifacts firefox
         uses: actions/upload-artifact@v3
         with:
-          name: dist-webext-zips-firefox
+          name: dist-webext-firefox
           path: |
-            ./apps/webext/dist/*firefox*.zip
+            ./apps/webext/dist/firefox/*
       - name: Archive production webext legacy artifacts chrome
         uses: actions/upload-artifact@v3
         with:
-          name: dist-webext-legacy-zips-chrome
+          name: dist-webext-legacy-chrome
           path: |
-            ./apps/webext-legacy/dist/*chrome*.zip
+            ./apps/webext-legacy/dist/chrome/*
       - name: Archive production webext legacy artifacts firefox
         uses: actions/upload-artifact@v3
         with:
-          name: dist-webext-legacy-zips-firefox
+          name: dist-webext-legacy-firefox
           path: |
-            ./apps/webext-legacy/dist/*firefox*.zip
+            ./apps/webext-legacy/dist/firefox/*
