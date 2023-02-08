@@ -298,7 +298,10 @@ export default function AccountsNotificationPanelAccounts({
                                   updateCurrentAccount(normalizedAddress);
                               }}
                               onKeyDown={(e) => {
-                                if (e.key === "Enter") {
+                                if (
+                                  e.key === "Enter" &&
+                                  e.target === e.currentTarget
+                                ) {
                                   e.stopPropagation();
                                   e.preventDefault();
                                   updateCurrentAccount(normalizedAddress);

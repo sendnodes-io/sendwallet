@@ -49,7 +49,7 @@ export default function AccountItemOptionsMenu({
           className="icon_settings"
           role="menu"
           tabIndex={0}
-          onKeyPress={(e) => {
+          onKeyDown={(e) => {
             if (e.key === "enter") {
               setShowOptionsMenu(true);
             }
@@ -140,7 +140,7 @@ export default function AccountItemOptionsMenu({
           <div
             role="presentation"
             onClick={(e) => e.stopPropagation()}
-            onKeyPress={(e) => e.stopPropagation()}
+            onKeyDown={(e) => e.stopPropagation()}
             style={{ cursor: "default", height: "100%" }}
           >
             <AccountItemRemovalConfirm
@@ -164,7 +164,7 @@ export default function AccountItemOptionsMenu({
           <div
             role="presentation"
             onClick={(e) => e.stopPropagation()}
-            onKeyPress={(e) => e.stopPropagation()}
+            onKeyDown={(e) => e.stopPropagation()}
             style={{ cursor: "default", height: "100%" }}
           >
             <AccountItemEditName
@@ -188,7 +188,7 @@ export default function AccountItemOptionsMenu({
           <div
             role="presentation"
             onClick={(e) => e.stopPropagation()}
-            onKeyPress={(e) => e.stopPropagation()}
+            onKeyDown={(e) => e.stopPropagation()}
             style={{ cursor: "default", height: "100%" }}
           >
             <AccountItemExportPrivateKeyConfirm
