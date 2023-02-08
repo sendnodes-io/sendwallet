@@ -260,6 +260,7 @@ const baseConfig: Configuration = {
           globOptions: {
             dot: true,
             gitignore: true,
+            ignore: [".DS_Store"],
           },
         },
         {
@@ -365,6 +366,7 @@ const modeConfigs: {
         }) as unknown as WebpackPluginInstance,
       ],
       optimization: {
+        minimize: true,
         minimizer: [
           new ESBuildMinifyPlugin({
             css: true,
