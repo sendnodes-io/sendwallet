@@ -71,6 +71,9 @@ const baseConfig: Configuration = {
   devtool: !isDevelopment ? undefined : "eval-cheap-source-map",
   devServer: {
     hot: true,
+    devMiddleware: {
+      writeToDisk: true,
+    },
   },
   watchOptions: {
     ignored: "**/node_modules",
@@ -328,7 +331,6 @@ const baseConfig: Configuration = {
   optimization: {
     minimize: false,
     splitChunks: {
-      chunks: "all",
       minSize: 1e4,
       enforceSizeThreshold: 2.5e5,
       maxSize: 5e5,
@@ -349,10 +351,6 @@ const modeConfigs: {
 
     return {
       entry,
-      plugins: [
-        // no longer useful after legacy migration, not compatible with esbuild
-        isDevelopment && new ReactRefreshWebpackPlugin(),
-      ].filter(Boolean) as WebpackPluginInstance[],
     };
   },
   production: (browser) => {

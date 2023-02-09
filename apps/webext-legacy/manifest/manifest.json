@@ -28,5 +28,6 @@
   "icons": {
     "128": "icon-128-black.png"
   },
-  "permissions": ["alarms", "storage", "unlimitedStorage", "activeTab"]
+  "permissions": ["alarms", "storage", "unlimitedStorage", "activeTab"],
+  "web_accessible_resources": ["*.json", "*.txt", "*.js", "*.css"]
 }
