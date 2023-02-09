@@ -9,9 +9,6 @@
     "dev:tools": "yarn dlx @redux-devtools/cli --hostname=localhost --port=8000",
     "build": "TAMAGUI_TARGET=web NODE_ENV=production webpack build --mode production",
     "lint": "run-p 'lint:*'",
-    "lint-fix": "run-p 'lint:*:fix'",
-    "lint:config": "prettier -c '**/*.@(json|yaml|toml)'",
-    "lint:config:fix": "prettier -w '**/*.@(json|yaml|toml)'",
     "lint:js": "tsc --noEmit"
   },
   "devDependencies": {

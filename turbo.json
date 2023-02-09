@@ -6,7 +6,7 @@
       "outputs": ["dist/**", "types/**", ".next/**"]
     },
     "test": {
-      "dependsOn": ["build", "lint"],
+      "dependsOn": ["^lint", "^build", "^test"],
       "outputs": [],
       "inputs": ["**/*.tsx", "**/*.ts", "**/*.ts", "**/*.tsx"]
     },
