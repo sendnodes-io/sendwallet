@@ -328,6 +328,7 @@ const baseConfig: Configuration = {
   optimization: {
     minimize: false,
     splitChunks: {
+      chunks: "all",
       minSize: 1e4,
       enforceSizeThreshold: 2.5e5,
       maxSize: 5e5,
@@ -356,13 +357,14 @@ const modeConfigs: {
   },
   production: (browser) => {
     const date = new Date();
+    const archiveName = `SendWallet-${branch.replaceAll(/[./]/gi, "-")}-${
+      date.toISOString().split("T")[0]
+    }-${revision}-${browser}`;
     return {
       devtool: false,
       plugins: [
         new WebExtensionArchivePlugin({
-          filename: `SendWallet-${branch.replaceAll(/[./]/gi, "-")}-${
-            date.toISOString().split("T")[0]
-          }-${revision}-${browser}`,
+          filename: archiveName,
         }) as unknown as WebpackPluginInstance,
       ],
       optimization: {

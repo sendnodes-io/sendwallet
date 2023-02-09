@@ -28,7 +28,9 @@
     "dev:tools": "yarn dlx @redux-devtools/cli --hostname=localhost --port=8000",
     "devChrome": "ENABLE_REACT_DEVTOOLS=true run-p devtools \"dev {@}\" -- --config-name chrome",
     "lint": "run-p 'lint:*'",
-    "lint:ts": "tsc --noEmit"
+    "lint:ts": "tsc --noEmit",
+    "test": "run-p 'test:*'",
+    "test:web-ext-lint": "web-ext lint --source-dir=dist/firefox"
   },
   "dependencies": {
     "@ethersproject/providers": "5.5.3",
@@ -112,6 +114,7 @@
     "ts-node": "^10.9.1",
     "typescript": "^4.6.4",
     "url-loader": "^4.1.1",
+    "web-ext": "^7.5.0",
     "webextension-polyfill": "^0.10.0",
     "webpack": "^5.75.0",
     "webpack-bundle-analyzer": "^4.7.0",
