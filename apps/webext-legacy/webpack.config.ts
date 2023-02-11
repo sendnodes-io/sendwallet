@@ -16,7 +16,6 @@ import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import { getBranch, getRevision } from "build-utils/src/index";
 import WebExtensionArchivePlugin from "build-utils/src/web-extension-archive-webpack-plugin";
 import type { Configuration as WebpackDevServerConfiguration } from "webpack-dev-server";
-import ReactRefreshWebpackPlugin from "@pmmmwh/react-refresh-webpack-plugin";
 import { ESBuildMinifyPlugin } from "esbuild-loader";
 
 interface Configuration extends WebpackConfiguration {
@@ -94,9 +93,6 @@ const baseConfig: Configuration = {
                 options: {
                   cacheDirectory: true,
                   rootMode: "upward",
-                  plugins: [
-                    isDevelopment && require.resolve("react-refresh/babel"),
-                  ].filter(Boolean),
                 },
               },
               {
@@ -105,26 +101,6 @@ const baseConfig: Configuration = {
               },
             ],
           },
-
-          // {
-          // 	test: /.*\.[tj]s$/,
-          // 	// exclude: /node_modules(?!\/@sendnodes)|webpack/,
-          // 	exclude: /node_modules(?!\/@sendnodes)|webpack|packages\/ui-legacy/,
-          // 	// exclude: /node_modules/,
-          // 	use: [
-          // 		// "thread-loader",
-          // 		{
-          // 			loader: "babel-loader",
-          // 			options: {
-          // 				cacheDirectory: true,
-          // 				rootMode: "upward",
-          // 				plugins: [
-          // 					isDevelopment && require.resolve("react-refresh/babel"),
-          // 				].filter(Boolean),
-          // 			},
-          // 		},
-          // 	],
-          // },
 
           {
             test: /.*\.[tj]s$/,
