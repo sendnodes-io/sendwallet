@@ -1,6 +1,6 @@
 import config from "../tamagui.config";
 import { NavigationProvider } from "./navigation";
-import { TamaguiProvider, TamaguiProviderProps } from "@my/ui";
+import { TamaguiProvider, TamaguiProviderProps, Theme } from "@my/ui";
 import { useColorScheme } from "react-native";
 
 export function Provider({
@@ -11,11 +11,13 @@ export function Provider({
   return (
     <TamaguiProvider
       config={config}
-      disableInjectCSS
+      // disableInjectCSS
       defaultTheme={scheme === "dark" ? "dark" : "light"}
       {...rest}
     >
-      <NavigationProvider>{children}</NavigationProvider>
+      <Theme name="blue">
+        <NavigationProvider>{children}</NavigationProvider>
+      </Theme>
     </TamaguiProvider>
   );
 }

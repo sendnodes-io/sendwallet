@@ -15,7 +15,6 @@ import {
 } from "@my/ui";
 import { ChevronDown, ChevronUp } from "@tamagui/lucide-icons";
 import { useState } from "react";
-import { useLink } from "solito/link";
 
 import SendNodesLogo from "../../../assets/sendnodes/logo.svg";
 import {
@@ -36,15 +35,11 @@ const IconRewardStack = styled(YStack, {
 });
 
 export function HomeScreen() {
-  const linkProps = useLink({
-    href: "/user/nate",
-  });
-
   return (
     <YStack flex={1} backgroundColor={"$blue1"}>
       <XStack space="$4" jc="space-between" p="$4">
         <Image src={SendNodesLogo} height={48} width={278} />
-        <Button>Connect Wallet</Button>
+        <Button backgroundColor={"$color7"}>Connect Wallet</Button>
       </XStack>
 
       <YStack
@@ -159,10 +154,6 @@ export function HomeScreen() {
           </XStack>
 
           <YStack jc="center" ai="center">
-            <XStack>
-              <Button {...linkProps}>Link to user</Button>
-            </XStack>
-
             <SheetDemo />
           </YStack>
         </YStack>
