@@ -38,7 +38,7 @@ From the root of the project run the following commands:
 
 ```sh
 yarn install
-yarn build:legacy --  --config-name chrome # or firefox
+yarn build:webext --  --config-name chrome # or firefox
 ```
 
 Once that finishes, please find the built files in the `./apps/webext/dist` directory. Then, visit <a href="chrome://extensions">chrome://extensions</a> load the `./apps/webext/dist/chrome` directory as an unpacked extension.
