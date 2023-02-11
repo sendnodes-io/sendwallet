@@ -41,7 +41,7 @@ yarn install
 yarn build:legacy --  --config-name chrome # or firefox
 ```
 
-Once that finishes, please find the built files in the `./apps/webext-legacy/dist` directory. Then, visit <a href="chrome://extensions">chrome://extensions</a> load the `./apps/webext-legacy/dist/chrome` directory as an unpacked extension.
+Once that finishes, please find the built files in the `./apps/webext/dist` directory. Then, visit <a href="chrome://extensions">chrome://extensions</a> load the `./apps/webext/dist/chrome` directory as an unpacked extension.
 
 ### Prepare safari build (highly experimental)
 

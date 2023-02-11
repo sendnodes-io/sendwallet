@@ -1,12 +1,12 @@
 {
   "name": "SendWallet",
-  "version": "0.4.2",
+  "version": "0.4.6",
   "description": "Secure your POKT with a modern and simple crypto wallet. It's your POKT, store it safely.",
   "homepage_url": "https://sendwallet.net",
   "author": "https://sendwallet.net",
   "manifest_version": 2,
   "default_locale": "en",
-  "content_security_policy": "object-src 'self'; script-src 'self';",
+  "content_security_policy": "object-src 'self'; script-src 'self' 'wasm-unsafe-eval';",
   "content_scripts": [
     {
       "matches": ["file://*/*", "http://localhost/*", "https://*/*"],
@@ -28,5 +28,6 @@
   "icons": {
     "128": "icon-128-black.png"
   },
-  "permissions": ["alarms", "storage", "unlimitedStorage", "activeTab"]
+  "permissions": ["alarms", "storage", "unlimitedStorage", "activeTab"],
+  "web_accessible_resources": ["*.json", "*.txt", "*.js", "*.css"]
 }

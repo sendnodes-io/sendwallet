@@ -1,10 +1,11 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "baseUrl": ".",
     "target": "esnext",
     "lib": ["esnext", "DOM", "DOM.Iterable", "WebWorker"],
-    "allowJs": true,
     "forceConsistentCasingInFileNames": true,
+    "allowJs": true,
     "module": "esnext",
     "moduleResolution": "node",
     "esModuleInterop": true,
@@ -36,15 +37,24 @@
       "@sendnodes/window-provider": ["../../packages/window-provider"]
     }
   },
+  "ts-node": {
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
+  },
+  "references": [],
   "include": [
+    "env.d.ts",
     "src",
-    "webext-env.d.ts",
     "webpack.config.ts",
     "../../global.d.ts",
-    "../../packages/app",
-    "../../packages/ui",
+    "../../packages/ui-legacy",
     "../../packages/background",
-    "../../packages/provider-bridge"
+    "../../packages/provider-bridge",
+    "../../packages/provider-bridge-shared",
+    "../../packages/window-provider",
+    "../../packages/app",
+    "../../packages/ui"
   ],
-  "exclude": ["../../packages/background/tests"]
+  "exclude": ["node_modules", "dist", "../../packages/background/tests"]
 }

@@ -35,15 +35,3 @@ jobs:
           name: dist-webext-firefox
           path: |
             ./apps/webext/dist/firefox/*
-      - name: Archive production webext legacy artifacts chrome
-        uses: actions/upload-artifact@v3
-        with:
-          name: dist-webext-legacy-chrome
-          path: |
-            ./apps/webext-legacy/dist/chrome/*
-      - name: Archive production webext legacy artifacts firefox
-        uses: actions/upload-artifact@v3
-        with:
-          name: dist-webext-legacy-firefox
-          path: |
-            ./apps/webext-legacy/dist/firefox/*
