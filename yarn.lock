@@ -4910,9 +4910,6 @@ __metadata:
     "@babel/runtime": ^7.18.9
     "@manypkg/cli": ^0.19.2
     eslint: ^8.21.0
-    husky: ^8.0.0
-    is-ci: ^3.0.1
-    pre-commit: ^1.2.2
     prettier: ^2.8.1
     react-native-safe-area-context: ^4.5.0
     react-native-web: ^0.18.11
@@ -16063,15 +16060,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"husky@npm:^8.0.0":
-  version: 8.0.3
-  resolution: "husky@npm:8.0.3"
-  bin:
-    husky: lib/bin.js
-  checksum: 837bc7e4413e58c1f2946d38fb050f5d7324c6f16b0fd66411ffce5703b294bd21429e8ba58711cd331951ee86ed529c5be4f76805959ff668a337dbfa82a1b0
-  languageName: node
-  linkType: hard
-
 "hyphenate-style-name@npm:^1.0.3":
   version: 1.0.4
   resolution: "hyphenate-style-name@npm:1.0.4"
@@ -22508,17 +22496,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pre-commit@npm:^1.2.2":
-  version: 1.2.2
-  resolution: "pre-commit@npm:1.2.2"
-  dependencies:
-    cross-spawn: ^5.0.1
-    spawn-sync: ^1.0.15
-    which: 1.2.x
-  checksum: b604716647a620796a3827ad1b45d68bd22407803845053ee6b788ceaac120c3ac00bf97c1f06256b6a68bc785d94dbad87e16a45e3dd7191e1f72dedcf4215c
-  languageName: node
-  linkType: hard
-
 "prelude-ls@npm:^1.2.1":
   version: 1.2.1
   resolution: "prelude-ls@npm:1.2.1"
@@ -25278,7 +25255,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"spawn-sync@npm:1.0.15, spawn-sync@npm:^1.0.15":
+"spawn-sync@npm:1.0.15":
   version: 1.0.15
   resolution: "spawn-sync@npm:1.0.15"
   dependencies:
@@ -28381,17 +28358,6 @@ __metadata:
   bin:
     which: ./bin/which
   checksum: 988abcbf802993d25ddaf9eca3b00265eec559554d2853da228b38a920a199cc4fc17530a29b8b8a06a25f0723f66f6d47b8290eaf7fb17ad7aeebeb53295f73
-  languageName: node
-  linkType: hard
-
-"which@npm:1.2.x":
-  version: 1.2.14
-  resolution: "which@npm:1.2.14"
-  dependencies:
-    isexe: ^2.0.0
-  bin:
-    which: ./bin/which
-  checksum: f69f2b75ac72a09d9bbabc1c309bc5d0dc6c48710fd2719db3cb4eb0868ca556ec01f7944ff15cf6ef95c8977f1588d887c40060a9479b9efec28f8370c7ba30
   languageName: node
   linkType: hard
 

@@ -11,6 +11,7 @@ import {
   Image,
   Text,
   styled,
+  Theme,
 } from "@my/ui";
 import { ChevronDown, ChevronUp } from "@tamagui/lucide-icons";
 import { useState } from "react";
@@ -60,7 +61,7 @@ export function HomeScreen() {
             <Paragraph fontWeight={"thin"}>Your Rewards</Paragraph>
           </YStack>
 
-          <XStack flex={1} width="100%" flexWrap="wrap" p="$4">
+          <XStack flex={1} flexWrap="wrap" p="$4">
             <XStack
               flex={1}
               width="100%"
@@ -99,9 +100,7 @@ export function HomeScreen() {
                 </svg>
               </IconRewardStack>
               <StatStack>
-                <StatHeader backgroundColor={"$blue2"}>
-                  Current Reward
-                </StatHeader>
+                <StatHeader>Current Reward</StatHeader>
                 <StatBody>489.8</StatBody>
               </StatStack>
               <YStack

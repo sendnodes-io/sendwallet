@@ -37,7 +37,6 @@
     "lint:prettier": "prettier --check .",
     "lint:prettier:fix": "prettier --write .",
     "lint": "turbo run lint",
-    "postinstall": "is-ci || husky install || yarn build",
     "upgrade:tamagui": "yarn run manypkg upgrade tamagui && yarn run manypkg upgrade @tamagui && yarn run manypkg upgrade tamagui-loader"
   },
   "workspaces": {
@@ -57,9 +56,6 @@
   "devDependencies": {
     "@manypkg/cli": "^0.19.2",
     "eslint": "^8.21.0",
-    "husky": "^8.0.0",
-    "is-ci": "^3.0.1",
-    "pre-commit": "^1.2.2",
     "prettier": "^2.8.1",
     "react-native-safe-area-context": "^4.5.0",
     "react-native-web": "^0.18.11",

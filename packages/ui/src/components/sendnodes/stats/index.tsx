@@ -15,7 +15,7 @@ export const StatHeader = styled(Paragraph, {
   position: "absolute",
   t: "$-2.5",
   fontFamily: "$heading",
-  backgroundColor: "$blue1",
+  backgroundColor: "$blue2",
   px: "$2",
 });
 
