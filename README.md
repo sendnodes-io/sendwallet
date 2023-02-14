@@ -30,6 +30,8 @@ SendNodes, Inc. is looking for amazing contributors to make SendWallet the best 
 
 You'll need a few tools to get started.
 
+> ⚠️ SendWallet is built using x86_64 CPUs. Arm64 is not currently supported.
+
 - NodeJS v16
 - Yarn
 - Python 3
