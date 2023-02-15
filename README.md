@@ -43,6 +43,12 @@ yarn install
 yarn build:webext --  --config-name chrome # or firefox
 ```
 
+Or just fancy building it without installing a bunch of extra stuff and you have Docker installed. (Or, you are the Firefox Extension Review Team 🦊.) Just run from the root of the project.
+
+```sh
+docker run --platform=linux/x86_64 -it --rm -v $(pwd):/app node:16 bash -c "cd app && yarn install && yarn build:webext"
+```
+
 Once that finishes, please find the built files in the `./apps/webext/dist` directory. Then, visit <a href="chrome://extensions">chrome://extensions</a> load the `./apps/webext/dist/chrome` directory as an unpacked extension.
 
 ### Prepare safari build (highly experimental)
