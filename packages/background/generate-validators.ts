@@ -14,6 +14,8 @@ import {
 import { metadataJTD } from "./lib/validate/erc721";
 import { coingeckoPriceSchema } from "./lib/validate/prices";
 
+console.log("Generating validators");
+
 const ajvJTD = new AjvJTD({
   allErrors: true,
   code: { source: true, es5: true },
@@ -51,3 +53,5 @@ writeFileSync(
   path.join(__dirname, "/lib/validate/json-validators.js"),
   jsonModuleCode
 );
+
+console.log("Generated validators");

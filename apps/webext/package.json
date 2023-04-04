@@ -1,7 +1,7 @@
 {
   "name": "webext",
   "private": true,
-  "version": "0.4.6",
+  "version": "0.4.7",
   "description": "Secure your POKT with a modern and simple crypto wallet. It's your POKT, store it safely.",
   "main": "index.js",
   "repository": "git@github.com:sendnodes/sendwallet.git",
@@ -22,7 +22,6 @@
   "scripts": {
     "clean": "rimraf dist",
     "dev": "run-p dev:tools \"dev:webpack {@}\" --",
-    "generate:validators": "ts-node background/generate-validators.ts",
     "build": "NODE_ENV=production webpack --mode=production",
     "dev:webpack": "NODE_ENV=development webpack serve --mode=development",
     "dev:tools": "yarn dlx @redux-devtools/cli --hostname=localhost --port=8000",

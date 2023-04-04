@@ -24,7 +24,8 @@
     "**/*.ts"
   ],
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "build": "ts-node ../../packages/background/generate-validators.ts"
   },
   "dependencies": {
     "@0xbigboss/webext-redux": "2.2.0",
