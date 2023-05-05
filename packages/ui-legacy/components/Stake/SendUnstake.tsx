@@ -86,7 +86,6 @@ export default function SendUnstake(): ReactElement {
     userStakingData?.userStakingData[0]?.staked ?? 0
   )
     .add(userStakingData?.userStakingData[0]?.pendingStaked ?? 0)
-    .sub(userStakingData?.userStakingData[0]?.pendingUnstaked ?? 0)
     .sub(
       pendingUnstakeTransactions.reduce((pendingUnstaked, transaction) => {
         return pendingUnstaked.add(
