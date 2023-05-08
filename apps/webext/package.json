@@ -1,7 +1,7 @@
 {
   "name": "webext",
   "private": true,
-  "version": "0.4.7",
+  "version": "0.4.8",
   "description": "Secure your POKT with a modern and simple crypto wallet. It's your POKT, store it safely.",
   "main": "index.js",
   "repository": "git@github.com:sendnodes/sendwallet.git",
