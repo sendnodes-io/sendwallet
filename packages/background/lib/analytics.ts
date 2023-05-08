@@ -97,35 +97,39 @@ export async function trackPageView(args: AnalyticsTrackPageView) {
 
   await postAnalytics(gaParams);
 }
-
-// TODO: Re-enable once we have a better idea of what we want to track and how to gain consent
 async function postAnalytics(gaParams: URLSearchParams) {
-  // try {
-  //   gaParams.set(
-  //     "z",
-  //     Math.random().toString() + new Date().getTime().toString()
-  //   );
-  //   const response = await fetch(ANALYTICS_PATH, {
-  //     method: "POST",
-  //     mode: "no-cors",
-  //     cache: "no-cache",
-  //     credentials: "same-origin",
-  //     headers: {
-  //       "Content-Type": "application/x-www-form-urlencoded",
-  //     },
-  //     redirect: "follow",
-  //     referrerPolicy: "no-referrer",
-  //     body: gaParams,
-  //   });
-  //   if (process.env.NODE_ENV === "development") {
-  //     console.debug("Sent analytics", {
-  //       gaParams: Object.fromEntries(gaParams),
-  //       response,
-  //     });
-  //   }
-  // } catch (e) {
-  //   if (process.env.NODE_ENV === "development") {
-  //     console.warn("Failed sending analytics event", e);
-  //   }
-  // }
+  try {
+    gaParams.set(
+      "z",
+      Math.random().toString() + new Date().getTime().toString()
+    );
+
+    // only send if in chrome, need consent for firefox
+    if (typeof chrome === "undefined") {
+      return;
+    }
+
+    const response = await fetch(ANALYTICS_PATH, {
+      method: "POST",
+      mode: "no-cors",
+      cache: "no-cache",
+      credentials: "same-origin",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      redirect: "follow",
+      referrerPolicy: "no-referrer",
+      body: gaParams,
+    });
+    if (process.env.NODE_ENV === "development") {
+      console.debug("Sent analytics", {
+        gaParams: Object.fromEntries(gaParams),
+        response,
+      });
+    }
+  } catch (e) {
+    if (process.env.NODE_ENV === "development") {
+      console.warn("Failed sending analytics event", e);
+    }
+  }
 }
