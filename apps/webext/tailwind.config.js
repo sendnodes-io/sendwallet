@@ -18,6 +18,8 @@ module.exports = {
         aqua: "#33ffff",
         "rich-black": "#040404",
         "eerie-black": "#1e1e1e",
+        "onyx-100": "#3b3b3b",
+        "onyx-200": "#3e3e3e",
         "spanish-gray": "#949494",
         "neon-green": "#5cff33",
       },

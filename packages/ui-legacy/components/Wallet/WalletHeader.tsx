@@ -174,6 +174,7 @@ export default function WalletHeader() {
                   width="1.25rem"
                   height="1.25rem"
                   icon="fluent:database-switch-20-regular"
+                  className="relative bottom-1"
                 />
               </a>
             ) : undefined
