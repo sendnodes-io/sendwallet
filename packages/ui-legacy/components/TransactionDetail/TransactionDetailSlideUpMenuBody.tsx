@@ -135,7 +135,7 @@ export default function TransactionDetailSlideUpMenuBody({
       </div>
       <div className="buttons">
         <SharedButton type="primaryGhost" size="medium" onClick={openExplorer}>
-          {activity.network.family === "POKT" ? "POKT Watch" : "Etherscan"}
+          {activity.network.family === "POKT" ? "POKTscan" : "Etherscan"}
         </SharedButton>
       </div>
       <style jsx>

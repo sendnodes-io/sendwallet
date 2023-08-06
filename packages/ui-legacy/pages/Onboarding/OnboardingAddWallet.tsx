@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useState } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import {
   useAreKeyringsUnlocked,
@@ -14,8 +14,7 @@ import {
 import styles from "../../components/Onboarding/styles";
 import SharedPopoutOpen from "../../components/Shared/SharedPopoutOpen";
 import SharedSplashScreen from "../../components/Shared/SharedSplashScreen";
-import { InformationCircleIcon } from "@heroicons/react/outline";
-import SharedModalPopup from "@sendnodes/pokt-wallet-ui/components/Shared/SharedModalPopup";
+import { InformationCircleIcon, XIcon } from "@heroicons/react/outline";
 import SharedModal, {
   SharedModalProps,
 } from "@sendnodes/pokt-wallet-ui/components/Shared/SharedModal";
@@ -304,24 +303,37 @@ function HelpModal({
   }, [dispatch, isAddingAccount]);
 
   return (
-    <SharedModalPopup header="Need Help? 🙋‍♀️" isOpen={isOpen} onClose={onClose}>
+    <SharedModal isOpen={isOpen} onClose={onClose}>
       <div>
+        <div className="absolute top-0 right-0 pt-5 pr-5 z-20">
+          <button
+            type="button"
+            className="rounded-md text-spanish-gray hover:text-white  "
+            onClick={onClose}
+          >
+            <span className="sr-only">Close</span>
+            <XIcon className="h-6 w-6" aria-hidden="true" />
+          </button>
+        </div>
+        <h1 className="text-2xl font-semibold mb-2">Need Help?</h1>
         <p>
           Please visit our{" "}
           <a
             href="https://docs.sendnodes.net/start-here/overview"
             target="_blank"
             rel="noopener noreferrer"
+            className="underline hover:text-white"
           >
             FAQ
           </a>{" "}
           or{" "}
           <a
-            href="https://discord.gg/Gh76tPkjTn"
+            href="https://t.me/send_wallet"
             target="_blank"
             rel="noopener noreferrer"
+            className="underline hover:text-white"
           >
-            join our Discord
+            join our Telegram
           </a>{" "}
           for support.
         </p>
@@ -368,6 +380,6 @@ function HelpModal({
           </SharedButton>
         </form>
       </div>
-    </SharedModalPopup>
+    </SharedModal>
   );
 }

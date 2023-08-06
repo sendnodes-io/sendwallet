@@ -236,7 +236,7 @@ function StakeTransactionItem({ tx }: StakeTransactionItemProps) {
                         className="h-4 w-4 mr-2"
                         width="158"
                         height="158"
-                        alt="https://pokt.watch/"
+                        alt="https://poktscan.com/"
                       />
                       <span title={tx.hash}>
                         {tx.hash.substring(0, 4)}...

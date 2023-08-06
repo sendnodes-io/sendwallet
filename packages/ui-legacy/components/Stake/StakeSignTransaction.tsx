@@ -41,13 +41,13 @@ import {
   useIsSigningMethodLocked,
 } from "../../hooks";
 import getSnActionFromMemo from "../../helpers/get-sn-action-from-memo";
-import { usePoktWatchLatestBlock } from "../../hooks/pokt-watch/use-latest-block";
 import usePocketNetworkFee from "../../hooks/pocket-network/use-network-fee";
 import formatTokenAmount from "../../utils/formatTokenAmount";
 import useStakingPoktParams from "../../hooks/staking-hooks/use-staking-pokt-params";
 import useAssetInMainCurrency from "../../hooks/assets/use-asset-in-main-currency";
 import type { RootState } from "@sendnodes/pokt-wallet-background";
 import { AccountType } from "@sendnodes/pokt-wallet-background/redux-slices/AccountType";
+import { usePoktNetworkBlock } from "@sendnodes/pokt-wallet-ui/hooks/pocket-network/use-latest-block";
 
 dayjs.extend(utc.default);
 dayjs.extend(localizedFormat.default);
@@ -56,7 +56,7 @@ dayjs.extend(relativeTime.default);
 export default function StakeSignTransaction(): ReactElement {
   const history = useHistory();
   const dispatch = useBackgroundDispatch();
-  const { latestBlock } = usePoktWatchLatestBlock();
+  const { data: latestBlock } = usePoktNetworkBlock();
   const transactionDetails = useBackgroundSelector(
     selectTransactionData,
     isEqual
@@ -186,8 +186,8 @@ export default function StakeSignTransaction(): ReactElement {
     ? { from: sendnodesComponent, to: signerComponent }
     : { from: signerComponent, to: sendnodesComponent };
 
-  const lastBlockOrNow = latestBlock?.timestamp
-    ? dayjs.utc(latestBlock?.timestamp)
+  const lastBlockOrNow = latestBlock?.header?.time
+    ? dayjs.utc(latestBlock?.header?.time)
     : dayjs();
   const avgBlockTime = 15;
   const avgBlocksPerDay = 96;

@@ -231,7 +231,7 @@ export default function Send(): ReactElement {
               {addressIsValidating && <SharedLoadingSpinner size="small" />}
               {!addressIsValidating && destinationAddress && (
                 <a
-                  href={`https://pokt.watch/address/${destinationAddress}`}
+                  href={`https://poktscan.com/account/${destinationAddress}`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >

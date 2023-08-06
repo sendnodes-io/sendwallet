@@ -22,9 +22,10 @@ import {
   enrichAssetAmountWithDecimalValues,
   enrichAssetAmountWithMainCurrencyValues,
 } from "@sendnodes/pokt-wallet-background/redux-slices/utils/asset-utils";
-import { usePoktWatchLatestBlock } from "../../hooks/pokt-watch/use-latest-block";
 import { SnAction, SnTransaction } from "../../hooks/staking-hooks";
 import { useBackgroundSelector } from "../../hooks";
+import { usePoktNetworkBlock } from "@sendnodes/pokt-wallet-ui/hooks/pocket-network/use-latest-block";
+import { Block } from "@sendnodes/pocket-js";
 
 dayjs.extend(updateLocale.default);
 dayjs.extend(localizedFormat.default);
@@ -90,7 +91,7 @@ const snActionIcon: Record<SnAction, (props: unknown) => JSX.Element> = {
 };
 
 export type StakeTransactionItemState = {
-  latestBlock?: POKTWatchBlock;
+  latestBlock?: Block;
   currentAccount: AddressOnNetwork;
   blockExplorerUrl: string;
   isPending: boolean;
@@ -215,7 +216,7 @@ export default function StakeTransactionInfo({
     hash,
   } = getStakeTransactionInfo({ transaction: tx });
 
-  const { latestBlock } = usePoktWatchLatestBlock();
+  const { data: latestBlock } = usePoktNetworkBlock();
   const currentAccount = useBackgroundSelector(selectCurrentAccount, isEqual);
   const blockExplorerUrl = useBackgroundSelector(
     (_) =>
@@ -229,7 +230,7 @@ export default function StakeTransactionInfo({
     !isPending
       ? txTimestamp
       : // the next block is committed 30 minutes after the start of the previous one
-        dayjs.utc(latestBlock?.timestamp).add(30, "minute")
+        dayjs.utc(latestBlock?.header?.time).add(30, "minute")
   );
 
   const baseAssetPricePoint = useBackgroundSelector((state) =>
@@ -262,9 +263,9 @@ export default function StakeTransactionInfo({
 
   useEffect(() => {
     if (isPending) {
-      setTimestamp(dayjs.utc(latestBlock?.timestamp).add(30, "minute"));
+      setTimestamp(dayjs.utc(latestBlock?.header?.time).add(30, "minute"));
       const interval = setInterval(() => {
-        setTimestamp(dayjs.utc(latestBlock?.timestamp).add(30, "minute"));
+        setTimestamp(dayjs.utc(latestBlock?.header?.time).add(30, "minute"));
       }, 60 * 1e3);
       return () => clearInterval(interval);
     }

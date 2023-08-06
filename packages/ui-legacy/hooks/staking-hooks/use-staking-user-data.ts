@@ -78,7 +78,7 @@ export function useStakingUserData(addressOnNetwork: AddressOnNetwork) {
     ],
     fetcher,
     {
-      refreshInterval: 60 * 1000,
+      refreshInterval: 5 * 60 * 1000,
     }
   );
 

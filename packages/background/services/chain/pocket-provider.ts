@@ -601,23 +601,24 @@ export default class PocketProvider extends BaseService<ServiceLifecycleEvents> 
   ): Promise<POKTWatchBlock | Block | undefined> {
     return poll(
       async () => {
+        // long live pokt watch
         // use POKT Watch to get a skinny block since mainnet blocks are too fat
-        if (this.network.chainID === "mainnet") {
-          try {
-            const result = await fetch(
-              `https://api.pokt.watch/block?height=eq.${blockNumber}`
-            );
-            return (await result.json())[0] as POKTWatchBlock;
-          } catch (e) {
-            return undefined;
-          }
-        } else {
-          const result = await this.rpc.query.getBlock(BigInt(blockNumber));
-          if (result instanceof RpcError) {
-            return undefined;
-          }
-          return result.block as Block;
+        // if (this.network.chainID === "mainnet") {
+        //   try {
+        //     const result = await fetch(
+        //       `https://api.pokt.watch/block?height=eq.${blockNumber}`
+        //     );
+        //     return (await result.json())[0] as POKTWatchBlock;
+        //   } catch (e) {
+        //     return undefined;
+        //   }
+        // } else {
+        const result = await this.rpc.query.getBlock(BigInt(blockNumber));
+        if (result instanceof RpcError) {
+          return undefined;
         }
+        return result.block as Block;
+        // }
       },
       { retryLimit: 10 }
     );

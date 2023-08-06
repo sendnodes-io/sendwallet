@@ -9,6 +9,7 @@ import WalletActivityList from "../components/Wallet/WalletActivityList";
 import WalletAccountBalanceControl from "../components/Wallet/WalletAccountBalanceControl";
 import WalletHeader from "../components/Wallet/WalletHeader";
 import { isEqual } from "lodash";
+import { NeedHelpModal } from "../components/NeedHelpModal";
 
 export default function Wallet(): ReactElement {
   const isKeyringUnlocked = useAreKeyringsUnlocked(false);
@@ -61,6 +62,8 @@ export default function Wallet(): ReactElement {
         <div className="section" style={{ flexGrow: 1 }}>
           <WalletActivityList activities={currentAccountActivities ?? []} />
         </div>
+
+        <NeedHelpModal />
       </div>
       <style jsx>
         {`
