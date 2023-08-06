@@ -89,6 +89,10 @@ export const selectBlockExplorerForAddress = createSelector(
   (addressOnNetwork) => {
     // luckily they follow the same basic form
     const blockExplorerUrl = selectBlockExplorer(addressOnNetwork.network);
+    // except for pocket
+    if (addressOnNetwork.network.family === POCKET.family) {
+      return `${blockExplorerUrl}account/${addressOnNetwork.address}`;
+    }
     return `${blockExplorerUrl}address/${addressOnNetwork.address}`;
   }
 );

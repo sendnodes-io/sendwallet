@@ -9,7 +9,7 @@ import { HexString, UNIXTime } from "./types";
 export enum NetworkBlockExplorerUrl {
   ETHERSCAN = "https://etherscan.io/",
   POLYGONSCAN = "https://polygonscan.com/",
-  POKTWATCH = "https://pokt.watch/",
+  POKTSCAN = "https://poktscan.com/",
   ROPSTEN = "https://ropsten.etherscan.io/",
   RINKEBY = "https://rinkeby.etherscan.io/",
   GOERLI = "https://goerli.etherscan.io/",
@@ -79,7 +79,7 @@ export type EVMNetwork = Network & {
 export type POKTNetwork = Network & {
   chainID: string;
   family: NetworkFamily.POKT;
-  blockExplorerUrl: NetworkBlockExplorerUrl.POKTWATCH;
+  blockExplorerUrl: NetworkBlockExplorerUrl.POKTSCAN;
 };
 
 /**

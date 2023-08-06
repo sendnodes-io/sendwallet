@@ -16,7 +16,7 @@ export const POCKET: POKTNetwork = {
   baseAsset: POKT,
   chainID: "mainnet",
   family: NetworkFamily.POKT,
-  blockExplorerUrl: NetworkBlockExplorerUrl.POKTWATCH,
+  blockExplorerUrl: NetworkBlockExplorerUrl.POKTSCAN,
   rcpUrl: DEFAULT_POCKET_RPC_URL,
 };
 
@@ -25,7 +25,7 @@ export const FIAGNET: POKTNetwork = {
   baseAsset: POKT,
   chainID: "fiagnet",
   family: NetworkFamily.POKT,
-  blockExplorerUrl: NetworkBlockExplorerUrl.POKTWATCH,
+  blockExplorerUrl: NetworkBlockExplorerUrl.POKTSCAN,
   rcpUrl: "http://node1.fiagnet.com:8081",
 };
 
@@ -34,7 +34,7 @@ export const POCKET_LOCAL: POKTNetwork = {
   baseAsset: POKT,
   chainID: "localnet",
   family: NetworkFamily.POKT,
-  blockExplorerUrl: NetworkBlockExplorerUrl.POKTWATCH,
+  blockExplorerUrl: NetworkBlockExplorerUrl.POKTSCAN,
   rcpUrl: "http://localhost:8081",
 };
 

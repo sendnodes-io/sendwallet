@@ -1,4 +1,7 @@
-import { QueryHeightResponse } from "@sendnodes/pocket-js";
+import type {
+  QueryBlockResponse,
+  QueryHeightResponse,
+} from "@sendnodes/pocket-js";
 import { POCKET } from "@sendnodes/pokt-wallet-background/constants";
 import logger from "@sendnodes/pokt-wallet-background/lib/logger";
 import { RemoteConfig } from "@sendnodes/pokt-wallet-background/services/chain";
@@ -60,6 +63,28 @@ export const usePoktNetworkBlockHeight = () => {
 
   return {
     data,
+    isLoading: !(error || data),
+    isError: error,
+  };
+};
+
+export const usePoktNetworkBlock = () => {
+  const { data, error } = useSWR<QueryBlockResponse, unknown>(
+    [`${getPocketRPCUrl()}v1/query/block`],
+    (url) =>
+      fetch(url, {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+        },
+      }).then((res) => res.json() as unknown as QueryBlockResponse),
+    {
+      refreshInterval: 5 * 60 * 1000,
+    }
+  );
+
+  return {
+    data: data?.block,
     isLoading: !(error || data),
     isError: error,
   };
